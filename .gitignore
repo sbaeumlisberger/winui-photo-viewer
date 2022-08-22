@@ -1,0 +1,10 @@
+﻿bin/
+obj/
+.vs/
+AppPackages/
+BundleArtifacts/
+
+# Ignore NuGet Packages
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+project.assets.json

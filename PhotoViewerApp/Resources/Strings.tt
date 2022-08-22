@@ -1,0 +1,100 @@
+﻿<#
+
+ClassName = "Strings";
+NameSpace = "PhotoViewerApp.Resources";
+ResourceFile = "en/Strings.resw";
+
+#>
+<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+
+/* AUTO GENERATED CODE - DO NOT CHANGE */ 
+
+using Windows.ApplicationModel.Resources;
+using System.Reflection;
+
+namespace <#=this.NameSpace#> {
+
+	public class <#=this.ClassName#> {
+
+		private static ResourceLoader resourceLoader;
+
+		static <#=this.ClassName#>()
+		{
+			var declaringAssembly = typeof(<#=this.ClassName#>).Assembly;
+			string name = typeof(<#=this.ClassName#>).Name;
+
+			string executingAssemblyName = Assembly.GetEntryAssembly()!.GetName().Name!;
+			string declaringAssemblyName = declaringAssembly.GetName().Name!;
+
+			string path;
+			if (declaringAssemblyName == executingAssemblyName)
+			{
+				path = name;
+			}
+			else
+			{
+				path = declaringAssemblyName + "/" + name;
+			}
+
+			resourceLoader = ResourceLoader.GetForViewIndependentUse(path);
+		}
+
+		protected static string Get(string name)
+		{
+			return resourceLoader.GetString(name);
+		}
+
+<#
+	var placeholderRegex = new Regex("{[0-9]}");
+	var path = this.Host.ResolvePath("");
+	foreach(var entry in this.GetEntries(path)){
+		var propertyName = entry.Name.Replace(".", "_");
+		var resourceName = entry.Name.Replace(".", "/");
+		var description = (entry.Comment ?? entry.Value).Replace("\n", "\n		/// ");	
+
+		var matches = placeholderRegex.Matches(entry.Value);		
+		bool hasPlaceholder = matches.Count > 0;
+		string argsStringWithTypes = "object arg0";
+		string argsString = "arg0";
+		if(hasPlaceholder) {
+			for(int i = 1; i < matches.Count; i++) {
+				argsStringWithTypes += ", object arg" + i;
+				argsString += ", arg" + i;
+			}
+		}
+#>
+		/// <summary>
+        /// <#=description #>
+        /// </summary>
+		public static string <#=propertyName #><#=hasPlaceholder ? "(" + argsStringWithTypes + ")" : "" #> => <#=hasPlaceholder ? "string.Format(" : "" #>Get("<#=resourceName #>")<#=hasPlaceholder ? ", " + argsString + ")" : "" #>;	
+<#
+	}
+#>
+
+		private <#=this.ClassName#>() {}
+
+	}
+
+}
+<#+
+string ClassName;
+string NameSpace;
+string ResourceFile;
+
+public List<(string Name, string Value, string Comment)> GetEntries(string path) {
+	var names = new List<(string, string, string)>();
+	var doc = new XmlDocument();
+	doc.Load(Path.Combine(path, this.ResourceFile));
+	foreach(XmlNode node in doc.SelectNodes("/root/data")) {
+		names.Add((node.Attributes["name"].InnerText, node["value"].InnerXml, node["comment"]?.InnerXml));
+	}
+	return names;
+}
+#>

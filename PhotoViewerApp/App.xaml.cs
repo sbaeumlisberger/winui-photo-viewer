@@ -1,0 +1,69 @@
+﻿using Microsoft.UI.Xaml;
+using System;
+using Windows.ApplicationModel;
+using PhotoViewerApp.Services;
+using Windows.Storage;
+using PhotoViewerApp.Utils.Logging;
+using System.Threading.Tasks;
+using System.Threading;
+using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
+using System.Globalization;
+
+namespace PhotoViewerApp
+{
+    /// <summary>
+    /// Provides application-specific behavior to supplement the default Application class.
+    /// </summary>
+    public partial class App : Application
+    {
+        private LoadMediaItemsService loadMediaItemsService = new LoadMediaItemsService();
+
+        /// <summary>
+        /// Initializes the singleton application object. This is the first line of authored code
+        /// executed, and as such is the logical equivalent of main() or WinMain().
+        /// </summary>
+        public App()
+        {
+            Log.Debug($"Local app folder: {ApplicationData.Current.LocalFolder.Path}");
+                       
+            UnhandledException += App_UnhandledException;
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+
+            this.InitializeComponent();
+        }
+
+        /// <summary>
+        /// Invoked when the application is launched normally by the end user. Other entry points
+        /// will be used such as when the application is launched to open a specific file.
+        /// </summary>
+        /// <param name="args">Details about the launch request and process.</param>
+        protected override void OnLaunched(LaunchActivatedEventArgs args)
+        {
+            Log.Info($"Application launched.");
+
+            var activatedEventArgs = AppInstance.GetActivatedEventArgs();
+            _ = loadMediaItemsService.LoadMediaItems(activatedEventArgs);
+
+            var window = new MainWindow();
+            window.Activate();
+        }
+
+        private void App_UnhandledException(object sender, UnhandledExceptionEventArgs args)
+        {
+            if (args.Exception is Exception exception)
+            {
+                Log.Fatal("An unhandled exception occurred", exception);
+            }
+            else
+            {
+                Log.Fatal($"An unhandled exception occurred: {args.Message}");
+            }
+        }
+
+        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs args)
+        {
+            Log.Error("An unobserved task exception occurred", args.Exception);
+        }
+
+    }
+}

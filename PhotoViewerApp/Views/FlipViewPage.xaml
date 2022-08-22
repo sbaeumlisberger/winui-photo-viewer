@@ -1,0 +1,52 @@
+﻿<Page
+    x:Class="PhotoViewerApp.Views.FlipViewPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewerApp.Views"
+    xmlns:model="using:PhotoViewerApp.Models"
+    xmlns:resources="using:PhotoViewerApp.Resources"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <local:DetailsBar DataContext="{x:Bind ViewModel.DetailsBarModel}"/>
+
+        <Grid Grid.Row="1">
+            <FlipView 
+                x:Name="flipView"
+                ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" 
+                SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                SelectionChanged="FlipView_SelectionChanged">
+                <FlipView.ItemTemplate>
+                    <DataTemplate x:DataType="model:IMediaItem">
+                        <local:MediaFlipViewItem DataContextChanged="MediaFlipViewItem_DataContextChanged"/>
+                    </DataTemplate>
+                </FlipView.ItemTemplate>
+            </FlipView>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                Visibility="{x:Bind ViewModel.ShowNoItemsUI, Mode=OneWay}">
+                <TextBlock 
+                    HorizontalAlignment="Center" 
+                    Text="{x:Bind resources:Strings.NoItemsMessage}"/>
+                <Button
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Center" 
+                    Content="{x:Bind resources:Strings.OpenFolderButton}"                    
+                    Command="{x:Bind ViewModel.OpenFolderCommand}"/>
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+
+    <Page.BottomAppBar>
+        <local:FlipViewPageCommandBar DataContext="{x:Bind ViewModel.CommandBarModel}"/>
+    </Page.BottomAppBar>
+</Page>

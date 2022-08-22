@@ -1,0 +1,36 @@
+﻿<UserControl
+    x:Class="PhotoViewerApp.Views.DetailsBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewerApp.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <RelativePanel Padding="4" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+        <TextBlock 
+            RelativePanel.AlignLeftWithPanel="True" 
+            Text="{x:Bind ViewModel.TextLeft, Mode=OneWay}"/>
+
+        <TextBlock 
+            RelativePanel.AlignHorizontalCenterWithPanel="True" 
+            Margin="4,0,4,0" 
+            Text="{x:Bind ViewModel.TextCenter, Mode=OneWay}" 
+            TextAlignment="Center"/>
+
+        <StackPanel 
+            RelativePanel.AlignRightWithPanel="True" 
+            Orientation="Horizontal">
+            <FontIcon 
+                Margin="0,0,4,0"
+                FontFamily="Segoe MDL2 Assets"
+                Glyph="&#xE2B1;"
+                FontSize="14"
+                Visibility="{x:Bind ViewModel.ShowColorProfileIndicator, Mode=OneWay}"
+                ToolTipService.ToolTip="{x:Bind ViewModel.ColorSpaceName, Mode=OneWay}"/>
+            <TextBlock 
+                Text="{x:Bind ViewModel.TextRight, Mode=OneWay}"/>
+        </StackPanel>
+    </RelativePanel>
+
+</UserControl>

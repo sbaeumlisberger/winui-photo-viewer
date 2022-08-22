@@ -1,0 +1,27 @@
+﻿<CommandBar
+    x:Class="PhotoViewerApp.Views.FlipViewPageCommandBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewerApp.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"  
+    Style="{ThemeResource DefaultCommandBarStyle}"
+    DefaultLabelPosition="Collapsed">
+
+    <AppBarButton Icon="ViewAll"/>
+    <AppBarButton Icon="View"/>
+    <AppBarButton Icon="SlideShow"/>
+    <AppBarButton Icon="Tag"/>
+    <AppBarButton Icon="Crop"/>
+    <AppBarButton Icon="Rotate"/>
+    <AppBarButton Icon="Delete" Command="{x:Bind ViewModel.DeleteCommand}"/>
+    <AppBarButton Icon="Back" Command="{x:Bind ViewModel.SelectPreviousCommand}"/>
+    <AppBarButton Icon="Forward" Command="{x:Bind ViewModel.SelectNextCommand}"/>
+    
+    <CommandBar.SecondaryCommands>
+        <AppBarButton Icon="OpenLocal" Label="Ordner öffnen" Command="{x:Bind ViewModel.OpenFolderCommand}"/>
+        <AppBarButton Icon="Setting" Label="Einstellungen"/>
+    </CommandBar.SecondaryCommands>
+    
+</CommandBar>
