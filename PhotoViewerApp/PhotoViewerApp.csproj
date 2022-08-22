@@ -78,4 +78,10 @@
       <Generator>ReswPlusAdvancedGenerator</Generator>
     </PRIResource>
   </ItemGroup>
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\.editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\.editorconfig" />
+  </ItemGroup>
 </Project>

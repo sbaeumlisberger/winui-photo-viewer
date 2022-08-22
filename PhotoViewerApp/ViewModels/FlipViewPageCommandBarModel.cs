@@ -4,7 +4,6 @@ using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
-using PhotoViewerApp.ViewModels;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -22,57 +21,62 @@ using Windows.Storage;
 //    }
 //}
 
-namespace PhotoViewerApp.ViewModels
+namespace PhotoViewerApp.ViewModels;
+
+public interface IFlipViewPageCommandBarModel : INotifyPropertyChanged
 {
-    public interface IFlipViewPageCommandBarModel : INotifyPropertyChanged
+    IMediaFlipViewItemModel? SelectedItemModel { get; set; }
+}
+
+public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageCommandBarModel
+{
+
+
+    [ObservableProperty]
+    private IMediaFlipViewItemModel? selectedItemModel;
+
+    public ICommand SelectPreviousCommand { get; }
+    public ICommand SelectNextCommand { get; }
+
+    [NotifyCanExecuteChangedFor(nameof(DeleteCommand))]
+    [ObservableProperty]
+    private bool canDelete = false;
+
+    private readonly ILoadMediaItemsService loadMediaItemsService;
+
+    public FlipViewPageCommandBarModel(
+        IMessenger? messenger,
+        IDialogService dialogService,
+        ILoadMediaItemsService loadMediaItemsService,
+        ICommand selectPreviousCommand,
+        ICommand selectNextCommand)
+        : base(messenger, dialogService)
     {
-        IMediaFlipViewItemModel? SelectedItemModel { get; set; }
+        this.loadMediaItemsService = loadMediaItemsService;
+        SelectPreviousCommand = selectPreviousCommand;
+        SelectNextCommand = selectNextCommand;
     }
 
-    public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageCommandBarModel
+    partial void OnSelectedItemModelChanged(IMediaFlipViewItemModel? value)
     {
+        CanDelete = SelectedItemModel != null;
+    }
 
+    [RelayCommand(CanExecute = nameof(CanDelete))]
+    private void Delete()
+    {
+        SelectedItemModel!.MediaItem.DeleteAsync();
+        Publish(new MediaItemsDeletedMessage(new List<IMediaItem>() { SelectedItemModel!.MediaItem }));
+    }
 
-        [ObservableProperty]
-        private IMediaFlipViewItemModel? selectedItemModel;
-
-        public ICommand SelectPreviousCommand { get; }
-        public ICommand SelectNextCommand { get; }
-
-        [NotifyCanExecuteChangedFor(nameof(DeleteCommand))]
-        [ObservableProperty]
-        private bool canDelete = false;
-
-        private readonly ILoadMediaItemsService loadMediaItemsService;
-
-        public FlipViewPageCommandBarModel(ILoadMediaItemsService loadMediaItemsService, ICommand selectPreviousCommand, ICommand selectNextCommand)
+    [RelayCommand]
+    private async void OpenFolder()
+    {
+        var folderPickerModel = new FolderPickerModel();
+        await ShowDialogAsync(folderPickerModel);
+        if (folderPickerModel.Folder is StorageFolder folder)
         {
-            this.loadMediaItemsService = loadMediaItemsService;
-            SelectPreviousCommand = selectPreviousCommand;
-            SelectNextCommand = selectNextCommand;
-        }
-
-        partial void OnSelectedItemModelChanged(IMediaFlipViewItemModel? value)
-        {
-            CanDelete = SelectedItemModel != null;
-        }
-
-        [RelayCommand(CanExecute = nameof(CanDelete))]
-        private void Delete()
-        {
-            SelectedItemModel!.MediaItem.DeleteAsync();
-            Publish(new MediaItemsDeletedMessage(new List<IMediaItem>() { SelectedItemModel!.MediaItem }));
-        }
-
-        [RelayCommand]
-        private async void OpenFolder()
-        {
-            var folderPickerModel = new FolderPickerModel();
-            await ShowDialogAsync(folderPickerModel);
-            if (folderPickerModel.Folder is StorageFolder folder)
-            {
-                await loadMediaItemsService.LoadMediaItems(folder);
-            }
+            await loadMediaItemsService.LoadMediaItems(folder);
         }
     }
 }

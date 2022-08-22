@@ -1,52 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PhotoViewerApp.Utils
+namespace PhotoViewerApp.Utils;
+
+public interface IMessenger
 {
-    public interface IMessenger 
-    {
-        void Publish<T>(T message) where T : notnull;
+    void Publish<T>(T message) where T : notnull;
 
-        void Subscribe<T>(Action<T> callback) where T : notnull;
+    void Subscribe<T>(Action<T> callback) where T : notnull;
+}
+
+internal class Messenger : IMessenger
+{
+    [ThreadStatic]
+    private static IMessenger? instance;
+
+    private Dictionary<Type, List<Delegate>> callbacksByMessageType = new Dictionary<Type, List<Delegate>>();
+
+    public static IMessenger GetForCurrentThread()
+    {
+        if (instance is null)
+        {
+            instance = new Messenger();
+        }
+        return instance;
     }
 
-    internal class Messenger : IMessenger
+    public void Publish<T>(T message) where T : notnull
     {
-        [ThreadStatic]
-        private static IMessenger? instance;
-
-        private Dictionary<Type, List<Delegate>> callbacksByMessageType = new Dictionary<Type, List<Delegate>>();
-
-        public static IMessenger GetForCurrentThread() 
+        if (callbacksByMessageType.TryGetValue(typeof(T), out var callbacksList))
         {
-            if (instance is null)
-            {
-                instance = new Messenger();
-            }
-            return instance;
+            callbacksList.ForEach(callback => ((Action<T>)callback).Invoke(message));
         }
+    }
 
-        public void Publish<T>(T message) where T : notnull
+    public void Subscribe<T>(Action<T> callback) where T : notnull
+    {
+        if (callbacksByMessageType.TryGetValue(typeof(T), out var callbacksList))
         {
-            if (callbacksByMessageType.TryGetValue(typeof(T), out var callbacksList))
-            {
-                callbacksList.ForEach(callback => ((Action<T>)callback).Invoke(message));
-            }
+            callbacksList.Add(callback);
         }
-
-        public void Subscribe<T>(Action<T> callback) where T : notnull
+        else
         {
-            if (callbacksByMessageType.TryGetValue(typeof(T), out var callbacksList))
-            {
-                callbacksList.Add(callback);
-            }
-            else 
-            {
-                callbacksByMessageType.Add(typeof(T), new List<Delegate>() { callback });
-            }
+            callbacksByMessageType.Add(typeof(T), new List<Delegate>() { callback });
         }
     }
 }

@@ -2,7 +2,6 @@
 using Microsoft.UI.Xaml.Media.Imaging;
 using PhotoViewerApp.Utils.Logging;
 using System;
-using System.Diagnostics;
 using Windows.Storage;
 
 namespace PhotoViewerApp.Converters;
