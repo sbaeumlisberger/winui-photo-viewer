@@ -9,7 +9,7 @@ namespace PhotoViewerApp.Views;
 
 public sealed partial class FlipViewPage : Page
 {
-    private FlipViewPageModel ViewModel { get; } = FlipViewPageModelFactory.Create();
+    private FlipViewPageModel ViewModel { get; } = FlipViewPageModelFactory.Create(App.Current.Window.DialogService);
 
     public FlipViewPage()
     {
@@ -21,7 +21,7 @@ public sealed partial class FlipViewPage : Page
     {
         if (e.PropertyName == nameof(ViewModel.SelectedItem))
         {
-            WindowsManger.GetForCurrentThread().Title = ViewModel.SelectedItem?.Name ?? "";
+            App.Current.Window.Title = ViewModel.SelectedItem?.Name ?? "";
         }
     }
     private void FlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -6,6 +8,20 @@ namespace PhotoViewerApp.Models;
 
 public class BitmapGraphicItem : IMediaItem
 {
+    public static readonly IReadOnlySet<string> CommonFileExtensions = new HashSet<string>()
+    {
+        ".bmp", ".dib" ,".gif" ,".ico" , ".jpeg", ".jpe", ".jpg", ".jfif",
+        ".png", ".tiff", ".tif", ".jxr", ".wdp", ".heic", ".heif" , ".webp"
+    };
+
+    public static readonly IReadOnlySet<string> RawFileExtensions = new HashSet<string>()
+    {
+        ".arw", ".cr2", ".crw", ".erf", ".kdc", ".mrw", ".nef", ".nrw", ".orf",
+         ".pef", ".raf", ".raw", ".rw2", ".rwl", ".sr2", ".srw", ".dng",  ".xmp"
+    };
+
+    public static readonly IReadOnlySet<string> SupportedFileExtensions = CommonFileExtensions.Concat(RawFileExtensions).ToHashSet();
+
     public string Name => File.Name;
 
     public IStorageFile File { get; }

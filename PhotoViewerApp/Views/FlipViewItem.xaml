@@ -9,10 +9,12 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <converters:StorageFileToImageSourceConverter x:Key="StorageFileToImageSourceConverter"/>
+        <converters:CanvasBitmapToImageSourceConverter x:Key="CanvasBitmapToImageSourceConverter"/>
+
     </UserControl.Resources>
 
     <Grid>
-        <Image Source="{x:Bind ViewModel.MediaItem.File, Converter={StaticResource StorageFileToImageSourceConverter}}"/>
+        <Image
+            Source="{x:Bind ViewModel.BitmapImage, Mode=OneWay, Converter={StaticResource CanvasBitmapToImageSourceConverter}}"/>
     </Grid>
 </UserControl>

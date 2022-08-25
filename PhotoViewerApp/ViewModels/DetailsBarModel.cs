@@ -3,32 +3,22 @@ using PhotoViewerApp.Models;
 using PhotoViewerApp.Resources;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
+using PhotoViewerCoreModule.Model;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
-
-//namespace PhotoViewerApp
-//{
-//    public partial class Ioc
-//    {
-//        public virtual IDetailsBarModel CreateDetailsBarModel()
-//        {
-//            return new DetailsBarModel();
-//        }
-//    }
-//}
 
 namespace PhotoViewerApp.ViewModels;
 
 public interface IDetailsBarModel : INotifyPropertyChanged
 {
-    IMediaItem? MediaItem { get; set; }
+    IMediaFlipViewItemModel? SelectedItemModel { get; set; }
 }
 
 public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 {
     [ObservableProperty]
-    private IMediaItem? mediaItem;
+    private IMediaFlipViewItemModel? selectedItemModel;
 
     [ObservableProperty]
     private bool isVisible = true;
@@ -48,13 +38,13 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
     [ObservableProperty]
     private string colorSpaceName = string.Empty;
 
-    partial void OnMediaItemChanged(IMediaItem? value)
+    partial void OnSelectedItemModelChanged(IMediaFlipViewItemModel? value)
     {
         if (IsVisible)
         {
-            if (MediaItem is not null)
+            if (SelectedItemModel is not null)
             {
-                UpdateAsync(MediaItem);
+                UpdateAsync(SelectedItemModel); // TODO cancel/wait previous update!
             }
             else
             {
@@ -63,27 +53,13 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         }
     }
 
-    //private void FlipViewModel_SelectedItemModelChanged()
-    //{
-    //    if (flipViewModel.SelectedItemModel is IPhotoFlipViewItemModel photoItemModel)
-    //    {
-    //        ShowColorProfileIndicator = photoItemModel.Image?.ColorSpace.Profile != null;
-    //        ColorSpaceName = ConvertColorSpaceTypeToDisplayName(photoItemModel.Image?.ColorSpace.Type ?? ColorSpaceType.Unknown);
-    //    }
-    //    else
-    //    {
-    //        ShowColorProfileIndicator = false;
-    //        ColorSpaceName = string.Empty;
-    //    }
-    //}
-
     partial void OnIsVisibleChanged(bool value)
     {
         if (IsVisible)
         {
-            if (MediaItem is not null)
+            if (SelectedItemModel is not null)
             {
-                UpdateAsync(MediaItem);
+                UpdateAsync(SelectedItemModel);
             }
         }
         else
@@ -99,19 +75,25 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         TextRight = "";
     }
 
-    private async void UpdateAsync(IMediaItem mediaItem)
+    private async void UpdateAsync(IMediaFlipViewItemModel itemModel)
     {
-        Log.Debug($"Update details bar for {mediaItem.Name}.");
+        Log.Debug($"Update details bar for {itemModel.MediaItem.Name}.");
 
-        TextCenter = mediaItem.Name;
+        TextCenter = itemModel.MediaItem.Name;
 
-        if (mediaItem is BitmapGraphicItem bitmapGraphicItem && bitmapGraphicItem.IsMetadataSupported)
+        if (itemModel.MediaItem is BitmapGraphicItem bitmapGraphicItem && bitmapGraphicItem.IsMetadataSupported)
         {
             await UpdateFromBitmapGraphicItemAsync(bitmapGraphicItem);
         }
         else
         {
-            await UpdateFromMediaItemAsync(mediaItem);
+            await UpdateFromMediaItemAsync(itemModel.MediaItem);
+        }
+
+        if (await itemModel.WaitUntilImageLoaded() is IBitmapImage bitmapImage)
+        {
+            ShowColorProfileIndicator = bitmapImage.ColorSpace.Profile is not null;
+            ColorSpaceName = ShowColorProfileIndicator ? ConvertColorSpaceTypeToDisplayName(bitmapImage.ColorSpace.Type) : string.Empty;
         }
     }
 
@@ -203,18 +185,18 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         }
     }
 
-    //private string ConvertColorSpaceTypeToDisplayName(ColorSpaceType colorSpaceType)
-    //{
-    //    switch (colorSpaceType)
-    //    {
-    //        case ColorSpaceType.SRGB:
-    //            return Strings.DetailsBar_ColorSpaceSRGB;
-    //        case ColorSpaceType.AdobeRGB:
-    //            return Strings.DetailsBar_ColorSpaceAdobeRGB;
-    //        default:
-    //            return Strings.DetailsBar_ColorSpaceUnknown;
-    //    }
-    //}
+    private string ConvertColorSpaceTypeToDisplayName(ColorSpaceType colorSpaceType)
+    {
+        switch (colorSpaceType)
+        {
+            case ColorSpaceType.SRGB:
+                return Strings.DetailsBar_ColorSpaceSRGB;
+            case ColorSpaceType.AdobeRGB:
+                return Strings.DetailsBar_ColorSpaceAdobeRGB;
+            default:
+                return Strings.DetailsBar_ColorSpaceUnknown;
+        }
+    }
 
 }
 

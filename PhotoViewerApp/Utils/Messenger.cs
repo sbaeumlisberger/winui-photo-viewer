@@ -12,19 +12,9 @@ public interface IMessenger
 
 internal class Messenger : IMessenger
 {
-    [ThreadStatic]
-    private static IMessenger? instance;
+    public static Messenger GlobalInstance { get; } = new Messenger();
 
     private Dictionary<Type, List<Delegate>> callbacksByMessageType = new Dictionary<Type, List<Delegate>>();
-
-    public static IMessenger GetForCurrentThread()
-    {
-        if (instance is null)
-        {
-            instance = new Messenger();
-        }
-        return instance;
-    }
 
     public void Publish<T>(T message) where T : notnull
     {

@@ -39,37 +39,41 @@ public partial class FlipViewPageModel : ViewModelBase
 
     private readonly Dictionary<IMediaItem, IMediaFlipViewItemModel> flipViewItemModels = new Dictionary<IMediaItem, IMediaFlipViewItemModel>();
 
+    private readonly IMessenger messenger;
+
+    private readonly IDialogService dialogService;
+
     private readonly ILoadMediaItemsService loadMediaItemsService;
 
     private readonly Func<IMediaItem, IMediaFlipViewItemModel> mediaFlipViewItemModelFactory;
 
     public FlipViewPageModel(
-        IMessenger? messenger,
+        IMessenger messenger,
         IDialogService dialogService,
         ILoadMediaItemsService loadMediaItemsService,
-        Func<IDetailsBarModel> createDetailsBarModel,
-        Func<ICommand, ICommand, IFlipViewPageCommandBarModel> createFlipViewPageCommandBarModel,
+        Func<IDetailsBarModel> detailsBarModelFactory,
+        Func<ICommand, ICommand, IFlipViewPageCommandBarModel> flipViewPageCommandBarModelFactory,
         Func<IMediaItem, IMediaFlipViewItemModel> mediaFlipViewItemModelFactory)
-        : base(messenger, dialogService)
     {
+        this.messenger = messenger;
+        this.dialogService = dialogService;
         this.loadMediaItemsService = loadMediaItemsService;
         this.mediaFlipViewItemModelFactory = mediaFlipViewItemModelFactory;
 
-        DetailsBarModel = createDetailsBarModel();
-        CommandBarModel = createFlipViewPageCommandBarModel(SelectPreviousCommand, SelectNextCommand);
+        DetailsBarModel = detailsBarModelFactory.Invoke();
+        CommandBarModel = flipViewPageCommandBarModelFactory.Invoke(SelectPreviousCommand, SelectNextCommand);
 
-        Subscribe<MediaItemsLoadedMessage>(msg =>
+        messenger.Subscribe<MediaItemsLoadedMessage>(msg =>
         {
             Items = new ObservableCollection<IMediaItem>(msg.MediaItems);
             SelectedItem = msg.StartItem;
             ShowNoItemsUI = !Items.Any();
         });
 
-        Subscribe<MediaItemsDeletedMessage>(msg =>
+        messenger.Subscribe<MediaItemsDeletedMessage>(msg =>
         {
             msg.MediaItems.ForEach(mediaItem => Items.Remove(mediaItem));
         });
-        this.loadMediaItemsService = loadMediaItemsService;
     }
 
     public IMediaFlipViewItemModel? GetFlipViewItemModel(IMediaItem mediaItem)
@@ -82,8 +86,9 @@ public partial class FlipViewPageModel : ViewModelBase
         UpdateFlipViewItemModels();
         CanSelectPrevious = SelectedItem != null && Items.IndexOf(SelectedItem) > 0;
         CanSelectNext = SelectedItem != null && Items.IndexOf(SelectedItem) < Items.Count - 1;
-        DetailsBarModel.MediaItem = SelectedItem;
-        CommandBarModel.SelectedItemModel = SelectedItem is not null ? flipViewItemModels.GetValueOrDefault(SelectedItem) : null;
+        var selectedItemModel = SelectedItem is not null ? flipViewItemModels.GetValueOrDefault(SelectedItem) : null;
+        DetailsBarModel.SelectedItemModel = selectedItemModel;
+        CommandBarModel.SelectedItemModel = selectedItemModel;
     }
 
     private void UpdateFlipViewItemModels()
@@ -122,10 +127,11 @@ public partial class FlipViewPageModel : ViewModelBase
     private async void OpenFolder()
     {
         var folderPickerModel = new FolderPickerModel();
-        await ShowDialogAsync(folderPickerModel);
+        await dialogService.ShowDialogAsync(folderPickerModel);
         if (folderPickerModel.Folder is StorageFolder folder)
         {
-            await loadMediaItemsService.LoadMediaItems(folder);
+            var result = await loadMediaItemsService.LoadMediaItems(folder);
+            messenger.Publish(new MediaItemsLoadedMessage(result.MediaItems, result.StartItem));
         }
     }
 

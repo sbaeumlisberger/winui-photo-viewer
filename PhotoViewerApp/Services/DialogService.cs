@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
-namespace PhotoViewerApp.Utils;
+namespace PhotoViewerApp.Services;
 
 public interface IDialogService
 {
@@ -14,30 +14,13 @@ public interface IDialogService
 
 public class DialogService : IDialogService
 {
-    [ThreadStatic]
-    private static IDialogService? instance;
+    public static IDialogService Instance => Instance ?? throw new InvalidOperationException("DialogService is not initialized.");
 
     private readonly IntPtr windowHandle;
 
     public DialogService(Window window)
     {
         windowHandle = WindowNative.GetWindowHandle(window);
-    }
-
-    public static IDialogService GetForCurrentWindow()
-    {
-        if (instance is null)
-        {
-            if (WindowsManger.GetForCurrentThread() is Window window)
-            {
-                instance = new DialogService(window);
-            }
-            else
-            {
-                throw new Exception("No window assigned to current thread.");
-            }
-        }
-        return instance;
     }
 
     public async Task ShowDialogAsync(object dialogModel)

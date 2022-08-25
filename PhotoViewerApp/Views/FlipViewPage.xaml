@@ -20,7 +20,7 @@
         <local:DetailsBar DataContext="{x:Bind ViewModel.DetailsBarModel}"/>
 
         <Grid Grid.Row="1">
-            <FlipView 
+            <FlipView  Background="Black"
                 x:Name="flipView"
                 ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" 
                 SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"

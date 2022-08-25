@@ -9,18 +9,6 @@ using System.ComponentModel;
 using System.Windows.Input;
 using Windows.Storage;
 
-//namespace PhotoViewerApp
-//{
-//    public partial class Ioc
-
-//    {
-//        public virtual IFlipViewPageCommandBarModel CreateFlipViewPageCommandBarModel(ICommand selectPreviousCommand, ICommand selectNextCommand)
-//        {
-//            return new FlipViewPageCommandBarModel(CreateLoadMediaItemsService(), selectPreviousCommand, selectNextCommand);
-//        }
-//    }
-//}
-
 namespace PhotoViewerApp.ViewModels;
 
 public interface IFlipViewPageCommandBarModel : INotifyPropertyChanged
@@ -42,16 +30,22 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     [ObservableProperty]
     private bool canDelete = false;
 
+
+    private readonly IMessenger messenger;
+
+    private readonly IDialogService dialogService;
+
     private readonly ILoadMediaItemsService loadMediaItemsService;
 
     public FlipViewPageCommandBarModel(
-        IMessenger? messenger,
+        IMessenger messenger,
         IDialogService dialogService,
         ILoadMediaItemsService loadMediaItemsService,
         ICommand selectPreviousCommand,
         ICommand selectNextCommand)
-        : base(messenger, dialogService)
     {
+        this.messenger = messenger;
+        this.dialogService = dialogService;
         this.loadMediaItemsService = loadMediaItemsService;
         SelectPreviousCommand = selectPreviousCommand;
         SelectNextCommand = selectNextCommand;
@@ -66,17 +60,18 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     private void Delete()
     {
         SelectedItemModel!.MediaItem.DeleteAsync();
-        Publish(new MediaItemsDeletedMessage(new List<IMediaItem>() { SelectedItemModel!.MediaItem }));
+        messenger.Publish(new MediaItemsDeletedMessage(new List<IMediaItem>() { SelectedItemModel!.MediaItem }));
     }
 
     [RelayCommand]
     private async void OpenFolder()
     {
         var folderPickerModel = new FolderPickerModel();
-        await ShowDialogAsync(folderPickerModel);
+        await dialogService.ShowDialogAsync(folderPickerModel);
         if (folderPickerModel.Folder is StorageFolder folder)
         {
-            await loadMediaItemsService.LoadMediaItems(folder);
+            var result = await loadMediaItemsService.LoadMediaItems(folder);
+            messenger.Publish(new MediaItemsLoadedMessage(result.MediaItems, result.StartItem));
         }
     }
 }

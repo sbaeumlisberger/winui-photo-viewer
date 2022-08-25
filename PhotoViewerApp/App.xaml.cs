@@ -1,6 +1,9 @@
 ﻿using Microsoft.UI.Xaml;
+using PhotoViewerApp.Messages;
 using PhotoViewerApp.Services;
+using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
+using PhotoViewerApp.Views;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -14,7 +17,9 @@ namespace PhotoViewerApp;
 /// </summary>
 public partial class App : Application
 {
-    private LoadMediaItemsService loadMediaItemsService = new LoadMediaItemsService();
+    public static new App Current => (App)Application.Current;
+
+    public MainWindow Window { get; private set; } = null!;
 
     /// <summary>
     /// Initializes the singleton application object. This is the first line of authored code
@@ -22,6 +27,8 @@ public partial class App : Application
     /// </summary>
     public App()
     {
+        Log.Info($"Application started.");
+
         Log.Debug($"Local app folder: {ApplicationData.Current.LocalFolder.Path}");
 
         UnhandledException += App_UnhandledException;
@@ -35,15 +42,25 @@ public partial class App : Application
     /// will be used such as when the application is launched to open a specific file.
     /// </summary>
     /// <param name="args">Details about the launch request and process.</param>
-    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
         Log.Info($"Application launched.");
 
+        var loadMediaItemsService = new LoadMediaItemsService();
         var activatedEventArgs = AppInstance.GetActivatedEventArgs();
-        _ = loadMediaItemsService.LoadMediaItems(activatedEventArgs);
+        var loadMediaItemsTask = loadMediaItemsService.LoadMediaItems(activatedEventArgs);
 
-        var window = new MainWindow();
-        window.Activate();
+        var messenger = Messenger.GlobalInstance;
+
+        Window = new MainWindow(messenger);
+        Window.Activate();
+
+        ColorProfileProvider.Initialize(Window);
+
+        messenger.Publish(new NavigateToPageMessage(typeof(FlipViewPage)));
+
+        var loadMediaItemsResult = await loadMediaItemsTask;
+        messenger.Publish(new MediaItemsLoadedMessage(loadMediaItemsResult.MediaItems, loadMediaItemsResult.StartItem));
     }
 
     private void App_UnhandledException(object sender, UnhandledExceptionEventArgs args)

@@ -7,11 +7,12 @@ using Windows.Storage;
 
 namespace PhotoViewerApp.Utils.Logging;
 
+// TODO logging of multiple processes
 internal class LoggerImpl : ILogger
 {
     private static readonly string LogsFolderName = "logs";
 
-    private static readonly string LogFileName = "log.txt";
+    private static readonly string LogFileName = "log-" + Guid.NewGuid() + ".txt";
 
     private static readonly string RolloverLogFileName = "previous-log.txt";
 

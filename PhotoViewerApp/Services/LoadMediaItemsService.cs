@@ -22,16 +22,18 @@ using Windows.Storage;
 
 namespace PhotoViewerApp.Services;
 
+public record class LoadMediaItemsResult(List<IMediaItem> MediaItems, IMediaItem? StartItem);
+
 public interface ILoadMediaItemsService
 {
 
-    Task LoadMediaItems(IActivatedEventArgs activatedEventArgs);
-    Task LoadMediaItems(StorageFolder storageFolder);
+    Task<LoadMediaItemsResult> LoadMediaItems(IActivatedEventArgs activatedEventArgs);
+    Task<LoadMediaItemsResult> LoadMediaItems(StorageFolder storageFolder);
 }
 
 internal class LoadMediaItemsService : ILoadMediaItemsService
 {
-    public async Task LoadMediaItems(IActivatedEventArgs activatedEventArgs)
+    public async Task<LoadMediaItemsResult> LoadMediaItems(IActivatedEventArgs activatedEventArgs)
     {
         List<IMediaItem> mediaItems;
         IMediaItem? startItem;
@@ -39,35 +41,41 @@ internal class LoadMediaItemsService : ILoadMediaItemsService
         if (activatedEventArgs is IFileActivatedEventArgsWithNeighboringFiles fileActivatedEventArgsWithNeighboringFiles)
         {
             var files = await fileActivatedEventArgsWithNeighboringFiles.NeighboringFilesQuery.GetFilesAsync();
-            mediaItems = new List<IMediaItem>(files.Select(file => new BitmapGraphicItem(file)));
+            mediaItems = ConvertFilesToMediaItems(files);
             startItem = mediaItems.First(mediaItem => mediaItem.File.Path == fileActivatedEventArgsWithNeighboringFiles.Files.First().Path);
         }
         else if (activatedEventArgs is IFileActivatedEventArgs fileActivatedEventArgs)
         {
-            mediaItems = new List<IMediaItem>(fileActivatedEventArgs.Files.Select(file => new BitmapGraphicItem((IStorageFile)file)));
+            mediaItems = ConvertFilesToMediaItems(fileActivatedEventArgs.Files.Cast<IStorageFile>().ToList());
             startItem = mediaItems.First();
         }
         else
         {
 #if DEBUG
             var files = await KnownFolders.PicturesLibrary.GetFilesAsync();
-            mediaItems = new List<IMediaItem>(files.Select(file => new BitmapGraphicItem(file)));
-            startItem = mediaItems.First();
+            mediaItems = ConvertFilesToMediaItems(files);
+            startItem = mediaItems.FirstOrDefault();
 #else
         mediaItems =  new List<IMediaItem>();
         startItem = null;
 #endif
         }
-        Messenger.GetForCurrentThread().Publish(new MediaItemsLoadedMessage(mediaItems, startItem));
+        return new LoadMediaItemsResult(mediaItems, startItem);
     }
 
-    public async Task LoadMediaItems(StorageFolder storageFolder)
+    public async Task<LoadMediaItemsResult> LoadMediaItems(StorageFolder storageFolder)
     {
         var files = await storageFolder.GetFilesAsync();
-        var mediaItems = new List<IMediaItem>(files.Select(file => new BitmapGraphicItem(file)));
+        var mediaItems = ConvertFilesToMediaItems(files);
         var startItem = mediaItems.FirstOrDefault();
-        Messenger.GetForCurrentThread().Publish(new MediaItemsLoadedMessage(mediaItems, startItem));
+        return new LoadMediaItemsResult(mediaItems, startItem);
+    }
 
+    private List<IMediaItem> ConvertFilesToMediaItems(IReadOnlyList<IStorageFile> files) 
+    {
+        return new List<IMediaItem>(files
+            .Where(file => BitmapGraphicItem.SupportedFileExtensions.Contains(file.FileType.ToLower()))
+            .Select(file => new BitmapGraphicItem(file)));
     }
 
 }

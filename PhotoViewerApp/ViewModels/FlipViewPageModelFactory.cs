@@ -6,10 +6,9 @@ namespace PhotoViewerApp.ViewModels;
 public class FlipViewPageModelFactory
 {
 
-    public static FlipViewPageModel Create()
+    public static FlipViewPageModel Create(IDialogService dialogService)
     {
-        var messenger = Messenger.GetForCurrentThread();
-        var dialogService = DialogService.GetForCurrentWindow();
+        var messenger = Messenger.GlobalInstance;
         var loadMediaItemsService = new LoadMediaItemsService();
         return new FlipViewPageModel(
             messenger,
@@ -18,7 +17,7 @@ public class FlipViewPageModelFactory
             () => new DetailsBarModel(),
             (selectPreviousCommand, selectNextCommand) => new FlipViewPageCommandBarModel(
                 messenger, dialogService, loadMediaItemsService, selectPreviousCommand, selectNextCommand),
-            (mediaItem) => new MediaFlipViewItemModel(mediaItem));
+            (mediaItem) => new MediaFlipViewItemModel(mediaItem, new ImageLoadService()));
     }
 
 }
