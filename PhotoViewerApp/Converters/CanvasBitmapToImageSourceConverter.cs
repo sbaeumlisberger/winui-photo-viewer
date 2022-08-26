@@ -4,8 +4,8 @@ using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Data;
+using PhotoViewerApp.Models;
 using PhotoViewerApp.Utils;
-using PhotoViewerCoreModule.Model;
 
 namespace PhotoViewerApp.Converters;
 

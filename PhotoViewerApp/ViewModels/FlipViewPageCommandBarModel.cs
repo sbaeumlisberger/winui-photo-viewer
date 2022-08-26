@@ -6,6 +6,7 @@ using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Storage;
 
@@ -19,17 +20,24 @@ public interface IFlipViewPageCommandBarModel : INotifyPropertyChanged
 public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageCommandBarModel
 {
 
-
     [ObservableProperty]
     private IMediaFlipViewItemModel? selectedItemModel;
 
     public ICommand SelectPreviousCommand { get; }
+
     public ICommand SelectNextCommand { get; }
 
-    [NotifyCanExecuteChangedFor(nameof(DeleteCommand))]
+    public ICommand StartDiashowCommand { get; }
+
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RotateCommand))]
+    private bool canRotate = false;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(DeleteCommand))]
     private bool canDelete = false;
 
+    private readonly Session session;
 
     private readonly IMessenger messenger;
 
@@ -38,29 +46,46 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     private readonly ILoadMediaItemsService loadMediaItemsService;
 
     public FlipViewPageCommandBarModel(
+        Session session,
         IMessenger messenger,
         IDialogService dialogService,
         ILoadMediaItemsService loadMediaItemsService,
-        ICommand selectPreviousCommand,
-        ICommand selectNextCommand)
+        IMediaFlipViewModel flipViewModel)
     {
+        this.session = session;
         this.messenger = messenger;
         this.dialogService = dialogService;
         this.loadMediaItemsService = loadMediaItemsService;
-        SelectPreviousCommand = selectPreviousCommand;
-        SelectNextCommand = selectNextCommand;
+     
+        SelectPreviousCommand = flipViewModel.SelectPreviousCommand;
+        SelectNextCommand = flipViewModel.SelectNextCommand;
+        StartDiashowCommand = null!; // TODO
     }
 
     partial void OnSelectedItemModelChanged(IMediaFlipViewItemModel? value)
     {
         CanDelete = SelectedItemModel != null;
+        CanRotate = false;
+    }
+
+    [RelayCommand]
+    private void NavigateToOverviewPage()
+    {
+       messenger.Publish(new NavigateToPageMessage(typeof(OverviewPageModel)));
+    }
+
+    [RelayCommand(CanExecute = nameof(CanRotate))]
+    private async Task RotateAsync()
+    {
+        // TODO
     }
 
     [RelayCommand(CanExecute = nameof(CanDelete))]
-    private void Delete()
+    private async Task DeleteAsync()
     {
-        SelectedItemModel!.MediaItem.DeleteAsync();
-        messenger.Publish(new MediaItemsDeletedMessage(new List<IMediaItem>() { SelectedItemModel!.MediaItem }));
+        await SelectedItemModel!.MediaItem.DeleteAsync();
+        session.MediaItems.Remove(SelectedItemModel.MediaItem);
+        messenger.Publish(new MediaItemsDeletedMessage(new List<IMediaItem>() { SelectedItemModel.MediaItem }));
     }
 
     [RelayCommand]

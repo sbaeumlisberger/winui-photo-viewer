@@ -1,15 +1,14 @@
-﻿namespace PhotoViewerCoreModule.Model
+﻿namespace PhotoViewerApp.Models;
+public class ColorSpaceInfo
 {
-    public class ColorSpaceInfo
+    public ColorSpaceType Type { get; }
+
+    public byte[]? Profile { get; }
+
+    public ColorSpaceInfo(ColorSpaceType type, byte[]? profile = null)
     {
-        public ColorSpaceType Type { get; }
-
-        public byte[]? Profile { get; }
-
-        public ColorSpaceInfo(ColorSpaceType type, byte[]? profile = null)
-        {
-            Type = type;
-            Profile = profile;
-        }
+        Type = type;
+        Profile = profile;
     }
 }
+

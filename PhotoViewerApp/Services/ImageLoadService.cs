@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Graphics.Canvas;
 using PhotoViewerApp.Exceptions;
-using PhotoViewerCoreModule.Model;
+using PhotoViewerApp.Models;
 using WIC;
 using Windows.Graphics.Imaging;
 using Windows.Storage;

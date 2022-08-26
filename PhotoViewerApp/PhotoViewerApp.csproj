@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
@@ -13,11 +14,14 @@
     <Nullable>Enable</Nullable>
     <DefaultLanguage>en</DefaultLanguage>
   </PropertyGroup>
+  
   <ItemGroup>
     <None Remove="FlipViewPage.xaml" />
     <None Remove="Views\DetailsBar.xaml" />
-    <None Remove="Views\FlipViewItem.xaml" />
     <None Remove="Views\FlipViewPageCommandBar.xaml" />
+    <None Remove="Views\MediaFlipView.xaml" />
+    <None Remove="Views\MediaFlipViewItem.xaml" />
+    <None Remove="Views\OverviewPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,19 +46,31 @@
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SourceGenerators\SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
   <!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
        Tools extension to be activated for this project even if the Windows App SDK Nuget
        package has not yet been restored -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
   </ItemGroup>
+  
   <ItemGroup>
     <None Update="Resources\Strings.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Strings.cs</LastGenOutput>
     </None>
-    <Page Update="Views\FlipViewItem.xaml">
+    <Page Update="Views\MediaFlipView.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\MediaFlipViewItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\OverviewPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\FlipViewPageCommandBar.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -63,14 +79,17 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  
   <ItemGroup>
     <Page Update="Views\FlipViewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
+  
   <ItemGroup>
     <Compile Update="Resources\Strings.cs">
       <DesignTime>True</DesignTime>
@@ -83,10 +102,12 @@
       <Generator>ReswPlusAdvancedGenerator</Generator>
     </PRIResource>
   </ItemGroup>
+  
   <ItemGroup>
     <EditorConfigFiles Remove="C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\.editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <None Include="C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\.editorconfig" />
   </ItemGroup>
+  
 </Project>

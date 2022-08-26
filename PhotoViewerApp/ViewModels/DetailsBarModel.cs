@@ -3,7 +3,6 @@ using PhotoViewerApp.Models;
 using PhotoViewerApp.Resources;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
-using PhotoViewerCoreModule.Model;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -77,7 +76,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 
     private async void UpdateAsync(IMediaFlipViewItemModel itemModel)
     {
-        Log.Debug($"Update details bar for {itemModel.MediaItem.Name}.");
+        Log.Debug($"Update details bar for {itemModel.MediaItem.Name}");
 
         TextCenter = itemModel.MediaItem.Name;
 

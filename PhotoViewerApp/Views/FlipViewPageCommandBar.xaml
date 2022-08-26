@@ -9,12 +9,13 @@
     Style="{ThemeResource DefaultCommandBarStyle}"
     DefaultLabelPosition="Collapsed">
 
-    <AppBarButton Icon="ViewAll"/>
-    <AppBarButton Icon="View"/>
-    <AppBarButton Icon="SlideShow"/>
-    <AppBarButton Icon="Tag"/>
-    <AppBarButton Icon="Crop"/>
-    <AppBarButton Icon="Rotate"/>
+    <AppBarButton Icon="ViewAll" Command="{x:Bind ViewModel.NavigateToOverviewPageCommand}"/>
+    <AppBarButton Icon="View" IsEnabled="False"/>
+    <AppBarButton Icon="SlideShow" Command="{x:Bind ViewModel.StartDiashowCommand}"/>
+    <AppBarButton Icon="Tag" IsEnabled="False"/>
+    <AppBarButton Icon="Edit" IsEnabled="False"/>
+    <AppBarButton Icon="Crop" IsEnabled="False"/>
+    <AppBarButton Icon="Rotate" Command="{x:Bind ViewModel.RotateCommand}"/>
     <AppBarButton Icon="Delete" Command="{x:Bind ViewModel.DeleteCommand}"/>
     <AppBarButton Icon="Back" Command="{x:Bind ViewModel.SelectPreviousCommand}"/>
     <AppBarButton Icon="Forward" Command="{x:Bind ViewModel.SelectNextCommand}"/>

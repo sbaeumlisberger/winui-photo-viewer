@@ -1,10 +1,9 @@
-﻿namespace PhotoViewerCoreModule.Model
+﻿namespace PhotoViewerApp.Models;
+
+public enum ColorSpaceType
 {
-    public enum ColorSpaceType
-    {
-        NotSpecified,
-        Unknown,
-        SRGB,
-        AdobeRGB
-    }
+    NotSpecified,
+    Unknown,
+    SRGB,
+    AdobeRGB
 }

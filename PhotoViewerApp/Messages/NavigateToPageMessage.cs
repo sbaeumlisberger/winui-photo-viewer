@@ -6,4 +6,4 @@ using System.Threading.Tasks;
 
 namespace PhotoViewerApp.Messages;
 
-public record class NavigateToPageMessage(Type PageType);
+public record class NavigateToPageMessage(Type PageType, object? Parameter = null);

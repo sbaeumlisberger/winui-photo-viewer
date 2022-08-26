@@ -1,8 +1,10 @@
 ﻿using Microsoft.UI.Xaml;
 using PhotoViewerApp.Messages;
+using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
+using PhotoViewerApp.ViewModels;
 using PhotoViewerApp.Views;
 using System;
 using System.Threading.Tasks;
@@ -57,7 +59,7 @@ public partial class App : Application
 
         ColorProfileProvider.Initialize(Window);
 
-        messenger.Publish(new NavigateToPageMessage(typeof(FlipViewPage)));
+        messenger.Publish(new NavigateToPageMessage(typeof(FlipViewPageModel)));
 
         var loadMediaItemsResult = await loadMediaItemsTask;
         messenger.Publish(new MediaItemsLoadedMessage(loadMediaItemsResult.MediaItems, loadMediaItemsResult.StartItem));

@@ -5,7 +5,13 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
-    <Page Update="Views\FlipViewItem.xaml">
+    <Page Update="Views\MediaFlipView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\MediaFlipViewItem.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\OverviewPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\FlipViewPageCommandBar.xaml">

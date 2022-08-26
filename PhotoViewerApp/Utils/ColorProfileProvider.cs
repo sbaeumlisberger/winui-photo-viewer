@@ -89,7 +89,7 @@ internal class ColorProfileProvider
         }
         catch (Exception ex)
         {
-            Log.Error("Failed to load color profile of display.", ex);
+            Log.Error("Failed to load color profile of display", ex);
         }
     }
 
