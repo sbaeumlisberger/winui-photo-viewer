@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using PhotoViewerApp.ViewModels;
 using System.ComponentModel;
 
@@ -20,5 +21,4 @@ public sealed partial class MediaFlipView : UserControl
             App.Current.Window.Title = ViewModel.SelectedItemModel?.MediaItem.Name ?? "";
         }
     }
-
 }

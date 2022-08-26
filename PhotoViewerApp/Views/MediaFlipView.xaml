@@ -13,7 +13,9 @@
         <FlipView  Background="Black"
                 x:Name="flipView"
                 ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" 
-                SelectedItem="{x:Bind ViewModel.SelectedItemModel, Mode=TwoWay}">
+                SelectedItem="{x:Bind ViewModel.SelectedItemModel, Mode=TwoWay}"
+                FocusVisualPrimaryThickness="0"
+                FocusVisualSecondaryThickness="0">
             <FlipView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:IMediaFlipViewItemModel">
                     <local:MediaFlipViewItem/>
