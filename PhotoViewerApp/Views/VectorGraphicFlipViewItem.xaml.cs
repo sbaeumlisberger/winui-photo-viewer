@@ -1,0 +1,81 @@
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
+using Microsoft.Web.WebView2.Core;
+using PhotoViewerApp.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+
+namespace PhotoViewerApp.Views;
+
+public sealed partial class VectorGraphicFlipViewItem : UserControl
+{
+    private VectorGraphicFlipViewItemModel ViewModel { get; set; }
+
+    public VectorGraphicFlipViewItem()
+    {
+        this.InitializeComponent();
+
+        ScrollViewerHelper.EnableAdvancedZoomBehaviour(scrollViewer);
+
+        DataContextChanged += VectorGraphicFlipViewItem_DataContextChanged;
+    }
+
+    private async void VectorGraphicFlipViewItem_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+    {
+        if (ViewModel != null)
+        {
+            ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
+        }
+
+        ViewModel = (VectorGraphicFlipViewItemModel)DataContext;
+
+        if (ViewModel != null)
+        {
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+            if (ViewModel.Content is string svg)
+            {
+                await ShowSvgAsync(svg);
+            }
+        }
+    }
+
+    private async void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ViewModel.Content))
+        {
+            if (ViewModel.Content is string svg)
+            {
+                await ShowSvgAsync(svg);
+            }
+        }
+    }
+
+    private async Task ShowSvgAsync(string svg)
+    {
+        await webView.EnsureCoreWebView2Async();
+        webView.NavigateToString(svg);
+        //webView.CoreWebView2.OpenDevToolsWindow();
+    }
+
+    private async void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+    {
+        string zoom = scrollViewer.ZoomFactor.ToString(CultureInfo.InvariantCulture);
+        string translateX = (-(scrollViewer.HorizontalOffset - (scrollViewer.ExtentWidth - scrollViewer.ViewportWidth) / 2)).ToString(CultureInfo.InvariantCulture);
+        string translateY = (-(scrollViewer.VerticalOffset - (scrollViewer.ExtentHeight - scrollViewer.ViewportHeight) / 2)).ToString(CultureInfo.InvariantCulture);
+        await webView.ExecuteScriptAsync($"document.getElementsByTagName(\"svg\")[0].style.transform = \"scale({zoom}) translate({translateX}px, {translateY}px)\"");
+    }
+}

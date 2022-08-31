@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Graphics.Canvas;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
@@ -12,6 +13,8 @@ public interface IBitmapImage : IDisposable
     CanvasDevice Device { get; }
 
     ICanvasImage CanvasImage { get; }
+
+    IReadOnlyList<IBitmapFrame> Frames { get; }
 
     Size SizeInDIPs { get; }
 

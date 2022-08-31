@@ -12,15 +12,15 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
-        <converters:StorageFileToImageSourceConverter x:Key="StorageFileToImageSourceConverter"/>
+        <converters:StorageFileToThumbnailConverter x:Key="StorageFileToThumbnailConverter"/>
     </Page.Resources>
 
     <Grid>
         <GridView ItemsSource="{x:Bind ViewModel.Items}">
             <GridView.ItemTemplate>
-                <DataTemplate x:DataType="models:IMediaItem">
+                <DataTemplate x:DataType="models:IMediaFileInfo">
                     <StackPanel Width="200" DoubleTapped="GridViewItem_DoubleTapped">
-                        <Image Source="{x:Bind File, Converter={StaticResource StorageFileToImageSourceConverter}}"/>
+                        <Image Source="{x:Bind File, Converter={StaticResource StorageFileToThumbnailConverter}}"/>
                         <TextBlock Text="{x:Bind Name}"/>
                     </StackPanel>
                 </DataTemplate>

@@ -1,6 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MetadataAPI;
+using MetadataAPI.Data;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Resources;
+using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
 using System;
@@ -23,13 +26,10 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
     private bool isVisible = true;
 
     [ObservableProperty]
-    private string textLeft = string.Empty;
+    private string dateInfo = string.Empty;
 
     [ObservableProperty]
-    private string textCenter = Strings.DetailsBar_NoInformationAvailable;
-
-    [ObservableProperty]
-    private string textRight = string.Empty;
+    private string fileNameInfo = Strings.DetailsBar_NoInformationAvailable;
 
     [ObservableProperty]
     private bool showColorProfileIndicator = false;
@@ -37,17 +37,31 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
     [ObservableProperty]
     private string colorSpaceName = string.Empty;
 
+    [ObservableProperty]
+    private string sizeInPixels = string.Empty;
+
+    [ObservableProperty]
+    private string cameraDetails = string.Empty;
+
+    [ObservableProperty]
+    private string fileSize = string.Empty;
+
+    private readonly IMetadataService metadataService;
+
+    public DetailsBarModel(IMetadataService metadataService)
+    {
+        this.metadataService = metadataService;
+    }
+
     partial void OnSelectedItemModelChanged(IMediaFlipViewItemModel? value)
     {
         if (IsVisible)
         {
+            Clear();
+
             if (SelectedItemModel is not null)
             {
                 UpdateAsync(SelectedItemModel); // TODO cancel/wait previous update!
-            }
-            else
-            {
-                Clear();
             }
         }
     }
@@ -69,119 +83,110 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 
     private void Clear()
     {
-        TextLeft = "";
-        TextCenter = Strings.DetailsBar_NoInformationAvailable;
-        TextRight = "";
+        DateInfo = "";
+        FileNameInfo = Strings.DetailsBar_NoInformationAvailable;
+        ShowColorProfileIndicator = false;
+        ColorSpaceName = "";
+        SizeInPixels = "";
+        CameraDetails = "";
+        FileSize = "";
     }
 
     private async void UpdateAsync(IMediaFlipViewItemModel itemModel)
     {
         Log.Debug($"Update details bar for {itemModel.MediaItem.Name}");
 
-        TextCenter = itemModel.MediaItem.Name;
+        FileNameInfo = itemModel.MediaItem.Name;
 
-        if (itemModel.MediaItem is BitmapGraphicItem bitmapGraphicItem && bitmapGraphicItem.IsMetadataSupported)
+        if (itemModel.MediaItem is BitmapFileInfo bitmapFile)
         {
-            await UpdateFromBitmapGraphicItemAsync(bitmapGraphicItem);
+            await UpdateFromBitmapFileAsync(bitmapFile);
         }
         else
         {
-            await UpdateFromMediaItemAsync(itemModel.MediaItem);
+            await UpdateFromMediaFileAsync(itemModel.MediaItem);
         }
 
         if (await itemModel.WaitUntilImageLoaded() is IBitmapImage bitmapImage)
         {
             ShowColorProfileIndicator = bitmapImage.ColorSpace.Profile is not null;
             ColorSpaceName = ShowColorProfileIndicator ? ConvertColorSpaceTypeToDisplayName(bitmapImage.ColorSpace.Type) : string.Empty;
+            SizeInPixels = bitmapImage.SizeInPixels.Width + "x" + bitmapImage.SizeInPixels.Height + "px";     
         }
     }
 
-    private async Task UpdateFromBitmapGraphicItemAsync(BitmapGraphicItem bitmapGraphicItem)
-    {
-        //try
-        //{
-        //    var metadata = await photo.GetMetadataAsync();
-
-        //    var date = metadata.Get(MetadataProperties.DateTaken) ?? (await photo.File.GetBasicPropertiesAsync()).DateModified;
-        //    ulong fileSize = await photo.GetFileSizeAsync();
-        //    DateTakenAndSize = date.ToString("g", CultureInfo.InstalledUICulture) + " " + ByteSizeFormatter.Format(fileSize);
-
-        //    string cameraDetails = "";
-
-        //    var sizeInPixels = await photo.GetSizeInPixelsAsync();
-        //    if (!sizeInPixels.IsEmpty)
-        //    {
-        //        uint width = (uint)sizeInPixels.Width;
-        //        uint height = (uint)sizeInPixels.Height;
-        //        cameraDetails += width + "x" + height + "px ";
-        //    }
-
-        //    if (metadata.Get(MetadataProperties.ExposureTime) is Fraction exposureTime)
-        //    {
-        //        cameraDetails += exposureTime.GetReduced().ToString() + "s ";
-        //    }
-
-        //    if (metadata.Get(MetadataProperties.FNumber) is Fraction fNumber)
-        //    {
-        //        cameraDetails += "F" + fNumber.ToDouble().ToString("#.#") + " ";
-        //    }
-
-        //    ushort? isoSpeed = metadata.Get(MetadataProperties.ISOSpeed);
-        //    if (isoSpeed != null)
-        //    {
-        //        cameraDetails += "ISO" + isoSpeed + " ";
-        //    }
-
-        //    double? focalLength = metadata.Get(MetadataProperties.FocalLength);
-        //    ushort? focalLengthInFilm = metadata.Get(MetadataProperties.FocalLengthInFilm);
-        //    if (focalLength != null && focalLengthInFilm != null)
-        //    {
-        //        cameraDetails += focalLength + "(" + focalLengthInFilm + ")mm";
-        //    }
-
-        //    CameraDetails = cameraDetails;
-        //}
-        //catch (Exception ex)
-        //{
-        //    Log.Error("Could not load metadata", ex);
-        //    DateTakenAndSize = await TryGetDateModifiedAndSizeAsync(photo);
-        //    CameraDetails = "";
-        //}
-    }
-
-    private async Task UpdateFromMediaItemAsync(IMediaItem mediaItem)
+    private async Task UpdateFromBitmapFileAsync(BitmapFileInfo bitmapFile)
     {
         try
         {
-            var dateModified = await mediaItem.GetDateModifiedAsync();
-            TextLeft = dateModified.ToString("g");
+            if (bitmapFile.IsMetadataSupported)
+            {
+                var metadata = await metadataService.GetMetadataAsync(bitmapFile);
+
+                var date = metadata.Get(MetadataProperties.DateTaken) ?? (await bitmapFile.GetDateModifiedAsync());
+                DateInfo = date.ToString("g");
+
+                CameraDetails = GetCameraDetails(metadata);;
+            }
+            else 
+            {
+                var date = await bitmapFile.GetDateModifiedAsync();
+                DateInfo = date.ToString("g");        
+            }
+
+            ulong fileSize = await bitmapFile.GetFileSizeAsync();
+            FileSize = ByteSizeFormatter.Format(fileSize);
         }
         catch (Exception ex)
         {
-            Log.Error("Could not retrieve date modified.", ex);
-            TextLeft = string.Empty;
+            Log.Error("Error on update details bar", ex);
         }
+    }
 
+    private async Task UpdateFromMediaFileAsync(IMediaFileInfo mediaItem)
+    {
         try
         {
-            //var sizeInPixels = await mediaItem.GetSizeInPixelsAsync();
-            //if (sizeInPixels != Size.Empty)
-            //{
-            //    TextRight = sizeInPixels.Width + "x" + sizeInPixels.Height + "px";
-            //}
-            //else
-            //{
-            //    TextRight = "";
-            //}
+            var date = await mediaItem.GetDateModifiedAsync();
+            DateInfo = date.ToString("g");
 
             ulong fileSize = await mediaItem.GetFileSizeAsync();
-            TextRight = ByteSizeFormatter.Format(fileSize);
+            FileSize = ByteSizeFormatter.Format(fileSize);
         }
         catch (Exception ex)
         {
-            Log.Error("Could not retrieve file size or resolution.", ex);
-            TextRight = string.Empty;
+            Log.Error("Error on update details bar", ex);       
         }
+    }
+
+    private string GetCameraDetails(MetadataView metadata)
+    {
+        string cameraDetails = "";
+
+        if (metadata.Get(MetadataProperties.ExposureTime) is Fraction exposureTime)
+        {
+            cameraDetails += exposureTime.GetReduced().ToString() + "s ";
+        }
+
+        if (metadata.Get(MetadataProperties.FNumber) is Fraction fNumber)
+        {
+            cameraDetails += "F" + fNumber.ToDouble().ToString("#.#") + " ";
+        }
+
+        ushort? isoSpeed = metadata.Get(MetadataProperties.ISOSpeed);
+        if (isoSpeed != null)
+        {
+            cameraDetails += "ISO" + isoSpeed + " ";
+        }
+
+        double? focalLength = metadata.Get(MetadataProperties.FocalLength);
+        ushort? focalLengthInFilm = metadata.Get(MetadataProperties.FocalLengthInFilm);
+        if (focalLength != null && focalLengthInFilm != null)
+        {
+            cameraDetails += focalLength + "(" + focalLengthInFilm + ")mm";
+        }
+
+        return cameraDetails;
     }
 
     private string ConvertColorSpaceTypeToDisplayName(ColorSpaceType colorSpaceType)

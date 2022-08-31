@@ -50,6 +50,6 @@ public partial class FlipViewPageModel : ViewModelBase
 
     public void OnNavigatedTo(object navigationParameter) 
     {
-        FlipViewModel.SetItems(session.MediaItems, (IMediaItem?)navigationParameter);
+        FlipViewModel.SetItems(session.MediaItems, (IMediaFileInfo?)navigationParameter);
     }
 }

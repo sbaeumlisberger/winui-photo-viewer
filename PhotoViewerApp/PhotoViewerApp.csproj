@@ -17,11 +17,13 @@
   
   <ItemGroup>
     <None Remove="FlipViewPage.xaml" />
+    <None Remove="Views\BitmapViewer.xaml" />
     <None Remove="Views\DetailsBar.xaml" />
     <None Remove="Views\FlipViewPageCommandBar.xaml" />
     <None Remove="Views\MediaFlipView.xaml" />
     <None Remove="Views\MediaFlipViewItem.xaml" />
     <None Remove="Views\OverviewPage.xaml" />
+    <None Remove="Views\VectorGraphicFlipViewItem.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,6 +38,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+    <PackageReference Include="MetadataAPI" Version="1.4.3" />
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.0.3.1" />
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.10-beta">
       <PrivateAssets>all</PrivateAssets>
@@ -62,6 +65,12 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Strings.cs</LastGenOutput>
     </None>
+    <Page Update="Controls\BitmapViewer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\VectorGraphicFlipViewItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\MediaFlipView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

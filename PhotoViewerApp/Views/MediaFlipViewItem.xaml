@@ -3,18 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PhotoViewerApp.Views"    
-    xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
+    xmlns:controls="using:PhotoViewerApp.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
-        <win2d:CanvasControl x:Name="canvasControl" Draw="CanvasControl_Draw"/>
-        <ScrollViewer 
-            x:Name="scrollViewer"
-            MinZoomFactor="1"
-            ViewChanged="ScrollViewer_ViewChanged">
-                <Grid x:Name="dummy" Background="Transparent"/>
-        </ScrollViewer>
-    </Grid>
+    <controls:BitmapViewer BitmapImage="{x:Bind ViewModel.BitmapImage, Mode=OneWay}"/>
+
 </UserControl>

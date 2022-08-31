@@ -1,4 +1,5 @@
-﻿using PhotoViewerApp.Models;
+﻿using PhotoVieweApp.Services;
+using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 
@@ -11,12 +12,15 @@ public class PageModelFactory
     {
         var session = Session.Instance;
         var messenger = Messenger.GlobalInstance;
-        var loadMediaItemsService = new LoadMediaItemsService();
+        var mediaFilesLoaderService = new MediaFilesLoaderService();
+        var metadataService = new MetadataService();
+        var rotatePhotoService = new RotatePhotoService(metadataService);
+        var imageLoaderService = new ImageLoaderService();
         return new FlipViewPageModel(
             session,
-            () => new MediaFlipViewModel(messenger, dialogService, loadMediaItemsService, (mediaItem) => new MediaFlipViewItemModel(mediaItem, new ImageLoadService())),
-            () => new DetailsBarModel(),
-            (flipViewPageModel) => new FlipViewPageCommandBarModel(session, messenger, dialogService, loadMediaItemsService, flipViewPageModel));
+            () => new MediaFlipViewModel(messenger, dialogService, mediaFilesLoaderService, (mediaItem) => new BitmapFlipViewItemModel(mediaItem, messenger, imageLoaderService)),
+            () => new DetailsBarModel(metadataService),
+            (flipViewPageModel) => new FlipViewPageCommandBarModel(session, messenger, dialogService, mediaFilesLoaderService, rotatePhotoService, flipViewPageModel));
     }
 
     public static OverviewPageModel CreateOverviewPageModel(IDialogService dialogService)

@@ -1,14 +1,15 @@
 ﻿using Microsoft.UI.Xaml;
 using System;
 
-namespace PhotoViewerApp.Utils;
-
-public class DependencyProperty<TDependencyObject> where TDependencyObject : DependencyObject
+namespace PhotoViewerApp.Utils
 {
-
-    public static DependencyProperty Register(string propertyName, Type propertyType, object? defaultValue, Action<TDependencyObject, DependencyPropertyChangedEventArgs> onPropertyChanged)
+    public class DependencyProperty<TDependencyObject> where TDependencyObject : DependencyObject
     {
-        return DependencyProperty.Register(propertyName, typeof(TDependencyObject), propertyType, new PropertyMetadata(defaultValue, (obj, args) => onPropertyChanged((TDependencyObject)obj, args)));
-    }
 
+        public static DependencyProperty Register(string propertyName, Type propertyType, object? defaultValue = null)
+        {
+            return DependencyProperty.Register(propertyName, typeof(TDependencyObject), propertyType, new PropertyMetadata(defaultValue));
+        }
+
+    }
 }

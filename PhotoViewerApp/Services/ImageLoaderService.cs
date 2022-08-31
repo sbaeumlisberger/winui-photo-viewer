@@ -15,24 +15,23 @@ using Windows.Storage.Streams;
 
 namespace PhotoViewerApp.Services;
 
-public interface IImageLoadService
+public interface IImageLoaderService
 {
     Task<IBitmapImage> LoadFromFileAsync(IStorageFile file, CancellationToken cancellationToken);
 }
 
-public class ImageLoadService : IImageLoadService
+public class ImageLoaderService : IImageLoaderService
 {
     private CanvasDevice Device => CanvasDevice.GetSharedDevice();
 
     public async Task<IBitmapImage> LoadFromFileAsync(IStorageFile file, CancellationToken cancellationToken)
     {
-        if (file is null)
-        {
-            throw new ArgumentNullException(nameof(file));
-        }
-
         try
         {
+            if (file.FileType.ToLower() == ".gif")
+            {
+                return await LoadGifAsync(file, cancellationToken).ConfigureAwait(false);
+            }
             return await LoadBitmapAsync(file, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -48,6 +47,14 @@ public class ImageLoadService : IImageLoadService
         }
     }
 
+    private async Task<IBitmapImage> LoadGifAsync(IStorageFile file, CancellationToken cancellationToken)
+    {
+        using (var fileStream = await file.OpenAsync(FileAccessMode.Read).AsTask(cancellationToken).ConfigureAwait(false))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return await GifImageLoader.LoadAsync(file.Name, Device, fileStream, cancellationToken).ConfigureAwait(false);
+        }
+    }
 
     private async Task<IBitmapImage> LoadBitmapAsync(IStorageFile file, CancellationToken cancellationToken)
     {
@@ -61,13 +68,13 @@ public class ImageLoadService : IImageLoadService
             {
                 var canvasBitmap = await CanvasBitmap.LoadAsync(Device, fileStream).AsTask(cancellationToken).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
-                return new CanvasBitmapImage(file.Name, canvasBitmap, colorSpace);
+                return new PVBitmapImage(file.Name, canvasBitmap, colorSpace);
             }
             catch (ArgumentException ex) when (ex.HResult == -2147024809)
             {
                 var canvasVirtualBitmap = await CanvasVirtualBitmap.LoadAsync(Device, fileStream).AsTask(cancellationToken).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
-                return new CanvasVirtualBitmapImage(file.Name, canvasVirtualBitmap, colorSpace);
+                return new PVVirtualBitmapImage(file.Name, canvasVirtualBitmap, colorSpace);
             }
         }
     }

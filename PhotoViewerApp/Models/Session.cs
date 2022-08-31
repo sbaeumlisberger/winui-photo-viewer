@@ -9,13 +9,13 @@ public class Session
 {
     public static Session Instance { get; } = new Session();
 
-    public IList<IMediaItem> MediaItems { get; private set; } = Array.Empty<IMediaItem>();
+    public IList<IMediaFileInfo> MediaItems { get; private set; } = Array.Empty<IMediaFileInfo>();
 
     public Session()
     {
         Messenger.GlobalInstance.Subscribe<MediaItemsLoadedMessage>(msg =>
         {
-            MediaItems = new List<IMediaItem>(msg.MediaItems);
+            MediaItems = new List<IMediaFileInfo>(msg.MediaItems);
         });
 
         Messenger.GlobalInstance.Subscribe<MediaItemsDeletedMessage>(msg =>

@@ -12,7 +12,7 @@ namespace PhotoViewerApp.ViewModels;
 public partial class OverviewPageModel : ViewModelBase
 {
     [ObservableProperty]
-    private ObservableCollection<IMediaItem> items = new ObservableCollection<IMediaItem>();
+    private ObservableCollection<IMediaFileInfo> items = new ObservableCollection<IMediaFileInfo>();
 
     private readonly IMessenger messenger;
 
@@ -26,11 +26,11 @@ public partial class OverviewPageModel : ViewModelBase
         this.messenger = messenger;
         this.dialogService = dialogService;
 
-        Items = new ObservableCollection<IMediaItem>(session.MediaItems);
+        Items = new ObservableCollection<IMediaFileInfo>(session.MediaItems);
 
         messenger.Subscribe<MediaItemsLoadedMessage>(msg =>
         {
-            Items = new ObservableCollection<IMediaItem>(msg.MediaItems);
+            Items = new ObservableCollection<IMediaFileInfo>(msg.MediaItems);
         });
 
         messenger.Subscribe<MediaItemsDeletedMessage>(msg =>
@@ -39,7 +39,7 @@ public partial class OverviewPageModel : ViewModelBase
         });
     }
 
-    public void ShowItem(IMediaItem mediaItem) 
+    public void ShowItem(IMediaFileInfo mediaItem) 
     {
         messenger.Publish(new NavigateToPageMessage(typeof(FlipViewPageModel), mediaItem));
     }

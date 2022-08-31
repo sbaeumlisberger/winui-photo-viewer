@@ -4,7 +4,7 @@ using Windows.Storage;
 
 namespace PhotoViewerApp.Models;
 
-public interface IMediaItem
+public interface IMediaFileInfo
 {
     string Name { get; }
 

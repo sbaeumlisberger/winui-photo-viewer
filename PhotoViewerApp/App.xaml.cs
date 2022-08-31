@@ -48,9 +48,9 @@ public partial class App : Application
     {
         Log.Info($"Application launched.");
 
-        var loadMediaItemsService = new LoadMediaItemsService();
+        var loadMediaItemsService = new MediaFilesLoaderService();
         var activatedEventArgs = AppInstance.GetActivatedEventArgs();
-        var loadMediaItemsTask = loadMediaItemsService.LoadMediaItems(activatedEventArgs);
+        var loadMediaItemsTask = loadMediaItemsService.LoadMediaFilesAsync(activatedEventArgs, /*TODO*/new LoadMediaConfig(true, "RAWs"));
 
         var messenger = Messenger.GlobalInstance;
 

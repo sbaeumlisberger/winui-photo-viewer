@@ -3,4 +3,4 @@ using System.Collections.Generic;
 
 namespace PhotoViewerApp.Messages;
 
-internal record class MediaItemsDeletedMessage(List<IMediaItem> MediaItems);
+internal record class MediaItemsDeletedMessage(List<IMediaFileInfo> MediaItems);

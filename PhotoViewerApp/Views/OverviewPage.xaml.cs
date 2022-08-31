@@ -20,7 +20,7 @@ public sealed partial class OverviewPage : Page
 
     private void GridViewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
-        IMediaItem mediaItem = (IMediaItem)((FrameworkElement)sender).DataContext;
+        IMediaFileInfo mediaItem = (IMediaFileInfo)((FrameworkElement)sender).DataContext;
         ViewModel.ShowItem(mediaItem);
     }
 }

@@ -10,17 +10,27 @@
     mc:Ignorable="d">
 
     <Grid>
-        <FlipView  Background="Black"
+        <FlipView
                 x:Name="flipView"
                 ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" 
                 SelectedItem="{x:Bind ViewModel.SelectedItemModel, Mode=TwoWay}"
                 FocusVisualPrimaryThickness="0"
-                FocusVisualSecondaryThickness="0">
-            <FlipView.ItemTemplate>
-                <DataTemplate x:DataType="viewModels:IMediaFlipViewItemModel">
-                    <local:MediaFlipViewItem/>
-                </DataTemplate>
-            </FlipView.ItemTemplate>
+                FocusVisualSecondaryThickness="0"
+                CornerRadius="0">
+            <FlipView.ItemTemplateSelector>
+                <local:MediaFlipViewItemTemplateSelector>
+                    <local:MediaFlipViewItemTemplateSelector.BitmapFileInfoTemplate>
+                        <DataTemplate>
+                            <local:MediaFlipViewItem/>
+                        </DataTemplate>
+                    </local:MediaFlipViewItemTemplateSelector.BitmapFileInfoTemplate>
+                    <local:MediaFlipViewItemTemplateSelector.VectorGraphicFileInfoTemplate>
+                        <DataTemplate>
+                            <local:VectorGraphicFlipViewItem/>
+                        </DataTemplate>
+                    </local:MediaFlipViewItemTemplateSelector.VectorGraphicFileInfoTemplate>
+                </local:MediaFlipViewItemTemplateSelector>
+            </FlipView.ItemTemplateSelector>
         </FlipView>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
                 Visibility="{x:Bind ViewModel.ShowNoItemsUI, Mode=OneWay}">

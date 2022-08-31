@@ -20,11 +20,13 @@ public interface IMediaFlipViewModel : INotifyPropertyChanged
     IMediaFlipViewItemModel? SelectedItemModel { get; }
     IRelayCommand SelectPreviousCommand { get; }
     IRelayCommand SelectNextCommand { get; }
-    void SetItems(IEnumerable<IMediaItem> mediaItems, IMediaItem? startItem = null);
+    void SetItems(IEnumerable<IMediaFileInfo> mediaItems, IMediaFileInfo? startItem = null);
 }
 
 public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 {
+    private static readonly int ImageCacheSize = 2;
+
     [ObservableProperty]
     private ObservableCollection<IMediaFlipViewItemModel> items = new ObservableCollection<IMediaFlipViewItemModel>();
 
@@ -46,17 +48,17 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     private readonly IDialogService dialogService;
 
-    private readonly ILoadMediaItemsService loadMediaItemsService;
+    private readonly IMediaFilesLoaderService loadMediaItemsService;
 
-    private readonly Func<IMediaItem, IMediaFlipViewItemModel> mediaFlipViewItemModelFactory;
+    private readonly Func<IMediaFileInfo, IMediaFlipViewItemModel> mediaFlipViewItemModelFactory;
 
     private ICollection<IMediaFlipViewItemModel> loadedItemModels = Array.Empty<IMediaFlipViewItemModel>();
 
     public MediaFlipViewModel(
         IMessenger messenger,
         IDialogService dialogService,
-        ILoadMediaItemsService loadMediaItemsService,
-        Func<IMediaItem, IMediaFlipViewItemModel> mediaFlipViewItemModelFactory)
+        IMediaFilesLoaderService loadMediaItemsService,
+        Func<IMediaFileInfo, IMediaFlipViewItemModel> mediaFlipViewItemModelFactory)
     {
         this.messenger = messenger;
         this.dialogService = dialogService;
@@ -64,7 +66,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         this.mediaFlipViewItemModelFactory = mediaFlipViewItemModelFactory;
 
         messenger.Subscribe<MediaItemsLoadedMessage>(msg =>
-        {         
+        {
+            Log.Debug("MediaItemsLoadedMessage received");
             SetItems(msg.MediaItems, msg.StartItem);   
         });
 
@@ -74,13 +77,25 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         });
     }
 
-    public void SetItems(IEnumerable<IMediaItem> mediaItems, IMediaItem? startItem = null) 
+    public void SetItems(IEnumerable<IMediaFileInfo> mediaItems, IMediaFileInfo? startItem = null) 
     {
+        Log.Debug("SetItems called");
         Stopwatch sw = Stopwatch.StartNew();
-        Items = new ObservableCollection<IMediaFlipViewItemModel>(mediaItems.Select(mediaFlipViewItemModelFactory));
+        Items = new ObservableCollection<IMediaFlipViewItemModel>(mediaItems.Select(CreateFlipViewItemModel));
         sw.Stop();
         Log.Info($"Create {Items.Count} item models took {sw.ElapsedMilliseconds} ms");
-        SelectedItemModel = startItem != null ? Items.FirstOrDefault(itemModel => itemModel.MediaItem == startItem) : Items.FirstOrDefault();
+        Log.Debug("Set SelectedItemModel");
+        SelectedItemModel = startItem != null ? Items.FirstOrDefault(itemModel => itemModel.MediaItem == startItem) : Items.FirstOrDefault();        
+    }
+
+    private IMediaFlipViewItemModel CreateFlipViewItemModel(IMediaFileInfo mediaFile) 
+    {
+        return mediaFile switch
+        {
+            BitmapFileInfo => mediaFlipViewItemModelFactory.Invoke(mediaFile),
+            VideoFileInfo => null!, // TODO,
+            VectorGraphicFileInfo => new VectorGraphicFlipViewItemModel(mediaFile) // TODO
+        };
     }
 
     partial void OnItemsChanged(ObservableCollection<IMediaFlipViewItemModel> value)
@@ -104,8 +119,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         {
             int selectedIndex = Items.IndexOf(SelectedItemModel);
 
-            int startIndex = Math.Max(selectedIndex - 2, 0);
-            int endIndex = Math.Min(selectedIndex + 2, Items.Count - 1);
+            int startIndex = Math.Max(selectedIndex - ImageCacheSize, 0);
+            int endIndex = Math.Min(selectedIndex + ImageCacheSize, Items.Count - 1);
             itemModelsToBeLoaded = Items.Skip(startIndex).Take(endIndex - startIndex + 1).ToList();
         }
         else
@@ -147,7 +162,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         await dialogService.ShowDialogAsync(folderPickerModel);
         if (folderPickerModel.Folder is StorageFolder folder)
         {
-            var result = await loadMediaItemsService.LoadMediaItems(folder);
+            var result = await loadMediaItemsService.LoadMediaFilesAsync(folder, /*TODO*/new LoadMediaConfig(true, "RAWs"));
             messenger.Publish(new MediaItemsLoadedMessage(result.MediaItems, result.StartItem));
         }
     }

@@ -1,4 +1,5 @@
 ﻿namespace PhotoViewerApp.Models;
+
 public class ColorSpaceInfo
 {
     public ColorSpaceType Type { get; }

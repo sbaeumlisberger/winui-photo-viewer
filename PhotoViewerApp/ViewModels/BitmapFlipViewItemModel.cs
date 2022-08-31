@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Graphics.Canvas;
+using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
@@ -13,7 +14,7 @@ namespace PhotoViewerApp.ViewModels;
 
 public interface IMediaFlipViewItemModel : INotifyPropertyChanged
 {
-    IMediaItem MediaItem { get; }
+    IMediaFileInfo MediaItem { get; }
 
     IBitmapImage? BitmapImage { get; }
 
@@ -24,35 +25,46 @@ public interface IMediaFlipViewItemModel : INotifyPropertyChanged
     Task<IBitmapImage?> WaitUntilImageLoaded();
 }
 
-public partial class MediaFlipViewItemModel : ViewModelBase, IMediaFlipViewItemModel
+public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItemModel
 {
-    public event EventHandler<EventArgs>? Cleanuped; // TODO
-
-    public IMediaItem MediaItem { get; }
+    public IMediaFileInfo MediaItem { get; }
 
     [ObservableProperty]
     private IBitmapImage? bitmapImage;
 
-    private readonly IImageLoadService imageLoadService;
+    private readonly IImageLoaderService imageLoadService;
+
+    private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
     private TaskCompletionSource<bool> loadImageTaskCompletionSource = new TaskCompletionSource<bool>();
 
-    public MediaFlipViewItemModel(IMediaItem mediaItem, IImageLoadService imageLoadService)
+    public BitmapFlipViewItemModel(IMediaFileInfo mediaItem, IMessenger messenger, IImageLoaderService imageLoadService)
     {
         MediaItem = mediaItem;
         this.imageLoadService = imageLoadService;
+
+        messenger.Subscribe<BitmapRotatedMesssage>(msg => 
+        {
+            if (msg.Bitmap == MediaItem && BitmapImage != null) 
+            {
+                StartLoading();
+            }
+        });
     }
 
     public async void StartLoading()
     {
-        // TODO wait for cleanup
-
-        loadImageTaskCompletionSource = new TaskCompletionSource<bool>();
+        var cancellationToken = cancellationTokenSource.Token;
         try
         {
-            BitmapImage = await imageLoadService.LoadFromFileAsync(MediaItem.File, CancellationToken.None);
+            loadImageTaskCompletionSource = new TaskCompletionSource<bool>();
+            BitmapImage = await imageLoadService.LoadFromFileAsync(MediaItem.File, cancellationToken);
             loadImageTaskCompletionSource.SetResult(true);
             Log.Info($"Loaded {MediaItem.Name} sucessfully");
+        }
+        catch (OperationCanceledException) 
+        {
+            Log.Debug($"Canceled loading {MediaItem.Name}");
         }
         catch (Exception ex)
         {
@@ -61,9 +73,10 @@ public partial class MediaFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
         }
     }
 
-    public async void Cleanup()
+    public void Cleanup()
     {
-        await WaitUntilImageLoaded();
+        cancellationTokenSource.Cancel();
+        cancellationTokenSource = new CancellationTokenSource();
         BitmapImage?.Dispose();
         BitmapImage = null;
     }

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PhotoVieweApp.Services;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
@@ -43,20 +44,24 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     private readonly IDialogService dialogService;
 
-    private readonly ILoadMediaItemsService loadMediaItemsService;
+    private readonly IMediaFilesLoaderService loadMediaItemsService;
+
+    private readonly IRotatePhotoService rotatePhotoService;
 
     public FlipViewPageCommandBarModel(
         Session session,
         IMessenger messenger,
         IDialogService dialogService,
-        ILoadMediaItemsService loadMediaItemsService,
+        IMediaFilesLoaderService loadMediaItemsService,
+        IRotatePhotoService rotatePhotoService,
         IMediaFlipViewModel flipViewModel)
     {
         this.session = session;
         this.messenger = messenger;
         this.dialogService = dialogService;
         this.loadMediaItemsService = loadMediaItemsService;
-     
+        this.rotatePhotoService = rotatePhotoService;
+
         SelectPreviousCommand = flipViewModel.SelectPreviousCommand;
         SelectNextCommand = flipViewModel.SelectNextCommand;
         StartDiashowCommand = null!; // TODO
@@ -65,19 +70,21 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     partial void OnSelectedItemModelChanged(IMediaFlipViewItemModel? value)
     {
         CanDelete = SelectedItemModel != null;
-        CanRotate = false;
+        CanRotate = SelectedItemModel?.MediaItem is BitmapFileInfo bitmap && rotatePhotoService.CanRotate(bitmap);
     }
 
     [RelayCommand]
     private void NavigateToOverviewPage()
     {
-       messenger.Publish(new NavigateToPageMessage(typeof(OverviewPageModel)));
+        messenger.Publish(new NavigateToPageMessage(typeof(OverviewPageModel)));
     }
 
     [RelayCommand(CanExecute = nameof(CanRotate))]
     private async Task RotateAsync()
     {
-        // TODO
+        var bitmap = (BitmapFileInfo)SelectedItemModel!.MediaItem;
+        await rotatePhotoService.RotateClockwise90DegreesAsync(bitmap);
+        messenger.Publish(new BitmapRotatedMesssage(bitmap));
     }
 
     [RelayCommand(CanExecute = nameof(CanDelete))]
@@ -85,7 +92,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     {
         await SelectedItemModel!.MediaItem.DeleteAsync();
         session.MediaItems.Remove(SelectedItemModel.MediaItem);
-        messenger.Publish(new MediaItemsDeletedMessage(new List<IMediaItem>() { SelectedItemModel.MediaItem }));
+        messenger.Publish(new MediaItemsDeletedMessage(new List<IMediaFileInfo>() { SelectedItemModel.MediaItem }));
     }
 
     [RelayCommand]
@@ -95,7 +102,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         await dialogService.ShowDialogAsync(folderPickerModel);
         if (folderPickerModel.Folder is StorageFolder folder)
         {
-            var result = await loadMediaItemsService.LoadMediaItems(folder);
+            var result = await loadMediaItemsService.LoadMediaFilesAsync(folder, /*TODO*/new LoadMediaConfig(true, "RAWs"));
             messenger.Publish(new MediaItemsLoadedMessage(result.MediaItems, result.StartItem));
         }
     }
