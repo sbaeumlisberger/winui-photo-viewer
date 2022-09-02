@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Windowing;
-using Microsoft.UI;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
@@ -172,7 +170,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     {
         return mediaFile switch
         {
-            BitmapFileInfo => mediaFlipViewItemModelFactory.Invoke(mediaFile),
+            IBitmapFileInfo => mediaFlipViewItemModelFactory.Invoke(mediaFile),
             VideoFileInfo => null!, // TODO,
             VectorGraphicFileInfo => new VectorGraphicFlipViewItemModel(mediaFile) // TODO
         };

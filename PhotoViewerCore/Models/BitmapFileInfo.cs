@@ -6,7 +6,14 @@ using Windows.Storage;
 
 namespace PhotoViewerApp.Models;
 
-public class BitmapFileInfo : MediaFileInfoBase
+public interface IBitmapFileInfo : IMediaFileInfo 
+{
+    new IList<IStorageFile> LinkedFiles { get; }
+
+    bool IsMetadataSupported { get; }
+}
+
+public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
 {
     public static readonly IReadOnlyList<string> BmpFileExtensions = new[] { ".bmp", ".dib" };
     public static readonly IReadOnlyList<string> GifFileExtensions = new[] { ".gif" };

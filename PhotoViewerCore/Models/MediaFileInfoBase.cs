@@ -38,11 +38,6 @@ public class MediaFileInfoBase : IMediaFileInfo
         return (ulong)fileSize!;
     }
 
-    public async Task DeleteAsync()
-    {
-        await File.DeleteAsync().AsTask().ConfigureAwait(false);
-    }
-
     private async Task LoadBasicPropertiesAsync()
     {
         var basicProperties = await File.GetBasicPropertiesAsync().AsTask().ConfigureAwait(false);

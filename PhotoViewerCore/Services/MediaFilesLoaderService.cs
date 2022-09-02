@@ -141,7 +141,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
     {
         if (rawFilesToLink.Any())
         {
-            IList<BitmapFileInfo> possibleLinkFiles = mediaFiles.OfType<BitmapFileInfo>().ToList();
+            IList<IBitmapFileInfo> possibleLinkFiles = mediaFiles.OfType<IBitmapFileInfo>().ToList();
 
             foreach (var rawFile in rawFilesToLink)
             {

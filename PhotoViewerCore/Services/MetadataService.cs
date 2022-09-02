@@ -15,13 +15,13 @@ namespace PhotoViewerApp.Services;
 
 public interface IMetadataService
 {
-    Task<MetadataView> GetMetadataAsync(BitmapFileInfo bitmap);
+    Task<MetadataView> GetMetadataAsync(IBitmapFileInfo bitmap);
 
-    Task<T> GetMetadataAsync<T>(BitmapFileInfo bitmap, IReadonlyMetadataProperty<T> propertyDefinition);
+    Task<T> GetMetadataAsync<T>(IBitmapFileInfo bitmap, IReadonlyMetadataProperty<T> propertyDefinition);
 
-    Task WriteMetadataAsync(BitmapFileInfo bitmap, MetadataPropertySet propertySet);
+    Task WriteMetadataAsync(IBitmapFileInfo bitmap, MetadataPropertySet propertySet);
 
-    Task WriteMetadataAsync<T>(BitmapFileInfo bitmap, IMetadataProperty<T> property, T value);
+    Task WriteMetadataAsync<T>(IBitmapFileInfo bitmap, IMetadataProperty<T> property, T value);
 }
 
 internal class MetadataService : IMetadataService
@@ -47,9 +47,9 @@ internal class MetadataService : IMetadataService
             MetadataProperties.Title
     };
 
-    private static readonly ConditionalWeakTable<BitmapFileInfo, AsyncCache<MetadataView>> cacheTable = new();
+    private static readonly ConditionalWeakTable<IBitmapFileInfo, AsyncCache<MetadataView>> cacheTable = new();
 
-    public Task<MetadataView> GetMetadataAsync(BitmapFileInfo bitmap)
+    public Task<MetadataView> GetMetadataAsync(IBitmapFileInfo bitmap)
     {
         if (!bitmap.IsMetadataSupported)
         {
@@ -59,13 +59,13 @@ internal class MetadataService : IMetadataService
         return cache.GetOrCreateValueAsync(() => ReadMetadataAsync(bitmap.File));
     }
 
-    public async Task<T> GetMetadataAsync<T>(BitmapFileInfo bitmap, IReadonlyMetadataProperty<T> propertyDefinition)
+    public async Task<T> GetMetadataAsync<T>(IBitmapFileInfo bitmap, IReadonlyMetadataProperty<T> propertyDefinition)
     {
         var metadata = await GetMetadataAsync(bitmap).ConfigureAwait(false);
         return metadata.Get(propertyDefinition);
     }
 
-    public async Task WriteMetadataAsync(BitmapFileInfo bitmap, MetadataPropertySet propertySet)
+    public async Task WriteMetadataAsync(IBitmapFileInfo bitmap, MetadataPropertySet propertySet)
     {
         Log.Info($"Write metadata to file {bitmap.File.Name}: {string.Join(", ", propertySet.Select(entry => $"{entry.Property.Identifier} = {entry.Value}"))}");
 
@@ -79,7 +79,7 @@ internal class MetadataService : IMetadataService
         UpdateMetadataCache(bitmap, propertySet);
     }
 
-    public async Task WriteMetadataAsync<T>(BitmapFileInfo bitmap, IMetadataProperty<T> property, T value)
+    public async Task WriteMetadataAsync<T>(IBitmapFileInfo bitmap, IMetadataProperty<T> property, T value)
     {
         var metadataPropertySet = new MetadataPropertySet();
         metadataPropertySet.Add(property, value);
@@ -112,7 +112,7 @@ internal class MetadataService : IMetadataService
         }
     }
 
-    private void UpdateMetadataCache(BitmapFileInfo bitmap, MetadataPropertySet metadataPropertySet)
+    private void UpdateMetadataCache(IBitmapFileInfo bitmap, MetadataPropertySet metadataPropertySet)
     {
         if (cacheTable.TryGetValue(bitmap, out var cache) && cache.TryGetValue(out var metadataView))
         {

@@ -11,12 +11,12 @@
     <RelativePanel Padding="4" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
         <TextBlock 
             RelativePanel.AlignLeftWithPanel="True" 
-            Text="{x:Bind ViewModel.DateInfo, Mode=OneWay}"/>
+            Text="{x:Bind ViewModel.DateFormatted, Mode=OneWay}"/>
 
         <TextBlock 
             RelativePanel.AlignHorizontalCenterWithPanel="True" 
             Margin="4,0,4,0" 
-            Text="{x:Bind ViewModel.FileNameInfo, Mode=OneWay}" 
+            Text="{x:Bind CheckFileName(ViewModel.FileName), Mode=OneWay}" 
             TextAlignment="Center"/>
 
         <StackPanel 
@@ -28,7 +28,7 @@
                 Glyph="&#xE2B1;"
                 FontSize="14"
                 Visibility="{x:Bind ViewModel.ShowColorProfileIndicator, Mode=OneWay}"
-                ToolTipService.ToolTip="{x:Bind ViewModel.ColorSpaceName, Mode=OneWay}"/>
+                ToolTipService.ToolTip="{x:Bind ColorSpaceTypeToDisplayName(ViewModel.ColorSpaceType), Mode=OneWay}"/>
             <TextBlock 
                 Text="{x:Bind ViewModel.SizeInPixels, Mode=OneWay}"/>
             <TextBlock 

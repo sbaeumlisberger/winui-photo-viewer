@@ -81,7 +81,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     {
         CanStartDiashow = SelectedItemModel != null;
         CanDelete = SelectedItemModel != null;
-        CanRotate = SelectedItemModel?.MediaItem is BitmapFileInfo bitmap && rotatePhotoService.CanRotate(bitmap);
+        CanRotate = SelectedItemModel?.MediaItem is IBitmapFileInfo bitmap && rotatePhotoService.CanRotate(bitmap);
     }
 
     [RelayCommand]
@@ -99,7 +99,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     [RelayCommand(CanExecute = nameof(CanRotate))]
     private async Task RotateAsync()
     {
-        var bitmap = (BitmapFileInfo)SelectedItemModel!.MediaItem;
+        var bitmap = (IBitmapFileInfo)SelectedItemModel!.MediaItem;
         await rotatePhotoService.RotateClockwise90DegreesAsync(bitmap);
         messenger.Publish(new BitmapRotatedMesssage(bitmap));
     }

@@ -14,8 +14,8 @@ internal static class UserControlUtil
             if (userControl.DataContext != null)
             {
                 action();
-            }
-            userControl.DataContextChanged -= UserControl_DataContextChanged;
+                userControl.DataContextChanged -= UserControl_DataContextChanged;
+            }         
         }
         userControl.DataContextChanged += UserControl_DataContextChanged;
     }

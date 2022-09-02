@@ -9,9 +9,9 @@ namespace PhotoViewerApp.Services;
 
 public partial interface IRotateBitmapService
 {
-    bool CanRotate(BitmapFileInfo photo);
+    bool CanRotate(IBitmapFileInfo photo);
 
-    Task RotateClockwise90DegreesAsync(BitmapFileInfo photo);
+    Task RotateClockwise90DegreesAsync(IBitmapFileInfo photo);
 }
 
 internal class RotateBitmapService : IRotateBitmapService
@@ -23,7 +23,7 @@ internal class RotateBitmapService : IRotateBitmapService
         this.metadataService = metadataService;
     }
 
-    public bool CanRotate(BitmapFileInfo photo)
+    public bool CanRotate(IBitmapFileInfo photo)
     {
         string fileExtension = photo.File.FileType.ToLower();
 
@@ -43,7 +43,7 @@ internal class RotateBitmapService : IRotateBitmapService
         return false;
     }
 
-    public async Task RotateClockwise90DegreesAsync(BitmapFileInfo photo)
+    public async Task RotateClockwise90DegreesAsync(IBitmapFileInfo photo)
     {
         if (MetadataProperties.Orientation.IsSupported(photo.File.FileType.ToLower()))
         {
@@ -55,7 +55,7 @@ internal class RotateBitmapService : IRotateBitmapService
         }
     }
 
-    private async Task RotateByMetadataAsync(BitmapFileInfo photo)
+    private async Task RotateByMetadataAsync(IBitmapFileInfo photo)
     {
         PhotoOrientation orientation = await metadataService.GetMetadataAsync(photo, MetadataProperties.Orientation).ConfigureAwait(false);
 

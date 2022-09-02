@@ -25,16 +25,16 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
     private bool isVisible = true;
 
     [ObservableProperty]
-    private string dateInfo = string.Empty;
+    private string dateFormatted = string.Empty;
 
     [ObservableProperty]
-    private string fileNameInfo = string.Empty; //Strings.DetailsBar_NoInformationAvailable;
+    private string fileName = string.Empty;
 
     [ObservableProperty]
     private bool showColorProfileIndicator = false;
 
     [ObservableProperty]
-    private string colorSpaceName = string.Empty;
+    private ColorSpaceType colorSpaceType = ColorSpaceType.NotSpecified;
 
     [ObservableProperty]
     private string sizeInPixels = string.Empty;
@@ -82,10 +82,10 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 
     private void Clear()
     {
-        DateInfo = "";
-        FileNameInfo = "";// Strings.DetailsBar_NoInformationAvailable;
+        DateFormatted = "";
+        FileName = "";// Strings.DetailsBar_NoInformationAvailable;
         ShowColorProfileIndicator = false;
-        ColorSpaceName = "";
+        ColorSpaceType = ColorSpaceType.NotSpecified;
         SizeInPixels = "";
         CameraDetails = "";
         FileSize = "";
@@ -95,9 +95,9 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
     {
         Log.Debug($"Update details bar for {itemModel.MediaItem.Name}");
 
-        FileNameInfo = itemModel.MediaItem.Name;
+        FileName = itemModel.MediaItem.Name;
 
-        if (itemModel.MediaItem is BitmapFileInfo bitmapFile)
+        if (itemModel.MediaItem is IBitmapFileInfo bitmapFile)
         {
             await UpdateFromBitmapFileAsync(bitmapFile);
         }
@@ -109,12 +109,12 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         if (await itemModel.WaitUntilImageLoaded() is IBitmapImage bitmapImage)
         {
             ShowColorProfileIndicator = bitmapImage.ColorSpace.Profile is not null;
-            ColorSpaceName = ShowColorProfileIndicator ? ConvertColorSpaceTypeToDisplayName(bitmapImage.ColorSpace.Type) : string.Empty;
+            ColorSpaceType = ShowColorProfileIndicator ? bitmapImage.ColorSpace.Type : ColorSpaceType.NotSpecified;
             SizeInPixels = bitmapImage.SizeInPixels.Width + "x" + bitmapImage.SizeInPixels.Height + "px";     
         }
     }
 
-    private async Task UpdateFromBitmapFileAsync(BitmapFileInfo bitmapFile)
+    private async Task UpdateFromBitmapFileAsync(IBitmapFileInfo bitmapFile)
     {
         try
         {
@@ -123,14 +123,14 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
                 var metadata = await metadataService.GetMetadataAsync(bitmapFile);
 
                 var date = metadata.Get(MetadataProperties.DateTaken) ?? (await bitmapFile.GetDateModifiedAsync());
-                DateInfo = date.ToString("g");
+                DateFormatted = date.ToString("g");
 
                 CameraDetails = GetCameraDetails(metadata);;
             }
             else 
             {
                 var date = await bitmapFile.GetDateModifiedAsync();
-                DateInfo = date.ToString("g");        
+                DateFormatted = date.ToString("g");        
             }
 
             ulong fileSize = await bitmapFile.GetFileSizeAsync();
@@ -147,7 +147,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         try
         {
             var date = await mediaItem.GetDateModifiedAsync();
-            DateInfo = date.ToString("g");
+            DateFormatted = date.ToString("g");
 
             ulong fileSize = await mediaItem.GetFileSizeAsync();
             FileSize = ByteSizeFormatter.Format(fileSize);
@@ -186,20 +186,6 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         }
 
         return cameraDetails;
-    }
-
-    private string ConvertColorSpaceTypeToDisplayName(ColorSpaceType colorSpaceType)
-    {
-        //switch (colorSpaceType)
-        //{
-            //case ColorSpaceType.SRGB:
-            //    return Strings.DetailsBar_ColorSpaceSRGB;
-            //case ColorSpaceType.AdobeRGB:
-            //    return Strings.DetailsBar_ColorSpaceAdobeRGB;
-            //default:
-            //    return Strings.DetailsBar_ColorSpaceUnknown;
-                return "";
-        //}
     }
 
 }

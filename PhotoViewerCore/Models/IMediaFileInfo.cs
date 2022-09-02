@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Windows.Storage;
+﻿using Windows.Storage;
 
 namespace PhotoViewerApp.Models;
 
@@ -17,6 +13,4 @@ public interface IMediaFileInfo
     Task<DateTimeOffset> GetDateModifiedAsync();
 
     Task<ulong> GetFileSizeAsync();
-
-    Task DeleteAsync();
 }

@@ -3,7 +3,11 @@ using Windows.Storage;
 
 namespace PhotoViewerApp.Models;
 
-internal class VideoFileInfo : MediaFileInfoBase
+public interface IVideoFileInfo : IMediaFileInfo
+{
+}
+
+internal class VideoFileInfo : MediaFileInfoBase, IVideoFileInfo
 {
 
     public static readonly IReadOnlySet<string> SupportedFileExtensions = new HashSet<string>()
