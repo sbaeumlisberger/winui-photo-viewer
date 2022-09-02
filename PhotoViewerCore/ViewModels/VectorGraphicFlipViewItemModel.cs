@@ -10,7 +10,7 @@ using Windows.Storage;
 
 namespace PhotoViewerApp.ViewModels;
 
-internal partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipViewItemModel
+public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipViewItemModel
 {
     public IMediaFileInfo MediaItem { get; }
 

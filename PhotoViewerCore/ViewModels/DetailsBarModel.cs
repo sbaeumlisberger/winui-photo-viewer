@@ -2,13 +2,10 @@
 using MetadataAPI;
 using MetadataAPI.Data;
 using PhotoViewerApp.Models;
-using PhotoViewerApp.Resources;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
-using System;
 using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace PhotoViewerApp.ViewModels;
 
@@ -31,7 +28,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
     private string dateInfo = string.Empty;
 
     [ObservableProperty]
-    private string fileNameInfo = Strings.DetailsBar_NoInformationAvailable;
+    private string fileNameInfo = string.Empty; //Strings.DetailsBar_NoInformationAvailable;
 
     [ObservableProperty]
     private bool showColorProfileIndicator = false;
@@ -86,7 +83,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
     private void Clear()
     {
         DateInfo = "";
-        FileNameInfo = Strings.DetailsBar_NoInformationAvailable;
+        FileNameInfo = "";// Strings.DetailsBar_NoInformationAvailable;
         ShowColorProfileIndicator = false;
         ColorSpaceName = "";
         SizeInPixels = "";
@@ -193,15 +190,16 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 
     private string ConvertColorSpaceTypeToDisplayName(ColorSpaceType colorSpaceType)
     {
-        switch (colorSpaceType)
-        {
-            case ColorSpaceType.SRGB:
-                return Strings.DetailsBar_ColorSpaceSRGB;
-            case ColorSpaceType.AdobeRGB:
-                return Strings.DetailsBar_ColorSpaceAdobeRGB;
-            default:
-                return Strings.DetailsBar_ColorSpaceUnknown;
-        }
+        //switch (colorSpaceType)
+        //{
+            //case ColorSpaceType.SRGB:
+            //    return Strings.DetailsBar_ColorSpaceSRGB;
+            //case ColorSpaceType.AdobeRGB:
+            //    return Strings.DetailsBar_ColorSpaceAdobeRGB;
+            //default:
+            //    return Strings.DetailsBar_ColorSpaceUnknown;
+                return "";
+        //}
     }
 
 }

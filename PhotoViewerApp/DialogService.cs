@@ -7,11 +7,6 @@ using WinRT.Interop;
 
 namespace PhotoViewerApp.Services;
 
-public interface IDialogService
-{
-    Task ShowDialogAsync(object dialogModel);
-}
-
 public class DialogService : IDialogService
 {
     public static IDialogService Instance => Instance ?? throw new InvalidOperationException("DialogService is not initialized.");

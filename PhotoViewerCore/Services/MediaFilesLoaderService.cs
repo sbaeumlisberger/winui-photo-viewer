@@ -19,7 +19,7 @@ public interface IMediaFilesLoaderService
     Task<LoadMediaFilesResult> LoadMediaFilesAsync(StorageFolder storageFolder, LoadMediaConfig config);
 }
 
-internal class MediaFilesLoaderService : IMediaFilesLoaderService
+public class MediaFilesLoaderService : IMediaFilesLoaderService
 {
 
     public async Task<LoadMediaFilesResult> LoadMediaFilesAsync(IActivatedEventArgs activatedEventArgs, LoadMediaConfig config)

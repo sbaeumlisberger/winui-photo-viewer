@@ -6,4 +6,4 @@ using System.Threading.Tasks;
 
 namespace PhotoViewerApp.Messages;
 
-internal record class EnterFullscreenMessage();
+public record class EnterFullscreenMessage();

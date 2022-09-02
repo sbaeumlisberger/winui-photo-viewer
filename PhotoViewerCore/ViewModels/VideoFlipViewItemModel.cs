@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PhotoViewerApp.ViewModels;
 
-internal class VideoFlipViewItemModel
+public class VideoFlipViewItemModel
 {
 
 

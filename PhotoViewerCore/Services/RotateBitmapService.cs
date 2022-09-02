@@ -1,15 +1,11 @@
 ﻿using MetadataAPI;
 using MetadataAPI.Data;
 using PhotoViewerApp.Models;
-using PhotoViewerApp.Services;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace PhotoVieweApp.Services;
+namespace PhotoViewerApp.Services;
 
 public partial interface IRotateBitmapService
 {

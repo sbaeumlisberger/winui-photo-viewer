@@ -1,5 +1,4 @@
-﻿using PhotoVieweApp.Services;
-using PhotoViewerApp.Models;
+﻿using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 
@@ -17,6 +16,7 @@ public class PageModelFactory
         var rotatePhotoService = new RotateBitmapService(metadataService);
         var imageLoaderService = new ImageLoaderService(new GifImageLoaderService());
         var displayRequestService = new DisplayRequestService();
+        var deleteMediaService = new DeleteMediaService();
         return new FlipViewPageModel(
             session,
             messenger,
@@ -24,7 +24,7 @@ public class PageModelFactory
                 (mediaItem) => new BitmapFlipViewItemModel(mediaItem, messenger, imageLoaderService)),
             () => new DetailsBarModel(metadataService),
             (flipViewPageModel) => new FlipViewPageCommandBarModel(session, messenger, dialogService, 
-                mediaFilesLoaderService, rotatePhotoService, flipViewPageModel),
+                mediaFilesLoaderService, rotatePhotoService, flipViewPageModel, deleteMediaService),
             displayRequestService);
     }
 

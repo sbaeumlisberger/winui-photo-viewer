@@ -10,7 +10,7 @@ public interface IMessenger
     void Subscribe<T>(Action<T> callback) where T : notnull;
 }
 
-internal class Messenger : IMessenger
+public class Messenger : IMessenger
 {
     public static Messenger GlobalInstance { get; } = new Messenger();
 

@@ -5,4 +5,5 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace PhotoViewerApp.Messages;
-internal record class ExitDiashowMessage();
+
+public record class ExitFullscreenMessage();

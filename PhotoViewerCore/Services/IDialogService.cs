@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhotoViewerApp.Messages;
+namespace PhotoViewerApp.Services;
 
-internal record class ExitFullscreenMessage();
+public interface IDialogService
+{
+    Task ShowDialogAsync(object dialogModel);
+}
