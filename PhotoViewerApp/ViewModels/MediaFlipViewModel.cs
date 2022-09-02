@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Windowing;
+using Microsoft.UI;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
@@ -11,7 +13,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Storage;
+using WinRT.Interop;
 
 namespace PhotoViewerApp.ViewModels;
 
@@ -54,6 +58,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     private ICollection<IMediaFlipViewItemModel> loadedItemModels = Array.Empty<IMediaFlipViewItemModel>();
 
+    private bool diashowActive = false;
+
     public MediaFlipViewModel(
         IMessenger messenger,
         IDialogService dialogService,
@@ -75,7 +81,18 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         {
             Items.RemoveAll(itemModel => msg.MediaItems.Contains(itemModel.MediaItem));
         });
-    }
+
+        messenger.Subscribe<StartDiashowMessage>(msg =>
+        {
+            diashowActive = true;
+            DiashowLoop();
+        });
+
+        messenger.Subscribe<ExitDiashowMessage>(msg =>
+        {
+            diashowActive = false;
+        });
+     }
 
     public void SetItems(IEnumerable<IMediaFileInfo> mediaItems, IMediaFileInfo? startItem = null) 
     {
@@ -87,17 +104,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         Log.Debug("Set SelectedItemModel");
         SelectedItemModel = startItem != null ? Items.FirstOrDefault(itemModel => itemModel.MediaItem == startItem) : Items.FirstOrDefault();        
     }
-
-    private IMediaFlipViewItemModel CreateFlipViewItemModel(IMediaFileInfo mediaFile) 
-    {
-        return mediaFile switch
-        {
-            BitmapFileInfo => mediaFlipViewItemModelFactory.Invoke(mediaFile),
-            VideoFileInfo => null!, // TODO,
-            VectorGraphicFileInfo => new VectorGraphicFlipViewItemModel(mediaFile) // TODO
-        };
-    }
-
+  
     partial void OnItemsChanged(ObservableCollection<IMediaFlipViewItemModel> value)
     {
         ShowNoItemsUI = !Items.Any();
@@ -109,6 +116,24 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         UpdateFlipViewItemModels();
         CanSelectPrevious = SelectedItemModel != null && Items.IndexOf(SelectedItemModel) > 0;
         CanSelectNext = SelectedItemModel != null && Items.IndexOf(SelectedItemModel) < Items.Count - 1;
+    }
+
+    private async void DiashowLoop()
+    {
+        await Task.Delay(3000);
+
+        if (diashowActive)
+        {
+            if (SelectNextCommand.CanExecute(null))
+            {
+                SelectNextCommand.Execute(null);
+            }
+            else
+            {
+                SelectedItemModel = Items.First();
+            }
+            DiashowLoop();
+        }
     }
 
     private void UpdateFlipViewItemModels()
@@ -141,6 +166,16 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         }
 
         loadedItemModels = itemModelsToBeLoaded;
+    }
+
+    private IMediaFlipViewItemModel CreateFlipViewItemModel(IMediaFileInfo mediaFile)
+    {
+        return mediaFile switch
+        {
+            BitmapFileInfo => mediaFlipViewItemModelFactory.Invoke(mediaFile),
+            VideoFileInfo => null!, // TODO,
+            VectorGraphicFileInfo => new VectorGraphicFlipViewItemModel(mediaFile) // TODO
+        };
     }
 
     [RelayCommand(CanExecute = nameof(CanSelectPrevious))]

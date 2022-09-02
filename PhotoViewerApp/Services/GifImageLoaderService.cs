@@ -10,14 +10,19 @@ using Windows.Storage.Streams;
 
 namespace PhotoViewerApp.Services;
 
-public static class GifImageLoader
+public interface IGifImageLoaderService
+{
+    Task<PVBitmapImage> LoadAsync(string id, CanvasDevice device, IRandomAccessStream stream, CancellationToken? cancellationToken = null);
+}
+
+internal class GifImageLoaderService : IGifImageLoaderService
 {
     private const string LeftPropertyKey = "/imgdesc/Left";
     private const string TopPropertyKey = "/imgdesc/Top";
     private const string DelayPropertyKey = "/grctlext/Delay";
     private const string DisposalPropertyKey = "/grctlext/Disposal";
 
-    public static async Task<PVBitmapImage> LoadAsync(string id, CanvasDevice device, IRandomAccessStream stream, CancellationToken? cancellationToken = null)
+    public async Task<PVBitmapImage> LoadAsync(string id, CanvasDevice device, IRandomAccessStream stream, CancellationToken? cancellationToken = null)
     {
         var _cancellationToken = cancellationToken ?? CancellationToken.None;
 
@@ -47,14 +52,14 @@ public static class GifImageLoader
         return new PVBitmapImage(id, device, frames, new ColorSpaceInfo(ColorSpaceType.Unknown));
     }
 
-    private static Point ExtractOffset(BitmapPropertySet bitmapProperties)
+    private Point ExtractOffset(BitmapPropertySet bitmapProperties)
     {
         var x = (ushort)bitmapProperties[LeftPropertyKey].Value;
         var y = (ushort)bitmapProperties[TopPropertyKey].Value;
         return new Point(x, y);
     }
 
-    private static double ExtractDelay(BitmapPropertySet bitmapProperties)
+    private double ExtractDelay(BitmapPropertySet bitmapProperties)
     {
         var delayInMilliseconds = 30.0;
         if (bitmapProperties.TryGetValue(DelayPropertyKey, out var delayProperty) && delayProperty.Type == PropertyType.UInt16)
@@ -68,7 +73,7 @@ public static class GifImageLoader
         return delayInMilliseconds;
     }
 
-    private static bool ExtractRequiresClear(BitmapPropertySet bitmapProperties)
+    private bool ExtractRequiresClear(BitmapPropertySet bitmapProperties)
     {
         bool requiresClear = false;
         if (bitmapProperties.TryGetValue(DisposalPropertyKey, out var disposalProperty) && disposalProperty.Type == PropertyType.UInt8)

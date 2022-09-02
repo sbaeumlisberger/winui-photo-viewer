@@ -42,7 +42,7 @@ public class BitmapFileInfo : MediaFileInfoBase
 
     public override string Name => File.Name + (LinkedFiles.Any() ? "[" + string.Join("|", LinkedFiles.Select(file => file.FileType)) + "]" : string.Empty);
 
-    public List<IStorageFile> LinkedFiles { get; } = new List<IStorageFile>();
+    public IList<IStorageFile> LinkedFiles { get; } = new List<IStorageFile>();
     
     public BitmapFileInfo(IStorageFile file) : base(file)
     {

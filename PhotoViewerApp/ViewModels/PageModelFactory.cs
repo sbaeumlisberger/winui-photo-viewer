@@ -14,13 +14,18 @@ public class PageModelFactory
         var messenger = Messenger.GlobalInstance;
         var mediaFilesLoaderService = new MediaFilesLoaderService();
         var metadataService = new MetadataService();
-        var rotatePhotoService = new RotatePhotoService(metadataService);
-        var imageLoaderService = new ImageLoaderService();
+        var rotatePhotoService = new RotateBitmapService(metadataService);
+        var imageLoaderService = new ImageLoaderService(new GifImageLoaderService());
+        var displayRequestService = new DisplayRequestService();
         return new FlipViewPageModel(
             session,
-            () => new MediaFlipViewModel(messenger, dialogService, mediaFilesLoaderService, (mediaItem) => new BitmapFlipViewItemModel(mediaItem, messenger, imageLoaderService)),
+            messenger,
+            () => new MediaFlipViewModel( messenger, dialogService, mediaFilesLoaderService, 
+                (mediaItem) => new BitmapFlipViewItemModel(mediaItem, messenger, imageLoaderService)),
             () => new DetailsBarModel(metadataService),
-            (flipViewPageModel) => new FlipViewPageCommandBarModel(session, messenger, dialogService, mediaFilesLoaderService, rotatePhotoService, flipViewPageModel));
+            (flipViewPageModel) => new FlipViewPageCommandBarModel(session, messenger, dialogService, 
+                mediaFilesLoaderService, rotatePhotoService, flipViewPageModel),
+            displayRequestService);
     }
 
     public static OverviewPageModel CreateOverviewPageModel(IDialogService dialogService)

@@ -15,6 +15,8 @@ namespace PhotoViewerApp.ViewModels;
 public interface IDetailsBarModel : INotifyPropertyChanged
 {
     IMediaFlipViewItemModel? SelectedItemModel { get; set; }
+
+    bool IsVisible { get; set; }
 }
 
 public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel

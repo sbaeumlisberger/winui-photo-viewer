@@ -11,18 +11,18 @@ using Windows.Storage.Streams;
 
 namespace PhotoVieweApp.Services;
 
-public partial interface IRotatePhotoService
+public partial interface IRotateBitmapService
 {
     bool CanRotate(BitmapFileInfo photo);
 
     Task RotateClockwise90DegreesAsync(BitmapFileInfo photo);
 }
 
-internal class RotatePhotoService : IRotatePhotoService
+internal class RotateBitmapService : IRotateBitmapService
 {
     private readonly IMetadataService metadataService;
 
-    public RotatePhotoService(IMetadataService metadataService)
+    public RotateBitmapService(IMetadataService metadataService)
     {
         this.metadataService = metadataService;
     }

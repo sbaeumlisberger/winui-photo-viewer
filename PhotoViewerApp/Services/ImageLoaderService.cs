@@ -24,6 +24,13 @@ public class ImageLoaderService : IImageLoaderService
 {
     private CanvasDevice Device => CanvasDevice.GetSharedDevice();
 
+    private IGifImageLoaderService gifImageLoaderService;
+
+    public ImageLoaderService(IGifImageLoaderService gifImageLoaderService)
+    {
+        this.gifImageLoaderService = gifImageLoaderService;
+    }
+
     public async Task<IBitmapImage> LoadFromFileAsync(IStorageFile file, CancellationToken cancellationToken)
     {
         try
@@ -52,7 +59,7 @@ public class ImageLoaderService : IImageLoaderService
         using (var fileStream = await file.OpenAsync(FileAccessMode.Read).AsTask(cancellationToken).ConfigureAwait(false))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return await GifImageLoader.LoadAsync(file.Name, Device, fileStream, cancellationToken).ConfigureAwait(false);
+            return await gifImageLoaderService.LoadAsync(file.Name, Device, fileStream, cancellationToken).ConfigureAwait(false);
         }
     }
 
