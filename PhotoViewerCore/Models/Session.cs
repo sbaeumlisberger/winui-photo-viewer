@@ -1,7 +1,5 @@
 ﻿using PhotoViewerApp.Messages;
 using PhotoViewerApp.Utils;
-using System;
-using System.Collections.Generic;
 
 namespace PhotoViewerApp.Models;
 
@@ -19,8 +17,8 @@ public class Session
         });
 
         Messenger.GlobalInstance.Subscribe<MediaItemsDeletedMessage>(msg =>
-        { 
-            msg.MediaItems.ForEach(mediaItem => MediaItems.Remove(mediaItem)); 
+        {
+            msg.MediaItems.ForEach(mediaItem => MediaItems.Remove(mediaItem));
         });
     }
 

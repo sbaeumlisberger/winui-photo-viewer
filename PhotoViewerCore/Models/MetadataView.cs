@@ -1,5 +1,4 @@
 ﻿using MetadataAPI;
-using System.Collections.Generic;
 
 namespace PhotoViewerApp.Models;
 public class MetadataView

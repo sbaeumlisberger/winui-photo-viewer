@@ -1,10 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace PhotoViewerApp.ViewModels;
@@ -39,7 +37,7 @@ public partial class OverviewPageModel : ViewModelBase
         });
     }
 
-    public void ShowItem(IMediaFileInfo mediaItem) 
+    public void ShowItem(IMediaFileInfo mediaItem)
     {
         messenger.Publish(new NavigateToPageMessage(typeof(FlipViewPageModel), mediaItem));
     }

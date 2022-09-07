@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-
-namespace PhotoViewerApp.Utils;
+﻿namespace PhotoViewerApp.Utils;
 
 public static class CollectionsUtil
 {
@@ -22,9 +17,9 @@ public static class CollectionsUtil
 
     public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
     {
-        foreach (var element in enumerable) 
-        { 
-            action(element); 
+        foreach (var element in enumerable)
+        {
+            action(element);
         }
     }
 

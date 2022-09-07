@@ -1,13 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using PhotoViewerApp.Exceptions;
 using PhotoViewerApp.Models;
+using System.Runtime.InteropServices;
+using System.Text;
 using WIC;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -133,7 +128,7 @@ public class ImageLoaderService : IImageLoaderService
         {
             return ColorSpaceType.AdobeRGB;
         }
-        else if (colorProfile != null) 
+        else if (colorProfile != null)
         {
             return ColorSpaceType.Unknown;
         }

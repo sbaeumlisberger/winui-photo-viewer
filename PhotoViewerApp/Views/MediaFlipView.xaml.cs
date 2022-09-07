@@ -1,5 +1,4 @@
 ﻿using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
 using System.ComponentModel;
@@ -12,7 +11,8 @@ public sealed partial class MediaFlipView : UserControl
     public MediaFlipView()
     {
         this.InitializeComponent();
-        this.WhenDataContextSet(() => {
+        this.WhenDataContextSet(() =>
+        {
             ViewModel.PropertyChanged += FlipViewModel_PropertyChanged;
             UpdateWindowTitle();
         });
@@ -26,7 +26,7 @@ public sealed partial class MediaFlipView : UserControl
         }
     }
 
-    private void UpdateWindowTitle() 
+    private void UpdateWindowTitle()
     {
         App.Current.Window.Title = ViewModel.SelectedItemModel?.MediaItem.Name ?? "";
     }

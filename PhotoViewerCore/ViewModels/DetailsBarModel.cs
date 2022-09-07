@@ -111,7 +111,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         {
             ShowColorProfileIndicator = bitmapImage.ColorSpace.Profile is not null;
             ColorSpaceType = ShowColorProfileIndicator ? bitmapImage.ColorSpace.Type : ColorSpaceType.NotSpecified;
-            SizeInPixels = bitmapImage.SizeInPixels.Width + "x" + bitmapImage.SizeInPixels.Height + "px";     
+            SizeInPixels = bitmapImage.SizeInPixels.Width + "x" + bitmapImage.SizeInPixels.Height + "px";
         }
     }
 
@@ -126,12 +126,12 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
                 var date = metadata.Get(MetadataProperties.DateTaken) ?? (await bitmapFile.GetDateModifiedAsync());
                 DateFormatted = date.ToString("g");
 
-                CameraDetails = GetCameraDetails(metadata);;
+                CameraDetails = GetCameraDetails(metadata); ;
             }
-            else 
+            else
             {
                 var date = await bitmapFile.GetDateModifiedAsync();
-                DateFormatted = date.ToString("g");        
+                DateFormatted = date.ToString("g");
             }
 
             ulong fileSize = await bitmapFile.GetFileSizeAsync();
@@ -155,7 +155,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         }
         catch (Exception ex)
         {
-            Log.Error("Error on update details bar", ex);       
+            Log.Error("Error on update details bar", ex);
         }
     }
 

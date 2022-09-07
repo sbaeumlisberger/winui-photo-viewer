@@ -15,7 +15,7 @@ internal static class UserControlUtil
             {
                 action();
                 userControl.DataContextChanged -= UserControl_DataContextChanged;
-            }         
+            }
         }
         userControl.DataContextChanged += UserControl_DataContextChanged;
     }
@@ -29,7 +29,7 @@ internal static class UserControlUtil
             userControl.Unloaded -= UserControl_Unloaded;
             userControl.UnregisterPropertyChangedCallback(property, token);
         }
-        userControl.Unloaded += UserControl_Unloaded;       
+        userControl.Unloaded += UserControl_Unloaded;
     }
 
 

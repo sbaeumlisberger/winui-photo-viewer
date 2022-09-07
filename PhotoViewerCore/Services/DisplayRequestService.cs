@@ -1,9 +1,4 @@
 ﻿using PhotoViewerApp.Utils.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.System.Display;
 
 namespace PhotoViewerApp.Services;
@@ -31,7 +26,7 @@ internal class DisplayRequestService : IDisplayRequestService
                 displayRequest?.RequestRelease();
                 displayRequest = null!;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Log.Error("Failed to release display request", ex);
             }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PhotoViewerApp.Exceptions
+﻿namespace PhotoViewerApp.Exceptions
 {
     public class CodecNotFoundException : Exception
     {

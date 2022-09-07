@@ -1,5 +1,4 @@
 ﻿using PhotoViewerApp.Models;
-using System.Collections.Generic;
 
 namespace PhotoViewerApp.Messages;
 

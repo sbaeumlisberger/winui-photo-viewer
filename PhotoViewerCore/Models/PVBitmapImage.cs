@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 
@@ -32,7 +30,7 @@ public class PVBitmapImage : IBitmapImage
         Frames = Array.Empty<IBitmapFrame>();
         SizeInDIPs = canvasBitmap.Size;
         SizeInPixels = canvasBitmap.SizeInPixels;
-        ColorSpace = colorSpace;        
+        ColorSpace = colorSpace;
     }
 
     public PVBitmapImage(string id, CanvasDevice device, IReadOnlyList<PVBitmapFrame> frames, ColorSpaceInfo colorSpace)
@@ -47,7 +45,7 @@ public class PVBitmapImage : IBitmapImage
     }
 
     public void Dispose()
-    {      
-        CanvasBitmap.Dispose();            
+    {
+        CanvasBitmap.Dispose();
     }
 }

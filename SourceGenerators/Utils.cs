@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.CodeAnalysis;
 
 namespace SourceGenerators;
 
@@ -14,7 +12,7 @@ internal class Utils
         var types = new List<INamedTypeSymbol>();
 
         GetAllTypeSymbolsRecursive(context.Compilation.Assembly.GlobalNamespace, types);
-   
+
         return types;
     }
 
@@ -35,9 +33,9 @@ internal class Utils
     internal static string GetFullName(ISymbol symbol)
     {
         var nss = new List<string>();
-        INamespaceSymbol ns;        
+        INamespaceSymbol ns;
 
-        if (symbol.ContainingType != null) 
+        if (symbol.ContainingType != null)
         {
             nss.Add(symbol.ContainingType.Name);
             ns = symbol.ContainingType.ContainingNamespace;
@@ -45,8 +43,8 @@ internal class Utils
         else
         {
             ns = symbol.ContainingNamespace;
-        }      
-        
+        }
+
         while (ns != null)
         {
             if (string.IsNullOrWhiteSpace(ns.Name))

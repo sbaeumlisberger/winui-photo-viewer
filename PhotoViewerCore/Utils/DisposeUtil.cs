@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PhotoViewerApp.Utils;
+﻿namespace PhotoViewerApp.Utils;
 
 public class DisposeUtil
 {

@@ -5,8 +5,6 @@ using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
 using PhotoViewerApp.ViewModels;
-using PhotoViewerApp.Views;
-using PhotoViewerCore.Models;
 using PhotoViewerCore.Services;
 using PhotoViewerCore.Utils;
 using System;

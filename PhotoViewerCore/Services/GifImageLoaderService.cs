@@ -1,9 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas;
 using PhotoViewerApp.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;

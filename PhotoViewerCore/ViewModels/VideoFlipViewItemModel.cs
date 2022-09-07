@@ -2,11 +2,6 @@
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Utils;
 using PhotoViewerCore.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PhotoViewerApp.ViewModels;
 
@@ -23,7 +18,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     public VideoFlipViewItemModel(IMediaFileInfo mediaFile)
     {
-        MediaItem = mediaFile;    
+        MediaItem = mediaFile;
     }
 
     public void StartLoading()

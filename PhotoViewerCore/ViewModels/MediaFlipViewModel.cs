@@ -7,15 +7,10 @@ using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
 using PhotoViewerCore.Models;
 using PhotoViewerCore.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Windows.Storage;
-using WinRT.Interop;
 
 namespace PhotoViewerApp.ViewModels;
 
@@ -122,7 +117,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
         CanSelectPrevious = SelectedItemModel != null && Items.IndexOf(SelectedItemModel) > 0;
         CanSelectNext = SelectedItemModel != null && Items.IndexOf(SelectedItemModel) < Items.Count - 1;
-        
+
         if (SelectedItemModel != null)
         {
             loadedItemModels.ForEach(x => x.IsActive = false);

@@ -1,11 +1,11 @@
-﻿using Microsoft.UI.Xaml;
-using PhotoViewerApp.Messages;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.Services;
+﻿using Microsoft.UI;
 using Microsoft.UI.Windowing;
-using Microsoft.UI;
-using WinRT.Interop;
+using Microsoft.UI.Xaml;
+using PhotoViewerApp.Messages;
+using PhotoViewerApp.Services;
+using PhotoViewerApp.Utils;
 using System;
+using WinRT.Interop;
 
 namespace PhotoViewerApp;
 
@@ -42,7 +42,7 @@ public sealed partial class MainWindow : Window
         frame.Navigate(viewRegistrations.ViewTypeByViewModelType[pageModelType], parameter);
     }
 
-    private AppWindow GetAppWindow() 
+    private AppWindow GetAppWindow()
     {
         var windowHandle = WindowNative.GetWindowHandle(this);
         var windowId = Win32Interop.GetWindowIdFromWindow(windowHandle);

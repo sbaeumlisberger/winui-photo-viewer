@@ -1,17 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using PhotoViewerApp.Messages;
+﻿using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using Windows.Storage;
-using static System.Collections.Specialized.BitVector32;
 
 namespace PhotoViewerApp.ViewModels;
 
@@ -52,7 +44,7 @@ public partial class FlipViewPageModel : ViewModelBase
             {
                 displayRequest = displayRequestService.RequestActive();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Log.Error("Failed to request display active", ex);
             }

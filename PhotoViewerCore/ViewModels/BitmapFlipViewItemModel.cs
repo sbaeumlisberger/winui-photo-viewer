@@ -1,15 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Graphics.Canvas;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
 using PhotoViewerCore.ViewModels;
-using System;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace PhotoViewerApp.ViewModels;
 
@@ -34,9 +29,9 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItem
         MediaItem = mediaItem;
         this.imageLoadService = imageLoadService;
 
-        messenger.Subscribe<BitmapRotatedMesssage>(msg => 
+        messenger.Subscribe<BitmapRotatedMesssage>(msg =>
         {
-            if (msg.Bitmap == MediaItem && BitmapImage != null) 
+            if (msg.Bitmap == MediaItem && BitmapImage != null)
             {
                 StartLoading();
             }
@@ -53,7 +48,7 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItem
             loadImageTaskCompletionSource.SetResult(true);
             Log.Info($"Loaded {MediaItem.Name} sucessfully");
         }
-        catch (OperationCanceledException) 
+        catch (OperationCanceledException)
         {
             Log.Debug($"Canceled loading {MediaItem.Name}");
         }

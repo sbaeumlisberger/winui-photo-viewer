@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Navigation;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;

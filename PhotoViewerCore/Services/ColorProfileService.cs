@@ -1,15 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
-using Microsoft.UI.Xaml;
 using PhotoViewerApp.Utils.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Windows.Devices.Display.Core;
-using WinRT.Interop;
 namespace PhotoVieweApp.Services;
 
 public interface IColorProfileService

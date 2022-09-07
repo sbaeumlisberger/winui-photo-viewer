@@ -1,12 +1,11 @@
 ﻿using Microsoft.UI.Xaml;
+using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
-using PhotoViewerApp.Utils;
 
 namespace PhotoViewerApp.Services;
 
@@ -69,7 +68,7 @@ public class DialogService : IDialogService
 
     private async Task ShowFileSavePickerModelAsync(FileSavePickerModel dialogModel)
     {
-        if (dialogModel.FileTypeChoices is null) 
+        if (dialogModel.FileTypeChoices is null)
         {
             throw new ArgumentException("The property FileTypeChoices must be set", nameof(dialogModel));
         }
@@ -79,7 +78,7 @@ public class DialogService : IDialogService
             SuggestedFileName = dialogModel.SuggestedFileName,
         };
 
-        dialogModel.FileTypeChoices.ForEach(ftc => fileSavePicker.FileTypeChoices.Add(ftc));             
+        dialogModel.FileTypeChoices.ForEach(ftc => fileSavePicker.FileTypeChoices.Add(ftc));
 
         InitializeWithWindow.Initialize(fileSavePicker, windowHandle);
 

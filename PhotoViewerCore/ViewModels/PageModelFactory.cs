@@ -24,10 +24,10 @@ public class PageModelFactory
         return new FlipViewPageModel(
             session,
             messenger,
-            () => new MediaFlipViewModel( messenger, dialogService, mediaFilesLoaderService, 
+            () => new MediaFlipViewModel(messenger, dialogService, mediaFilesLoaderService,
                 (mediaItem) => new BitmapFlipViewItemModel(mediaItem, messenger, imageLoaderService), settings),
             () => new DetailsBarModel(metadataService),
-            (flipViewPageModel) => new FlipViewPageCommandBarModel(session, messenger, dialogService, 
+            (flipViewPageModel) => new FlipViewPageCommandBarModel(session, messenger, dialogService,
                 mediaFilesLoaderService, rotatePhotoService, flipViewPageModel, deleteMediaService, settings),
             displayRequestService);
     }

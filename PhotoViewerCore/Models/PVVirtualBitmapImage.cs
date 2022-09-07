@@ -1,6 +1,4 @@
 ﻿using Microsoft.Graphics.Canvas;
-using System;
-using System.Collections.Generic;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 

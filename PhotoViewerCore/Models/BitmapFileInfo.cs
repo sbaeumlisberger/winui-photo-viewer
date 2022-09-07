@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using Windows.Storage;
+﻿using Windows.Storage;
 
 namespace PhotoViewerApp.Models;
 
-public interface IBitmapFileInfo : IMediaFileInfo 
+public interface IBitmapFileInfo : IMediaFileInfo
 {
     new IList<IStorageFile> LinkedFiles { get; }
 
@@ -50,7 +46,7 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
     public override string Name => File.Name + (LinkedFiles.Any() ? "[" + string.Join("|", LinkedFiles.Select(file => file.FileType)) + "]" : string.Empty);
 
     public IList<IStorageFile> LinkedFiles { get; } = new List<IStorageFile>();
-    
+
     public BitmapFileInfo(IStorageFile file) : base(file)
     {
         IsMetadataSupported = JpegFileExtensions.Contains(File.FileType.ToLower()) || TiffFileExtensions.Contains(File.FileType.ToLower());

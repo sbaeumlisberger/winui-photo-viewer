@@ -1,12 +1,9 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 
 namespace SourceGenerators;
 
@@ -92,7 +89,7 @@ public class ViewRegistrationGenerator : ISourceGenerator
             }
             registeredView.Add(className);
 
-            source.AppendLine($"        {{ typeof({viewModelTypeArg.Value}), typeof({className}) }},");            
+            source.AppendLine($"        {{ typeof({viewModelTypeArg.Value}), typeof({className}) }},");
         }
 
         source.AppendLine("    };");

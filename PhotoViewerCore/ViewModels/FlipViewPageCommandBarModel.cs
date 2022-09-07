@@ -6,9 +6,7 @@ using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerCore.Models;
 using PhotoViewerCore.ViewModels;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Storage;
 
@@ -76,6 +74,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         this.loadMediaItemsService = loadMediaItemsService;
         this.rotatePhotoService = rotatePhotoService;
         this.deleteMediaService = deleteMediaService;
+        this.settings = settings;
 
         SelectPreviousCommand = flipViewModel.SelectPreviousCommand;
         SelectNextCommand = flipViewModel.SelectNextCommand;

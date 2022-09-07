@@ -1,12 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Svg;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
 using PhotoViewerCore.ViewModels;
-using System;
-using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace PhotoViewerApp.ViewModels;
