@@ -4,11 +4,11 @@ using PhotoViewerApp.ViewModels;
 
 namespace PhotoViewerApp.Views;
 
-public sealed partial class MediaFlipViewItem : UserControl
+public sealed partial class BitmapFlipViewItem : UserControl
 {
-    private IMediaFlipViewItemModel ViewModel => (IMediaFlipViewItemModel)DataContext;
+    private BitmapFlipViewItemModel ViewModel => (BitmapFlipViewItemModel)DataContext;
 
-    public MediaFlipViewItem()
+    public BitmapFlipViewItem()
     {
         this.InitializeComponent();
         DataContextChanged += MediaFlipViewItem_DataContextChanged; ;

@@ -6,6 +6,9 @@ using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
 using PhotoViewerApp.ViewModels;
 using PhotoViewerApp.Views;
+using PhotoViewerCore.Models;
+using PhotoViewerCore.Services;
+using PhotoViewerCore.Utils;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -48,9 +51,13 @@ public partial class App : Application
     {
         Log.Info($"Application launched.");
 
+        var settingsService = new SettingsService();
+        var settings = await settingsService.LoadSettingsAsync();
+        ApplicationSettingsProvider.SetSettings(settings);
         var loadMediaItemsService = new MediaFilesLoaderService();
         var activatedEventArgs = AppInstance.GetActivatedEventArgs();
-        var loadMediaItemsTask = loadMediaItemsService.LoadMediaFilesAsync(activatedEventArgs, /*TODO*/new LoadMediaConfig(true, "RAWs"));
+        var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName);
+        var loadMediaItemsTask = loadMediaItemsService.LoadMediaFilesAsync(activatedEventArgs, config);
 
         var messenger = Messenger.GlobalInstance;
 

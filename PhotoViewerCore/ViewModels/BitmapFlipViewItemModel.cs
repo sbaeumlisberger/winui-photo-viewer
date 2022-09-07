@@ -5,6 +5,7 @@ using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
+using PhotoViewerCore.ViewModels;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -12,22 +13,12 @@ using System.Threading.Tasks;
 
 namespace PhotoViewerApp.ViewModels;
 
-public interface IMediaFlipViewItemModel : INotifyPropertyChanged
-{
-    IMediaFileInfo MediaItem { get; }
-
-    IBitmapImage? BitmapImage { get; }
-
-    void StartLoading();
-
-    void Cleanup();
-
-    Task<IBitmapImage?> WaitUntilImageLoaded();
-}
-
 public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItemModel
 {
     public IMediaFileInfo MediaItem { get; }
+
+    [ObservableProperty]
+    private bool isActive;
 
     [ObservableProperty]
     private IBitmapImage? bitmapImage;

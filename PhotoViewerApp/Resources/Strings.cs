@@ -60,6 +60,14 @@ public class Strings {
     /// Open folder
     /// </summary>
 	public static string OpenFolderButton => Get("OpenFolderButton");	
+	/// <summary>
+    /// Back
+    /// </summary>
+	public static string SettingsPage_BackButtonTooltip => Get("SettingsPage_BackButtonTooltip");	
+	/// <summary>
+    /// Settings
+    /// </summary>
+	public static string SettingsPage_Title => Get("SettingsPage_Title");	
 
 	private Strings() {}
 

@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace PhotoViewerApp.Utils;
 
-internal static class CollectionsUtil
+public static class CollectionsUtil
 {
 
     /// <summary>Removes all the elements that match the conditions defined by the specified predicate.</summary>
@@ -20,4 +20,16 @@ internal static class CollectionsUtil
         }
     }
 
+    public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
+    {
+        foreach (var element in enumerable) 
+        { 
+            action(element); 
+        }
+    }
+
+    public static void AddRange<T>(this ICollection<T> collection, IList<T> range)
+    {
+        range.ForEach(collection.Add);
+    }
 }

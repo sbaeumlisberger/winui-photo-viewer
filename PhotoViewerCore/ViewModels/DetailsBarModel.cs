@@ -5,6 +5,7 @@ using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
+using PhotoViewerCore.ViewModels;
 using System.ComponentModel;
 
 namespace PhotoViewerApp.ViewModels;
@@ -106,7 +107,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
             await UpdateFromMediaFileAsync(itemModel.MediaItem);
         }
 
-        if (await itemModel.WaitUntilImageLoaded() is IBitmapImage bitmapImage)
+        if (itemModel is BitmapFlipViewItemModel bitmapItemModel && await bitmapItemModel.WaitUntilImageLoaded() is IBitmapImage bitmapImage)
         {
             ShowColorProfileIndicator = bitmapImage.ColorSpace.Profile is not null;
             ColorSpaceType = ShowColorProfileIndicator ? bitmapImage.ColorSpace.Type : ColorSpaceType.NotSpecified;

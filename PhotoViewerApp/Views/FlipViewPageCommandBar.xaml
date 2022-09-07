@@ -23,7 +23,7 @@
     
     <CommandBar.SecondaryCommands>
         <AppBarButton Icon="OpenLocal" Label="Ordner öffnen" Command="{x:Bind ViewModel.OpenFolderCommand}"/>
-        <AppBarButton Icon="Setting" Label="Einstellungen"/>
+        <AppBarButton Icon="Setting" Label="Einstellungen" Command="{x:Bind ViewModel.NavigateToSettingsPageCommand}"/>
     </CommandBar.SecondaryCommands>
     
 </CommandBar>

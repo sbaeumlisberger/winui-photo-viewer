@@ -12,14 +12,22 @@ public sealed partial class MediaFlipView : UserControl
     public MediaFlipView()
     {
         this.InitializeComponent();
-        this.WhenDataContextSet(() => ViewModel.PropertyChanged += FlipViewModel_PropertyChanged);
+        this.WhenDataContextSet(() => {
+            ViewModel.PropertyChanged += FlipViewModel_PropertyChanged;
+            UpdateWindowTitle();
+        });
     }
 
     private void FlipViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(ViewModel.SelectedItemModel))
         {
-            App.Current.Window.Title = ViewModel.SelectedItemModel?.MediaItem.Name ?? "";
+            UpdateWindowTitle();
         }
+    }
+
+    private void UpdateWindowTitle() 
+    {
+        App.Current.Window.Title = ViewModel.SelectedItemModel?.MediaItem.Name ?? "";
     }
 }

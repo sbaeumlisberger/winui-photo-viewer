@@ -4,6 +4,8 @@ using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
+using PhotoViewerCore.Models;
+using PhotoViewerCore.ViewModels;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -56,6 +58,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     private readonly IDeleteMediaService deleteMediaService;
 
+    private readonly ApplicationSettings settings;
+
     public FlipViewPageCommandBarModel(
         Session session,
         IMessenger messenger,
@@ -63,7 +67,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         IMediaFilesLoaderService loadMediaItemsService,
         IRotateBitmapService rotatePhotoService,
         IMediaFlipViewModel flipViewModel,
-        IDeleteMediaService deleteMediaService)
+        IDeleteMediaService deleteMediaService,
+        ApplicationSettings settings)
     {
         this.session = session;
         this.messenger = messenger;
@@ -119,8 +124,15 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         await dialogService.ShowDialogAsync(folderPickerModel);
         if (folderPickerModel.Folder is StorageFolder folder)
         {
-            var result = await loadMediaItemsService.LoadMediaFilesAsync(folder, /*TODO*/new LoadMediaConfig(true, "RAWs"));
+            var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName);
+            var result = await loadMediaItemsService.LoadMediaFilesAsync(folder, config);
             messenger.Publish(new MediaItemsLoadedMessage(result.MediaItems, result.StartItem));
         }
+    }
+
+    [RelayCommand]
+    private void NavigateToSettingsPage()
+    {
+        messenger.Publish(new NavigateToPageMessage(typeof(SettingsPageModel)));
     }
 }

@@ -16,6 +16,11 @@
     </Page.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
         <GridView ItemsSource="{x:Bind ViewModel.Items}">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="models:IMediaFileInfo">
@@ -26,9 +31,7 @@
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>
-    </Grid>
 
-    <Page.BottomAppBar>
-        <CommandBar/>
-    </Page.BottomAppBar>
+        <CommandBar Grid.Row="1"/>
+    </Grid>
 </Page>

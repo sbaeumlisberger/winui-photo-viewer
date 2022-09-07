@@ -9,18 +9,16 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <local:DetailsBar DataContext="{x:Bind ViewModel.DetailsBarModel}"/>
 
         <local:MediaFlipView Grid.Row="1" DataContext="{x:Bind ViewModel.FlipViewModel}"/>
-    </Grid>
 
-    <Page.BottomAppBar>
-        <local:FlipViewPageCommandBar DataContext="{x:Bind ViewModel.CommandBarModel}"/>
-    </Page.BottomAppBar>
+        <local:FlipViewPageCommandBar Grid.Row="2" DataContext="{x:Bind ViewModel.CommandBarModel}"/>
+    </Grid>
 </Page>

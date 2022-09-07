@@ -31,7 +31,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
         {
             var files = await fileActivatedEventArgsWithNeighboringFiles.NeighboringFilesQuery.GetFilesAsync();
 
-            if (config.RAWsFolderName != null)
+            if (!string.IsNullOrEmpty(config.RAWsFolderName))
             {
                 string rawsFolderPath = Path.Combine(Path.GetDirectoryName(files.First().Path)!, config.RAWsFolderName);
 
@@ -66,7 +66,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
     {
         var files = await storageFolder.GetFilesAsync().AsTask().ConfigureAwait(false);
 
-        if (config.RAWsFolderName != null)
+        if (!string.IsNullOrEmpty(config.RAWsFolderName))
         {
             if (await storageFolder.TryGetItemAsync(config.RAWsFolderName).AsTask().ConfigureAwait(false) is IStorageFolder rawsFolder)
             {
@@ -112,7 +112,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             }
             else if (VideoFileInfo.SupportedFileExtensions.Contains(fileExtension))
             {
-                // not yet supported
+                mediaFiles.Add(new VideoFileInfo(file));
             }
             else if (VectorGraphicFileInfo.SupportedFileExtensions.Contains(fileExtension))
             {

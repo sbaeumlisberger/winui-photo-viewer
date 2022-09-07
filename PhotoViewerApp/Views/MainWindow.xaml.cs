@@ -22,6 +22,7 @@ public sealed partial class MainWindow : Window
         messenger.Subscribe<EnterFullscreenMessage>(msg => EnterFullscreen());
         messenger.Subscribe<ExitFullscreenMessage>(msg => ExitFullscreen());
         messenger.Subscribe<NavigateToPageMessage>(msg => NavigateToPage(msg.PageType, msg.Parameter));
+        messenger.Subscribe<NavigateBackMessage>(msg => frame.GoBack());
     }
 
     private void EnterFullscreen()

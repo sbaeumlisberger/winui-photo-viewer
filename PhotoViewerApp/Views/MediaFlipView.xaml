@@ -16,12 +16,13 @@
                 SelectedItem="{x:Bind ViewModel.SelectedItemModel, Mode=TwoWay}"
                 FocusVisualPrimaryThickness="0"
                 FocusVisualSecondaryThickness="0"
-                CornerRadius="0">
+                CornerRadius="0"
+                UseTouchAnimationsForAllNavigation="False">
             <FlipView.ItemTemplateSelector>
                 <local:MediaFlipViewItemTemplateSelector>
                     <local:MediaFlipViewItemTemplateSelector.BitmapFileInfoTemplate>
                         <DataTemplate>
-                            <local:MediaFlipViewItem/>
+                            <local:BitmapFlipViewItem/>
                         </DataTemplate>
                     </local:MediaFlipViewItemTemplateSelector.BitmapFileInfoTemplate>
                     <local:MediaFlipViewItemTemplateSelector.VectorGraphicFileInfoTemplate>
@@ -29,6 +30,11 @@
                             <local:VectorGraphicFlipViewItem/>
                         </DataTemplate>
                     </local:MediaFlipViewItemTemplateSelector.VectorGraphicFileInfoTemplate>
+                    <local:MediaFlipViewItemTemplateSelector.VideoFileInfoTemplate>
+                        <DataTemplate>
+                            <local:VideoFlipViewItem/>
+                        </DataTemplate>
+                    </local:MediaFlipViewItemTemplateSelector.VideoFileInfoTemplate>
                 </local:MediaFlipViewItemTemplateSelector>
             </FlipView.ItemTemplateSelector>
         </FlipView>

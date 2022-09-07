@@ -1,5 +1,5 @@
-﻿<Window
-    x:Class="PhotoViewerApp.MainWindow"
+﻿<UserControl
+    x:Class="PhotoViewerApp.Views.VideoFlipViewItem"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PhotoViewerApp.Views"
@@ -7,6 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Frame x:Name="frame"/>
- 
-</Window>
+    <Grid>
+        <!-- handle if displayed -->
+        <WebView2 x:Name="webView"/>
+    </Grid>
+</UserControl>

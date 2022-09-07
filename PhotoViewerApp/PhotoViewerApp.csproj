@@ -17,13 +17,14 @@
   
   <ItemGroup>
     <None Remove="FlipViewPage.xaml" />
+    <None Remove="Views\BitmapFlipViewItem.xaml" />
     <None Remove="Views\BitmapViewer.xaml" />
     <None Remove="Views\DetailsBar.xaml" />
     <None Remove="Views\FlipViewPageCommandBar.xaml" />
     <None Remove="Views\MediaFlipView.xaml" />
-    <None Remove="Views\MediaFlipViewItem.xaml" />
     <None Remove="Views\OverviewPage.xaml" />
     <None Remove="Views\VectorGraphicFlipViewItem.xaml" />
+    <None Remove="Views\VideoFlipViewItem.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -66,13 +67,22 @@
     <Page Update="Controls\BitmapViewer.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Update="Views\SettingsPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\VideoFlipViewItem.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\VectorGraphicFlipViewItem.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\MediaFlipView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\MediaFlipViewItem.xaml">
+    <Page Update="Views\BitmapFlipViewItem.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\OverviewPage.xaml">

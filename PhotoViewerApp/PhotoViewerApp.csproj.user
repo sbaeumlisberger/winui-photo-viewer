@@ -8,13 +8,19 @@
     <Page Update="Controls\BitmapViewer.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\SettingsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\VideoFlipViewItem.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\VectorGraphicFlipViewItem.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\MediaFlipView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\MediaFlipViewItem.xaml">
+    <Page Update="Views\BitmapFlipViewItem.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\OverviewPage.xaml">

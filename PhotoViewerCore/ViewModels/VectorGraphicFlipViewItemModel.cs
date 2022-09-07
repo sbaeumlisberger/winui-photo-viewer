@@ -4,6 +4,7 @@ using Microsoft.Graphics.Canvas.Svg;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
+using PhotoViewerCore.ViewModels;
 using System;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -14,14 +15,16 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
 {
     public IMediaFileInfo MediaItem { get; }
 
+
+    [ObservableProperty]
+    private bool isActive;
+
     [ObservableProperty]
     private string? content;
 
     [ObservableProperty]
     public bool isLoadingFailed = false;
 
-    // TODO
-    public IBitmapImage? BitmapImage => null;
 
     private TaskCompletionSource<bool> loadImageTaskCompletionSource = new TaskCompletionSource<bool>();
 
@@ -76,10 +79,4 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
         IsLoadingFailed = false;
     }
 
-    // TODO
-    public async Task<IBitmapImage?> WaitUntilImageLoaded()
-    {
-        await loadImageTaskCompletionSource.Task;
-        return null;
-    }
 }

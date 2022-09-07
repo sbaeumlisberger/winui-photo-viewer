@@ -1,0 +1,76 @@
+﻿<Page
+    x:Class="PhotoViewerApp.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewerApp.Views"
+    xmlns:converters="using:PhotoViewerApp.Converters"
+    xmlns:models="using:PhotoViewerApp.Models"
+    xmlns:resources="using:PhotoViewerApp.Resources"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <converters:TimeSpanToDoubleConverter x:Key="TimeSpanToDoubleConverter"/>
+    </Page.Resources>
+
+    <Grid Margin="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Orientation="Horizontal">
+            <Button ToolTipService.ToolTip="{x:Bind resources:Strings.SettingsPage_BackButtonTooltip}"
+                    Command="{x:Bind ViewModel.NavigateBackCommand}" Height="40" Margin="0,1,0,0" 
+                    VerticalAlignment="Center">
+                <SymbolIcon Symbol="Back"/>
+            </Button>
+            <TextBlock Margin="16,0,0,0" Style="{ThemeResource TitleTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Title}"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel>
+                <TextBlock Margin="0,32,0,8" Style="{ThemeResource SubtitleTextBlockStyle}" Text="Anzeige"/>
+                <ToggleSwitch Header="Animation beim Löschen von Dateien anzeigen" IsOn="{x:Bind ViewModel.Settings.ShowDeleteAnimation, Mode=OneWay}"/>
+                <ToggleSwitch Header="Ansicht zum Bearbeiten der Metadaten beim Starten automatisch öffnen" IsOn="{x:Bind ViewModel.Settings.AutoOpenMetadataPanel, Mode=OneWay}"/>
+                <ToggleSwitch Header="Leiste mit Details beim Starten automatisch öffnen" IsOn="{x:Bind ViewModel.Settings.AutoOpenDetailsBar, Mode=OneWay}"/>
+                <TextBlock Text="Zeitspanne in Sekunden, wie lange Fotos in der Diashow angezeigt werden"/>
+                <NumberBox Margin="0,4,0,0" HorizontalAlignment="Left" MinWidth="100" SpinButtonPlacementMode="Compact"
+                           Value="{x:Bind ViewModel.Settings.DiashowTime, Mode=TwoWay, Converter={StaticResource TimeSpanToDoubleConverter}}"/>
+
+                <TextBlock Margin="0,32,0,8" Style="{ThemeResource SubtitleTextBlockStyle}" Text="RAW-Dateien"/>
+                <ToggleSwitch IsOn="{x:Bind ViewModel.Settings.LinkRawFiles, Mode=OneWay}">
+                    <ToggleSwitch.Header>
+                        <StackPanel>
+                            <TextBlock Text="RAW-Dateien verlinken"/>
+                            <TextBlock Foreground="{ThemeResource SystemColorDisabledTextBrush}" Text="Normale Dateien und RAW-Dateien werden als eine Datei angezeigt"/>
+                        </StackPanel>
+                    </ToggleSwitch.Header>
+                </ToggleSwitch>
+                <TextBlock Margin="0,16,0,0" Text="Ordnername für RAW-Dateien"/>
+                <TextBlock Foreground="{ThemeResource SystemColorDisabledTextBrush}" Text="Spezifziert den Namen für einen Unterordner der nach RAW-Dateien durchsucht wird"/>
+                <TextBox Margin="0,8,0,0" HorizontalAlignment="Left" MinWidth="200"
+                         Text="{x:Bind ViewModel.Settings.RawFilesFolderName, Mode=OneWay}"/>
+                <TextBlock Margin="0,16,0,0" Text="Verlinkte Dateien löschen"/>
+                <RadioButtons MaxColumns="3">
+                    <RadioButton Content="Nachfragen"/>
+                    <RadioButton Content="Immer"/>
+                    <RadioButton Content="Nie"/>
+                </RadioButtons>
+
+                <TextBlock Margin="0,32,0,8" Style="{ThemeResource SubtitleTextBlockStyle}" Text="Videos"/>
+                <ToggleSwitch Header="Video-Dateien anzeigen" IsOn="{x:Bind ViewModel.Settings.IncludeVideos, Mode=OneWay}"/>
+
+                <TextBlock Margin="0,32,0,8" Style="{ThemeResource SubtitleTextBlockStyle}" Text="Einstellungen verwalten"/>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <Button Content="Exportieren..." Command="{x:Bind ViewModel.ExportCommand}"/>
+                    <Button Content="Wiederherstellen..." Command="{x:Bind ViewModel.ImportCommand}"/>
+                </StackPanel>
+                <Button Margin="0,12,0,0" Content="Alle Einstellungen zurücksetzen" Command="{x:Bind ViewModel.ResetCommand}"/>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
