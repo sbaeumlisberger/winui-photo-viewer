@@ -29,7 +29,8 @@ public class PageModelFactory
             () => new DetailsBarModel(metadataService),
             (flipViewPageModel) => new FlipViewPageCommandBarModel(session, messenger, dialogService,
                 mediaFilesLoaderService, rotatePhotoService, flipViewPageModel, deleteMediaService, settings),
-            displayRequestService);
+            displayRequestService,
+            showTagPeopleOnPhotoButton => new MetadataPanelModel(messenger, showTagPeopleOnPhotoButton));
     }
 
     public static OverviewPageModel CreateOverviewPageModel(IDialogService dialogService)

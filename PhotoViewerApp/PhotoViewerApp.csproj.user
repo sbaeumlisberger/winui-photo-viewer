@@ -5,6 +5,9 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Views\MetadataPanel.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Controls\BitmapViewer.xaml">
       <SubType>Designer</SubType>
     </Page>

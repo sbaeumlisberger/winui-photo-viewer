@@ -11,8 +11,6 @@ namespace PhotoViewerApp.Services;
 
 public class DialogService : IDialogService
 {
-    public static IDialogService Instance => Instance ?? throw new InvalidOperationException("DialogService is not initialized.");
-
     private readonly IntPtr windowHandle;
 
     public DialogService(Window window)

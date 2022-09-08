@@ -1,15 +1,15 @@
 ﻿using Microsoft.UI;
 using Microsoft.UI.Windowing;
-using Microsoft.UI.Xaml;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using System;
 using WinRT.Interop;
+using WinUIEx;
 
 namespace PhotoViewerApp;
 
-public sealed partial class MainWindow : Window
+public sealed partial class MainWindow : WindowEx
 {
     private readonly ViewRegistrations viewRegistrations = new ViewRegistrations();
 

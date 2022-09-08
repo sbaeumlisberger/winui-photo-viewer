@@ -129,6 +129,12 @@
   <data name="DetailsBar_NoInformationAvailable" xml:space="preserve">
     <value>Keine Information verfügbar</value>
   </data>
+  <data name="MetadataPanel_CloseButtonToolTip" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="MetadataPanel_Title" xml:space="preserve">
+    <value>Metadaten</value>
+  </data>
   <data name="NoItemsMessage" xml:space="preserve">
     <value>Keine Fotos zum Anzeigen vorhanden</value>
   </data>

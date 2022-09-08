@@ -3,6 +3,7 @@ using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
+using PhotoViewerCore.ViewModels;
 using System.ComponentModel;
 
 namespace PhotoViewerApp.ViewModels;
@@ -15,6 +16,8 @@ public partial class FlipViewPageModel : ViewModelBase
 
     public IMediaFlipViewModel FlipViewModel { get; }
 
+    public IMetadataPanelModel MetadataPanelModel { get; }
+
     private readonly Session session;
 
     private IDisposable? displayRequest;
@@ -25,13 +28,15 @@ public partial class FlipViewPageModel : ViewModelBase
         Func<IMediaFlipViewModel> flipViewModelFactory,
         Func<IDetailsBarModel> detailsBarModelFactory,
         Func<IMediaFlipViewModel, IFlipViewPageCommandBarModel> flipViewPageCommandBarModelFactory,
-        IDisplayRequestService displayRequestService)
+        IDisplayRequestService displayRequestService,
+        MetadataPanelModelFactory metadataPanelModelFactory)
     {
         this.session = session;
 
         FlipViewModel = flipViewModelFactory.Invoke();
         DetailsBarModel = detailsBarModelFactory.Invoke();
         CommandBarModel = flipViewPageCommandBarModelFactory.Invoke(FlipViewModel);
+        MetadataPanelModel = metadataPanelModelFactory.Invoke(true);
 
         FlipViewModel.PropertyChanged += FlipViewModel_PropertyChanged;
 

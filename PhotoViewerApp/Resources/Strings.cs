@@ -54,6 +54,14 @@ public class Strings
     /// </summary>
     public static string DetailsBar_NoInformationAvailable => Get("DetailsBar_NoInformationAvailable");
     /// <summary>
+    /// Close
+    /// </summary>
+    public static string MetadataPanel_CloseButtonToolTip => Get("MetadataPanel_CloseButtonToolTip");
+    /// <summary>
+    /// Metadata
+    /// </summary>
+    public static string MetadataPanel_Title => Get("MetadataPanel_Title");
+    /// <summary>
     /// Nothing to show
     /// </summary>
     public static string NoItemsMessage => Get("NoItemsMessage");
