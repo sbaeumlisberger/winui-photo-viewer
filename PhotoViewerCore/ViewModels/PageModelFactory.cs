@@ -30,17 +30,19 @@ public class PageModelFactory
             (flipViewPageModel) => new FlipViewPageCommandBarModel(session, messenger, dialogService,
                 mediaFilesLoaderService, rotatePhotoService, flipViewPageModel, deleteMediaService, settings),
             displayRequestService,
-            showTagPeopleOnPhotoButton => new MetadataPanelModel(messenger, showTagPeopleOnPhotoButton));
+            showTagPeopleOnPhotoButton => new MetadataPanelModel(messenger, metadataService, showTagPeopleOnPhotoButton));
     }
 
     public static OverviewPageModel CreateOverviewPageModel(IDialogService dialogService)
     {
         var session = Session.Instance;
         var messenger = Messenger.GlobalInstance;
+        var metadataService = new MetadataService();
         return new OverviewPageModel(
             session,
             messenger,
-            dialogService);
+            dialogService,
+            showTagPeopleOnPhotoButton => new MetadataPanelModel(messenger, metadataService, showTagPeopleOnPhotoButton));
     }
 
     public static SettingsPageModel CreateSettingsPageModel(IDialogService dialogService)

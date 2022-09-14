@@ -3,14 +3,20 @@ using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
+using PhotoViewerCore.ViewModels;
 using System.Collections.ObjectModel;
 
 namespace PhotoViewerApp.ViewModels;
 
 public partial class OverviewPageModel : ViewModelBase
 {
+    public IMetadataPanelModel MetadataPanelModel { get; }
+
     [ObservableProperty]
     private ObservableCollection<IMediaFileInfo> items = new ObservableCollection<IMediaFileInfo>();
+
+    [ObservableProperty]
+    private IList<IMediaFileInfo> selectedItems = new ObservableCollection<IMediaFileInfo>();
 
     private readonly IMessenger messenger;
 
@@ -19,10 +25,13 @@ public partial class OverviewPageModel : ViewModelBase
     public OverviewPageModel(
         Session session,
         IMessenger messenger,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        MetadataPanelModelFactory metadataPanelModelFactory)
     {
         this.messenger = messenger;
         this.dialogService = dialogService;
+
+        MetadataPanelModel = metadataPanelModelFactory.Invoke(false);
 
         Items = new ObservableCollection<IMediaFileInfo>(session.MediaItems);
 
@@ -40,6 +49,11 @@ public partial class OverviewPageModel : ViewModelBase
     public void ShowItem(IMediaFileInfo mediaItem)
     {
         messenger.Publish(new NavigateToPageMessage(typeof(FlipViewPageModel), mediaItem));
+    }
+
+    partial void OnSelectedItemsChanged(IList<IMediaFileInfo> value)
+    {
+        MetadataPanelModel.Files = SelectedItems;
     }
 
 }

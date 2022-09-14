@@ -43,6 +43,12 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     [NotifyCanExecuteChangedFor(nameof(SelectNextCommand))]
     private bool canSelectNext = false;
 
+    [ObservableProperty]
+    private bool isDiashowActive = false;
+
+    [ObservableProperty]
+    private bool isDiashowLoopActive = false;
+
     private readonly IMessenger messenger;
 
     private readonly IDialogService dialogService;
@@ -55,7 +61,9 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     private ICollection<IMediaFlipViewItemModel> loadedItemModels = Array.Empty<IMediaFlipViewItemModel>();
 
-    private bool diashowActive = false;
+    private bool isSelectionChangedByDiashowLoop = false;
+
+    private CancellationTokenSource? diashowLoopCancellationTokenSource;
 
     public MediaFlipViewModel(
         IMessenger messenger,
@@ -83,13 +91,14 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
         messenger.Subscribe<StartDiashowMessage>(msg =>
         {
-            diashowActive = true;
-            DiashowLoop();
+            IsDiashowActive = true;
+            IsDiashowLoopActive = true;
         });
 
         messenger.Subscribe<ExitDiashowMessage>(msg =>
         {
-            diashowActive = false;
+            IsDiashowActive = false;
+            IsDiashowLoopActive = false;
         });
     }
 
@@ -102,6 +111,30 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         Log.Info($"Create {Items.Count} item models took {sw.ElapsedMilliseconds} ms");
         Log.Debug("Set SelectedItemModel");
         SelectedItemModel = startItem != null ? Items.FirstOrDefault(itemModel => itemModel.MediaItem == startItem) : Items.FirstOrDefault();
+    }
+
+    public void Diashow_SelectPrevious()
+    {
+        if (CanSelectPrevious)
+        {
+            SelectPrevious();
+        }
+        else
+        {
+            SelectedItemModel = Items.Last();
+        }
+    }
+
+    public void Diashow_SelectNext()
+    {
+        if (CanSelectNext)
+        {
+            SelectNext();
+        }
+        else
+        {
+            SelectedItemModel = Items.First();
+        }
     }
 
     partial void OnItemsChanged(ObservableCollection<IMediaFlipViewItemModel> value)
@@ -123,24 +156,49 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
             loadedItemModels.ForEach(x => x.IsActive = false);
             SelectedItemModel.IsActive = true;
         }
+
+        if (!isSelectionChangedByDiashowLoop)
+        {
+            IsDiashowLoopActive = false;
+        }
     }
 
-    private async void DiashowLoop()
+    partial void OnIsDiashowLoopActiveChanged(bool value)
     {
-        await Task.Delay(settings.DiashowTime);
-
-        if (diashowActive)
+        if (IsDiashowLoopActive)
         {
-            if (CanSelectNext)
-            {
-                SelectNext();
-            }
-            else
-            {
-                SelectedItemModel = Items.First();
-            }
-            DiashowLoop();
+            EnableDiashowLoop();
         }
+        else
+        {
+            DisableDiashowLoop();
+        }
+    }
+
+    private void EnableDiashowLoop()
+    {
+        diashowLoopCancellationTokenSource?.Cancel();
+        diashowLoopCancellationTokenSource = new CancellationTokenSource();
+
+        async void loop(CancellationToken cancellationToken)
+        {
+            await Task.Delay(settings.DiashowTime);
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                isSelectionChangedByDiashowLoop = true;
+                Diashow_SelectNext();
+                isSelectionChangedByDiashowLoop = false;
+                await Task.Delay(settings.DiashowTime);
+            }
+        }
+
+        loop(diashowLoopCancellationTokenSource.Token);
+    }
+
+    private void DisableDiashowLoop()
+    {
+        diashowLoopCancellationTokenSource?.Cancel();
+        diashowLoopCancellationTokenSource = null;
     }
 
     private void UpdateFlipViewItemModels()
@@ -196,6 +254,27 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     private void SelectNext()
     {
         SelectedItemModel = Items[Items.IndexOf(SelectedItemModel!) + 1];
+    }
+
+    [RelayCommand]
+    private void ToogleDiashowLoop()
+    {
+        if (IsDiashowLoopActive)
+        {
+            IsDiashowLoopActive = false;
+            DisableDiashowLoop();
+        }
+        else
+        {
+            IsDiashowLoopActive = true;
+            EnableDiashowLoop();
+        }
+    }
+
+    [RelayCommand]
+    private void ExitDiashow()
+    {
+        messenger.Publish(new ExitDiashowMessage());
     }
 
     [RelayCommand]

@@ -5,6 +5,9 @@ using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
 using PhotoViewerCore.Models;
 using PhotoViewerCore.Services;
+using PhotoViewerCore.Utils;
+using System.ComponentModel;
+using Tocronx.SimpleAsync;
 using Windows.Storage;
 
 namespace PhotoViewerCore.ViewModels
@@ -16,6 +19,10 @@ namespace PhotoViewerCore.ViewModels
         private readonly IDialogService dialogService;
 
         private readonly ISettingsService settingsService;
+
+        private readonly SequentialTaskRunner saveSettingsTaskRunner = new SequentialTaskRunner();
+
+        public IList<DeleteLinkedFilesOption> AvailableDeleteLinkedFilesOptions { get; } = Enum.GetValues<DeleteLinkedFilesOption>();
 
         public ApplicationSettings Settings { get; }
 
@@ -29,6 +36,21 @@ namespace PhotoViewerCore.ViewModels
             this.settingsService = settingsService;
             this.dialogService = dialogService;
             Settings = settings;
+        }
+
+        public void OnViewLoaded()
+        {
+            Settings.PropertyChanged += Settings_PropertyChanged;
+        }
+
+        public void OnViewUnloaded() 
+        {
+            Settings.PropertyChanged -= Settings_PropertyChanged;
+        }
+
+        private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            saveSettingsTaskRunner.EnqueueIfEmpty(() => settingsService.SaveSettingsAsync(Settings));
         }
 
         [RelayCommand]
@@ -66,7 +88,8 @@ namespace PhotoViewerCore.ViewModels
 
             if (fileOpenPickerModel.File is IStorageFile file)
             {
-                await settingsService.ImportSettingsAsync(file);
+                var importedSettings = await settingsService.ImportSettingsAsync(file);
+                ApplicationSettingsProvider.SetSettings(importedSettings);
             }
         }
 

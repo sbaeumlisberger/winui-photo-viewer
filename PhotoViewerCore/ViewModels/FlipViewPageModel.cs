@@ -68,8 +68,10 @@ public partial class FlipViewPageModel : ViewModelBase
     {
         if (e.PropertyName == nameof(FlipViewModel.SelectedItemModel))
         {
-            DetailsBarModel.SelectedItemModel = FlipViewModel.SelectedItemModel;
-            CommandBarModel.SelectedItemModel = FlipViewModel.SelectedItemModel;
+            var selectedItemModel = FlipViewModel.SelectedItemModel;
+            DetailsBarModel.SelectedItemModel = selectedItemModel;
+            CommandBarModel.SelectedItemModel = selectedItemModel;
+            MetadataPanelModel.Files = CollectionsUtil.NotNull(selectedItemModel?.MediaItem);
         }
     }
 

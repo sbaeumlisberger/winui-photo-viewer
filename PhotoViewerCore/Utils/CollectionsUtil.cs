@@ -1,4 +1,6 @@
-﻿namespace PhotoViewerApp.Utils;
+﻿using System.Security.Cryptography;
+
+namespace PhotoViewerApp.Utils;
 
 public static class CollectionsUtil
 {
@@ -26,5 +28,10 @@ public static class CollectionsUtil
     public static void AddRange<T>(this ICollection<T> collection, IList<T> range)
     {
         range.ForEach(collection.Add);
+    }
+
+    public static IList<T> NotNull<T>(T? element) 
+    {
+        return element != null ? new[] { element } : Array.Empty<T>();
     }
 }

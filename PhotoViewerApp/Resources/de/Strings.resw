@@ -129,11 +129,23 @@
   <data name="DetailsBar_NoInformationAvailable" xml:space="preserve">
     <value>Keine Information verfügbar</value>
   </data>
+  <data name="MediaFlipView_DisableDiashowLoop" xml:space="preserve">
+    <value>Pausieren</value>
+  </data>
+  <data name="MediaFlipView_EnableDiashowLoop" xml:space="preserve">
+    <value>Fortsetzen</value>
+  </data>
+  <data name="MediaFlipView_ExitDiashow" xml:space="preserve">
+    <value>Beenden</value>
+  </data>
   <data name="MetadataPanel_CloseButtonToolTip" xml:space="preserve">
     <value>Schließen</value>
   </data>
   <data name="MetadataPanel_Title" xml:space="preserve">
     <value>Metadaten</value>
+  </data>
+  <data name="MetadataPanel_TitleHeader" xml:space="preserve">
+    <value>Titel</value>
   </data>
   <data name="NoItemsMessage" xml:space="preserve">
     <value>Keine Fotos zum Anzeigen vorhanden</value>
@@ -141,8 +153,32 @@
   <data name="OpenFolderButton" xml:space="preserve">
     <value>Ordner öffnen</value>
   </data>
+  <data name="SettingsPage_AppearanceSectionTittle" xml:space="preserve">
+    <value>Anzeige</value>
+  </data>
+  <data name="SettingsPage_AutoShowDetailsBarToogle" xml:space="preserve">
+    <value>Leiste mit Details beim Starten öffnen</value>
+  </data>
+  <data name="SettingsPage_AutoShowMetadataPanelToogle" xml:space="preserve">
+    <value>Ansicht zum Bearbeiten der Metadaten beim Starten öffnen</value>
+  </data>
   <data name="SettingsPage_BackButtonTooltip" xml:space="preserve">
     <value>Zurück</value>
+  </data>
+  <data name="SettingsPage_DeleteLinkedFilesOption_Ask" xml:space="preserve">
+    <value>Nachfragen</value>
+  </data>
+  <data name="SettingsPage_DeleteLinkedFilesOption_No" xml:space="preserve">
+    <value>Nie</value>
+  </data>
+  <data name="SettingsPage_DeleteLinkedFilesOption_Yes" xml:space="preserve">
+    <value>Immer</value>
+  </data>
+  <data name="SettingsPage_DiashowTimeLabel" xml:space="preserve">
+    <value>Zeitspanne in Sekunden, wie lange Fotos in der Diashow angezeigt werden</value>
+  </data>
+  <data name="SettingsPage_ShowDeleteAnimationToggle" xml:space="preserve">
+    <value>Animation beim Löschen von Dateien anzeigen</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Einstellungen</value>

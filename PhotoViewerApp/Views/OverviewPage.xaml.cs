@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Input;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
+using System.Linq;
 
 namespace PhotoViewerApp.Views;
 
@@ -21,5 +22,10 @@ public sealed partial class OverviewPage : Page
     {
         IMediaFileInfo mediaItem = (IMediaFileInfo)((FrameworkElement)sender).DataContext;
         ViewModel.ShowItem(mediaItem);
+    }
+
+    private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        ViewModel.SelectedItems = gridView.SelectedItems.Cast<IMediaFileInfo>().ToList();
     }
 }

@@ -2,7 +2,9 @@
 using PhotoViewerApp.Resources;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
+using PhotoViewerCore.Models;
 using PhotoViewerCore.ViewModels;
+using System;
 
 namespace PhotoViewerApp.Views;
 
@@ -15,5 +17,13 @@ public sealed partial class SettingsPage : Page
     {
         this.InitializeComponent();
         App.Current.Window.Title = Strings.SettingsPage_Title;
+    }
+
+    private void DeleteLinkedFilesOptions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.AddedItems.Count > 0 && e.AddedItems[0] is DeleteLinkedFilesOption option)
+        {
+            ViewModel.Settings.DeleteLinkedFilesOption = option;
+        }
     }
 }
