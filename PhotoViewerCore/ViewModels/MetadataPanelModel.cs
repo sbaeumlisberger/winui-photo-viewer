@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using MetadataAPI;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
@@ -12,36 +11,42 @@ namespace PhotoViewerCore.ViewModels
 {
     public delegate IMetadataPanelModel MetadataPanelModelFactory(bool tagPeopleOnPhotoButtonVisible);
 
-    public interface IMetadataPanelModel : INotifyPropertyChanged 
+    public interface IMetadataPanelModel : INotifyPropertyChanged
     {
         IList<IMediaFileInfo> Files { get; set; }
+
+        bool IsVisible { get; set; }
     }
 
     public partial class MetadataPanelModel : ViewModelBase, IMetadataPanelModel
     {
-        [ObservableProperty]
-        private bool isVisible = true;
+        public bool IsVisible { get; set; } = true;
 
-        [ObservableProperty]
-        private bool isEnabled = false;
+        public bool IsEnabled { get; private set; } = false;
 
-        public MetadataStringViewModel TitleModel { get; } = new MetadataStringViewModel();
+        public MetadataTextboxModel TitleTextboxModel { get; }
 
-        [ObservableProperty]
-        private IList<IMediaFileInfo> files = Array.Empty<IMediaFileInfo>();
+        public KeywordsSectionModel KeywordsSectionModel { get; }
+
+        public MetadataTextboxModel AuthorTextboxModel { get; }
+
+        public MetadataTextboxModel CopyrightTextboxModel { get; }
+
+        public IList<IMediaFileInfo> Files { get; set; } = Array.Empty<IMediaFileInfo>();
 
         private IList<IBitmapFileInfo> supportedFiles = Array.Empty<IBitmapFileInfo>();
 
         public bool IsTagPeopleOnPhotoButtonVisible { get; }
 
-        [ObservableProperty]
-        private bool isTagPeopleOnPhotoButtonChecked;
+        public bool IsTagPeopleOnPhotoButtonChecked { get; private set; }
 
         private readonly IMessenger messenger;
 
         private readonly IMetadataService metadataService;
 
-        private readonly CancelableTaskRunner cancelableTaskRunner = new CancelableTaskRunner();
+        private readonly CancelableTaskRunner updateRunner = new CancelableTaskRunner();
+
+        private readonly SequentialTaskRunner writeFilesRunner = new SequentialTaskRunner();
 
         public MetadataPanelModel(IMessenger messenger, IMetadataService metadataService, bool tagPeopleOnPhotoButtonVisible)
         {
@@ -57,15 +62,20 @@ namespace PhotoViewerCore.ViewModels
                     IsTagPeopleOnPhotoButtonChecked = msg.IsVisible;
                 });
             }
+
+            TitleTextboxModel = new MetadataTextboxModel(value => WriteMetadataAsync(MetadataProperties.Title, value));
+            KeywordsSectionModel = new KeywordsSectionModel(metadataService);
+            AuthorTextboxModel = new MetadataTextboxModel(value => WriteMetadataAsync(MetadataProperties.Author, value.Split(";").Select(author => author.Trim()).ToArray()));
+            CopyrightTextboxModel = new MetadataTextboxModel(value => WriteMetadataAsync(MetadataProperties.Copyright, value));
         }
 
-        partial void OnFilesChanged(IList<IMediaFileInfo> value)
+        partial void OnFilesChanged()
         {
             supportedFiles = Files.OfType<IBitmapFileInfo>().Where(file => file.IsMetadataSupported).ToList();
-            
+
             IsEnabled = supportedFiles.Count == Files.Count;
 
-            cancelableTaskRunner.RunAndCancelPrevious(Update);
+            updateRunner.RunAndCancelPrevious(Update);
         }
 
         private async Task Update(CancellationToken cancellationToken)
@@ -76,11 +86,17 @@ namespace PhotoViewerCore.ViewModels
 
                 if (cancellationToken.IsCancellationRequested) return;
 
-                TitleModel.SetValues(metadata.Select(m => m.Get(MetadataProperties.Title).Trim()));
+                TitleTextboxModel.SetValues(metadata.Select(m => m.Get(MetadataProperties.Title).Trim()).ToList());
+                KeywordsSectionModel.SetValues(supportedFiles, metadata.Select(m => m.Get(MetadataProperties.Keywords)).ToList());
+                AuthorTextboxModel.SetValues(metadata.Select(m => string.Join("; ", m.Get(MetadataProperties.Author))).ToList());
+                CopyrightTextboxModel.SetValues(metadata.Select(m => m.Get(MetadataProperties.Copyright).Trim()).ToList());
             }
-            else 
+            else
             {
-                TitleModel.Clear();
+                TitleTextboxModel.Clear();
+                KeywordsSectionModel.Clear();
+                AuthorTextboxModel.Clear();
+                CopyrightTextboxModel.Clear();
             }
         }
 
@@ -95,6 +111,17 @@ namespace PhotoViewerCore.ViewModels
         private void ToggleTagPeopleOnPhoto()
         {
             messenger.Publish(new SetTagPeopleToolActive(!IsTagPeopleOnPhotoButtonChecked));
+        }
+
+        private async Task WriteMetadataAsync<T>(IMetadataProperty<T> property, T value)
+        {
+            await writeFilesRunner.Enqueue(async () =>
+            {
+                foreach (var file in supportedFiles)
+                {
+                    await metadataService.WriteMetadataAsync(file, property, value);
+                }
+            });
         }
 
     }

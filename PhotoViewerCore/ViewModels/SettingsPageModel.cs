@@ -43,7 +43,7 @@ namespace PhotoViewerCore.ViewModels
             Settings.PropertyChanged += Settings_PropertyChanged;
         }
 
-        public void OnViewUnloaded() 
+        public void OnViewUnloaded()
         {
             Settings.PropertyChanged -= Settings_PropertyChanged;
         }

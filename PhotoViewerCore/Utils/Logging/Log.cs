@@ -39,13 +39,8 @@ public static class Log
         return await Logger.GetLogFileAsync().ConfigureAwait(false);
     }
 
-    public static async Task ClearLogFileAsync()
+    public static void ArchiveLogFile()
     {
-        await Logger.ClearLogFileAsync().ConfigureAwait(false);
-    }
-
-    public static async Task<IStorageFile> GetPreviousLogFileAsync()
-    {
-        return await Logger.GetPreviousLogFileAsync().ConfigureAwait(false);
+        Logger.ArchiveLogFile();
     }
 }

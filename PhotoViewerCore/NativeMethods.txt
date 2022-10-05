@@ -1,5 +1,0 @@
-﻿MonitorFromWindow
-EnumDisplayDevices
-WcsGetDefaultColorProfileSize
-WcsGetDefaultColorProfile
-RECT

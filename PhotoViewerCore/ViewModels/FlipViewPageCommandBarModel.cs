@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
@@ -22,27 +21,19 @@ public interface IFlipViewPageCommandBarModel : INotifyPropertyChanged
 public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageCommandBarModel
 {
 
-    [ObservableProperty]
-    private IMediaFlipViewItemModel? selectedItemModel;
+    public IMediaFlipViewItemModel? SelectedItemModel { get; set; }
 
-    [ObservableProperty]
-    private bool isVisible = true;
+    public bool IsVisible { get; set; } = true;
 
     public ICommand SelectPreviousCommand { get; }
 
     public ICommand SelectNextCommand { get; }
 
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(StartDiashowCommand))]
-    private bool canStartDiashow = false;
+    public bool CanStartDiashow { get; private set; } = false;
 
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(RotateCommand))]
-    private bool canRotate = false;
+    public bool CanRotate { get; private set; } = false;
 
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(DeleteCommand))]
-    private bool canDelete = false;
+    public bool CanDelete { get; private set; } = false;
 
     private readonly Session session;
 
@@ -78,10 +69,9 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
         SelectPreviousCommand = flipViewModel.SelectPreviousCommand;
         SelectNextCommand = flipViewModel.SelectNextCommand;
-        this.deleteMediaService = deleteMediaService;
     }
 
-    partial void OnSelectedItemModelChanged(IMediaFlipViewItemModel? value)
+    partial void OnSelectedItemModelChanged()
     {
         CanStartDiashow = SelectedItemModel != null;
         CanDelete = SelectedItemModel != null;

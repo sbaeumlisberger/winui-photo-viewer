@@ -1,33 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.22621.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="NativeMethods.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Include="NativeMethods.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
     <PackageReference Include="MetadataAPI" Version="1.4.3" />
-    <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.0.3.1" ExcludeAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="PostSharp.Patterns.Model" Version="6.10.15" />
     <PackageReference Include="Tocronx.SimpleAsync" Version="1.4.0" />
+    <PackageReference Include="WIC.DotNet" Version="1.2.0" />
+    
+    <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.0.3.1" ExcludeAssets="all" GeneratePathProperty="true" />
     <Reference Include="CopyThis">
       <HintPath>$(PkgMicrosoft_Graphics_Win2D)\lib\net5.0-windows10.0.18362.0\Microsoft.Graphics.Canvas.Interop.dll</HintPath>
       <Private>true</Private>
-    </Reference>   
-    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.46-beta">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="WIC.DotNet" Version="1.2.0" />
+    </Reference>  
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SourceGenerators\SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

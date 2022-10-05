@@ -1,29 +1,63 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
-using Microsoft.UI.Xaml;
-using PhotoVieweApp.Services;
+using Microsoft.Graphics.Display;
+using Microsoft.UI;
+using PhotoViewerApp.Utils.Logging;
 using System;
-using WinRT.Interop;
+using System.Threading.Tasks;
 
 namespace PhotoViewerApp.Utils;
 
-internal class ColorProfileProvider
+interface IColorProfileProvider
 {
+    event EventHandler? ColorProfileChanged;
 
-    private static ColorManagementProfile? colorProfile;
+    ColorManagementProfile? ColorProfile { get; }
+}
 
-    public static ColorManagementProfile? GetColorProfile()
+internal class ColorProfileProvider : IColorProfileProvider
+{
+    public static ColorProfileProvider Instance { get; } = new ColorProfileProvider();
+
+    public event EventHandler? ColorProfileChanged;
+
+    public ColorManagementProfile? ColorProfile { get; private set; }
+
+    private DisplayInformation? displayInformation;
+
+    public async Task InitializeAsync(WindowId windowId)
     {
-        return colorProfile;
+        try
+        {
+            displayInformation = DisplayInformation.CreateForWindowId(windowId);
+            displayInformation.ColorProfileChanged += DisplayInformation_ColorProfileChanged;
+            ColorProfile = await LoadColorProfileAsync(displayInformation);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to initialize ColorProfileProvider", ex);
+        }
     }
 
-    private static readonly IColorProfileService colorProfileService = new ColorProfileService();
-
-    // TODO handle no profile assigned
-    // TODO handle profile not activated
-    // TODO window moved
-    public static void Initialize(Window window)
+    private async void DisplayInformation_ColorProfileChanged(DisplayInformation sender, object args)
     {
-        IntPtr windowHandle = WindowNative.GetWindowHandle(window);
-        colorProfile = colorProfileService.GetColorProfileForWindow(windowHandle);
+        Log.Info("Color profile changed");
+        ColorProfile = await LoadColorProfileAsync(sender);
+        ColorProfileChanged?.Invoke(null, EventArgs.Empty);
+    }
+
+    private async Task<ColorManagementProfile?> LoadColorProfileAsync(DisplayInformation displayInformation)
+    {
+        try
+        {
+            var colorProfileStream = await displayInformation.GetColorProfileAsync().AsTask().ConfigureAwait(false);
+            if (colorProfileStream is null) return null;
+            byte[] colorProfileBytes = await colorProfileStream.ReadBytesAsync().ConfigureAwait(false);
+            return ColorManagementProfile.CreateCustom(colorProfileBytes);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to load display color profile", ex);
+            return null;
+        }
     }
 }

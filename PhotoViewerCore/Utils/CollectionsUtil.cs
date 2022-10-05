@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-
-namespace PhotoViewerApp.Utils;
+﻿namespace PhotoViewerApp.Utils;
 
 public static class CollectionsUtil
 {
@@ -25,12 +23,17 @@ public static class CollectionsUtil
         }
     }
 
-    public static void AddRange<T>(this ICollection<T> collection, IList<T> range)
+    public static IEnumerable<T> Flatten<T>(this IEnumerable<IEnumerable<T>> enumerable)
+    {
+        return enumerable.SelectMany(x => x);
+    }
+
+    public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> range)
     {
         range.ForEach(collection.Add);
     }
 
-    public static IList<T> NotNull<T>(T? element) 
+    public static IList<T> NotNull<T>(T? element)
     {
         return element != null ? new[] { element } : Array.Empty<T>();
     }

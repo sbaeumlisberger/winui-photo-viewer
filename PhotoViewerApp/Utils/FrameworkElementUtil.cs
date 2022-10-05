@@ -17,7 +17,7 @@ public static class FrameworkElementUtil
         {
             menuFlyout.ShowAt(element, position);
         }
-        else 
+        else
         {
             flyout.ShowAt(element);
         }

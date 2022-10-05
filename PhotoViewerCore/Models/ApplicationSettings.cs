@@ -3,7 +3,7 @@
 namespace PhotoViewerCore.Models;
 
 [ObservableObject]
- public partial class ApplicationSettings
+public partial class ApplicationSettings
 {
     [ObservableProperty] private bool showDeleteAnimation = true;
     [ObservableProperty] private bool autoOpenMetadataPanel = false;

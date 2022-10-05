@@ -4,7 +4,6 @@ using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
 using PhotoViewerCore.Models;
 using PhotoViewerCore.ViewModels;
-using System;
 
 namespace PhotoViewerApp.Views;
 

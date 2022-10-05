@@ -138,8 +138,32 @@
   <data name="MediaFlipView_ExitDiashow" xml:space="preserve">
     <value>Beenden</value>
   </data>
+  <data name="MetadataPanel_AuthorsHeader" xml:space="preserve">
+    <value>Autoren</value>
+  </data>
   <data name="MetadataPanel_CloseButtonToolTip" xml:space="preserve">
     <value>Schließen</value>
+  </data>
+  <data name="MetadataPanel_CopyrightHeader" xml:space="preserve">
+    <value>Copyright</value>
+  </data>
+  <data name="MetadataPanel_DateTakenHeader" xml:space="preserve">
+    <value>Aufnamedatum</value>
+  </data>
+  <data name="MetadataPanel_KeywordsHeader" xml:space="preserve">
+    <value>Markierungen</value>
+  </data>
+  <data name="MetadataPanel_LocationHeader" xml:space="preserve">
+    <value>Aufnahmeort</value>
+  </data>
+  <data name="MetadataPanel_PeopleHeader" xml:space="preserve">
+    <value>Personen</value>
+  </data>
+  <data name="MetadataPanel_PeoplePlaceholder" xml:space="preserve">
+    <value>Name eingeben</value>
+  </data>
+  <data name="MetadataPanel_RatingHeader" xml:space="preserve">
+    <value>Bewertung</value>
   </data>
   <data name="MetadataPanel_Title" xml:space="preserve">
     <value>Metadaten</value>

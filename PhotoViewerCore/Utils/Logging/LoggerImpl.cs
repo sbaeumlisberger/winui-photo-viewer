@@ -4,20 +4,11 @@ using Windows.Storage;
 
 namespace PhotoViewerApp.Utils.Logging;
 
-// TODO logging of multiple processes
 internal class LoggerImpl : ILogger
 {
-    private static readonly string LogsFolderName = "logs";
+    private static readonly string LogFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "logs");
 
-    private static readonly string LogFileName = "log-" + Guid.NewGuid() + ".txt";
-
-    private static readonly string RolloverLogFileName = "previous-log.txt";
-
-    private static readonly string LogFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, LogsFolderName);
-
-    private static readonly string LogFilePath = Path.Combine(LogFolderPath, LogFileName);
-
-    private static readonly string RolloverLogFilePath = Path.Combine(LogFolderPath, RolloverLogFileName);
+    private static readonly string LogFilePath = Path.Combine(LogFolderPath, "log-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt");
 
     private readonly StreamWriter logFileWriter;
 
@@ -25,15 +16,13 @@ internal class LoggerImpl : ILogger
     {
         Directory.CreateDirectory(LogFolderPath);
 
-        if (File.Exists(LogFilePath))
-        {
-            File.Delete(RolloverLogFilePath);
-            File.Move(LogFilePath, RolloverLogFilePath);
-        }
-
         var stream = new FileStream(LogFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
         stream.Seek(0, SeekOrigin.End);
         logFileWriter = new StreamWriter(stream) { AutoFlush = true };
+
+        System.Diagnostics.Debug.WriteLine($"Logging to: {LogFilePath}");
+
+        Task.Run(CleanupOldLogFiles);
     }
 
     public void Debug(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
@@ -43,12 +32,12 @@ internal class LoggerImpl : ILogger
 
     public void Info(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Log("INFO ", message, null, file, lineNumber);
+        Log("INFO", message, null, file, lineNumber);
     }
 
     public void Warn(string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Log("WARN ", message, exception, file, lineNumber);
+        Log("WARN", message, exception, file, lineNumber);
     }
 
     public void Error(string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
@@ -61,16 +50,31 @@ internal class LoggerImpl : ILogger
         Log("FATAL", message, exception, file, lineNumber);
     }
 
-    private void Log(string prefix, string? message, Exception? exception, string file, int lineNumber)
+    public async Task<IStorageFile> GetLogFileAsync()
+    {
+        return await StorageFile.GetFileFromPathAsync(LogFilePath).AsTask().ConfigureAwait(false);
+    }
+
+    public void ArchiveLogFile()
+    {
+        logFileWriter.Close();
+        File.Move(LogFilePath, LogFilePath + ".bak");
+    }
+
+    private void Log(string level, string? message, Exception? exception, string file, int lineNumber)
     {
         string timestamp = DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss");
-        var fileName = file.Substring(file.IndexOf(@"\PhotoViewerApp\") + @"\PhotoViewerApp\".Length);
+        var fileName = file.Substring(file.IndexOf(@"\PhotoViewer") + @"\PhotoViewer".Length);
 
-        AppendToLog($"{timestamp} | {prefix} | {fileName}:{lineNumber} | {message ?? exception?.Message ?? ""} \n");
+        string line = ($"{timestamp} | {level} | {fileName}:{lineNumber} | {message ?? exception?.Message ?? ""} \n");
 
         if (exception != null)
         {
-            AppendToLog(ExceptionFormatter.Format(exception));
+            AppendToLog(line + ExceptionFormatter.Format(exception));
+        }
+        else
+        {
+            AppendToLog(line);
         }
     }
 
@@ -98,20 +102,40 @@ internal class LoggerImpl : ILogger
         }
     }
 
-    public async Task<IStorageFile> GetLogFileAsync()
+    private void CleanupOldLogFiles()
     {
-        return await StorageFile.GetFileFromPathAsync(LogFilePath).AsTask().ConfigureAwait(false);
+        try
+        {
+#if DEBUG
+            if (Debugger.IsAttached)
+            {
+                Directory.EnumerateFiles(LogFolderPath)
+                    .Where(filePath => filePath != LogFilePath)
+                    .ForEach(filePath => TryDeleteFile(filePath));
+                return;
+            }
+#endif
+            var oneWeekAgo = DateTime.UtcNow.Subtract(TimeSpan.FromDays(7));
+            Directory.EnumerateFiles(LogFolderPath)
+                .Where(filePath => File.GetLastWriteTimeUtc(filePath) < oneWeekAgo)
+                .ForEach(filePath => TryDeleteFile(filePath));
+        }
+        catch (Exception ex)
+        {
+            Warn("Failed to cleanup old log files", ex);
+        }
     }
 
-    public async Task ClearLogFileAsync()
+    private void TryDeleteFile(string filePath)
     {
-        logFileWriter.BaseStream.Position = 0;
-        logFileWriter.BaseStream.SetLength(0);
-        await logFileWriter.FlushAsync().ConfigureAwait(false);
+        try
+        {
+            File.Delete(filePath);
+        }
+        catch (Exception ex)
+        {
+            Warn($"Failed to delete \"{Path.GetFileName(filePath)}\"", ex);
+        }
     }
 
-    public async Task<IStorageFile> GetPreviousLogFileAsync()
-    {
-        return await StorageFile.GetFileFromPathAsync(RolloverLogFilePath).AsTask().ConfigureAwait(false);
-    }
 }

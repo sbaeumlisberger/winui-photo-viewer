@@ -8,43 +8,34 @@ using PhotoViewerApp.ViewModels;
 using PhotoViewerCore.Services;
 using PhotoViewerCore.Utils;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Storage;
+using WinUIEx;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
 namespace PhotoViewerApp;
 
-/// <summary>
-/// Provides application-specific behavior to supplement the default Application class.
-/// </summary>
 public partial class App : Application
 {
     public static new App Current => (App)Application.Current;
 
     public MainWindow Window { get; private set; } = null!;
 
-    /// <summary>
-    /// Initializes the singleton application object. This is the first line of authored code
-    /// executed, and as such is the logical equivalent of main() or WinMain().
-    /// </summary>
     public App()
     {
-        Log.Info($"Application started.");
-
-        Log.Debug($"Local app folder: {ApplicationData.Current.LocalFolder.Path}");
+        Debug.WriteLine($"Local app data folder: {ApplicationData.Current.LocalFolder.Path}");
 
         UnhandledException += App_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
         this.InitializeComponent();
+
+        Log.Info($"Application instance created.");
     }
 
-    /// <summary>
-    /// Invoked when the application is launched normally by the end user. Other entry points
-    /// will be used such as when the application is launched to open a specific file.
-    /// </summary>
-    /// <param name="args">Details about the launch request and process.</param>
+
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
         Log.Info($"Application launched.");
@@ -52,6 +43,7 @@ public partial class App : Application
         var settingsService = new SettingsService();
         var settings = await settingsService.LoadSettingsAsync();
         ApplicationSettingsProvider.SetSettings(settings);
+
         var loadMediaItemsService = new MediaFilesLoaderService();
         var activatedEventArgs = AppInstance.GetActivatedEventArgs();
         var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName);
@@ -62,7 +54,7 @@ public partial class App : Application
         Window = new MainWindow(messenger);
         Window.Activate();
 
-        ColorProfileProvider.Initialize(Window);
+        await ColorProfileProvider.Instance.InitializeAsync(Window.GetAppWindow().Id);
 
         messenger.Publish(new NavigateToPageMessage(typeof(FlipViewPageModel)));
 

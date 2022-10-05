@@ -44,6 +44,7 @@ public partial class FlipViewPageModel : ViewModelBase
         {
             DetailsBarModel.IsVisible = false;
             CommandBarModel.IsVisible = false;
+            MetadataPanelModel.IsVisible = false;
             messenger.Publish(new EnterFullscreenMessage());
             try
             {
@@ -59,6 +60,7 @@ public partial class FlipViewPageModel : ViewModelBase
         {
             DetailsBarModel.IsVisible = true;
             CommandBarModel.IsVisible = true;
+            MetadataPanelModel.IsVisible = true;
             messenger.Publish(new ExitFullscreenMessage());
             DisposeUtil.DisposeSafely(ref displayRequest);
         });

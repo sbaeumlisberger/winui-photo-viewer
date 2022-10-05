@@ -1,12 +1,10 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using PhotoVieweApp.Utils;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
 using System.ComponentModel;
-using Windows.Foundation;
 
 namespace PhotoViewerApp.Views;
 public sealed partial class MediaFlipView : UserControl
@@ -46,16 +44,19 @@ public sealed partial class MediaFlipView : UserControl
 
     private void FlipView_Tapped(object sender, TappedRoutedEventArgs e)
     {
-        var window = App.Current.Window;
-        var windowCenterX = window.Bounds.Left + window.Bounds.Width / 2;
+        if (ViewModel.IsDiashowActive)
+        {
+            var window = App.Current.Window;
+            var windowCenterX = window.Bounds.Left + window.Bounds.Width / 2;
 
-        if (e.GetPosition(flipView).X > windowCenterX)
-        {
-            ViewModel.Diashow_SelectNext();
-        }
-        else 
-        {
-            ViewModel.Diashow_SelectPrevious();
+            if (e.GetPosition(flipView).X > windowCenterX)
+            {
+                ViewModel.Diashow_SelectNext();
+            }
+            else
+            {
+                ViewModel.Diashow_SelectPrevious();
+            }
         }
     }
 }

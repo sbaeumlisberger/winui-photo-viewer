@@ -3,6 +3,7 @@ using Microsoft.UI.Windowing;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
+using PhotoViewerApp.Utils.Logging;
 using System;
 using WinRT.Interop;
 using WinUIEx;
@@ -18,11 +19,17 @@ public sealed partial class MainWindow : WindowEx
     public MainWindow(IMessenger messenger)
     {
         this.InitializeComponent();
+        Closed += MainWindow_Closed;
         DialogService = new DialogService(this);
         messenger.Subscribe<EnterFullscreenMessage>(msg => EnterFullscreen());
         messenger.Subscribe<ExitFullscreenMessage>(msg => ExitFullscreen());
         messenger.Subscribe<NavigateToPageMessage>(msg => NavigateToPage(msg.PageType, msg.Parameter));
         messenger.Subscribe<NavigateBackMessage>(msg => frame.GoBack());
+    }
+
+    private void MainWindow_Closed(object sender, Microsoft.UI.Xaml.WindowEventArgs args)
+    {
+        Log.ArchiveLogFile();
     }
 
     private void EnterFullscreen()

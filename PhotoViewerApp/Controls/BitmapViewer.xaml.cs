@@ -24,21 +24,37 @@ public sealed partial class BitmapViewer : UserControl
 
     private AnimatedBitmapRenderer? animatedBitmapRenderer;
 
+    private readonly IColorProfileProvider colorProfileProvider;
+
     public BitmapViewer()
     {
         this.InitializeComponent();
-        Unloaded += MediaFlipViewItem_Unloaded;
+
         ScrollViewerHelper.EnableAdvancedZoomBehaviour(scrollViewer);
+
+        Unloaded += BitmapViewer_Unloaded;
+
         this.RegisterPropertyChangedCallbackSafely(IsEnabledProperty, OnIsEnabledChanged);
         this.RegisterPropertyChangedCallbackSafely(BitmapImageProperty, OnBitmapImageChanged);
         this.RegisterPropertyChangedCallbackSafely(IsScaleUpEnabeldProperty, OnIsScaleUpEnabeldChanged);
+
+        colorProfileProvider = ColorProfileProvider.Instance;
+        colorProfileProvider.ColorProfileChanged += ColorProfileProvider_ColorProfileChanged;
     }
 
-    private void MediaFlipViewItem_Unloaded(object sender, RoutedEventArgs e)
+    private void BitmapViewer_Unloaded(object sender, RoutedEventArgs e)
     {
         DisposeUtil.DisposeSafely(ref animatedBitmapRenderer);
+
         canvasControl.RemoveFromVisualTree();
         canvasControl = null;
+
+        colorProfileProvider.ColorProfileChanged -= ColorProfileProvider_ColorProfileChanged;
+    }
+
+    private void ColorProfileProvider_ColorProfileChanged(object? sender, EventArgs e)
+    {
+        canvasControl.Invalidate();
     }
 
     private void OnBitmapImageChanged(DependencyObject sender, DependencyProperty dp)
@@ -145,7 +161,7 @@ public sealed partial class BitmapViewer : UserControl
             sourceColorProfile = ColorManagementProfile.CreateCustom(colorProfileBytes);
         }
 
-        var outputColorProfile = ColorProfileProvider.GetColorProfile();
+        var outputColorProfile = colorProfileProvider.ColorProfile;
 
         ICanvasImage canvasImage = animatedBitmapRenderer != null ? animatedBitmapRenderer.RenderTarget : image.CanvasImage;
 

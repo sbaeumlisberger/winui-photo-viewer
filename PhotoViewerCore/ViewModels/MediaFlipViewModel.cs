@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
@@ -26,28 +25,19 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 {
     private static readonly int ImageCacheSize = 2;
 
-    [ObservableProperty]
-    private ObservableCollection<IMediaFlipViewItemModel> items = new ObservableCollection<IMediaFlipViewItemModel>();
+    public ObservableCollection<IMediaFlipViewItemModel> Items { get; private set; } = new ObservableCollection<IMediaFlipViewItemModel>();
 
-    [ObservableProperty]
-    private IMediaFlipViewItemModel? selectedItemModel; // restore on back nav
+    public IMediaFlipViewItemModel? SelectedItemModel { get; set; } // restore on back nav
 
-    [ObservableProperty]
-    private bool showNoItemsUI = true;
+    public bool ShowNoItemsUI { get; private set; } = true;
 
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(SelectPreviousCommand))]
-    private bool canSelectPrevious = false;
+    public bool CanSelectPrevious { get; private set; } = false;
 
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(SelectNextCommand))]
-    private bool canSelectNext = false;
+    public bool CanSelectNext { get; private set; } = false;
 
-    [ObservableProperty]
-    private bool isDiashowActive = false;
+    public bool IsDiashowActive { get; private set; } = false;
 
-    [ObservableProperty]
-    private bool isDiashowLoopActive = false;
+    public bool IsDiashowLoopActive { get; private set; } = false;
 
     private readonly IMessenger messenger;
 
@@ -115,6 +105,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     public void Diashow_SelectPrevious()
     {
+        Debug.Assert(IsDiashowActive);
+
         if (CanSelectPrevious)
         {
             SelectPrevious();
@@ -127,6 +119,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     public void Diashow_SelectNext()
     {
+        Debug.Assert(IsDiashowActive);
+
         if (CanSelectNext)
         {
             SelectNext();
@@ -137,12 +131,12 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         }
     }
 
-    partial void OnItemsChanged(ObservableCollection<IMediaFlipViewItemModel> value)
+    partial void OnItemsChanged()
     {
         ShowNoItemsUI = !Items.Any();
     }
 
-    partial void OnSelectedItemModelChanged(IMediaFlipViewItemModel? value)
+    partial void OnSelectedItemModelChanged()
     {
         Log.Info($"Selection changed to {SelectedItemModel?.MediaItem.Name}");
 
@@ -163,7 +157,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         }
     }
 
-    partial void OnIsDiashowLoopActiveChanged(bool value)
+    partial void OnIsDiashowLoopActiveChanged()
     {
         if (IsDiashowLoopActive)
         {

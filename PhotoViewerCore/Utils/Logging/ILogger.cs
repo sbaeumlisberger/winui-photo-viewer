@@ -17,7 +17,5 @@ public interface ILogger
 
     Task<IStorageFile> GetLogFileAsync();
 
-    Task ClearLogFileAsync();
-
-    Task<IStorageFile> GetPreviousLogFileAsync();
+    void ArchiveLogFile();
 }
