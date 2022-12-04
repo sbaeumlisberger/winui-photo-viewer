@@ -129,6 +129,42 @@
   <data name="DetailsBar_NoInformationAvailable" xml:space="preserve">
     <value>no information available</value>
   </data>
+  <data name="FlipViewPageCommandBar_CompareButton" xml:space="preserve">
+    <value>Compare</value>
+  </data>
+  <data name="FlipViewPageCommandBar_CropButton" xml:space="preserve">
+    <value>Crop</value>
+  </data>
+  <data name="FlipViewPageCommandBar_DeleteButton" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="FlipViewPageCommandBar_DiashowButton" xml:space="preserve">
+    <value>Start diashow</value>
+  </data>
+  <data name="FlipViewPageCommandBar_MetadataButton" xml:space="preserve">
+    <value>Show metadata</value>
+  </data>
+  <data name="FlipViewPageCommandBar_NextButton" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="FlipViewPageCommandBar_OpenFolderButton" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="FlipViewPageCommandBar_OverviewButton" xml:space="preserve">
+    <value>Zur Übersicht wechseln</value>
+  </data>
+  <data name="FlipViewPageCommandBar_PreviousButton" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="FlipViewPageCommandBar_RotateButton" xml:space="preserve">
+    <value>Rotate (left)</value>
+  </data>
+  <data name="FlipViewPageCommandBar_SettingsButton" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="ItemWithCount_All" xml:space="preserve">
+    <value>All</value>
+  </data>
   <data name="MediaFlipView_DisableDiashowLoop" xml:space="preserve">
     <value>Pause</value>
   </data>
@@ -137,6 +173,18 @@
   </data>
   <data name="MediaFlipView_ExitDiashow" xml:space="preserve">
     <value>Exit</value>
+  </data>
+  <data name="MetadataPanel_AddDateTakenButton" xml:space="preserve">
+    <value>Add date taken</value>
+  </data>
+  <data name="MetadataPanel_AddKeywordPlaceholder" xml:space="preserve">
+    <value>Add keyword</value>
+  </data>
+  <data name="MetadataPanel_AddPersonPlaceholder" xml:space="preserve">
+    <value>Add person</value>
+  </data>
+  <data name="MetadataPanel_AnyFileNotSupported" xml:space="preserve">
+    <value>The selected file does not support metadata</value>
   </data>
   <data name="MetadataPanel_AuthorsHeader" xml:space="preserve">
     <value>Authors</value>
@@ -150,20 +198,38 @@
   <data name="MetadataPanel_DateTakenHeader" xml:space="preserve">
     <value>Date Taken</value>
   </data>
+  <data name="MetadataPanel_EditLocationButton" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="MetadataPanel_ImportFromGpxFileButton" xml:space="preserve">
+    <value>Import from GPX file</value>
+  </data>
   <data name="MetadataPanel_KeywordsHeader" xml:space="preserve">
     <value>Keywords</value>
   </data>
   <data name="MetadataPanel_LocationHeader" xml:space="preserve">
     <value>Location</value>
   </data>
+  <data name="MetadataPanel_LocationMarker" xml:space="preserve">
+    <value>place taken</value>
+  </data>
+  <data name="MetadataPanel_NoDateTakenPresent" xml:space="preserve">
+    <value>No date taken</value>
+  </data>
   <data name="MetadataPanel_PeopleHeader" xml:space="preserve">
     <value>People</value>
   </data>
-  <data name="MetadataPanel_PeoplePlaceholder" xml:space="preserve">
-    <value>Enter a name</value>
-  </data>
   <data name="MetadataPanel_RatingHeader" xml:space="preserve">
     <value>Rating</value>
+  </data>
+  <data name="MetadataPanel_RemoveKeyword" xml:space="preserve">
+    <value>Remove keyword</value>
+  </data>
+  <data name="MetadataPanel_ShiftDateTakenButton" xml:space="preserve">
+    <value>Shift date taken</value>
+  </data>
+  <data name="MetadataPanel_ShowLocationOnMapButton" xml:space="preserve">
+    <value>Show on map</value>
   </data>
   <data name="MetadataPanel_Title" xml:space="preserve">
     <value>Metadata</value>
@@ -176,6 +242,9 @@
   </data>
   <data name="OpenFolderButton" xml:space="preserve">
     <value>Open folder</value>
+  </data>
+  <data name="OverviewPage_Title" xml:space="preserve">
+    <value>Overview</value>
   </data>
   <data name="SettingsPage_AppearanceSectionTittle" xml:space="preserve">
     <value>Appearance</value>
@@ -206,5 +275,11 @@
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="YesNoDialog_No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="YesNoDialog_Yes" xml:space="preserve">
+    <value>Yes</value>
   </data>
 </root>

@@ -10,7 +10,7 @@ namespace PhotoViewerApp.Views;
 
 public sealed partial class VectorGraphicFlipViewItem : UserControl
 {
-    private VectorGraphicFlipViewItemModel ViewModel { get; set; }
+    private VectorGraphicFlipViewItemModel? ViewModel { get; set; }
 
     public VectorGraphicFlipViewItem()
     {
@@ -45,7 +45,7 @@ public sealed partial class VectorGraphicFlipViewItem : UserControl
     {
         if (e.PropertyName == nameof(ViewModel.Content))
         {
-            if (ViewModel.Content is string svg)
+            if (ViewModel!.Content is string svg)
             {
                 await ShowSvgAsync(svg);
             }

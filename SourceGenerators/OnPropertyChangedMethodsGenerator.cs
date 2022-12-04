@@ -8,7 +8,7 @@ using System.Text;
 namespace SourceGenerators;
 
 [Generator]
-public class CallOnPropertyChangedMethodGenerator : ISourceGenerator
+public class OnPropertyChangedMethodsGenerator : ISourceGenerator
 {
     public void Initialize(GeneratorInitializationContext context)
     {
@@ -18,24 +18,22 @@ public class CallOnPropertyChangedMethodGenerator : ISourceGenerator
             //Debugger.Launch();
         }
 #endif
-
-        context.RegisterForSyntaxNotifications(() => new ClassSyntaxReceiver());
     }
 
     public void Execute(GeneratorExecutionContext context)
     {
         var types = Utils.GetAllTypeSymbols(context);
 
-        foreach (var clazz in types)
+        foreach (var type in types)
         {
-            string className = Utils.GetFullName(clazz);
+            string fullName = Utils.GetFullName(type);
 
-            if (clazz.BaseType?.Name != "ViewModelBase")
+            if (type.BaseType?.Name != "ViewModelBase")
             {
                 continue;
             }
 
-            List<string> properties = clazz.GetMembers().OfType<IPropertySymbol>().Select(prop => prop.Name).ToList();
+            List<string> properties = type.GetMembers().OfType<IPropertySymbol>().Select(prop => prop.Name).ToList();
 
             if (properties.Any())
             {
@@ -43,13 +41,13 @@ public class CallOnPropertyChangedMethodGenerator : ISourceGenerator
                 source.AppendLine("using System;");
                 source.AppendLine("using System.ComponentModel;");
                 source.AppendLine("");
-                source.AppendLine("namespace " + className.Replace("." + clazz.Name, "") + ";");
+                source.AppendLine("namespace " + fullName.Replace("." + type.Name, "") + ";");
                 source.AppendLine("");
-                source.AppendLine("partial class " + clazz.Name);
+                source.AppendLine("partial class " + type.Name);
                 source.AppendLine("{");
-                source.AppendLine("  protected override void __EnableCallOnPropertyChangedMethod()");
+                source.AppendLine("  protected override void __EnableOnPropertyChangedMethods()");
                 source.AppendLine("  {");
-                source.AppendLine("    PropertyChanged += (object? sender, PropertyChangedEventArgs e) =>");
+                source.AppendLine("    PropertyChanged += (object sender, PropertyChangedEventArgs e) =>");
                 source.AppendLine("    {");
                 source.AppendLine("      switch(e.PropertyName)");
                 source.AppendLine("      {");
@@ -66,7 +64,7 @@ public class CallOnPropertyChangedMethodGenerator : ISourceGenerator
                     source.AppendLine("  partial void On" + property + "Changed();");
                 }
                 source.AppendLine("}");
-                context.AddSource(className + ".g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
+                context.AddSource(fullName + ".g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
             }
         }
 

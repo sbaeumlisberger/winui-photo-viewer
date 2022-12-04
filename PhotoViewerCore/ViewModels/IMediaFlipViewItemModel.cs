@@ -9,7 +9,7 @@ public interface IMediaFlipViewItemModel : INotifyPropertyChanged
 
     bool IsActive { get; set; }
 
-    void StartLoading();
+    Task InitializeAsync();
 
     void Cleanup();
 }

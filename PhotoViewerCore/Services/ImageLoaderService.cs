@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using PhotoViewerApp.Exceptions;
 using PhotoViewerApp.Models;
+using PhotoViewerApp.Utils;
 using System.Runtime.InteropServices;
 using System.Text;
 using WIC;
@@ -12,7 +13,7 @@ namespace PhotoViewerApp.Services;
 
 public interface IImageLoaderService
 {
-    Task<IBitmapImage> LoadFromFileAsync(IStorageFile file, CancellationToken cancellationToken);
+    Task<IBitmapImage> LoadFromFileAsync(IBitmapFileInfo file, CancellationToken cancellationToken);
 }
 
 public class ImageLoaderService : IImageLoaderService
@@ -26,11 +27,11 @@ public class ImageLoaderService : IImageLoaderService
         this.gifImageLoaderService = gifImageLoaderService;
     }
 
-    public async Task<IBitmapImage> LoadFromFileAsync(IStorageFile file, CancellationToken cancellationToken)
+    public async Task<IBitmapImage> LoadFromFileAsync(IBitmapFileInfo file, CancellationToken cancellationToken)
     {
         try
         {
-            if (file.FileType.ToLower() == ".gif")
+            if (file.FileExtension == ".gif")
             {
                 return await LoadGifAsync(file, cancellationToken).ConfigureAwait(false);
             }
@@ -38,9 +39,9 @@ public class ImageLoaderService : IImageLoaderService
         }
         catch (Exception ex)
         {
-            if (TryGetDeocderInfoForFileExtension(file.FileType) is null)
+            if (TryGetDeocderInfoForFileExtension(file.FileExtension) is null)
             {
-                throw new CodecNotFoundException(file.FileType, ex);
+                throw new CodecNotFoundException(file.FileExtension, ex);
             }
             else
             {
@@ -49,18 +50,18 @@ public class ImageLoaderService : IImageLoaderService
         }
     }
 
-    private async Task<IBitmapImage> LoadGifAsync(IStorageFile file, CancellationToken cancellationToken)
+    private async Task<IBitmapImage> LoadGifAsync(IBitmapFileInfo file, CancellationToken cancellationToken)
     {
-        using (var fileStream = await file.OpenAsync(FileAccessMode.Read).AsTask(cancellationToken).ConfigureAwait(false))
+        using (var fileStream = await file.OpenAsync(FileAccessMode.Read).ConfigureAwait(false))
         {
             cancellationToken.ThrowIfCancellationRequested();
             return await gifImageLoaderService.LoadAsync(file.Name, Device, fileStream, cancellationToken).ConfigureAwait(false);
         }
     }
 
-    private async Task<IBitmapImage> LoadBitmapAsync(IStorageFile file, CancellationToken cancellationToken)
+    private async Task<IBitmapImage> LoadBitmapAsync(IBitmapFileInfo file, CancellationToken cancellationToken)
     {
-        using (var fileStream = await file.OpenAsync(FileAccessMode.Read).AsTask(cancellationToken).ConfigureAwait(false))
+        using (var fileStream = await file.OpenAsync(FileAccessMode.Read).ConfigureAwait(false))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ColorSpaceInfo colorSpace = GetColorSpaceInfo(fileStream);
@@ -119,7 +120,7 @@ public class ImageLoaderService : IImageLoaderService
                .FirstOrDefault(cc => cc.GetType() == WICColorContextType.WICColorContextExifColorSpace)
                ?.GetExifColorSpace();
 
-        if (exifColorSpace == ExifColorSpace.SRGB)
+        if (exifColorSpace == ExifColorSpace.SRGB || exifColorSpace == /*ExifColorSpace.Uncalibrated*/ (ExifColorSpace)65535)
         {
             return ColorSpaceType.SRGB;
         }

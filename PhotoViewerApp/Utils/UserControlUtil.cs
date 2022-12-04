@@ -7,17 +7,59 @@ namespace PhotoViewerApp.Utils;
 internal static class UserControlUtil
 {
 
-    public static void WhenDataContextSet(this UserControl userControl, Action action)
+    public static void InitializeMVVM<T>(this UserControl userControl, Action initializeComponent, 
+        Action? connectToViewModel = null, Action? disconnectFromViewModel = null) where T : ViewModelBase
     {
-        void UserControl_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        if (userControl.IsLoaded) 
         {
-            if (userControl.DataContext != null)
-            {
-                action();
-                userControl.DataContextChanged -= UserControl_DataContextChanged;
-            }
+            throw new Exception("UserControl is already loaded");
         }
-        userControl.DataContextChanged += UserControl_DataContextChanged;
+
+        T? viewModel = null;
+
+        void connect(T newViewModel) 
+        {
+            viewModel = newViewModel;
+            connectToViewModel?.Invoke();
+            viewModel.OnViewConnected();
+        }
+
+        void disconnect(T currentViewModel) 
+        {
+            disconnectFromViewModel?.Invoke();
+            currentViewModel.OnViewDisconnected();
+            viewModel = null;
+        }
+
+        userControl.Loaded += (s, e) =>
+        {
+            userControl.DataContextChanged += (s, e) =>
+            {
+                if (viewModel is T currentViewModel)
+                {
+                    disconnect(currentViewModel);
+                }
+                if (userControl.DataContext is T newViewModel && !ReferenceEquals(newViewModel, viewModel))
+                {
+                    connect(newViewModel);
+                }
+            };
+            if (userControl.DataContext is T newViewModel && !ReferenceEquals(newViewModel, viewModel))
+            {
+                connect(newViewModel);
+            }
+        };
+
+        userControl.Unloaded += (s, e) =>
+        {
+            if (viewModel is T currentViewModel)
+            {
+                disconnect(currentViewModel);
+            }
+            userControl.DataContext = null;
+        };
+
+        initializeComponent.Invoke();
     }
 
     public static void RegisterPropertyChangedCallbackSafely(this UserControl userControl, DependencyProperty property, DependencyPropertyChangedCallback propertyChangedCallback)

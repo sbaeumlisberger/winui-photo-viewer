@@ -129,6 +129,42 @@
   <data name="DetailsBar_NoInformationAvailable" xml:space="preserve">
     <value>Keine Information verfügbar</value>
   </data>
+  <data name="FlipViewPageCommandBar_CompareButton" xml:space="preserve">
+    <value>Vergleichen</value>
+  </data>
+  <data name="FlipViewPageCommandBar_CropButton" xml:space="preserve">
+    <value>Zuschneiden</value>
+  </data>
+  <data name="FlipViewPageCommandBar_DeleteButton" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="FlipViewPageCommandBar_DiashowButton" xml:space="preserve">
+    <value>Diashow starten</value>
+  </data>
+  <data name="FlipViewPageCommandBar_MetadataButton" xml:space="preserve">
+    <value>Metadata anzeigen</value>
+  </data>
+  <data name="FlipViewPageCommandBar_NextButton" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="FlipViewPageCommandBar_OpenFolderButton" xml:space="preserve">
+    <value>Ordner öffnen</value>
+  </data>
+  <data name="FlipViewPageCommandBar_OverviewButton" xml:space="preserve">
+    <value>Zur Übersicht wechseln</value>
+  </data>
+  <data name="FlipViewPageCommandBar_PreviousButton" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
+  <data name="FlipViewPageCommandBar_RotateButton" xml:space="preserve">
+    <value>Drehen (nach rechts)</value>
+  </data>
+  <data name="FlipViewPageCommandBar_SettingsButton" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="ItemWithCount_All" xml:space="preserve">
+    <value>Alle</value>
+  </data>
   <data name="MediaFlipView_DisableDiashowLoop" xml:space="preserve">
     <value>Pausieren</value>
   </data>
@@ -137,6 +173,18 @@
   </data>
   <data name="MediaFlipView_ExitDiashow" xml:space="preserve">
     <value>Beenden</value>
+  </data>
+  <data name="MetadataPanel_AddDateTakenButton" xml:space="preserve">
+    <value>Aufnahmedatum hinzufügen</value>
+  </data>
+  <data name="MetadataPanel_AddKeywordPlaceholder" xml:space="preserve">
+    <value>Schlagwort hinzufügen</value>
+  </data>
+  <data name="MetadataPanel_AddPersonPlaceholder" xml:space="preserve">
+    <value>Person hinzufügen</value>
+  </data>
+  <data name="MetadataPanel_AnyFileNotSupported" xml:space="preserve">
+    <value>Die ausgwählte Datei unterstützt keine Metadaten</value>
   </data>
   <data name="MetadataPanel_AuthorsHeader" xml:space="preserve">
     <value>Autoren</value>
@@ -150,20 +198,38 @@
   <data name="MetadataPanel_DateTakenHeader" xml:space="preserve">
     <value>Aufnamedatum</value>
   </data>
+  <data name="MetadataPanel_EditLocationButton" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="MetadataPanel_ImportFromGpxFileButton" xml:space="preserve">
+    <value>Von GPX-Datei importieren</value>
+  </data>
   <data name="MetadataPanel_KeywordsHeader" xml:space="preserve">
-    <value>Markierungen</value>
+    <value>Schlagwörter</value>
   </data>
   <data name="MetadataPanel_LocationHeader" xml:space="preserve">
     <value>Aufnahmeort</value>
   </data>
+  <data name="MetadataPanel_LocationMarker" xml:space="preserve">
+    <value>Aufnahmeort</value>
+  </data>
+  <data name="MetadataPanel_NoDateTakenPresent" xml:space="preserve">
+    <value>Keine Aufnahmedatum</value>
+  </data>
   <data name="MetadataPanel_PeopleHeader" xml:space="preserve">
     <value>Personen</value>
   </data>
-  <data name="MetadataPanel_PeoplePlaceholder" xml:space="preserve">
-    <value>Name eingeben</value>
-  </data>
   <data name="MetadataPanel_RatingHeader" xml:space="preserve">
     <value>Bewertung</value>
+  </data>
+  <data name="MetadataPanel_RemoveKeyword" xml:space="preserve">
+    <value>Schlagwort entfernen</value>
+  </data>
+  <data name="MetadataPanel_ShiftDateTakenButton" xml:space="preserve">
+    <value>Aufnahmedaten verschieben</value>
+  </data>
+  <data name="MetadataPanel_ShowLocationOnMapButton" xml:space="preserve">
+    <value>Auf Karte anzeigen</value>
   </data>
   <data name="MetadataPanel_Title" xml:space="preserve">
     <value>Metadaten</value>
@@ -176,6 +242,9 @@
   </data>
   <data name="OpenFolderButton" xml:space="preserve">
     <value>Ordner öffnen</value>
+  </data>
+  <data name="OverviewPage_Title" xml:space="preserve">
+    <value>Übersicht</value>
   </data>
   <data name="SettingsPage_AppearanceSectionTittle" xml:space="preserve">
     <value>Anzeige</value>
@@ -206,5 +275,11 @@
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Einstellungen</value>
+  </data>
+  <data name="YesNoDialog_No" xml:space="preserve">
+    <value>Nein</value>
+  </data>
+  <data name="YesNoDialog_Yes" xml:space="preserve">
+    <value>Ja</value>
   </data>
 </root>

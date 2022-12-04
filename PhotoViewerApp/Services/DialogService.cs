@@ -1,20 +1,26 @@
 ﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
+using PhotoViewerApp.Views;
+using PhotoViewerCore.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
+using WinUIEx;
 
 namespace PhotoViewerApp.Services;
 
 public class DialogService : IDialogService
 {
+    private readonly WeakReference<Window> windowRef;
     private readonly IntPtr windowHandle;
 
     public DialogService(Window window)
     {
+        windowRef = new WeakReference<Window>(window);
         windowHandle = WindowNative.GetWindowHandle(window);
     }
 
@@ -28,6 +34,10 @@ public class DialogService : IDialogService
                 await ShowFileOpenPickerModelAsync(fileOpenPickerModel); break;
             case FileSavePickerModel fileSavePickerModel:
                 await ShowFileSavePickerModelAsync(fileSavePickerModel); break;
+            case MessageDialogModel messageDialogModel:
+                await ShowMessageDialogAsync(messageDialogModel); break;
+            case YesNoDialogModel yesNoDialogModel:
+                await ShowYesNoDialogAsync(yesNoDialogModel); break;
             default:
                 throw new Exception();
         }
@@ -81,6 +91,34 @@ public class DialogService : IDialogService
         InitializeWithWindow.Initialize(fileSavePicker, windowHandle);
 
         dialogModel.File = await fileSavePicker.PickSaveFileAsync();
+    }
+
+    private async Task ShowMessageDialogAsync(MessageDialogModel messageDialogModel)
+    {
+        if (windowRef.TryGetTarget(out var window))
+        {
+            var dialog = new ContentDialog()
+            {
+                Title = messageDialogModel.Title,
+                Content = messageDialogModel.Message
+            };
+            dialog.XamlRoot = window.Content.XamlRoot;
+            await dialog.ShowAsync();
+        }
+    }
+
+    private async Task ShowYesNoDialogAsync(YesNoDialogModel yesNoDialogModel)
+    {
+        if (windowRef.TryGetTarget(out var window))
+        {
+            var dialog = new YesNoDialog(
+                yesNoDialogModel.Title,
+                yesNoDialogModel.Message,
+                yesNoDialogModel.RememberMessage);
+            dialog.XamlRoot = window.Content.XamlRoot;
+            yesNoDialogModel.IsYes = await dialog.ShowAsync();
+            yesNoDialogModel.IsRemember = dialog.IsRemember;
+        }
     }
 }
 

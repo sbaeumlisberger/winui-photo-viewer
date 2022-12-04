@@ -9,21 +9,19 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 {
     public IMediaFileInfo MediaItem { get; }
 
+    public bool IsActive { get; set; }
 
-    [ObservableProperty]
-    private bool isActive;
-
-    [ObservableProperty]
-    private string webViewContent = string.Empty;
+    public string WebViewContent { get; set; } = string.Empty;
 
     public VideoFlipViewItemModel(IMediaFileInfo mediaFile)
     {
         MediaItem = mediaFile;
     }
 
-    public void StartLoading()
+    public Task InitializeAsync()
     {
-        WebViewContent = $"<html><body style=\"margin: 0px; background: black\"><video style=\"width: 100%; height: 100%\" controls><source src=\"http://files/{MediaItem.File.Name}\" type=\"{MediaItem.File.ContentType}\"></video></body></html>";
+        WebViewContent = $"<html><body style=\"margin: 0px; background: black\"><video style=\"width: 100%; height: 100%\" controls><source src=\"http://files/{MediaItem.FileName}\" type=\"{MediaItem.StorageFile.ContentType}\"></video></body></html>";
+        return Task.CompletedTask;
     }
 
     public void Cleanup()

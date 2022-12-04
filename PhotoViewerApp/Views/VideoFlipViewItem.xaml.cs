@@ -11,7 +11,7 @@ namespace PhotoViewerApp.Views;
 
 public sealed partial class VideoFlipViewItem : UserControl
 {
-    private VideoFlipViewItemModel ViewModel { get; set; }
+    private VideoFlipViewItemModel? ViewModel { get; set; }
 
     public VideoFlipViewItem()
     {
@@ -43,14 +43,14 @@ public sealed partial class VideoFlipViewItem : UserControl
     {
         if (e.PropertyName == nameof(ViewModel.WebViewContent))
         {
-            if (ViewModel.WebViewContent is string videoTag)
+            if (ViewModel!.WebViewContent is string videoTag)
             {
                 await ShowVideoAsync(videoTag);
             }
         }
         else if (e.PropertyName == nameof(ViewModel.IsActive))
         {
-            if (ViewModel.IsActive is false)
+            if (ViewModel!.IsActive is false)
             {
                 await PauseVideoAsync();
             }
@@ -60,7 +60,7 @@ public sealed partial class VideoFlipViewItem : UserControl
     private async Task ShowVideoAsync(string videoTag)
     {
         await webView.EnsureCoreWebView2Async();
-        webView.CoreWebView2.SetVirtualHostNameToFolderMapping("files", Path.GetDirectoryName(ViewModel.MediaItem.File.Path), CoreWebView2HostResourceAccessKind.Allow);
+        webView.CoreWebView2.SetVirtualHostNameToFolderMapping("files", Path.GetDirectoryName(ViewModel!.MediaItem.FilePath), CoreWebView2HostResourceAccessKind.Allow);
         webView.NavigateToString(videoTag);
     }
 

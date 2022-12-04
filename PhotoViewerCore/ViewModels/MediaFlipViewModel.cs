@@ -23,7 +23,7 @@ public interface IMediaFlipViewModel : INotifyPropertyChanged
 
 public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 {
-    private static readonly int ImageCacheSize = 2;
+    private static readonly int CacheSize = 2;
 
     public ObservableCollection<IMediaFlipViewItemModel> Items { get; private set; } = new ObservableCollection<IMediaFlipViewItemModel>();
 
@@ -203,8 +203,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         {
             int selectedIndex = Items.IndexOf(SelectedItemModel);
 
-            int startIndex = Math.Max(selectedIndex - ImageCacheSize, 0);
-            int endIndex = Math.Min(selectedIndex + ImageCacheSize, Items.Count - 1);
+            int startIndex = Math.Max(selectedIndex - CacheSize, 0);
+            int endIndex = Math.Min(selectedIndex + CacheSize, Items.Count - 1);
             itemModelsToBeLoaded = Items.Skip(startIndex).Take(endIndex - startIndex + 1).ToList();
         }
         else
@@ -221,7 +221,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         foreach (var itemModel in itemModelsToBeLoaded.Except(loadedItemModels))
         {
             Log.Info($"Load ViewModel for {itemModel.MediaItem.Name}");
-            itemModel.StartLoading();
+            _ = itemModel.InitializeAsync();
         }
 
         loadedItemModels = itemModelsToBeLoaded;

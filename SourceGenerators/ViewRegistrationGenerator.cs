@@ -18,8 +18,6 @@ public class ViewRegistrationGenerator : ISourceGenerator
             //Debugger.Launch();
         }
 #endif
-
-        context.RegisterForSyntaxNotifications(() => new ClassSyntaxReceiver());
     }
 
     public void Execute(GeneratorExecutionContext context)
@@ -37,17 +35,17 @@ public class ViewRegistrationGenerator : ISourceGenerator
 
         HashSet<string> registeredView = new HashSet<string>();
 
-        foreach (var clazz in types)
+        foreach (var type in types)
         {
-            var attribute = clazz.GetAttributes().FirstOrDefault(a => a.AttributeClass?.Name == "ViewRegistrationAttribute");
+            var attribute = type.GetAttributes().FirstOrDefault(a => a.AttributeClass?.Name == "ViewRegistrationAttribute");
             if (attribute == null)
                 continue;
 
             var viewModelTypeArg = attribute.ConstructorArguments.FirstOrDefault();
 
-            var constructor = clazz.InstanceConstructors[0];
+            var constructor = type.InstanceConstructors[0];
 
-            string className = Utils.GetFullName(clazz);
+            string className = Utils.GetFullName(type);
 
             if (registeredView.Contains(className))
             {
@@ -73,15 +71,15 @@ public class ViewRegistrationGenerator : ISourceGenerator
 
         registeredView.Clear();
 
-        foreach (var clazz in types)
+        foreach (var type in types)
         {
-            var attribute = clazz.GetAttributes().FirstOrDefault(a => a.AttributeClass?.Name == "ViewRegistrationAttribute");
+            var attribute = type.GetAttributes().FirstOrDefault(a => a.AttributeClass?.Name == "ViewRegistrationAttribute");
             if (attribute == null)
                 continue;
 
             var viewModelTypeArg = attribute.ConstructorArguments.FirstOrDefault();
 
-            string className = Utils.GetFullName(clazz);
+            string className = Utils.GetFullName(type);
 
             if (registeredView.Contains(className))
             {

@@ -38,13 +38,25 @@ internal static class ScrollViewerHelper
             content.PointerWheelChanged += ScrollViewer_PointerWheelChanged;
             content.PointerPressed += Content_PointerPressed;
             content.PointerMoved += Content_PointerMoved;
+
+            scrollViewer.Unloaded += ScrollViewer_Unloaded;
+        }
+
+        private void ScrollViewer_Unloaded(object sender, RoutedEventArgs e)
+        {
+            scrollViewer.Unloaded -= ScrollViewer_Unloaded;
+            scrollViewer.PointerWheelChanged -= ScrollViewer_PointerWheelChanged;
+            var content = (UIElement)scrollViewer.Content;
+            content.PointerWheelChanged -= ScrollViewer_PointerWheelChanged;
+            content.PointerPressed -= Content_PointerPressed;
+            content.PointerMoved -= Content_PointerMoved;
         }
 
         private void ScrollViewer_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
         {
             if (e.KeyModifiers == VirtualKeyModifiers.Control)
             {
-                return; // skip because of default scrolling behavior
+                return; // skip because of default zoom behavior
             }
 
             e.Handled = true;

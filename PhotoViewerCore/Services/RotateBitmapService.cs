@@ -23,9 +23,9 @@ internal class RotateBitmapService : IRotateBitmapService
         this.metadataService = metadataService;
     }
 
-    public bool CanRotate(IBitmapFileInfo photo)
+    public bool CanRotate(IBitmapFileInfo bitmapFile)
     {
-        string fileExtension = photo.File.FileType.ToLower();
+        string fileExtension = bitmapFile.FileExtension;
 
         if (MetadataProperties.Orientation.IsSupported(fileExtension))
         {
@@ -43,15 +43,15 @@ internal class RotateBitmapService : IRotateBitmapService
         return false;
     }
 
-    public async Task RotateClockwise90DegreesAsync(IBitmapFileInfo photo)
+    public async Task RotateClockwise90DegreesAsync(IBitmapFileInfo bitmapFile)
     {
-        if (MetadataProperties.Orientation.IsSupported(photo.File.FileType.ToLower()))
+        if (MetadataProperties.Orientation.IsSupported(bitmapFile.FileExtension))
         {
-            await RotateByMetadataAsync(photo);
+            await RotateByMetadataAsync(bitmapFile);
         }
         else
         {
-            await RotateByPixelAsync(photo.File);
+            await RotateByPixelAsync(bitmapFile.StorageFile);
         }
     }
 

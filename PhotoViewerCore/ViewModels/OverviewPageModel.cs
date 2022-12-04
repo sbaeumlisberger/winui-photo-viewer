@@ -12,11 +12,11 @@ public partial class OverviewPageModel : ViewModelBase
 {
     public IMetadataPanelModel MetadataPanelModel { get; }
 
-    [ObservableProperty]
-    private ObservableCollection<IMediaFileInfo> items = new ObservableCollection<IMediaFileInfo>();
+    public ObservableCollection<IMediaFileInfo> Items { get; private set; } = new ObservableCollection<IMediaFileInfo>();
 
-    [ObservableProperty]
-    private IList<IMediaFileInfo> selectedItems = new ObservableCollection<IMediaFileInfo>();
+    public IReadOnlyList<IMediaFileInfo> SelectedItems { get; set; } = Array.Empty<IMediaFileInfo>();
+
+    public IOverviewPageCommandBarModel OverviewPageCommandBarModel { get; }
 
     private readonly IMessenger messenger;
 
@@ -26,11 +26,13 @@ public partial class OverviewPageModel : ViewModelBase
         Session session,
         IMessenger messenger,
         IDialogService dialogService,
+        IOverviewPageCommandBarModel overviewPageCommandBarModel,
         MetadataPanelModelFactory metadataPanelModelFactory)
     {
         this.messenger = messenger;
         this.dialogService = dialogService;
 
+        OverviewPageCommandBarModel = overviewPageCommandBarModel;
         MetadataPanelModel = metadataPanelModelFactory.Invoke(false);
 
         Items = new ObservableCollection<IMediaFileInfo>(session.MediaItems);
@@ -51,8 +53,9 @@ public partial class OverviewPageModel : ViewModelBase
         messenger.Publish(new NavigateToPageMessage(typeof(FlipViewPageModel), mediaItem));
     }
 
-    partial void OnSelectedItemsChanged(IList<IMediaFileInfo> value)
+    partial void OnSelectedItemsChanged()
     {
+        OverviewPageCommandBarModel.SelectedItems = SelectedItems;
         MetadataPanelModel.Files = SelectedItems;
     }
 

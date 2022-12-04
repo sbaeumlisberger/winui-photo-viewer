@@ -90,6 +90,12 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         messenger.Publish(new StartDiashowMessage());
     }
 
+    [RelayCommand]
+    private void ToggleMetadataPanel() 
+    {
+        messenger.Publish(new ToggleMetataPanelMessage());
+    }
+
     [RelayCommand(CanExecute = nameof(CanRotate))]
     private async Task RotateAsync()
     {

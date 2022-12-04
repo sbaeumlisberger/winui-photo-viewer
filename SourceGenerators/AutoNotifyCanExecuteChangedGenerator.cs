@@ -8,7 +8,7 @@ using System.Text;
 namespace SourceGenerators;
 
 [Generator]
-public class RelayCommandAutoUpdateCanExecuteChangedGenerator : ISourceGenerator
+public class AutoNotifyCanExecuteChangedGenerator : ISourceGenerator
 {
     public void Initialize(GeneratorInitializationContext context)
     {
@@ -18,26 +18,24 @@ public class RelayCommandAutoUpdateCanExecuteChangedGenerator : ISourceGenerator
             //Debugger.Launch();
         }
 #endif
-
-        context.RegisterForSyntaxNotifications(() => new ClassSyntaxReceiver());
     }
 
     public void Execute(GeneratorExecutionContext context)
     {
         var types = Utils.GetAllTypeSymbols(context);
 
-        foreach (var clazz in types)
+        foreach (var type in types)
         {
-            string className = Utils.GetFullName(clazz);
+            string className = Utils.GetFullName(type);
 
-            if (clazz.BaseType?.Name != "ViewModelBase")
+            if (type.BaseType?.Name != "ViewModelBase")
             {
                 continue;
             }
 
             List<(string Property, string Command)> list = new();
 
-            foreach (var member in clazz.GetMembers())
+            foreach (var member in type.GetMembers())
             {
                 if (member.GetAttributes().FirstOrDefault(attr => attr.AttributeClass!.Name == "RelayCommandAttribute") is { } attribute &&
                     attribute.NamedArguments.FirstOrDefault(arg => arg.Key == "CanExecute") is { } canExecuteArg)
@@ -56,13 +54,13 @@ public class RelayCommandAutoUpdateCanExecuteChangedGenerator : ISourceGenerator
                 source.AppendLine("using System;");
                 source.AppendLine("using System.ComponentModel;");
                 source.AppendLine("");
-                source.AppendLine("namespace " + className.Replace("." + clazz.Name, "") + ";");
+                source.AppendLine("namespace " + className.Replace("." + type.Name, "") + ";");
                 source.AppendLine("");
-                source.AppendLine("partial class " + clazz.Name);
+                source.AppendLine("partial class " + type.Name);
                 source.AppendLine("{");
                 source.AppendLine("  protected override void __EnableAutoNotifyCanExecuteChanged()");
                 source.AppendLine("  {");
-                source.AppendLine("    PropertyChanged += (object? sender, PropertyChangedEventArgs e) =>");
+                source.AppendLine("    PropertyChanged += (object sender, PropertyChangedEventArgs e) =>");
                 source.AppendLine("    {");
                 source.AppendLine("      switch(e.PropertyName)");
                 source.AppendLine("      {");

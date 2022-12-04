@@ -8,11 +8,14 @@ namespace PhotoViewerApp.Views;
 [ViewRegistration(typeof(FlipViewPageModel))]
 public sealed partial class FlipViewPage : Page
 {
-    private FlipViewPageModel ViewModel { get; } = PageModelFactory.CreateFlipViewPageModel(App.Current.Window.DialogService);
+    private FlipViewPageModel ViewModel => (FlipViewPageModel)DataContext;
 
     public FlipViewPage()
     {
-        this.InitializeComponent();
+        DataContext = PageModelFactory.CreateFlipViewPageModel(App.Current.Window.DialogService);
+        this.InitializeMVVM<FlipViewPageModel>(InitializeComponent,
+            connectToViewModel: () => Bindings.Initialize(),
+            disconnectFromViewModel: () => Bindings.StopTracking());
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

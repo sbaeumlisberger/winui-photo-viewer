@@ -17,7 +17,7 @@ public sealed partial class MainWindow : WindowEx
     public IDialogService DialogService { get; }
 
     public MainWindow(IMessenger messenger)
-    {
+    {        
         this.InitializeComponent();
         Closed += MainWindow_Closed;
         DialogService = new DialogService(this);

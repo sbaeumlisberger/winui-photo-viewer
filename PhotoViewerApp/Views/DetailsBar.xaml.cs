@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Resources;
+using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
 
 
@@ -13,11 +14,7 @@ public sealed partial class DetailsBar : UserControl
 
     public DetailsBar()
     {
-        this.InitializeComponent();
-    }
-    private string CheckFileName(string fileName)
-    {
-        return fileName != string.Empty ? fileName : Strings.DetailsBar_NoInformationAvailable;
+        this.InitializeMVVM<DetailsBarModel>(InitializeComponent);
     }
 
     private string ColorSpaceTypeToDisplayName(ColorSpaceType colorSpaceType)

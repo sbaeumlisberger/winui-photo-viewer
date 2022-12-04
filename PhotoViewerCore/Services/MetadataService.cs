@@ -50,7 +50,7 @@ internal class MetadataService : IMetadataService
             throw new NotSupportedException("The file format does not support any metadata.");
         }
         var cache = cacheTable.GetOrCreateValue(bitmap);
-        return cache.GetOrCreateValueAsync(() => ReadMetadataAsync(bitmap.File));
+        return cache.GetOrCreateValueAsync(() => ReadMetadataAsync(bitmap));
     }
 
     public async Task<T> GetMetadataAsync<T>(IBitmapFileInfo bitmap, IReadonlyMetadataProperty<T> propertyDefinition)
@@ -61,9 +61,9 @@ internal class MetadataService : IMetadataService
 
     public async Task WriteMetadataAsync(IBitmapFileInfo bitmap, MetadataPropertySet propertySet)
     {
-        Log.Info($"Write metadata to file {bitmap.File.Name}: {string.Join(", ", propertySet.Select(entry => $"{entry.Property.Identifier} = {entry.Value}"))}");
+        Log.Info($"Write metadata to file {bitmap.FileName}: {string.Join(", ", propertySet.Select(entry => $"{entry.Property.Identifier} = {entry.Value}"))}");
 
-        using (var fileStream = await bitmap.File.OpenAsync(FileAccessMode.ReadWrite).AsTask().ConfigureAwait(false))
+        using (var fileStream = await bitmap.OpenAsync(FileAccessMode.ReadWrite).ConfigureAwait(false))
         {
             var metadataEncoder = new MetadataEncoder(fileStream.AsStream());
             metadataEncoder.AutoResizeLargeThumbnails = true;
@@ -80,21 +80,17 @@ internal class MetadataService : IMetadataService
         await WriteMetadataAsync(bitmap, metadataPropertySet);
     }
 
-    private async Task<MetadataView> ReadMetadataAsync(IStorageFile file)
+    private async Task<MetadataView> ReadMetadataAsync(IBitmapFileInfo file)
     {
         Log.Info($"Read metadata for file {file.Name}");
 
-        using (var fileStream = await file.OpenReadAsync().AsTask().ConfigureAwait(false))
+        using (var fileStream = await file.OpenAsync(FileAccessMode.Read).ConfigureAwait(false))
         {
             var wic = new WICImagingFactory();
 
             var decoder = wic.CreateDecoderFromStream(fileStream.AsStream(), WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
 
             var frame = decoder.GetFrame(0);
-
-            WICSize size = frame.GetSize();
-
-            //sizeInPixels = new Size(size.Width, size.Height);
 
             var metadataReader = new MetadataReader(frame.GetMetadataQueryReader(), decoder.GetDecoderInfo());
 

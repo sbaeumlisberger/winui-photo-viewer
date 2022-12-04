@@ -1,4 +1,5 @@
-﻿using Windows.Storage;
+﻿using System.Runtime.InteropServices;
+using Windows.Storage;
 
 namespace PhotoViewerApp.Models;
 

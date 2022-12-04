@@ -8,6 +8,19 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <controls:BitmapViewer BitmapImage="{x:Bind ViewModel.BitmapImage, Mode=OneWay}" IsEnabled="{x:Bind ViewModel.IsActive, Mode=OneWay}"/>
-
+    <Grid>
+        <controls:BitmapViewer 
+            BitmapImage="{x:Bind ViewModel.BitmapImage, Mode=OneWay}" 
+            IsEnabled="{x:Bind ViewModel.IsActive, Mode=OneWay}"/>
+        <!---TODO loading indicator -->
+        <StackPanel 
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center" 
+            Spacing="8"
+            Visibility="{x:Bind ViewModel.IsLoadingImageFailed, Mode=OneWay}">
+            <TextBlock HorizontalAlignment="Center" Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"/>
+            <Button HorizontalAlignment="Center" Content="Reload" Command="{x:Bind ViewModel.ReloadCommand}"/> 
+        </StackPanel>
+    </Grid>    
+    
 </UserControl>

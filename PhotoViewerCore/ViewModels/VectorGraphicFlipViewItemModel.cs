@@ -3,6 +3,7 @@ using PhotoViewerApp.Models;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
 using PhotoViewerCore.ViewModels;
+using System.Text;
 using Windows.Storage;
 
 namespace PhotoViewerApp.ViewModels;
@@ -29,12 +30,13 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
         MediaItem = mediaFile;
     }
 
-    public async void StartLoading()
+    public async Task InitializeAsync()
     {
         try
         {
             loadImageTaskCompletionSource = new TaskCompletionSource<bool>();
-            string svgString = await FileIO.ReadTextAsync(MediaItem.File);
+            using var fileStream = await MediaItem.OpenAsync(FileAccessMode.Read);
+            string svgString = await new StreamReader(fileStream.AsStream()).ReadToEndAsync();
             Content = "<html>\n" +
                 "   <head>\n" +
                 "       <style>\n" +

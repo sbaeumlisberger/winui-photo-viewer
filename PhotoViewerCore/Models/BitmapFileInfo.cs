@@ -1,12 +1,13 @@
 ﻿using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace PhotoViewerApp.Models;
 
 public interface IBitmapFileInfo : IMediaFileInfo
 {
-    new IList<IStorageFile> LinkedFiles { get; }
-
     bool IsMetadataSupported { get; }
+
+    void LinkStorageFile(IStorageFile storageFile);
 }
 
 public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
@@ -43,13 +44,24 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
 
     public bool IsMetadataSupported { get; }
 
-    public override string Name => File.Name + (LinkedFiles.Any() ? "[" + string.Join("|", LinkedFiles.Select(file => file.FileType)) + "]" : string.Empty);
+    public override IReadOnlyList<IStorageFile> LinkedStorageFiles => linkedStorageFiles;
 
-    public IList<IStorageFile> LinkedFiles { get; } = new List<IStorageFile>();
+    private List<IStorageFile> linkedStorageFiles = new List<IStorageFile>();
 
     public BitmapFileInfo(IStorageFile file) : base(file)
     {
-        IsMetadataSupported = JpegFileExtensions.Contains(File.FileType.ToLower()) || TiffFileExtensions.Contains(File.FileType.ToLower());
+        IsMetadataSupported = JpegFileExtensions.Contains(StorageFile.FileType.ToLower()) || TiffFileExtensions.Contains(StorageFile.FileType.ToLower());
+    }
+
+    public void LinkStorageFile(IStorageFile storageFile) 
+    {
+        linkedStorageFiles.Add(storageFile);
+    }
+
+    public override async Task<IRandomAccessStream?> GetThumbnailAsync()
+    {
+        // loading the image directly is much faster and always up-to-date
+        return await OpenAsync(FileAccessMode.Read).ConfigureAwait(false);
     }
 
 }

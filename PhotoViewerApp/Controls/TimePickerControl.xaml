@@ -1,0 +1,58 @@
+﻿<UserControl
+    x:Class="PhotoViewerApp.Controls.TimePickerControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewerApp.Controls"
+    xmlns:converter="using:PhotoViewerApp.Converters"   
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="32"
+    d:DesignWidth="300">
+
+    <UserControl.Resources>
+        <converter:StringFormatConverter x:Key="StringFormatConverter"/>
+        <DataTemplate x:Key="ItemTemplate" x:DataType="x:Int32">
+            <TextBlock Text="{x:Bind 
+                Converter={StaticResource StringFormatConverter}, 
+                ConverterParameter='{}{0:00}'}"/>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="72" Width="*"/>
+            <ColumnDefinition MinWidth="72" Width="*"/>
+            <ColumnDefinition MinWidth="72" Width="*"/>
+        </Grid.ColumnDefinitions>
+        <ComboBox  
+            x:Name="hoursBox"
+            Grid.Column="0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            PlaceholderText="hh"         
+            BorderThickness="1,1,0,1"
+            CornerRadius="4,0,0,4"
+            ItemTemplate="{StaticResource ItemTemplate}"
+            DropDownClosed="HoursBox_DropDownClosed"/>
+        <ComboBox
+            x:Name="minutesBox"
+            Grid.Column="1"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            PlaceholderText="mm"
+            CornerRadius="0"
+            ItemTemplate="{StaticResource ItemTemplate}"
+            DropDownClosed="MinutesBox_DropDownClosed"/>
+        <ComboBox
+            x:Name="secondsBox"
+            Grid.Column="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            PlaceholderText="ss"
+            BorderThickness="0,1,1,1"
+            CornerRadius="0,4,4,0"
+            ItemTemplate="{StaticResource ItemTemplate}"
+            DropDownClosed="SecondsBox_DropDownClosed"/>
+    </Grid>
+</UserControl>

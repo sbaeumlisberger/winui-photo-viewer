@@ -9,10 +9,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource PageBackgroundBrush}">
 
     <Page.Resources>
-        <converters:StorageFileToThumbnailConverter x:Key="StorageFileToThumbnailConverter"/>
+        <converters:MediaFileInfoToThumbnailConverter x:Key="MediaFileInfoToThumbnailConverter"/>
     </Page.Resources>
 
     <Grid>
@@ -28,18 +28,20 @@
 
         <local:MetadataPanel Grid.RowSpan="2" DataContext="{x:Bind ViewModel.MetadataPanelModel}"/>
 
-        <GridView x:Name="gridView" Grid.Column="1" ItemsSource="{x:Bind ViewModel.Items}" 
+        <GridView x:Name="gridView" Grid.Column="1" Padding="8" ItemsSource="{x:Bind ViewModel.Items}" 
             SelectionMode="Extended" SelectionChanged="GridView_SelectionChanged">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="models:IMediaFileInfo">
                     <StackPanel Width="200" DoubleTapped="GridViewItem_DoubleTapped">
-                        <Image Source="{x:Bind File, Converter={StaticResource StorageFileToThumbnailConverter}}"/>
-                        <TextBlock Text="{x:Bind Name}"/>
+                        <Image Source="{x:Bind Converter={StaticResource MediaFileInfoToThumbnailConverter}}"/>
+                        <TextBlock TextAlignment="Center" Text="{x:Bind Name}"/>
                     </StackPanel>
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>
 
-        <CommandBar Grid.Column="1" Grid.Row="1"/>
+        <local:OverviewPageCommandBar  
+            Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1"
+            DataContext="{x:Bind ViewModel.OverviewPageCommandBarModel}"/>
     </Grid>
 </Page>

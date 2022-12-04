@@ -11,6 +11,7 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.Services.Maps;
 using Windows.Storage;
 using WinUIEx;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
@@ -19,6 +20,8 @@ namespace PhotoViewerApp;
 
 public partial class App : Application
 {
+    public const string MapServiceToken = "vQDj7umE60UMzHG2XfCm~ehfqvBJAFQn6pphOPVbDsQ~ArtM_t2j4AyKdgLIa5iXeftg8bEG4YRYCwhUN-SMXhIK73mnPtCYU4nOF2VtqGiF";
+
     public static new App Current => (App)Application.Current;
 
     public MainWindow Window { get; private set; } = null!;
@@ -31,6 +34,8 @@ public partial class App : Application
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
         this.InitializeComponent();
+
+        MapService.ServiceToken = MapServiceToken;
 
         Log.Info($"Application instance created.");
     }

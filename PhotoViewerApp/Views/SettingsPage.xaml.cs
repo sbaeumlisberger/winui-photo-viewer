@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using PhotoViewerApp.Resources;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
@@ -15,6 +16,10 @@ public sealed partial class SettingsPage : Page
     public SettingsPage()
     {
         this.InitializeComponent();
+    }
+
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
         App.Current.Window.Title = Strings.SettingsPage_Title;
     }
 

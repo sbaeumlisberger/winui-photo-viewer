@@ -20,6 +20,10 @@ public partial class FlipViewPageModel : ViewModelBase
 
     private readonly Session session;
 
+    private readonly IMessenger messenger;
+
+    private readonly IDisplayRequestService displayRequestService;
+
     private IDisposable? displayRequest;
 
     public FlipViewPageModel(
@@ -32,6 +36,8 @@ public partial class FlipViewPageModel : ViewModelBase
         MetadataPanelModelFactory metadataPanelModelFactory)
     {
         this.session = session;
+        this.messenger = messenger;
+        this.displayRequestService = displayRequestService;
 
         FlipViewModel = flipViewModelFactory.Invoke();
         DetailsBarModel = detailsBarModelFactory.Invoke();
@@ -39,31 +45,43 @@ public partial class FlipViewPageModel : ViewModelBase
         MetadataPanelModel = metadataPanelModelFactory.Invoke(true);
 
         FlipViewModel.PropertyChanged += FlipViewModel_PropertyChanged;
+    }
 
-        messenger.Subscribe<StartDiashowMessage>(msg =>
-        {
-            DetailsBarModel.IsVisible = false;
-            CommandBarModel.IsVisible = false;
-            MetadataPanelModel.IsVisible = false;
-            messenger.Publish(new EnterFullscreenMessage());
-            try
-            {
-                displayRequest = displayRequestService.RequestActive();
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Failed to request display active", ex);
-            }
-        });
+    public override void OnViewConnected()
+    {
+        messenger.Subscribe<StartDiashowMessage>(OnStartDiashowMessageReceived);
+        messenger.Subscribe<ExitDiashowMessage>(OnExitDiashowMessageReceived);
+    }
 
-        messenger.Subscribe<ExitDiashowMessage>(msg =>
+    public override void OnViewDisconnected()
+    {
+        messenger.Unsubscribe<StartDiashowMessage>(OnStartDiashowMessageReceived);
+        messenger.Unsubscribe<ExitDiashowMessage>(OnExitDiashowMessageReceived);
+    }
+
+    private void OnStartDiashowMessageReceived(StartDiashowMessage msg)
+    {
+        DetailsBarModel.IsVisible = false;
+        CommandBarModel.IsVisible = false;
+        MetadataPanelModel.IsVisible = false;
+        messenger.Publish(new EnterFullscreenMessage());
+        try
         {
-            DetailsBarModel.IsVisible = true;
-            CommandBarModel.IsVisible = true;
-            MetadataPanelModel.IsVisible = true;
-            messenger.Publish(new ExitFullscreenMessage());
-            DisposeUtil.DisposeSafely(ref displayRequest);
-        });
+            displayRequest = displayRequestService.RequestActive();
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to request display active", ex);
+        }
+    }
+
+    private void OnExitDiashowMessageReceived(ExitDiashowMessage msg)
+    {
+        DetailsBarModel.IsVisible = true;
+        CommandBarModel.IsVisible = true;
+        MetadataPanelModel.IsVisible = true;
+        messenger.Publish(new ExitFullscreenMessage());
+        DisposeUtil.DisposeSafely(ref displayRequest);
     }
 
     private void FlipViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)

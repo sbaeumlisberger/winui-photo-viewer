@@ -1,6 +1,10 @@
 ﻿using PhotoViewerApp.Models;
 using PhotoViewerApp.Utils.Logging;
+using PhotoViewerCore.Utils;
 using System.Diagnostics;
+using System.Formats.Tar;
+using System.IO;
+using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 
@@ -20,41 +24,72 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
     public async Task<LoadMediaFilesResult> LoadMediaFilesAsync(IActivatedEventArgs activatedEventArgs, LoadMediaConfig config)
     {
         List<IMediaFileInfo> mediaFiles;
-        IMediaFileInfo? startFile;
+        IMediaFileInfo? startMediaFile;
 
         if (activatedEventArgs is IFileActivatedEventArgsWithNeighboringFiles fileActivatedEventArgsWithNeighboringFiles)
         {
-            var files = await fileActivatedEventArgsWithNeighboringFiles.NeighboringFilesQuery.GetFilesAsync();
+            var activatedFiles = fileActivatedEventArgsWithNeighboringFiles.Files.OfType<IStorageFile>().ToList();
+            var neighboringFilesQuery = fileActivatedEventArgsWithNeighboringFiles.NeighboringFilesQuery;
+
+            IReadOnlyList<IStorageFile> files = activatedFiles;
+
+            if (neighboringFilesQuery != null) // not always available
+            {
+                files = await neighboringFilesQuery.GetFilesAsync();
+            }
+
+            var startFile = activatedFiles.First();
 
             if (!string.IsNullOrEmpty(config.RAWsFolderName))
             {
-                string rawsFolderPath = Path.Combine(Path.GetDirectoryName(files.First().Path)!, config.RAWsFolderName);
+                string? directory = Path.GetDirectoryName(files.FirstOrDefault()?.Path);
 
-                if (File.Exists(rawsFolderPath))
+                if (!string.IsNullOrEmpty(directory))
                 {
-                    var rawsFolder = await StorageFolder.GetFolderFromPathAsync(rawsFolderPath).AsTask().ConfigureAwait(false);
-                    files = files.Concat(await rawsFolder.GetFilesAsync().AsTask().ConfigureAwait(false)).ToList();
+                    string rawsFolderPath = Path.Combine(directory, config.RAWsFolderName);
+
+                    if (File.Exists(rawsFolderPath))
+                    {
+                        var rawsFolder = await StorageFolder.GetFolderFromPathAsync(rawsFolderPath).AsTask().ConfigureAwait(false);
+                        files = files.Concat(await rawsFolder.GetFilesAsync().AsTask().ConfigureAwait(false)).ToList();
+                    }
                 }
             }
 
             mediaFiles = ConvertFilesToMediaFiles(files, config.LinkRAWs);
-            startFile = mediaFiles.First(mediaItem => mediaItem.File.Path == fileActivatedEventArgsWithNeighboringFiles.Files.First().Path);
+            startMediaFile = FindStartMediaFile(mediaFiles, startFile);
         }
         else if (activatedEventArgs is IFileActivatedEventArgs fileActivatedEventArgs)
         {
             mediaFiles = ConvertFilesToMediaFiles(fileActivatedEventArgs.Files.Cast<IStorageFile>().ToList(), config.LinkRAWs);
-            startFile = mediaFiles.First();
+            startMediaFile = mediaFiles.FirstOrDefault();
         }
         else
         {
 #if DEBUG
             return await LoadMediaFilesAsync(KnownFolders.PicturesLibrary, config);
 #else
-            mediaItems =  new List<IMediaItem>();
-            startItem = null;
+            mediaFiles =  new List<IMediaItem>();
+            startMediaFile = null;
 #endif
         }
-        return new LoadMediaFilesResult(mediaFiles, startFile);
+        return new LoadMediaFilesResult(mediaFiles, startMediaFile);
+    }
+
+    private IMediaFileInfo FindStartMediaFile(IReadOnlyList<IMediaFileInfo> mediaFiles, IStorageFile startFile) 
+    {
+        if (mediaFiles.FirstOrDefault(mediaFile =>
+            mediaFile.StorageFile.IsEqual(startFile)) is IMediaFileInfo mediaFile) 
+        {
+            return mediaFile;
+        }
+
+        // The startFile can be a tempoary copy of one of the loaded files (e.g. when
+        // accessing files on a smartphone or camera). Typically the file name of the
+        // copy ends with a number inside brackets ("[" and "]").
+        string assumedFileName = Regex.Replace(startFile.Name, "\\[\\d*\\]", "");
+        return mediaFiles.FirstOrDefault(mediaFile => mediaFile.FileName == assumedFileName) 
+            ?? mediaFiles.First(); // fallback to first file
     }
 
     public async Task<LoadMediaFilesResult> LoadMediaFilesAsync(StorageFolder storageFolder, LoadMediaConfig config)
@@ -70,8 +105,8 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
         }
 
         var mediaFiles = ConvertFilesToMediaFiles(files, config.LinkRAWs);
-        var startFile = mediaFiles.FirstOrDefault();
-        return new LoadMediaFilesResult(mediaFiles, startFile);
+        var startMediaFile = mediaFiles.FirstOrDefault();
+        return new LoadMediaFilesResult(mediaFiles, startMediaFile);
     }
 
     private List<IMediaFileInfo> ConvertFilesToMediaFiles(IReadOnlyList<IStorageFile> files, bool linkRAWs)
@@ -140,8 +175,8 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 
             foreach (var rawFile in rawFilesToLink)
             {
-                var mediaFileInfo = possibleLinkFiles.First(mfi => Path.GetFileNameWithoutExtension(mfi.File.Name) == Path.GetFileNameWithoutExtension(rawFile.Name));
-                mediaFileInfo.LinkedFiles.Add(rawFile);
+                var mediaFileInfo = possibleLinkFiles.First(mfi => Path.GetFileNameWithoutExtension(mfi.StorageFile.Name) == Path.GetFileNameWithoutExtension(rawFile.Name));
+                mediaFileInfo.LinkStorageFile(rawFile);
             }
         }
     }

@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using PhotoViewerCore.Messages;
 using PostSharp.Patterns.Model;
 
 namespace PhotoViewerApp.Utils;
@@ -8,7 +10,9 @@ public class ViewModelBase : ObservableObject
 {
     protected virtual void __EnableAutoNotifyCanExecuteChanged() { }
 
-    protected virtual void __EnableCallOnPropertyChangedMethod() { }
+    protected virtual void __EnableOnPropertyChangedMethods() { }
+
+    protected virtual void __EnableDependsOn() { }
 
     private readonly SynchronizationContext synchronizationContext;
 
@@ -16,11 +20,16 @@ public class ViewModelBase : ObservableObject
     {
         synchronizationContext = SynchronizationContext.Current!;
         __EnableAutoNotifyCanExecuteChanged();
-        __EnableCallOnPropertyChangedMethod();
+        __EnableOnPropertyChangedMethods();
+        __EnableDependsOn();
     }
+
+    public virtual void OnViewConnected() { }
+
+    public virtual void OnViewDisconnected() { }
 
     protected void RunOnUIThread(Action action)
     {
-        synchronizationContext.Post(_ => action(), null);
+        synchronizationContext.Send(_ => action(), null);
     }
 }

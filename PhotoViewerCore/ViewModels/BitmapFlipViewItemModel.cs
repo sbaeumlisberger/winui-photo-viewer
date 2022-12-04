@@ -1,10 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.Input;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
+using PhotoViewerCore.Messages;
 using PhotoViewerCore.ViewModels;
+using System.Threading;
+using Windows.Foundation;
 
 namespace PhotoViewerApp.ViewModels;
 
@@ -12,40 +15,71 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItem
 {
     public IMediaFileInfo MediaItem { get; }
 
-    [ObservableProperty]
-    private bool isActive;
+    public bool IsActive { get; set; } = false;
 
-    [ObservableProperty]
-    private IBitmapImage? bitmapImage;
+    public IBitmapImage? BitmapImage { get; private set; }
+
+    public bool IsLoadingImageFailed { get; private set; } = false;
+
+    public string ErrorMessage { get; private set; } = string.Empty;
+
+    private readonly IMessenger messenger;
 
     private readonly IImageLoaderService imageLoadService;
 
-    private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-
-    private TaskCompletionSource<bool> loadImageTaskCompletionSource = new TaskCompletionSource<bool>();
+    private CancellationTokenSource? cancellationTokenSource;
 
     public BitmapFlipViewItemModel(IMediaFileInfo mediaItem, IMessenger messenger, IImageLoaderService imageLoadService)
     {
         MediaItem = mediaItem;
+        this.messenger = messenger;
         this.imageLoadService = imageLoadService;
-
-        messenger.Subscribe<BitmapRotatedMesssage>(msg =>
-        {
-            if (msg.Bitmap == MediaItem && BitmapImage != null)
-            {
-                StartLoading();
-            }
-        });
+        messenger.Subscribe<BitmapRotatedMesssage>(OnBitmapRotatedMesssageReceived);
     }
 
-    public async void StartLoading()
+    public async Task InitializeAsync()
     {
-        var cancellationToken = cancellationTokenSource.Token;
+        await LoadImageAsync();
+    }
+
+    public void Cleanup()
+    {
+        messenger.Unsubscribe<BitmapRotatedMesssage>(OnBitmapRotatedMesssageReceived);
+        cancellationTokenSource?.Cancel();
+        cancellationTokenSource?.Dispose();
+        cancellationTokenSource = null;
+        var bitmapImage = BitmapImage;
+        BitmapImage = null;
+        bitmapImage?.Dispose();
+    }
+
+    private async void OnBitmapRotatedMesssageReceived(BitmapRotatedMesssage msg) 
+    {
+        if (msg.Bitmap == MediaItem)
+        {
+            await LoadImageAsync();
+        }
+    }
+ 
+    private async Task LoadImageAsync() 
+    {
         try
         {
-            loadImageTaskCompletionSource = new TaskCompletionSource<bool>();
-            BitmapImage = await imageLoadService.LoadFromFileAsync(MediaItem.File, cancellationToken);
-            loadImageTaskCompletionSource.SetResult(true);
+            cancellationTokenSource?.Cancel();
+
+            cancellationTokenSource?.Dispose();
+            cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+
+            IsLoadingImageFailed = false;
+            ErrorMessage = string.Empty;
+
+            var bitmapImage = await imageLoadService.LoadFromFileAsync((IBitmapFileInfo)MediaItem, cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            BitmapImage = bitmapImage;
+
+            messenger.Publish(new BitmapImageLoadedMessage((IBitmapFileInfo)MediaItem, bitmapImage));
+
             Log.Info($"Loaded {MediaItem.Name} sucessfully");
         }
         catch (OperationCanceledException)
@@ -55,22 +89,15 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItem
         catch (Exception ex)
         {
             Log.Error($"Failed to load {MediaItem.Name}", ex);
-            loadImageTaskCompletionSource.SetResult(false);
+            IsLoadingImageFailed = true;
+            ErrorMessage = ex.Message;
         }
     }
 
-    public void Cleanup()
+    [RelayCommand(CanExecute = nameof(IsLoadingImageFailed))]
+    private async Task ReloadAsync()
     {
-        cancellationTokenSource.Cancel();
-        cancellationTokenSource = new CancellationTokenSource();
-        BitmapImage?.Dispose();
-        BitmapImage = null;
-    }
-
-    public async Task<IBitmapImage?> WaitUntilImageLoaded()
-    {
-        await loadImageTaskCompletionSource.Task;
-        return BitmapImage;
+        await LoadImageAsync();
     }
 
 }

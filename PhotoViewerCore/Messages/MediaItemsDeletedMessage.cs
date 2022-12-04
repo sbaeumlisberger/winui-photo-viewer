@@ -2,4 +2,4 @@
 
 namespace PhotoViewerApp.Messages;
 
-public record class MediaItemsDeletedMessage(List<IMediaFileInfo> MediaItems);
+public record class MediaItemsDeletedMessage(IReadOnlyCollection<IMediaFileInfo> MediaItems);
