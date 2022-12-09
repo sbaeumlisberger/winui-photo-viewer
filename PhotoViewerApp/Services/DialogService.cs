@@ -6,8 +6,12 @@ using PhotoViewerApp.Views;
 using PhotoViewerCore.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Pickers;
+using Windows.System;
 using WinRT.Interop;
 using WinUIEx;
 
@@ -38,6 +42,10 @@ public class DialogService : IDialogService
                 await ShowMessageDialogAsync(messageDialogModel); break;
             case YesNoDialogModel yesNoDialogModel:
                 await ShowYesNoDialogAsync(yesNoDialogModel); break;
+            case LaunchFileDialogModel launchFileDialogModel:
+                await ShowLaunchFileDialogAsync(launchFileDialogModel); break;
+            case ShareDialogModel shareDialogModel:
+                await ShowShareDialogAsync(shareDialogModel); break;
             default:
                 throw new Exception();
         }
@@ -120,5 +128,47 @@ public class DialogService : IDialogService
             yesNoDialogModel.IsRemember = dialog.IsRemember;
         }
     }
+
+    private async Task ShowLaunchFileDialogAsync(LaunchFileDialogModel launchFileDialogModel)
+    {
+        var options = new LauncherOptions
+        {
+            DisplayApplicationPicker = true
+        };
+        await Launcher.LaunchFileAsync(launchFileDialogModel.File, options);
+    }
+
+    private Task ShowShareDialogAsync(ShareDialogModel shareDialogModel)
+    {
+        var dataTransferManager = GetDataTransferManagerForWindow(windowHandle);
+        dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+        void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            var dataPackage = new DataPackage();
+            dataPackage.RequestedOperation = DataPackageOperation.Copy;
+            dataPackage.SetStorageItems(shareDialogModel.Files);
+            dataPackage.Properties.Title = string.Join(", ", shareDialogModel.Files.Select(file => file.Name));
+            args.Request.Data = dataPackage;
+            dataTransferManager.DataRequested -= DataTransferManager_DataRequested;
+        }
+        DataTransferManager.As<IDataTransferManagerInterop>().ShowShareUIForWindow(windowHandle);
+        return Task.CompletedTask;
+    }
+
+    private static DataTransferManager GetDataTransferManagerForWindow([In] IntPtr appWindow)
+    {
+        IDataTransferManagerInterop interop = DataTransferManager.As<IDataTransferManagerInterop>();
+        Guid riid = new Guid(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
+        return DataTransferManager.FromAbi(interop.GetForWindow(appWindow, riid));
+    }
+
+    [ComImport, Guid("3A3DCD6C-3EAB-43DC-BCDE-45671CE800C8")]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    interface IDataTransferManagerInterop
+    {
+        IntPtr GetForWindow([In] IntPtr appWindow, [In] ref Guid riid);
+        void ShowShareUIForWindow(IntPtr appWindow);
+    }
+
 }
 

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
@@ -27,26 +28,21 @@ public partial class KeywordsSectionModel : ViewModelBase
 
     private readonly SequentialTaskRunner writeFilesRunner;
 
-    private readonly IMessenger messenger;
-
     private readonly IMetadataService metadataService;
 
-    public KeywordsSectionModel(SequentialTaskRunner writeFilesRunner, IMessenger messenger, IMetadataService metadataService)
+    public KeywordsSectionModel(
+        SequentialTaskRunner writeFilesRunner,
+        IMessenger messenger,
+        IMetadataService metadataService) : base(messenger)
     {
         this.writeFilesRunner = writeFilesRunner;
-        this.messenger = messenger;
         this.metadataService = metadataService;
     }
 
-    public override void OnViewConnected()
+    protected override void OnViewConnectedOverride()
     {
-        messenger.Subscribe<MetadataModifiedMessage>(OnMetadataModifiedMessageReceived);
+        Messenger.Register<MetadataModifiedMessage>(this, OnReceive);
         UpdateSuggestions();
-    }
-
-    public override void OnViewDisconnected() 
-    {
-        messenger.Unsubscribe<MetadataModifiedMessage>(OnMetadataModifiedMessageReceived);
     }
 
     public void Update(IList<IBitmapFileInfo> files, IList<MetadataView> metadata)
@@ -68,7 +64,7 @@ public partial class KeywordsSectionModel : ViewModelBase
         UpdateSuggestions();
     }
 
-    private void OnMetadataModifiedMessageReceived(MetadataModifiedMessage msg)
+    private void OnReceive(MetadataModifiedMessage msg)
     {
         if (msg.Files.Intersect(files).Any() && msg.MetadataProperty == MetadataProperties.Keywords)
         {
@@ -132,7 +128,7 @@ public partial class KeywordsSectionModel : ViewModelBase
                     await metadataService.WriteMetadataAsync(file, MetadataProperties.Keywords, keywords).ConfigureAwait(false);
                 }
             }).ConfigureAwait(false);
-            messenger.Publish(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Keywords));
+            Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Keywords));
             // TODO show error message
         }).ConfigureAwait(false); ;
     }
@@ -151,7 +147,7 @@ public partial class KeywordsSectionModel : ViewModelBase
                     await metadataService.WriteMetadataAsync(file, MetadataProperties.Keywords, keywords).ConfigureAwait(false);
                 }
             }).ConfigureAwait(false);
-            messenger.Publish(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Keywords));
+            Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Keywords));
             // TODO show error message
         }).ConfigureAwait(false); ;
     }

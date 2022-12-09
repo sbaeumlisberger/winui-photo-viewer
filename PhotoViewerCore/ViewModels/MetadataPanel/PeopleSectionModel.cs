@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
 using MetadataAPI.Data;
-using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
@@ -29,30 +29,26 @@ public partial class PeopleSectionModel : ViewModelBase
 
     private readonly SequentialTaskRunner writeFilesRunner;
 
-    private readonly IMessenger messenger;
-
     private readonly IMetadataService metadataService;
 
-    public PeopleSectionModel(SequentialTaskRunner writeFilesRunner, IMessenger messenger, IMetadataService metadataService, bool tagPeopleOnPhotoButtonVisible)
+    public PeopleSectionModel(
+        SequentialTaskRunner writeFilesRunner, 
+        IMessenger messenger, 
+        IMetadataService metadataService, 
+        bool tagPeopleOnPhotoButtonVisible) : base(messenger)
     {
         this.writeFilesRunner = writeFilesRunner;
-        this.messenger = messenger;
         this.metadataService = metadataService;
         IsTagPeopleOnPhotoButtonVisible = tagPeopleOnPhotoButtonVisible;       
     }
 
-    public override void OnViewConnected()
+    protected override void OnViewConnectedOverride()
     {
         if (IsTagPeopleOnPhotoButtonVisible)
         {
-            messenger.Subscribe<TagPeopleToolActiveChangedMeesage>(OnTagPeopleToolActiveChangedMessageReceived);
+            Messenger.Register<TagPeopleToolActiveChangedMeesage>(this, OnTagPeopleToolActiveChangedMessageReceived);
         }
         UpdateSuggestions();
-    }
-
-    public override void OnViewDisconnected()
-    {
-        messenger.Unsubscribe<TagPeopleToolActiveChangedMeesage>(OnTagPeopleToolActiveChangedMessageReceived);
     }
 
     public void Update(IList<IBitmapFileInfo> files, IList<MetadataView> metadata)
@@ -129,7 +125,7 @@ public partial class PeopleSectionModel : ViewModelBase
     [RelayCommand]
     private void ToggleTagPeopleOnPhoto()
     {
-        messenger.Publish(new SetTagPeopleToolActive(!IsTagPeopleOnPhotoButtonChecked));
+        Messenger.Send(new SetTagPeopleToolActive(!IsTagPeopleOnPhotoButtonChecked));
     }
 
 }

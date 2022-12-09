@@ -33,7 +33,7 @@ public static class CollectionsUtil
         range.ForEach(collection.Add);
     }
 
-    public static List<T> NotNull<T>(T? element)
+    public static List<T> ListOf<T>(T? element)
     {
         return element != null ? new List<T>(1) { element } : new List<T>(0);
     }

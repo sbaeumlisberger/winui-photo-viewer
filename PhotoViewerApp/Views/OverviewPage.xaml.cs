@@ -13,11 +13,16 @@ namespace PhotoViewerApp.Views;
 [ViewRegistration(typeof(OverviewPageModel))]
 public sealed partial class OverviewPage : Page
 {
-    private OverviewPageModel ViewModel { get; } = PageModelFactory.CreateOverviewPageModel(App.Current.Window.DialogService);
+    private OverviewPageModel ViewModel => (OverviewPageModel)DataContext;
+
+    public MenuFlyout ContextMenu => MediaFileContextMenuHolder.MediaFileContextMenu;
 
     public OverviewPage()
     {
-        this.InitializeComponent();    
+        DataContext = PageModelFactory.CreateOverviewPageModel(App.Current.Window.DialogService);
+        this.InitializeMVVM<OverviewPageModel>(InitializeComponent,
+            (viewModel) => this.Bindings.Initialize(),
+            (viewModel) => this.Bindings.StopTracking());
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -34,5 +39,14 @@ public sealed partial class OverviewPage : Page
     private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         ViewModel.SelectedItems = gridView.SelectedItems.Cast<IMediaFileInfo>().ToList();
+    }
+
+    private void GridViewItem_RightTapped(object sender, RightTappedRoutedEventArgs e)
+    {
+        var itemModel = ((FrameworkElement)sender).DataContext;
+        if (!ViewModel.SelectedItems.Contains(itemModel))
+        {
+            gridView.SelectedItem = itemModel;
+        }
     }
 }

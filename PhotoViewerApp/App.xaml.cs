@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Xaml;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
@@ -54,17 +55,17 @@ public partial class App : Application
         var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName);
         var loadMediaItemsTask = loadMediaItemsService.LoadMediaFilesAsync(activatedEventArgs, config);
 
-        var messenger = Messenger.GlobalInstance;
+        var messenger = StrongReferenceMessenger.Default;
 
         Window = new MainWindow(messenger);
         Window.Activate();
 
         await ColorProfileProvider.Instance.InitializeAsync(Window.GetAppWindow().Id);
 
-        messenger.Publish(new NavigateToPageMessage(typeof(FlipViewPageModel)));
+        messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel)));
 
         var loadMediaItemsResult = await loadMediaItemsTask;
-        messenger.Publish(new MediaItemsLoadedMessage(loadMediaItemsResult.MediaItems, loadMediaItemsResult.StartItem));
+        messenger.Send(new MediaItemsLoadedMessage(loadMediaItemsResult.MediaItems, loadMediaItemsResult.StartItem));
     }
 
     private void App_UnhandledException(object sender, UnhandledExceptionEventArgs args)

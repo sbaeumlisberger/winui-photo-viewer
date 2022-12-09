@@ -11,6 +11,9 @@
     <None Update="Controls\TimePickerControl.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Views\MediaFileContextMenu.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\OverviewPageCommandBar.xaml">
       <SubType>Designer</SubType>
     </Page>

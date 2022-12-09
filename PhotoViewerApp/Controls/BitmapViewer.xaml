@@ -18,7 +18,9 @@
             ViewChanged="ScrollViewer_ViewChanged">
             <Grid 
                 x:Name="dummy" 
-                Background="Transparent"/>
+                Background="Transparent">
+                <ContentPresenter Content="{x:Bind Content, Mode=OneWay}"/>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </UserControl>

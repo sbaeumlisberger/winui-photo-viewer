@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.VisualBasic;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
@@ -7,16 +8,17 @@ using PhotoViewerCore.Models;
 using PhotoViewerCore.Services;
 using PhotoViewerCore.Utils;
 using PhotoViewerCore.ViewModels;
+using System.Windows.Input;
+using Windows.System;
 
 namespace PhotoViewerCore.Commands;
 
-public interface IDeleteFilesCommand
-{
-    Task ExecuteAsync(ICollection<IMediaFileInfo> files);
-}
+public interface IDeleteFilesCommand : IAcceleratedCommand, ICommand { }
 
-public class DeleteFilesCommand : IDeleteFilesCommand
+public class DeleteFilesCommand : AsyncCommandBase<ICollection<IMediaFileInfo>>, IDeleteFilesCommand
 {
+    public VirtualKey AcceleratorKey => VirtualKey.Delete;
+
     private readonly IMessenger messenger;
     private readonly IDeleteMediaService deleteMediaService;
     private readonly IDialogService dialogService;
@@ -32,7 +34,12 @@ public class DeleteFilesCommand : IDeleteFilesCommand
         this.settings = settings;
     }
 
-    public async Task ExecuteAsync(ICollection<IMediaFileInfo> files)
+    protected override bool CanExecute(ICollection<IMediaFileInfo> parameter)
+    {
+        return parameter.Any();
+    }
+
+    protected override async Task ExecuteAsync(ICollection<IMediaFileInfo> files)
     {
         bool deleteLinkedFiles = settings.DeleteLinkedFilesOption switch
         {
@@ -46,7 +53,7 @@ public class DeleteFilesCommand : IDeleteFilesCommand
             await deleteMediaService.DeleteMediaAsync(file, deleteLinkedFiles);
         });
 
-        messenger.Publish(new MediaItemsDeletedMessage(result.ProcessedElements));
+        messenger.Send(new MediaItemsDeletedMessage(result.ProcessedElements));
 
         if (result.HasFailures)
         {

@@ -10,16 +10,37 @@ using Windows.Services.Maps;
 
 namespace PhotoViewerCore.Services
 {
-    /// <summary>A helper class to geocode and reverse-geocode location data via the Bing Maps REST Services.</summary>
+    /// <summary>A service to geocode and reverse-geocode location data.</summary>
+    public interface ILocationService
+    {     
+        /// <summary>Returns the location of the specified position.</summary>
+        Task<Location?> FindLocationAsync(Geopoint geopoint);
+
+        /// <summary>Retruns a list of locations found for the given query.</summary>
+        Task<IReadOnlyList<Location>> FindLocationsAsync(string query, uint maxResults = 5);
+
+        /// <summary>Returns the location of the specified query. If no location is found, null is returned.</summary>
+        Task<Location?> FindLocationAsync(string query);
+
+        /// <summary>Returns the nearest address of the specified position. If no address is found, null is returned.</summary>
+        Task<Address?> FindAddressAsync(Geopoint position);
+
+        /// <summary>Returns the position of the specified address. If no position is found, null is returned.</summary>
+        Task<Geopoint?> FindGeopointAsync(Address address);
+
+        /// <summary>Returns the position of the specified address. If no position is found, null is returned.</summary>
+        Task<Geopoint?> FindGeopointAsync(string address);
+
+    }
+
+    /// <summary>A service to geocode and reverse-geocode location data via the Bing Maps REST Services.</summary>
     /// <remarks>
     /// This class is using the <see cref="MapService.ServiceToken"/> property to authenticate the REST requests.
     /// </remarks>
-    public class LocationService
+    public class LocationService : ILocationService
     {
         private string Culture => ApplicationLanguages.Languages.First().Substring(0, 2);
-
-        /// <summary>Returns the location of the specified position.</summary>
-        /// <exception cref="WebException"/>
+          
         public async Task<Location?> FindLocationAsync(Geopoint geopoint)
         {
             if (geopoint is null)
@@ -38,8 +59,6 @@ namespace PhotoViewerCore.Services
             return (await ParseLocationsAsync(response).ConfigureAwait(false)).FirstOrDefault();
         }
 
-        /// <summary>Retruns a list of locations found for the given query.</summary>
-        /// <exception cref="WebException"/>
         public async Task<IReadOnlyList<Location>> FindLocationsAsync(string query, uint maxResults = 5)
         {
             if (query is null)
@@ -63,29 +82,21 @@ namespace PhotoViewerCore.Services
             return await ParseLocationsAsync(response).ConfigureAwait(false);
         }
 
-        /// <summary>Returns the location of the specified query. If no location is found, null is returned.</summary>
-        /// <exception cref="WebException"/>
         public async Task<Location?> FindLocationAsync(string query)
         {
             return (await FindLocationsAsync(query, 1).ConfigureAwait(false)).FirstOrDefault();
         }
 
-        /// <summary>Returns the nearest address of the specified position. If no address is found, null is returned.</summary>
-        /// <exception cref="WebException"/>
         public async Task<Address?> FindAddressAsync(Geopoint position)
         {
             return (await FindLocationAsync(position).ConfigureAwait(false))?.Address;
         }
 
-        /// <summary>Returns the position of the specified address. If no position is found, null is returned.</summary>
-        /// <exception cref="WebException"/>
         public async Task<Geopoint?> FindGeopointAsync(Address address)
         {
             return (await FindLocationAsync(address.ToString()).ConfigureAwait(false))?.Point;
         }
 
-        /// <summary>Returns the position of the specified address. If no position is found, null is returned.</summary>
-        /// <exception cref="WebException"/>
         public async Task<Geopoint?> FindGeopointAsync(string address)
         {
             return (await FindLocationAsync(address).ConfigureAwait(false))?.Point;

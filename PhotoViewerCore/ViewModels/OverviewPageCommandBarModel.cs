@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
@@ -8,6 +9,7 @@ using PhotoViewerCore.Models;
 using PhotoViewerCore.Utils;
 using PhotoViewerCore.ViewModels;
 using System.ComponentModel;
+using System.Windows.Input;
 using Windows.Storage;
 
 namespace PhotoViewerApp.ViewModels;
@@ -20,16 +22,11 @@ public interface IOverviewPageCommandBarModel : INotifyPropertyChanged
 public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageCommandBarModel
 {
     public IReadOnlyList<IMediaFileInfo> SelectedItems { get; set; } = Array.Empty<IMediaFileInfo>();
-
-    public bool CanDelete { get; private set; } = false;
-
-    private readonly IMessenger messenger;
+    public IAcceleratedCommand DeleteCommand { get; }
 
     private readonly IDialogService dialogService;
 
     private readonly IMediaFilesLoaderService loadMediaItemsService;
-
-    private readonly IDeleteFilesCommand deleteFilesCommand;
 
     private readonly ApplicationSettings settings;
 
@@ -38,30 +35,19 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
         IDialogService dialogService,
         IMediaFilesLoaderService loadMediaItemsService,
         IDeleteFilesCommand deleteFilesCommand,
-        ApplicationSettings settings)
+        ApplicationSettings settings) : base(messenger)
     {
-        this.messenger = messenger;
         this.dialogService = dialogService;
         this.loadMediaItemsService = loadMediaItemsService;
-        this.deleteFilesCommand = deleteFilesCommand;
         this.settings = settings;
-    }
 
-    partial void OnSelectedItemsChanged()
-    {
-        CanDelete = SelectedItems.Any();
+        DeleteCommand = deleteFilesCommand;
     }
 
     [RelayCommand]
     private void ToggleMetadataPanel() 
     {
-        messenger.Publish(new ToggleMetataPanelMessage());
-    }
-
-    [RelayCommand(CanExecute = nameof(CanDelete))]
-    private async Task DeleteAsync()
-    {
-        await deleteFilesCommand.ExecuteAsync(SelectedItems.ToList());
+        Messenger.Send(new ToggleMetataPanelMessage());
     }
 
     [RelayCommand]
@@ -73,13 +59,13 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
         {
             var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName);
             var result = await loadMediaItemsService.LoadMediaFilesAsync(folder, config);
-            messenger.Publish(new MediaItemsLoadedMessage(result.MediaItems, result.StartItem));
+            Messenger.Send(new MediaItemsLoadedMessage(result.MediaItems, result.StartItem));
         }
     }
 
     [RelayCommand]
     private void NavigateToSettingsPage()
     {
-        messenger.Publish(new NavigateToPageMessage(typeof(SettingsPageModel)));
+        Messenger.Send(new NavigateToPageMessage(typeof(SettingsPageModel)));
     }
 }

@@ -14,8 +14,8 @@ public sealed partial class FlipViewPage : Page
     {
         DataContext = PageModelFactory.CreateFlipViewPageModel(App.Current.Window.DialogService);
         this.InitializeMVVM<FlipViewPageModel>(InitializeComponent,
-            connectToViewModel: () => Bindings.Initialize(),
-            disconnectFromViewModel: () => Bindings.StopTracking());
+            connectToViewModel: (viewModel) => Bindings.Initialize(),
+            disconnectFromViewModel: (viewModel) => Bindings.StopTracking());
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

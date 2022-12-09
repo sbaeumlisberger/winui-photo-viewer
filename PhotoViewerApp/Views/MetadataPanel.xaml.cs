@@ -10,16 +10,16 @@ public sealed partial class MetadataPanel : UserControl
     public MetadataPanel()
     {
         this.InitializeMVVM<MetadataPanelModel>(InitializeComponent,
-             connectToViewModel: () =>
+             connectToViewModel: (viewModel) =>
              {
                  ViewModel.PeopleSectionModel.OnViewConnected();
                  ViewModel.KeywordsSectionModel.OnViewConnected();
                  Bindings.Initialize();
              },
-            disconnectFromViewModel: () =>
+            disconnectFromViewModel: (viewModel) =>
             {
-                ViewModel.PeopleSectionModel.OnViewDisconnected();
-                ViewModel.KeywordsSectionModel.OnViewDisconnected();
+                viewModel.PeopleSectionModel.OnViewDisconnected();
+                viewModel.KeywordsSectionModel.OnViewDisconnected();
                 Bindings.StopTracking();
             });
     }

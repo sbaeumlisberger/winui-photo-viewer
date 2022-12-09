@@ -14,19 +14,34 @@ public class ViewModelBase : ObservableObject
 
     protected virtual void __EnableDependsOn() { }
 
+    protected IMessenger Messenger { get; }
+
     private readonly SynchronizationContext synchronizationContext;
 
-    public ViewModelBase()
+    public ViewModelBase(IMessenger messenger = null!)
     {
+        Messenger = messenger;
         synchronizationContext = SynchronizationContext.Current!;
         __EnableAutoNotifyCanExecuteChanged();
         __EnableOnPropertyChangedMethods();
         __EnableDependsOn();
     }
 
-    public virtual void OnViewConnected() { }
+    public void OnViewConnected() 
+    {
+        Messenger?.RegisterAll(this);
+        OnViewConnectedOverride();
+    }
 
-    public virtual void OnViewDisconnected() { }
+    protected virtual void OnViewConnectedOverride() { }
+
+    public void OnViewDisconnected() 
+    {
+        Messenger?.UnregisterAll(this);
+        OnViewDisconnectedOverride();
+    }
+
+    protected virtual void OnViewDisconnectedOverride() { }
 
     protected void RunOnUIThread(Action action)
     {

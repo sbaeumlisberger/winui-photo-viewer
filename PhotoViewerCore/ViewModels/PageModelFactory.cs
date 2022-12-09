@@ -1,4 +1,5 @@
-﻿using PhotoViewerApp.Models;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerCore.Commands;
@@ -10,55 +11,63 @@ namespace PhotoViewerApp.ViewModels;
 
 public class PageModelFactory
 {
+    private static readonly IMessenger messenger = StrongReferenceMessenger.Default;
+    private static readonly Session session = new Session(messenger);
+    private static readonly IMediaFilesLoaderService mediaFilesLoaderService = new MediaFilesLoaderService();
+    private static readonly IMetadataService metadataService = new MetadataService();
+    private static readonly IDeleteMediaService deleteMediaService = new DeleteMediaService();
+    private static readonly IRotateBitmapService rotateBitmapService = new RotateBitmapService(metadataService);
+    private static readonly IImageLoaderService imageLoaderService = new ImageLoaderService(new GifImageLoaderService());
+    private static readonly IDisplayRequestService displayRequestService = new DisplayRequestService();
+    private static readonly ILocationService locationService = new LocationService();
+    private static readonly ISettingsService settingService = new SettingsService();
+    private static readonly IPersonalizationService personalizationService = new PersonalizationService();
+    private static readonly IClipboardService clipboardService = new ClipboardService();
 
     public static FlipViewPageModel CreateFlipViewPageModel(IDialogService dialogService)
     {
-        var session = Session.Instance;
-        var messenger = Messenger.GlobalInstance;
-        var mediaFilesLoaderService = new MediaFilesLoaderService();
-        var metadataService = new MetadataService();
-        var rotatePhotoService = new RotateBitmapService(metadataService);
-        var imageLoaderService = new ImageLoaderService(new GifImageLoaderService());
-        var displayRequestService = new DisplayRequestService();
-        var deleteMediaService = new DeleteMediaService();
-        var locationService = new LocationService();
         var settings = ApplicationSettingsProvider.GetSettings();
+        var deleteFilesCommand = new DeleteFilesCommand(messenger, deleteMediaService, dialogService, settingService, settings);
         return new FlipViewPageModel(
             session,
             messenger,
             () => new MediaFlipViewModel(messenger, dialogService, mediaFilesLoaderService,
-                (mediaItem) => new BitmapFlipViewItemModel(mediaItem, messenger, imageLoaderService), settings),
+                (mediaFile) =>
+                {
+                    var mediaFileContextFlyoutModel = new MediaFileContextMenuModel(messenger, personalizationService, rotateBitmapService, dialogService, clipboardService, deleteFilesCommand);
+                    return mediaFile switch
+                    {
+                        IBitmapFileInfo => new BitmapFlipViewItemModel(mediaFile, mediaFileContextFlyoutModel, messenger, imageLoaderService),
+                        IVideoFileInfo => new VideoFlipViewItemModel(mediaFile),
+                        IVectorGraphicFileInfo => new VectorGraphicFlipViewItemModel(mediaFile),
+                        _ => throw new Exception($"Unexcpected type of media file: {mediaFile.GetType()}")
+                    };
+                },
+                settings),
             () => new DetailsBarModel(messenger, metadataService),
             (flipViewPageModel) => new FlipViewPageCommandBarModel(session, messenger, dialogService,
-                mediaFilesLoaderService, rotatePhotoService, flipViewPageModel, deleteMediaService, settings),
+                mediaFilesLoaderService, rotateBitmapService, flipViewPageModel, deleteMediaService, settings, deleteFilesCommand),
             displayRequestService,
             showTagPeopleOnPhotoButton => new MetadataPanelModel(messenger, metadataService, locationService, showTagPeopleOnPhotoButton));
     }
 
     public static OverviewPageModel CreateOverviewPageModel(IDialogService dialogService)
     {
-        var session = Session.Instance;
-        var messenger = Messenger.GlobalInstance;
-        var metadataService = new MetadataService();
-        var locationService = new LocationService();
-        var mediaFilesLoaderService = new MediaFilesLoaderService();
-        var deleteMediaService = new DeleteMediaService();
-        var settingService = new SettingsService();
         var settings = ApplicationSettingsProvider.GetSettings();
         var deleteFilesCommand = new DeleteFilesCommand(messenger, deleteMediaService, dialogService, settingService, settings);
+        var mediaFileContextFlyoutModel = new MediaFileContextMenuModel(messenger, personalizationService, rotateBitmapService, dialogService, clipboardService, deleteFilesCommand);
         return new OverviewPageModel(
             session,
             messenger,
             dialogService,
             new OverviewPageCommandBarModel(messenger, dialogService, mediaFilesLoaderService, deleteFilesCommand, settings),
+            mediaFileContextFlyoutModel,
             showTagPeopleOnPhotoButton => new MetadataPanelModel(messenger, metadataService, locationService, showTagPeopleOnPhotoButton));
     }
 
     public static SettingsPageModel CreateSettingsPageModel(IDialogService dialogService)
     {
-        var messenger = Messenger.GlobalInstance;
         var settings = ApplicationSettingsProvider.GetSettings();
-        var settingService = new SettingsService();
         return new SettingsPageModel(messenger, settings, settingService, dialogService);
     }
 }

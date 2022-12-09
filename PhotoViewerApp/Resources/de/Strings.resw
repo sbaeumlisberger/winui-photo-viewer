@@ -157,13 +157,46 @@
     <value>Zurück</value>
   </data>
   <data name="FlipViewPageCommandBar_RotateButton" xml:space="preserve">
-    <value>Drehen (nach rechts)</value>
+    <value>Drehen nach rechts</value>
   </data>
   <data name="FlipViewPageCommandBar_SettingsButton" xml:space="preserve">
     <value>Einstellungen</value>
   </data>
   <data name="ItemWithCount_All" xml:space="preserve">
     <value>Alle</value>
+  </data>
+  <data name="MediaFileContextMenu_Delete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="MediaFileContextMenu_Open" xml:space="preserve">
+    <value>Kopieren</value>
+  </data>
+  <data name="MediaFileContextMenu_OpenInNewWindows" xml:space="preserve">
+    <value>In neuem Fentster öffnen</value>
+  </data>
+  <data name="MediaFileContextMenu_OpenWidth" xml:space="preserve">
+    <value>Öffnen mit ...</value>
+  </data>
+  <data name="MediaFileContextMenu_Print" xml:space="preserve">
+    <value>Drucken</value>
+  </data>
+  <data name="MediaFileContextMenu_Properties" xml:space="preserve">
+    <value>Eigenschaften</value>
+  </data>
+  <data name="MediaFileContextMenu_Rotate" xml:space="preserve">
+    <value>Drehen</value>
+  </data>
+  <data name="MediaFileContextMenu_SetAs" xml:space="preserve">
+    <value>Festlegen als ...</value>
+  </data>
+  <data name="MediaFileContextMenu_SetAsDesktopBackground" xml:space="preserve">
+    <value>Dektop-Hintergrund</value>
+  </data>
+  <data name="MediaFileContextMenu_SetAsLockscreenBackground" xml:space="preserve">
+    <value>Sperrbildschirm</value>
+  </data>
+  <data name="MediaFileContextMenu_Share" xml:space="preserve">
+    <value>Teilen</value>
   </data>
   <data name="MediaFlipView_DisableDiashowLoop" xml:space="preserve">
     <value>Pausieren</value>

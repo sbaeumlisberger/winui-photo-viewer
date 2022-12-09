@@ -28,9 +28,9 @@ namespace MetadataEditModule.ViewModel
 
         private Location? location;
 
-        private readonly LocationService locationService;
+        private readonly ILocationService locationService;
 
-        public LocationSectionModel(LocationService locationService) 
+        public LocationSectionModel(ILocationService locationService) 
         {
             this.locationService = locationService;
         }

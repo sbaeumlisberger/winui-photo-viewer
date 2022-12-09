@@ -22,6 +22,7 @@
     <None Remove="Views\DetailsBar.xaml" />
     <None Remove="Views\FlipViewPageCommandBar.xaml" />
     <None Remove="Views\ItemWithCount.xaml" />
+    <None Remove="Views\MediaFileContextMenu.xaml" />
     <None Remove="Views\MediaFlipView.xaml" />
     <None Remove="Views\MetadataPanel.xaml" />
     <None Remove="Views\OverviewPage.xaml" />
@@ -126,6 +127,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Strings.cs</LastGenOutput>
     </None>
+    <Page Update="Views\MediaFileContextMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Compile Update="Resources\Strings.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
 using MetadataEditModule.ViewModel;
 using PhotoViewerApp.Messages;
@@ -51,17 +52,18 @@ namespace PhotoViewerCore.ViewModels
 
         private IList<IBitmapFileInfo> supportedFiles = Array.Empty<IBitmapFileInfo>();
 
-        private readonly IMessenger messenger;
-
         private readonly IMetadataService metadataService;
 
         private readonly CancelableTaskRunner updateRunner = new CancelableTaskRunner();
 
         private readonly SequentialTaskRunner writeFilesRunner = new SequentialTaskRunner();
 
-        public MetadataPanelModel(IMessenger messenger, IMetadataService metadataService, LocationService locationService, bool tagPeopleOnPhotoButtonVisible)
+        public MetadataPanelModel(
+            IMessenger messenger,
+            IMetadataService metadataService,
+            ILocationService locationService,
+            bool tagPeopleOnPhotoButtonVisible) : base(messenger)
         {
-            this.messenger = messenger;
             this.metadataService = metadataService;
 
             TitleTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Title);
@@ -74,17 +76,12 @@ namespace PhotoViewerCore.ViewModels
             DateTakenSectionModel = new DateTakenSectionModel();
         }
 
-        public override void OnViewConnected()
+        protected override void OnViewConnectedOverride()
         {
-            messenger.Subscribe<ToggleMetataPanelMessage>(OnToggleMetataPanelMessageReceived);
+            Messenger.Register<ToggleMetataPanelMessage>(this, OnReceive);
         }
 
-        public override void OnViewDisconnected()
-        {
-            messenger.Unsubscribe<ToggleMetataPanelMessage>(OnToggleMetataPanelMessageReceived);
-        }
-
-        private void OnToggleMetataPanelMessageReceived(ToggleMetataPanelMessage msg)
+        private void OnReceive(ToggleMetataPanelMessage msg)
         {
             IsVisible = !IsVisible;
         }

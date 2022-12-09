@@ -1,0 +1,112 @@
+<UserControl
+    x:Class="PhotoViewerApp.Views.MediaFileContextMenuHolder"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewerApp.Views"
+    xmlns:res="using:PhotoViewerApp.Resources"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+
+        <MenuFlyout x:Key="MediaFileContextMenu">
+            <MenuFlyoutItem
+                Icon="OpenWith" Text="{x:Bind res:Strings.MediaFileContextMenu_OpenWidth}"
+                Command="{x:Bind ViewModel.OpenWithCommand}"
+                Visibility="{x:Bind ViewModel.IsOpenWithItemVisible, Mode=OneWay}"/>
+            <MenuFlyoutItem
+                Icon="NewWindow" Text="{x:Bind res:Strings.MediaFileContextMenu_OpenInNewWindows}"
+                Command="{x:Bind ViewModel.OpenInNewWindowCommand}">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Modifiers="Control" Key="N"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+
+            <MenuFlyoutSeparator/>
+
+            <MenuFlyoutItem
+                Icon="Copy" Text="{x:Bind res:Strings.MediaFileContextMenu_Open}" 
+                Command="{x:Bind ViewModel.CopyCommand, Mode=OneWay}">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Modifiers="Control" Key="C"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+
+            <MenuFlyoutItem 
+                Icon="Share" Text="{x:Bind res:Strings.MediaFileContextMenu_Share}"
+                Command="{x:Bind ViewModel.ShareCommand, Mode=OneWay}"/>
+
+            <MenuFlyoutItem 
+                Icon="Print" Text="{x:Bind res:Strings.MediaFileContextMenu_Print}"
+                Command="{x:Bind ViewModel.PrintCommand, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.IsPrinItemVisible, Mode=OneWay}">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator IsEnabled="False" Modifiers="Control" Key="P"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+
+            <MenuFlyoutSubItem
+                Text="{x:Bind res:Strings.MediaFileContextMenu_SetAs}"
+                Visibility="{x:Bind ViewModel.IsSetAsItemVisible, Mode=OneWay}">
+                <MenuFlyoutSubItem.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE771;"/>
+                </MenuFlyoutSubItem.Icon>
+                <MenuFlyoutSubItem.Items>
+                    <MenuFlyoutItem
+                        Text="{x:Bind res:Strings.MediaFileContextMenu_SetAsDesktopBackground}"
+                        Command="{x:Bind ViewModel.SetDesktopBackgroundCommand, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsSetAsDesktopBackgroundItemVisible, Mode=OneTime}">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE7F4;"/>
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem 
+                        Text="{x:Bind res:Strings.MediaFileContextMenu_SetAsLockscreenBackground}"
+                        Command="{x:Bind ViewModel.SetLockscreenBackgroundCommand, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsSetAsLockscreenBackgroundItemVisible, Mode=OneTime}">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEE3F;"/>
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                </MenuFlyoutSubItem.Items>
+            </MenuFlyoutSubItem>
+
+            <MenuFlyoutSeparator/>
+
+            <MenuFlyoutItem 
+                Icon="Rotate" 
+                Text="{x:Bind res:Strings.MediaFileContextMenu_Rotate}"
+                Command="{x:Bind ViewModel.RotateCommand, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.IsRotateItemVisible, Mode=OneWay}">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Modifiers="Control" Key="R"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+
+            <MenuFlyoutItem
+                Icon="Delete" 
+                Text="{x:Bind res:Strings.MediaFileContextMenu_Delete}"
+                Command="{x:Bind ViewModel.DeleteCommand, Mode=OneWay}"
+                CommandParameter="{x:Bind ViewModel.Files, Mode=OneWay}">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator 
+                        Modifiers="{x:Bind ViewModel.DeleteCommand.AcceleratorModifiers}"
+                        Key="{x:Bind ViewModel.DeleteCommand.AcceleratorKey}"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+
+            <MenuFlyoutSeparator Visibility="{x:Bind ViewModel.IsShowPropertiesItemVisible, Mode=OneWay}"/>
+
+            <MenuFlyoutItem
+                Text="{x:Bind res:Strings.MediaFileContextMenu_Properties}"
+                Command="{x:Bind ViewModel.ShowPropertiesCommand, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.IsShowPropertiesItemVisible, Mode=OneWay}">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Margin="0,0,-1,-2" FontSize="18" FontFamily="Segoe MDL2 Assets" Glyph="&#xE946;"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+        </MenuFlyout>
+
+    </UserControl.Resources>
+</UserControl>

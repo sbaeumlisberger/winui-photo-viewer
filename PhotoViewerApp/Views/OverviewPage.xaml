@@ -9,10 +9,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    Name="uc"
     Background="{ThemeResource PageBackgroundBrush}">
 
     <Page.Resources>
         <converters:MediaFileInfoToThumbnailConverter x:Key="MediaFileInfoToThumbnailConverter"/>
+        <local:MediaFileContextMenuHolder 
+            x:Name="MediaFileContextMenuHolder" 
+            DataContext="{x:Bind ViewModel.ContextMenuModel}"/>
     </Page.Resources>
 
     <Grid>
@@ -28,11 +32,12 @@
 
         <local:MetadataPanel Grid.RowSpan="2" DataContext="{x:Bind ViewModel.MetadataPanelModel}"/>
 
-        <GridView x:Name="gridView" Grid.Column="1" Padding="8" ItemsSource="{x:Bind ViewModel.Items}" 
+        <GridView x:Name="gridView" Grid.Column="1" Padding="8" ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" 
             SelectionMode="Extended" SelectionChanged="GridView_SelectionChanged">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="models:IMediaFileInfo">
-                    <StackPanel Width="200" DoubleTapped="GridViewItem_DoubleTapped">
+                    <StackPanel Width="200" DoubleTapped="GridViewItem_DoubleTapped" RightTapped="GridViewItem_RightTapped"
+                         ContextFlyout="{Binding ContextMenu, ElementName=uc}"><!--- TODO get rid of Binding -->
                         <Image Source="{x:Bind Converter={StaticResource MediaFileInfoToThumbnailConverter}}"/>
                         <TextBlock TextAlignment="Center" Text="{x:Bind Name}"/>
                     </StackPanel>

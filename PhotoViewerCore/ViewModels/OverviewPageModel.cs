@@ -1,10 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerCore.ViewModels;
 using System.Collections.ObjectModel;
+using PhotoViewerCore.Utils;
 
 namespace PhotoViewerApp.ViewModels;
 
@@ -12,13 +13,15 @@ public partial class OverviewPageModel : ViewModelBase
 {
     public IMetadataPanelModel MetadataPanelModel { get; }
 
+    public IMediaFileContextMenuModel ContextMenuModel { get; }
+
     public ObservableCollection<IMediaFileInfo> Items { get; private set; } = new ObservableCollection<IMediaFileInfo>();
 
     public IReadOnlyList<IMediaFileInfo> SelectedItems { get; set; } = Array.Empty<IMediaFileInfo>();
 
     public IOverviewPageCommandBarModel OverviewPageCommandBarModel { get; }
 
-    private readonly IMessenger messenger;
+    private readonly Session session;
 
     private readonly IDialogService dialogService;
 
@@ -27,36 +30,44 @@ public partial class OverviewPageModel : ViewModelBase
         IMessenger messenger,
         IDialogService dialogService,
         IOverviewPageCommandBarModel overviewPageCommandBarModel,
-        MetadataPanelModelFactory metadataPanelModelFactory)
+        IMediaFileContextMenuModel mediaFileContextMenuModel,
+        MetadataPanelModelFactory metadataPanelModelFactory) : base(messenger)
     {
-        this.messenger = messenger;
+        this.session = session;
         this.dialogService = dialogService;
 
         OverviewPageCommandBarModel = overviewPageCommandBarModel;
         MetadataPanelModel = metadataPanelModelFactory.Invoke(false);
+        ContextMenuModel = mediaFileContextMenuModel;
+    }
 
+    protected override void OnViewConnectedOverride()
+    {
+        Messenger.Register<MediaItemsLoadedMessage>(this, OnMediaItemsLoadedMessageReceived);
+        Messenger.Register<MediaItemsDeletedMessage>(this, OnMediaItemsDeletedMessageReceived);
         Items = new ObservableCollection<IMediaFileInfo>(session.MediaItems);
-
-        messenger.Subscribe<MediaItemsLoadedMessage>(msg =>
-        {
-            Items = new ObservableCollection<IMediaFileInfo>(msg.MediaItems);
-        });
-
-        messenger.Subscribe<MediaItemsDeletedMessage>(msg =>
-        {
-            msg.MediaItems.ForEach(mediaItem => Items.Remove(mediaItem));
-        });
     }
 
     public void ShowItem(IMediaFileInfo mediaItem)
     {
-        messenger.Publish(new NavigateToPageMessage(typeof(FlipViewPageModel), mediaItem));
+        Messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel), mediaItem));
+    }
+
+    private void OnMediaItemsLoadedMessageReceived(MediaItemsLoadedMessage msg)
+    {
+        Items = new ObservableCollection<IMediaFileInfo>(msg.MediaItems);
+    }
+
+    private void OnMediaItemsDeletedMessageReceived(MediaItemsDeletedMessage msg)
+    {
+        msg.MediaItems.ForEach(mediaItem => Items.Remove(mediaItem));
     }
 
     partial void OnSelectedItemsChanged()
     {
         OverviewPageCommandBarModel.SelectedItems = SelectedItems;
         MetadataPanelModel.Files = SelectedItems;
+        ContextMenuModel.Files = SelectedItems;
     }
 
 }

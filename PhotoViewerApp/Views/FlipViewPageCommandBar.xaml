@@ -41,19 +41,36 @@
     <AppBarButton 
         Icon="Rotate" 
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_RotateButton}"
-        Command="{x:Bind ViewModel.RotateCommand}"/>
+        Command="{x:Bind ViewModel.RotateCommand}">
+        <AppBarButton.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control" Key="R"/>
+        </AppBarButton.KeyboardAccelerators>
+    </AppBarButton>
     <AppBarButton 
         Icon="Delete" 
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_PreviousButton}"
-        Command="{x:Bind ViewModel.DeleteCommand}"/>
+        Command="{x:Bind ViewModel.DeleteCommand}"
+        CommandParameter="{x:Bind ListOf(ViewModel.SelectedItemModel.MediaItem), Mode=OneWay}">
+        <AppBarButton.KeyboardAccelerators>
+            <KeyboardAccelerator Key="{x:Bind ViewModel.DeleteCommand.AcceleratorKey}"/>
+        </AppBarButton.KeyboardAccelerators>
+    </AppBarButton>
     <AppBarButton 
         Icon="Back" 
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_NextButton}"
-        Command="{x:Bind ViewModel.SelectPreviousCommand}"/>
+        Command="{x:Bind ViewModel.SelectPreviousCommand}">
+        <AppBarButton.KeyboardAccelerators>
+            <KeyboardAccelerator Key="Left"/>
+        </AppBarButton.KeyboardAccelerators>
+    </AppBarButton>
     <AppBarButton 
         Icon="Forward" 
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_NextButton}"
-        Command="{x:Bind ViewModel.SelectNextCommand}"/>
+        Command="{x:Bind ViewModel.SelectNextCommand}">
+        <AppBarButton.KeyboardAccelerators>
+            <KeyboardAccelerator Key="Right"/>
+        </AppBarButton.KeyboardAccelerators>
+    </AppBarButton>
     
     <CommandBar.SecondaryCommands>
         <AppBarButton 

@@ -8,7 +8,7 @@ internal static class UserControlUtil
 {
 
     public static void InitializeMVVM<T>(this UserControl userControl, Action initializeComponent, 
-        Action? connectToViewModel = null, Action? disconnectFromViewModel = null) where T : ViewModelBase
+        Action<T>? connectToViewModel = null, Action<T>? disconnectFromViewModel = null) where T : ViewModelBase
     {
         if (userControl.IsLoaded) 
         {
@@ -20,13 +20,13 @@ internal static class UserControlUtil
         void connect(T newViewModel) 
         {
             viewModel = newViewModel;
-            connectToViewModel?.Invoke();
+            connectToViewModel?.Invoke(newViewModel);
             viewModel.OnViewConnected();
         }
 
         void disconnect(T currentViewModel) 
         {
-            disconnectFromViewModel?.Invoke();
+            disconnectFromViewModel?.Invoke(currentViewModel);
             currentViewModel.OnViewDisconnected();
             viewModel = null;
         }

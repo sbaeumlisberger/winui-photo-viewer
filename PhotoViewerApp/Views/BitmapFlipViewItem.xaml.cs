@@ -8,6 +8,8 @@ public sealed partial class BitmapFlipViewItem : UserControl
 {
     private BitmapFlipViewItemModel ViewModel => (BitmapFlipViewItemModel)DataContext;
 
+    private MenuFlyout ContextMenu => MediaFileContextMenuHolder.MediaFileContextMenu;
+
     public BitmapFlipViewItem()
     {
         this.InitializeComponent();

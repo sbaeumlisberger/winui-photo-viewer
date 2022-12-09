@@ -14,15 +14,15 @@ public sealed partial class MediaFlipView : UserControl
     public MediaFlipView()
     {
         this.InitializeMVVM<MediaFlipViewModel>(InitializeComponent,
-            connectToViewModel: () =>
+            connectToViewModel: (viewModel) =>
             {
                 ViewModel.PropertyChanged += FlipViewModel_PropertyChanged;
                 Bindings.Initialize();
                 UpdateWindowTitle();
             },
-            disconnectFromViewModel: () =>
+            disconnectFromViewModel: (viewModel) =>
             {
-                ViewModel.PropertyChanged -= FlipViewModel_PropertyChanged;
+                viewModel.PropertyChanged -= FlipViewModel_PropertyChanged;
                 Bindings.StopTracking();
             });
     }

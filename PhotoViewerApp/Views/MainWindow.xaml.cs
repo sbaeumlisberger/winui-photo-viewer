@@ -1,8 +1,10 @@
-﻿using Microsoft.UI;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI;
 using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Services;
-using PhotoViewerApp.Utils;
+using PhotoViewerCore.Utils;
 using PhotoViewerApp.Utils.Logging;
 using System;
 using WinRT.Interop;
@@ -17,17 +19,17 @@ public sealed partial class MainWindow : WindowEx
     public IDialogService DialogService { get; }
 
     public MainWindow(IMessenger messenger)
-    {        
+    {
         this.InitializeComponent();
         Closed += MainWindow_Closed;
         DialogService = new DialogService(this);
-        messenger.Subscribe<EnterFullscreenMessage>(msg => EnterFullscreen());
-        messenger.Subscribe<ExitFullscreenMessage>(msg => ExitFullscreen());
-        messenger.Subscribe<NavigateToPageMessage>(msg => NavigateToPage(msg.PageType, msg.Parameter));
-        messenger.Subscribe<NavigateBackMessage>(msg => frame.GoBack());
+        messenger.Register<EnterFullscreenMessage>(this, _ => EnterFullscreen());
+        messenger.Register<ExitFullscreenMessage>(this, _ => ExitFullscreen());
+        messenger.Register<NavigateToPageMessage>(this, msg => NavigateToPage(msg.PageType, msg.Parameter));
+        messenger.Register<NavigateBackMessage>(this, _ => frame.GoBack());
     }
 
-    private void MainWindow_Closed(object sender, Microsoft.UI.Xaml.WindowEventArgs args)
+    private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
         Log.ArchiveLogFile();
     }

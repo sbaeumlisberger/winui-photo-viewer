@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
@@ -14,8 +15,6 @@ namespace PhotoViewerCore.ViewModels
 {
     public partial class SettingsPageModel : ViewModelBase
     {
-        private readonly IMessenger messenger;
-
         private readonly IDialogService dialogService;
 
         private readonly ISettingsService settingsService;
@@ -30,9 +29,8 @@ namespace PhotoViewerCore.ViewModels
             IMessenger messenger,
             ApplicationSettings settings,
             ISettingsService settingsService,
-            IDialogService dialogService)
+            IDialogService dialogService) : base(messenger)
         {
-            this.messenger = messenger;
             this.settingsService = settingsService;
             this.dialogService = dialogService;
             Settings = settings;
@@ -56,7 +54,7 @@ namespace PhotoViewerCore.ViewModels
         [RelayCommand]
         private void NavigateBack()
         {
-            messenger.Publish(new NavigateBackMessage());
+            Messenger.Send(new NavigateBackMessage());
         }
 
         [RelayCommand]

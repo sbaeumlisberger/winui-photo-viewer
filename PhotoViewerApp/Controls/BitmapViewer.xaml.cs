@@ -18,9 +18,12 @@ public sealed partial class BitmapViewer : UserControl
 
     public static readonly DependencyProperty IsScaleUpEnabeldProperty = DependencyProperty<BitmapViewer>.Register(nameof(IsScaleUpEnabeld), typeof(bool), false);
 
+    public static new readonly DependencyProperty ContentProperty = DependencyProperty<BitmapViewer>.Register(nameof(Content), typeof(object));
+
     public IBitmapImage? BitmapImage { get => (IBitmapImage?)GetValue(BitmapImageProperty); set => SetValue(BitmapImageProperty, value); }
 
     public bool IsScaleUpEnabeld { get => (bool)GetValue(IsScaleUpEnabeldProperty); set => SetValue(IsScaleUpEnabeldProperty, value); }
+    public new object Content { get => GetValue(ContentProperty); set => SetValue(ContentProperty, value); }
 
     private AnimatedBitmapRenderer? animatedBitmapRenderer;
 

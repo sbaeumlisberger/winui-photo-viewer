@@ -1,4 +1,5 @@
-﻿using MetadataAPI;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using MetadataAPI;
 using MetadataAPI.Data;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
@@ -42,31 +43,22 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 
     public string FileSize { get; private set; } = string.Empty;
 
-    private readonly IMessenger messenger;
-
     private readonly IMetadataService metadataService;
 
     private readonly CancelableTaskRunner updateRunner = new CancelableTaskRunner();
 
-    public DetailsBarModel(IMessenger messenger, IMetadataService metadataService)
+    public DetailsBarModel(IMessenger messenger, IMetadataService metadataService) : base(messenger)
     {
-        this.messenger = messenger;
         this.metadataService = metadataService;
     }
 
-    public override void OnViewConnected()
+    protected override void OnViewConnectedOverride()
     {
-        messenger.Subscribe<MetadataModifiedMessage>(OnMetadataModifiedMessageReceived);
-        messenger.Subscribe<BitmapImageLoadedMessage>(OnBitmapImageLoadedMessageReceived);
+        Messenger.Register<MetadataModifiedMessage>(this, OnReceive);
+        Messenger.Register<BitmapImageLoadedMessage>(this, OnReceive);
     }
 
-    public override void OnViewDisconnected()
-    {
-        messenger.Unsubscribe<MetadataModifiedMessage>(OnMetadataModifiedMessageReceived);
-        messenger.Unsubscribe<BitmapImageLoadedMessage>(OnBitmapImageLoadedMessageReceived);
-    }
-
-    private void OnMetadataModifiedMessageReceived(MetadataModifiedMessage msg)
+    private void OnReceive(MetadataModifiedMessage msg)
     {
         if (msg.MetadataProperty == MetadataProperties.DateTaken
             && SelectedItemModel?.MediaItem is IBitmapFileInfo selectedFile
@@ -82,6 +74,14 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
                     DateFormatted = date.ToString("g");
                 });
             });
+        }
+    }
+
+    private void OnReceive(BitmapImageLoadedMessage msg)
+    {
+        if (IsVisible && msg.BitmapFile == SelectedItemModel?.MediaItem)
+        {
+            UpdateFromBitmapImage(msg.BitmapImage);
         }
     }
 
@@ -147,14 +147,6 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
                 UpdateFromBitmapImage(bitmapImage);
             }
         });
-    }
-
-    private void OnBitmapImageLoadedMessageReceived(BitmapImageLoadedMessage msg)
-    {
-        if (IsVisible && msg.BitmapFile == SelectedItemModel?.MediaItem)
-        {
-            UpdateFromBitmapImage(msg.BitmapImage);
-        }
     }
 
     private void UpdateFromBitmapImage(IBitmapImage bitmapImage)

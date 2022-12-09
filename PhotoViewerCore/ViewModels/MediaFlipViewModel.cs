@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
@@ -10,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using Windows.Storage;
+using PhotoViewerCore.Utils;
 
 namespace PhotoViewerApp.ViewModels;
 
@@ -39,8 +41,6 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     public bool IsDiashowLoopActive { get; private set; } = false;
 
-    private readonly IMessenger messenger;
-
     private readonly IDialogService dialogService;
 
     private readonly IMediaFilesLoaderService loadMediaItemsService;
@@ -60,32 +60,31 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         IDialogService dialogService,
         IMediaFilesLoaderService loadMediaItemsService,
         Func<IMediaFileInfo, IMediaFlipViewItemModel> mediaFlipViewItemModelFactory,
-        ApplicationSettings settings)
+        ApplicationSettings settings) : base(messenger)
     {
-        this.messenger = messenger;
         this.dialogService = dialogService;
         this.loadMediaItemsService = loadMediaItemsService;
         this.mediaFlipViewItemModelFactory = mediaFlipViewItemModelFactory;
         this.settings = settings;
 
-        messenger.Subscribe<MediaItemsLoadedMessage>(msg =>
+        Messenger.Register<MediaItemsLoadedMessage>(this, msg =>
         {
             Log.Debug("MediaItemsLoadedMessage received");
             SetItems(msg.MediaItems, msg.StartItem);
         });
 
-        messenger.Subscribe<MediaItemsDeletedMessage>(msg =>
+        Messenger.Register<MediaItemsDeletedMessage>(this, msg =>
         {
             Items.RemoveAll(itemModel => msg.MediaItems.Contains(itemModel.MediaItem));
         });
 
-        messenger.Subscribe<StartDiashowMessage>(msg =>
+        Messenger.Register<StartDiashowMessage>(this, msg =>
         {
             IsDiashowActive = true;
             IsDiashowLoopActive = true;
         });
 
-        messenger.Subscribe<ExitDiashowMessage>(msg =>
+        Messenger.Register<ExitDiashowMessage>(this, msg =>
         {
             IsDiashowActive = false;
             IsDiashowLoopActive = false;
@@ -96,7 +95,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     {
         Log.Debug("SetItems called");
         Stopwatch sw = Stopwatch.StartNew();
-        Items = new ObservableCollection<IMediaFlipViewItemModel>(mediaItems.Select(CreateFlipViewItemModel));
+        Items = new ObservableCollection<IMediaFlipViewItemModel>(mediaItems.Select(mediaFlipViewItemModelFactory.Invoke));
         sw.Stop();
         Log.Info($"Create {Items.Count} item models took {sw.ElapsedMilliseconds} ms");
         Log.Debug("Set SelectedItemModel");
@@ -227,17 +226,6 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         loadedItemModels = itemModelsToBeLoaded;
     }
 
-    private IMediaFlipViewItemModel CreateFlipViewItemModel(IMediaFileInfo mediaFile)
-    {
-        return mediaFile switch
-        {
-            IBitmapFileInfo => mediaFlipViewItemModelFactory.Invoke(mediaFile),
-            IVideoFileInfo => new VideoFlipViewItemModel(mediaFile), // TODO,
-            IVectorGraphicFileInfo => new VectorGraphicFlipViewItemModel(mediaFile), // TODO
-            _ => throw new Exception($"Unexcpected type of media file: {mediaFile.GetType()}")
-        };
-    }
-
     [RelayCommand(CanExecute = nameof(CanSelectPrevious))]
     private void SelectPrevious()
     {
@@ -268,7 +256,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     [RelayCommand]
     private void ExitDiashow()
     {
-        messenger.Publish(new ExitDiashowMessage());
+        Messenger.Send(new ExitDiashowMessage());
     }
 
     [RelayCommand]
@@ -280,7 +268,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         {
             var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName);
             var result = await loadMediaItemsService.LoadMediaFilesAsync(folder, config);
-            messenger.Publish(new MediaItemsLoadedMessage(result.MediaItems, result.StartItem));
+            Messenger.Send(new MediaItemsLoadedMessage(result.MediaItems, result.StartItem));
         }
     }
 }

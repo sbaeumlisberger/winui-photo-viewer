@@ -1,22 +1,22 @@
-﻿using PhotoViewerApp.Messages;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using PhotoViewerApp.Messages;
+using PhotoViewerCore.Utils;
 using PhotoViewerApp.Utils;
 
 namespace PhotoViewerApp.Models;
 
 public class Session
 {
-    public static Session Instance { get; } = new Session();
-
     public IList<IMediaFileInfo> MediaItems { get; private set; } = Array.Empty<IMediaFileInfo>();
 
-    public Session()
+    public Session(IMessenger messenger)
     {
-        Messenger.GlobalInstance.Subscribe<MediaItemsLoadedMessage>(msg =>
+        messenger.Register<MediaItemsLoadedMessage>(this, msg =>
         {
             MediaItems = new List<IMediaFileInfo>(msg.MediaItems);
         });
 
-        Messenger.GlobalInstance.Subscribe<MediaItemsDeletedMessage>(msg =>
+        messenger.Register<MediaItemsDeletedMessage>(this, msg =>
         {
             msg.MediaItems.ForEach(mediaItem => MediaItems.Remove(mediaItem));
         });

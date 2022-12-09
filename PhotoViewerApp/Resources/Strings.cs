@@ -89,7 +89,7 @@ public class Strings {
     /// </summary>
 	public static string FlipViewPageCommandBar_PreviousButton => Get("FlipViewPageCommandBar_PreviousButton");	
 	/// <summary>
-    /// Rotate (left)
+    /// Rotate left
     /// </summary>
 	public static string FlipViewPageCommandBar_RotateButton => Get("FlipViewPageCommandBar_RotateButton");	
 	/// <summary>
@@ -100,6 +100,50 @@ public class Strings {
     /// All
     /// </summary>
 	public static string ItemWithCount_All => Get("ItemWithCount_All");	
+	/// <summary>
+    /// Delete
+    /// </summary>
+	public static string MediaFileContextMenu_Delete => Get("MediaFileContextMenu_Delete");	
+	/// <summary>
+    /// Copy
+    /// </summary>
+	public static string MediaFileContextMenu_Open => Get("MediaFileContextMenu_Open");	
+	/// <summary>
+    /// Open in new window
+    /// </summary>
+	public static string MediaFileContextMenu_OpenInNewWindows => Get("MediaFileContextMenu_OpenInNewWindows");	
+	/// <summary>
+    /// Open with ...
+    /// </summary>
+	public static string MediaFileContextMenu_OpenWidth => Get("MediaFileContextMenu_OpenWidth");	
+	/// <summary>
+    /// Print
+    /// </summary>
+	public static string MediaFileContextMenu_Print => Get("MediaFileContextMenu_Print");	
+	/// <summary>
+    /// Properties
+    /// </summary>
+	public static string MediaFileContextMenu_Properties => Get("MediaFileContextMenu_Properties");	
+	/// <summary>
+    /// Rotate
+    /// </summary>
+	public static string MediaFileContextMenu_Rotate => Get("MediaFileContextMenu_Rotate");	
+	/// <summary>
+    /// Set as ...
+    /// </summary>
+	public static string MediaFileContextMenu_SetAs => Get("MediaFileContextMenu_SetAs");	
+	/// <summary>
+    /// Desktop background
+    /// </summary>
+	public static string MediaFileContextMenu_SetAsDesktopBackground => Get("MediaFileContextMenu_SetAsDesktopBackground");	
+	/// <summary>
+    /// Lockscreen
+    /// </summary>
+	public static string MediaFileContextMenu_SetAsLockscreenBackground => Get("MediaFileContextMenu_SetAsLockscreenBackground");	
+	/// <summary>
+    /// Share
+    /// </summary>
+	public static string MediaFileContextMenu_Share => Get("MediaFileContextMenu_Share");	
 	/// <summary>
     /// Pause
     /// </summary>

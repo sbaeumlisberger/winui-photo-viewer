@@ -1,9 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
+using PhotoViewerCore.Commands;
 using PhotoViewerCore.Models;
+using PhotoViewerCore.Utils;
 using PhotoViewerCore.ViewModels;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -25,6 +28,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     public bool IsVisible { get; set; } = true;
 
+    public IAcceleratedCommand DeleteCommand { get; }
+
     public ICommand SelectPreviousCommand { get; }
 
     public ICommand SelectNextCommand { get; }
@@ -33,11 +38,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     public bool CanRotate { get; private set; } = false;
 
-    public bool CanDelete { get; private set; } = false;
-
     private readonly Session session;
-
-    private readonly IMessenger messenger;
 
     private readonly IDialogService dialogService;
 
@@ -57,16 +58,17 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         IRotateBitmapService rotatePhotoService,
         IMediaFlipViewModel flipViewModel,
         IDeleteMediaService deleteMediaService,
-        ApplicationSettings settings)
+        ApplicationSettings settings,
+        IDeleteFilesCommand deleteFilesCommand) : base(messenger)
     {
         this.session = session;
-        this.messenger = messenger;
         this.dialogService = dialogService;
         this.loadMediaItemsService = loadMediaItemsService;
         this.rotatePhotoService = rotatePhotoService;
         this.deleteMediaService = deleteMediaService;
         this.settings = settings;
 
+        DeleteCommand = deleteFilesCommand;
         SelectPreviousCommand = flipViewModel.SelectPreviousCommand;
         SelectNextCommand = flipViewModel.SelectNextCommand;
     }
@@ -74,26 +76,25 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     partial void OnSelectedItemModelChanged()
     {
         CanStartDiashow = SelectedItemModel != null;
-        CanDelete = SelectedItemModel != null;
         CanRotate = SelectedItemModel?.MediaItem is IBitmapFileInfo bitmap && rotatePhotoService.CanRotate(bitmap);
     }
 
     [RelayCommand]
     private void NavigateToOverviewPage()
     {
-        messenger.Publish(new NavigateToPageMessage(typeof(OverviewPageModel)));
+        Messenger.Send(new NavigateToPageMessage(typeof(OverviewPageModel)));
     }
 
     [RelayCommand(CanExecute = nameof(CanStartDiashow))]
     private void StartDiashow()
     {
-        messenger.Publish(new StartDiashowMessage());
+        Messenger.Send(new StartDiashowMessage());
     }
 
     [RelayCommand]
     private void ToggleMetadataPanel() 
     {
-        messenger.Publish(new ToggleMetataPanelMessage());
+        Messenger.Send(new ToggleMetataPanelMessage());
     }
 
     [RelayCommand(CanExecute = nameof(CanRotate))]
@@ -101,15 +102,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     {
         var bitmap = (IBitmapFileInfo)SelectedItemModel!.MediaItem;
         await rotatePhotoService.RotateClockwise90DegreesAsync(bitmap);
-        messenger.Publish(new BitmapRotatedMesssage(bitmap));
-    }
-
-    [RelayCommand(CanExecute = nameof(CanDelete))]
-    private async Task DeleteAsync()
-    {
-        await deleteMediaService.DeleteMediaAsync(SelectedItemModel!.MediaItem, true/*TODO*/);
-        session.MediaItems.Remove(SelectedItemModel.MediaItem);
-        messenger.Publish(new MediaItemsDeletedMessage(new List<IMediaFileInfo>() { SelectedItemModel.MediaItem }));
+        Messenger.Send(new BitmapRotatedMesssage(bitmap));
     }
 
     [RelayCommand]
@@ -121,13 +114,13 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         {
             var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName);
             var result = await loadMediaItemsService.LoadMediaFilesAsync(folder, config);
-            messenger.Publish(new MediaItemsLoadedMessage(result.MediaItems, result.StartItem));
+            Messenger.Send(new MediaItemsLoadedMessage(result.MediaItems, result.StartItem));
         }
     }
 
     [RelayCommand]
     private void NavigateToSettingsPage()
     {
-        messenger.Publish(new NavigateToPageMessage(typeof(SettingsPageModel)));
+        Messenger.Send(new NavigateToPageMessage(typeof(SettingsPageModel)));
     }
 }
