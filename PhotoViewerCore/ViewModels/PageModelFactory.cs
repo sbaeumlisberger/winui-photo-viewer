@@ -34,7 +34,7 @@ public class PageModelFactory
             () => new MediaFlipViewModel(messenger, dialogService, mediaFilesLoaderService,
                 (mediaFile) =>
                 {
-                    var mediaFileContextFlyoutModel = new MediaFileContextMenuModel(messenger, personalizationService, rotateBitmapService, dialogService, clipboardService, deleteFilesCommand);
+                    var mediaFileContextFlyoutModel = new MediaFileContextMenuModel(messenger, metadataService, personalizationService, rotateBitmapService, dialogService, clipboardService, deleteFilesCommand);
                     return mediaFile switch
                     {
                         IBitmapFileInfo => new BitmapFlipViewItemModel(mediaFile, mediaFileContextFlyoutModel, messenger, imageLoaderService),
@@ -55,7 +55,7 @@ public class PageModelFactory
     {
         var settings = ApplicationSettingsProvider.GetSettings();
         var deleteFilesCommand = new DeleteFilesCommand(messenger, deleteMediaService, dialogService, settingService, settings);
-        var mediaFileContextFlyoutModel = new MediaFileContextMenuModel(messenger, personalizationService, rotateBitmapService, dialogService, clipboardService, deleteFilesCommand);
+        var mediaFileContextFlyoutModel = new MediaFileContextMenuModel(messenger, metadataService, personalizationService, rotateBitmapService, dialogService, clipboardService, deleteFilesCommand);
         return new OverviewPageModel(
             session,
             messenger,

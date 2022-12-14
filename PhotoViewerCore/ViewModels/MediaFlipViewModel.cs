@@ -41,6 +41,9 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     public bool IsDiashowLoopActive { get; private set; } = false;
 
+    [DependsOn(nameof(SelectedItemModel))]
+    public int SelectedItemNumber => SelectedItemModel is null ? 0 : Items.IndexOf(SelectedItemModel) + 1;
+
     private readonly IDialogService dialogService;
 
     private readonly IMediaFilesLoaderService loadMediaItemsService;

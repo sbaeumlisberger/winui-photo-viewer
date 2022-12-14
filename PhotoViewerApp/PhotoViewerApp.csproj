@@ -116,6 +116,12 @@
     <Page Update="Views\FlipViewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Update="Views\Dialogs\PropertiesDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\MediaFileContextMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   
   <ItemGroup>
@@ -127,9 +133,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Strings.cs</LastGenOutput>
     </None>
-    <Page Update="Views\MediaFileContextMenu.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Compile Update="Resources\Strings.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -145,7 +148,7 @@
   <ItemGroup>
     <EditorConfigFiles Remove="C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\.editorconfig" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <None Include="C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\.editorconfig" />
   </ItemGroup>

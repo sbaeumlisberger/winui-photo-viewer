@@ -14,7 +14,9 @@ public sealed partial class DetailsBar : UserControl
 
     public DetailsBar()
     {
-        this.InitializeMVVM<DetailsBarModel>(InitializeComponent);
+        this.InitializeMVVM<FlipViewPageModel>(InitializeComponent,
+          connectToViewModel: (viewModel) => Bindings.Initialize(),
+          disconnectFromViewModel: (viewModel) => Bindings.StopTracking());
     }
 
     private string ColorSpaceTypeToDisplayName(ColorSpaceType colorSpaceType)

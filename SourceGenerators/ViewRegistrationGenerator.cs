@@ -30,6 +30,8 @@ public class ViewRegistrationGenerator : ISourceGenerator
         source.AppendLine("");
         source.AppendLine("public class ViewRegistrations");
         source.AppendLine("{");
+        source.AppendLine("    public static ViewRegistrations Instance { get; } = new ViewRegistrations();");
+        source.AppendLine("    ");
         source.AppendLine("    public Dictionary<Type, Func<object, object>> ViewFactoriesByViewModelType { get; } = new Dictionary<Type, Func<object, object>>()");
         source.AppendLine("    {");
 

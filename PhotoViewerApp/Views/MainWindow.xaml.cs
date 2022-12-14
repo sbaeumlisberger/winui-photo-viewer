@@ -14,7 +14,7 @@ namespace PhotoViewerApp;
 
 public sealed partial class MainWindow : WindowEx
 {
-    private readonly ViewRegistrations viewRegistrations = new ViewRegistrations();
+    private readonly ViewRegistrations viewRegistrations = ViewRegistrations.Instance;
 
     public IDialogService DialogService { get; }
 

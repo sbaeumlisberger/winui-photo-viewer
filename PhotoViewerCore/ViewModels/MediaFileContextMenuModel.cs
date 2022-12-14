@@ -9,6 +9,8 @@ using PhotoViewerCore.Commands;
 using PhotoViewerCore.Services;
 using PhotoViewerCore.Utils;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace PhotoViewerCore.ViewModels;
 
@@ -34,11 +36,15 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
 
     //public bool IsRenameItemVisible => Files.Count == 1 && renameCallback is not null;
 
+    [DependsOn(nameof(Files))]
     public bool IsRotateItemVisible => Files.All(file => file is IBitmapFileInfo bitmapFile && rotateBitmapService.CanRotate(bitmapFile));
-
+    
+    [DependsOn(nameof(Files))]
     public bool IsShowPropertiesItemVisible => Files.Count == 1;
 
     public IAcceleratedCommand DeleteCommand { get; }
+
+    private readonly IMetadataService metadataService;
 
     private readonly IPersonalizationService personalizationService;
 
@@ -48,35 +54,21 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
 
     private readonly IClipboardService clipboardService;
 
-    //private readonly IViewModelFactory viewModelFactory;
-    //private readonly Action<IMedia>? renameCallback;
-
     public MediaFileContextMenuModel(
         IMessenger messenger,
+        IMetadataService metadataService,
         IPersonalizationService personalizationService,
         IRotateBitmapService rotateBitmapService,
         IDialogService dialogService,
         IClipboardService clipboardService,
         IDeleteFilesCommand deleteCommand) : base(messenger)
     {
+        this.metadataService = metadataService;
         this.personalizationService = personalizationService;
         this.rotateBitmapService = rotateBitmapService;
         this.dialogService = dialogService;
         this.clipboardService = clipboardService;
         DeleteCommand = deleteCommand;
-
-        //OpenWithCommand = new AsyncCommand(OpenWithAsync);
-        //OpenInNewWindowCommand = new AsyncCommand(OpenInNewWindowAsync);
-        //CopyCommand = new Command(Copy);
-        //ShareCommand = new SharePhotoCommand(() => Files);
-        //PrintCommand = new AsyncCommand(PrintAsync);
-        //SetDesktopBackgroundCommand = new AsyncCommand(SetDesktopBackgroundAsync);
-        //SetLockscreenBackgroundCommand = new AsyncCommand(SetLockscreenBackgroundAsync);
-        //SetAppTileBackgroundCommand = new AsyncCommand(SetAppTileBackgroundAsync);
-        //RenameCommand = new Command(Rename);
-        //RotateCommand = new RotateCommand(/*TODO*/new RotatePhotoService(), messenger, () => Files.OfType<IPhoto>());
-        //DeleteCommand = new DeleteCommand(/*TODO*/new DeleteService(), new ProcessingService(), messenger, () => Files);
-        //ShowDetailsCommand = new Command(ShowDetails);
     }
 
     [RelayCommand]
@@ -86,37 +78,31 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
     }
 
     [RelayCommand]
-    private async Task OpenInNewWindowAsync()
+    private void OpenInNewWindow()
     {
-        //var mediaSource = new MultipleFilesPhotoSource(Files.SelectMany(photo => photo.Files).ToList());
-        //var loadMediaTask = new PhotoLoadService().LoadPhotosAsync(mediaSource, PhotoViewerSettings.PhotoLoadingConfig);
-        //await ShowWindowAsync(() =>
-        //{
-        //    var frameModel = viewModelFactory.CreateFrameModel();
-        //    MessengerProvider.Messenger.Publish(new MediaLoadingMessage(loadMediaTask));
-        //    return frameModel;
-        //});
+        var filePaths = Files.SelectMany(file => file.StorageFiles).Select(storageFile => storageFile.Path);
+        Process.Start(Environment.ProcessPath!, filePaths);
     }
 
     [RelayCommand]
     private void Copy()
     {
-        var storageFiles = Files.SelectMany(file => new[] { file.StorageFile }.Concat(file.LinkedStorageFiles)).ToList();
+        var storageFiles = Files.SelectMany(file => file.StorageFiles).ToList();
         clipboardService.CopyStorageItems(storageFiles);
     }
 
     [RelayCommand]
     private async Task ShareAsync()
     {
-        var storageFiles = Files.SelectMany(file => new[] { file.StorageFile }.Concat(file.LinkedStorageFiles)).ToList();
+        var storageFiles = Files.SelectMany(file => file.StorageFiles).ToList();
         await dialogService.ShowDialogAsync(new ShareDialogModel(storageFiles));
     }
 
     [RelayCommand]
-    private async Task PrintAsync()
+    private Task PrintAsync()
     {
-        //var printJob = new PhotoPrintJob(Files.Select(photo => photo.File));
-        //await PrintService.Current.ShowPrintUIAsync(printJob);
+        // TODO
+        return Task.CompletedTask;
     }
 
     [RelayCommand]
@@ -131,7 +117,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
             Log.Error("Could not set desktop background.", ex);
             await dialogService.ShowDialogAsync(new MessageDialogModel()
             {
-                Title = "",//Strings.Error_SetPhotoAsDesktopBackground,
+                Title = "", // TODO Strings.Error_SetPhotoAsDesktopBackground,
                 Message = ex.Message
             });
         }
@@ -149,7 +135,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
             Log.Error("Could not set lockscreen background.", ex);
             await dialogService.ShowDialogAsync(new MessageDialogModel()
             {
-                Title = "",//Strings.Error_SetPhotoAsLockscreenBackground,
+                Title = "",  // TODO Strings.Error_SetPhotoAsLockscreenBackground,
                 Message = ex.Message
             });
         }
@@ -168,13 +154,14 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
     [RelayCommand]
     private void Rename()
     {
-        //renameCallback!.Invoke(Files.First());
+        // TODO
     }
 
     [RelayCommand]
-    private void ShowProperties()
+    private async Task ShowPropertiesAsync()
     {
-        //ShowDialogAsync(new DetailsDialogModel(Files.First()));
+        var dialogModel = new PropertiesDialogModel(metadataService, Files.First());
+        await dialogService.ShowDialogAsync(dialogModel);
     }
 
 }

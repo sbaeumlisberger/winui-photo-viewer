@@ -4,15 +4,15 @@ using System;
 
 namespace PhotoViewerApp.Utils;
 
-internal static class UserControlUtil
+internal static class ControlUtil
 {
 
-    public static void InitializeMVVM<T>(this UserControl userControl, Action initializeComponent, 
+    public static void InitializeMVVM<T>(this Control control, Action initializeComponent, 
         Action<T>? connectToViewModel = null, Action<T>? disconnectFromViewModel = null) where T : ViewModelBase
     {
-        if (userControl.IsLoaded) 
+        if (control.IsLoaded) 
         {
-            throw new Exception("UserControl is already loaded");
+            throw new Exception("Control is already loaded");
         }
 
         T? viewModel = null;
@@ -31,47 +31,47 @@ internal static class UserControlUtil
             viewModel = null;
         }
 
-        userControl.Loaded += (s, e) =>
+        control.Loaded += (s, e) =>
         {
-            userControl.DataContextChanged += (s, e) =>
+            control.DataContextChanged += (s, e) =>
             {
                 if (viewModel is T currentViewModel)
                 {
                     disconnect(currentViewModel);
                 }
-                if (userControl.DataContext is T newViewModel && !ReferenceEquals(newViewModel, viewModel))
+                if (control.DataContext is T newViewModel && !ReferenceEquals(newViewModel, viewModel))
                 {
                     connect(newViewModel);
                 }
             };
-            if (userControl.DataContext is T newViewModel && !ReferenceEquals(newViewModel, viewModel))
+            if (control.DataContext is T newViewModel && !ReferenceEquals(newViewModel, viewModel))
             {
                 connect(newViewModel);
             }
         };
 
-        userControl.Unloaded += (s, e) =>
+        control.Unloaded += (s, e) =>
         {
             if (viewModel is T currentViewModel)
             {
                 disconnect(currentViewModel);
             }
-            userControl.DataContext = null;
+            control.DataContext = null;
         };
 
         initializeComponent.Invoke();
     }
 
-    public static void RegisterPropertyChangedCallbackSafely(this UserControl userControl, DependencyProperty property, DependencyPropertyChangedCallback propertyChangedCallback)
+    public static void RegisterPropertyChangedCallbackSafely(this Control control, DependencyProperty property, DependencyPropertyChangedCallback propertyChangedCallback)
     {
-        long token = userControl.RegisterPropertyChangedCallback(property, propertyChangedCallback);
+        long token = control.RegisterPropertyChangedCallback(property, propertyChangedCallback);
 
         void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            userControl.Unloaded -= UserControl_Unloaded;
-            userControl.UnregisterPropertyChangedCallback(property, token);
+            control.Unloaded -= UserControl_Unloaded;
+            control.UnregisterPropertyChangedCallback(property, token);
         }
-        userControl.Unloaded += UserControl_Unloaded;
+        control.Unloaded += UserControl_Unloaded;
     }
 
 

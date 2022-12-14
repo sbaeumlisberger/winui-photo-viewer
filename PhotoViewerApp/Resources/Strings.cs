@@ -253,6 +253,58 @@ public class Strings {
     /// </summary>
 	public static string OverviewPage_Title => Get("OverviewPage_Title");	
 	/// <summary>
+    /// Camera
+    /// </summary>
+	public static string PropertiesDialog_Camera => Get("PropertiesDialog_Camera");	
+	/// <summary>
+    /// Close
+    /// </summary>
+	public static string PropertiesDialog_Close => Get("PropertiesDialog_Close");	
+	/// <summary>
+    /// Date taken
+    /// </summary>
+	public static string PropertiesDialog_DateTaken => Get("PropertiesDialog_DateTaken");	
+	/// <summary>
+    /// Dimensions
+    /// </summary>
+	public static string PropertiesDialog_Dimensions => Get("PropertiesDialog_Dimensions");	
+	/// <summary>
+    /// File name
+    /// </summary>
+	public static string PropertiesDialog_FileName => Get("PropertiesDialog_FileName");	
+	/// <summary>
+    /// File path
+    /// </summary>
+	public static string PropertiesDialog_FilePath => Get("PropertiesDialog_FilePath");	
+	/// <summary>
+    /// File size
+    /// </summary>
+	public static string PropertiesDialog_FileSize => Get("PropertiesDialog_FileSize");	
+	/// <summary>
+    /// Aperture
+    /// </summary>
+	public static string PropertiesDialog_FNumber => Get("PropertiesDialog_FNumber");	
+	/// <summary>
+    /// Focal length
+    /// </summary>
+	public static string PropertiesDialog_FocalLength => Get("PropertiesDialog_FocalLength");	
+	/// <summary>
+    /// ISO
+    /// </summary>
+	public static string PropertiesDialog_ISO => Get("PropertiesDialog_ISO");	
+	/// <summary>
+    /// Show in explorer
+    /// </summary>
+	public static string PropertiesDialog_ShowInExplorer => Get("PropertiesDialog_ShowInExplorer");	
+	/// <summary>
+    /// Shutter speed
+    /// </summary>
+	public static string PropertiesDialog_ShutterSpeed => Get("PropertiesDialog_ShutterSpeed");	
+	/// <summary>
+    /// Properties
+    /// </summary>
+	public static string PropertiesDialog_Title => Get("PropertiesDialog_Title");	
+	/// <summary>
     /// Appearance
     /// </summary>
 	public static string SettingsPage_AppearanceSectionTittle => Get("SettingsPage_AppearanceSectionTittle");	

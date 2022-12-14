@@ -97,5 +97,18 @@
                     Content="{x:Bind res:Strings.OpenFolderButton}"                    
                     Command="{x:Bind ViewModel.OpenFolderCommand}"/>
         </StackPanel>
+
+        <StackPanel
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Padding="8"
+            Margin="12"
+            CornerRadius="4"
+            Background="{ThemeResource SystemControlBackgroundAltMediumBrush}"
+            Orientation="Horizontal">
+            <TextBlock Text="{x:Bind ViewModel.SelectedItemNumber, Mode=OneWay}"/>
+            <TextBlock Text="/" Margin="4,0,4,0"/>
+            <TextBlock Text="{x:Bind ViewModel.Items.Count, Mode=OneWay}"/>
+        </StackPanel>
     </Grid>
 </UserControl>

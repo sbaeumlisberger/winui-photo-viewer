@@ -18,6 +18,8 @@ public interface IMediaFileInfo
 
     IReadOnlyList<IStorageFile> LinkedStorageFiles { get; }
 
+    IEnumerable<IStorageFile> StorageFiles => new[] { StorageFile }.Concat(LinkedStorageFiles);
+
     Task<IRandomAccessStream> OpenAsync(FileAccessMode fileAccessMode);
 
     Task<DateTimeOffset> GetDateModifiedAsync();

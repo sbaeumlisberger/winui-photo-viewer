@@ -19,12 +19,14 @@ namespace PhotoViewerApp.Services;
 
 public class DialogService : IDialogService
 {
-    private readonly WeakReference<Window> windowRef;
+    private readonly ViewRegistrations viewRegistrations = ViewRegistrations.Instance;
+
+    private readonly Window window;
     private readonly IntPtr windowHandle;
 
     public DialogService(Window window)
     {
-        windowRef = new WeakReference<Window>(window);
+        this.window = window;
         windowHandle = WindowNative.GetWindowHandle(window);
     }
 
@@ -47,7 +49,7 @@ public class DialogService : IDialogService
             case ShareDialogModel shareDialogModel:
                 await ShowShareDialogAsync(shareDialogModel); break;
             default:
-                throw new Exception();
+                await ShowCustomDialogAsync(dialogModel); break;
         }
     }
 
@@ -103,30 +105,24 @@ public class DialogService : IDialogService
 
     private async Task ShowMessageDialogAsync(MessageDialogModel messageDialogModel)
     {
-        if (windowRef.TryGetTarget(out var window))
+        var dialog = new ContentDialog()
         {
-            var dialog = new ContentDialog()
-            {
-                Title = messageDialogModel.Title,
-                Content = messageDialogModel.Message
-            };
-            dialog.XamlRoot = window.Content.XamlRoot;
-            await dialog.ShowAsync();
-        }
+            Title = messageDialogModel.Title,
+            Content = messageDialogModel.Message
+        };
+        dialog.XamlRoot = window.Content.XamlRoot;
+        await dialog.ShowAsync();
     }
 
     private async Task ShowYesNoDialogAsync(YesNoDialogModel yesNoDialogModel)
     {
-        if (windowRef.TryGetTarget(out var window))
-        {
-            var dialog = new YesNoDialog(
-                yesNoDialogModel.Title,
-                yesNoDialogModel.Message,
-                yesNoDialogModel.RememberMessage);
-            dialog.XamlRoot = window.Content.XamlRoot;
-            yesNoDialogModel.IsYes = await dialog.ShowAsync();
-            yesNoDialogModel.IsRemember = dialog.IsRemember;
-        }
+        var dialog = new YesNoDialog(
+            yesNoDialogModel.Title,
+            yesNoDialogModel.Message,
+            yesNoDialogModel.RememberMessage);
+        dialog.XamlRoot = window.Content.XamlRoot;
+        yesNoDialogModel.IsYes = await dialog.ShowAsync();
+        yesNoDialogModel.IsRemember = dialog.IsRemember;
     }
 
     private async Task ShowLaunchFileDialogAsync(LaunchFileDialogModel launchFileDialogModel)
@@ -153,6 +149,20 @@ public class DialogService : IDialogService
         }
         DataTransferManager.As<IDataTransferManagerInterop>().ShowShareUIForWindow(windowHandle);
         return Task.CompletedTask;
+    }
+
+    private async Task ShowCustomDialogAsync(object dialogModel)
+    {
+        if (viewRegistrations.ViewFactoriesByViewModelType.TryGetValue(dialogModel.GetType(), out var dialogFactory))
+        {
+            var dialog = (ContentDialog)dialogFactory.Invoke(dialogModel);
+            dialog.XamlRoot = window.Content.XamlRoot;
+            await dialog.ShowAsync();
+        }
+        else
+        {
+            throw new Exception($"No view found for dialog model of type {dialogModel.GetType().FullName}");
+        }
     }
 
     private static DataTransferManager GetDataTransferManagerForWindow([In] IntPtr appWindow)

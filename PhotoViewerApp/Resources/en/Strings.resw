@@ -279,6 +279,45 @@
   <data name="OverviewPage_Title" xml:space="preserve">
     <value>Overview</value>
   </data>
+  <data name="PropertiesDialog_Camera" xml:space="preserve">
+    <value>Camera</value>
+  </data>
+  <data name="PropertiesDialog_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="PropertiesDialog_DateTaken" xml:space="preserve">
+    <value>Date taken</value>
+  </data>
+  <data name="PropertiesDialog_Dimensions" xml:space="preserve">
+    <value>Dimensions</value>
+  </data>
+  <data name="PropertiesDialog_FileName" xml:space="preserve">
+    <value>File name</value>
+  </data>
+  <data name="PropertiesDialog_FilePath" xml:space="preserve">
+    <value>File path</value>
+  </data>
+  <data name="PropertiesDialog_FileSize" xml:space="preserve">
+    <value>File size</value>
+  </data>
+  <data name="PropertiesDialog_FNumber" xml:space="preserve">
+    <value>Aperture</value>
+  </data>
+  <data name="PropertiesDialog_FocalLength" xml:space="preserve">
+    <value>Focal length</value>
+  </data>
+  <data name="PropertiesDialog_ISO" xml:space="preserve">
+    <value>ISO</value>
+  </data>
+  <data name="PropertiesDialog_ShowInExplorer" xml:space="preserve">
+    <value>Show in explorer</value>
+  </data>
+  <data name="PropertiesDialog_ShutterSpeed" xml:space="preserve">
+    <value>Shutter speed</value>
+  </data>
+  <data name="PropertiesDialog_Title" xml:space="preserve">
+    <value>Properties</value>
+  </data>
   <data name="SettingsPage_AppearanceSectionTittle" xml:space="preserve">
     <value>Appearance</value>
   </data>
