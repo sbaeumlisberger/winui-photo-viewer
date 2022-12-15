@@ -1,4 +1,5 @@
-﻿using Windows.Storage;
+﻿using Windows.Foundation;
+using Windows.Storage;
 
 namespace PhotoViewerApp.Models;
 
@@ -15,4 +16,8 @@ internal class VectorGraphicFileInfo : MediaFileInfoBase, IVectorGraphicFileInfo
     {
     }
 
+    public override Task<Size> GetSizeInPixelsAsync()
+    {
+        return Task.FromResult(Size.Empty);
+    }
 }

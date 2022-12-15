@@ -8,16 +8,24 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Title="{x:Bind res:Strings.PropertiesDialog_Title}"
-    CloseButtonText="{x:Bind res:Strings.PropertiesDialog_Close}">
+    CloseButtonText="{x:Bind res:Strings.PropertiesDialog_Close}"
+    DefaultButton="Close">
 
     <ContentDialog.Resources>
-        <Style TargetType="TextBox" x:Key="ReadOnlyTextBoxStyle"></Style>
+        <Style TargetType="TextBox">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Height" Value="28"/>
+        </Style>
         <Style TargetType="TextBlock">
             <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
     </ContentDialog.Resources>
     
-    <Grid>       
+    <Grid Width="400" Margin="0,8,0,0">       
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="16"/>

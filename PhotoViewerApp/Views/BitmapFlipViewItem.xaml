@@ -11,7 +11,7 @@
 
     <UserControl.Resources>
         <local:MediaFileContextMenuHolder 
-            x:Name="MediaFileContextMenuHolder" 
+            x:Name="mediaFileContextMenuHolder" 
             DataContext="{x:Bind ViewModel.ContextMenuModel}"/>
     </UserControl.Resources>
   
@@ -19,7 +19,9 @@
         <controls:BitmapViewer 
             BitmapImage="{x:Bind ViewModel.BitmapImage, Mode=OneWay}" 
             IsEnabled="{x:Bind ViewModel.IsActive, Mode=OneWay}">
-            <Grid Background="Transparent" ContextFlyout="{x:Bind ContextMenu}"/>
+            <Grid 
+                Background="Transparent" 
+                ContextFlyout="{x:Bind mediaFileContextMenuHolder.MediaFileContextMenu}"/>
         </controls:BitmapViewer>
 
         <ProgressRing 

@@ -1,4 +1,5 @@
-﻿using Windows.Storage;
+﻿using Windows.Foundation;
+using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 
@@ -16,6 +17,8 @@ public interface IMediaFileInfo
 
     string FileExtension { get; }
 
+    string ContentType { get; }
+
     IReadOnlyList<IStorageFile> LinkedStorageFiles { get; }
 
     IEnumerable<IStorageFile> StorageFiles => new[] { StorageFile }.Concat(LinkedStorageFiles);
@@ -26,5 +29,9 @@ public interface IMediaFileInfo
 
     Task<ulong> GetFileSizeAsync();
 
+    Task<Size> GetSizeInPixelsAsync();
+
     Task<IRandomAccessStream?> GetThumbnailAsync();
+
+    void InvalidateCache();
 }

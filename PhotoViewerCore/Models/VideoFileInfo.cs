@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using Windows.Foundation;
 using Windows.Storage;
 
 namespace PhotoViewerApp.Models;
@@ -17,6 +18,16 @@ internal class VideoFileInfo : MediaFileInfoBase, IVideoFileInfo
 
     public VideoFileInfo(IStorageFile file) : base(file)
     {
+    }
+
+    public override async Task<Size> GetSizeInPixelsAsync()
+    {
+        if (StorageFile is StorageFile storageFile)
+        {
+            var videoProperties = await storageFile.Properties.GetVideoPropertiesAsync();
+            return new Size(videoProperties.Width, videoProperties.Height);
+        }
+        return Size.Empty;
     }
 
 }

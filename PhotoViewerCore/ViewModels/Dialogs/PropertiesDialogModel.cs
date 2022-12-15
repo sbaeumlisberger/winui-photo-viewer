@@ -39,7 +39,7 @@ public partial class PropertiesDialogModel : ViewModelBase
 
     private readonly IMetadataService metadataService;
 
-    private readonly IMediaFileInfo mediaFileInfo;   
+    private readonly IMediaFileInfo mediaFileInfo;
 
     private IStorageFolder? folder;
 
@@ -77,18 +77,17 @@ public partial class PropertiesDialogModel : ViewModelBase
             ClearMetadataProperties();
         }
 
-        // TODO
-        //var sizeInPixels = await mediaFileInfo.GetSizeInPixelsAsync();
-        //if (!sizeInPixels.IsEmpty)
-        //{
-        //    uint width = (uint)sizeInPixels.Width;
-        //    uint height = (uint)sizeInPixels.Height;
-        //    Dimensions += width + "x" + height + "px";
-        //}
-        //else
-        //{
-        //    Dimensions = "";
-        //}
+        var sizeInPixels = await mediaFileInfo.GetSizeInPixelsAsync();
+        if (!sizeInPixels.IsEmpty)
+        {
+            uint width = (uint)sizeInPixels.Width;
+            uint height = (uint)sizeInPixels.Height;
+            Dimensions += width + "x" + height + "px";
+        }
+        else
+        {
+            Dimensions = "";
+        }
 
         if (!string.IsNullOrEmpty(mediaFileInfo.FilePath)
             && mediaFileInfo.StorageFile is StorageFile storageFile

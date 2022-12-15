@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using Windows.Storage;
 using PhotoViewerCore.Utils;
+using Microsoft.Graphics.Canvas.Text;
 
 namespace PhotoViewerApp.ViewModels;
 
@@ -178,13 +179,16 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
         async void loop(CancellationToken cancellationToken)
         {
-            await Task.Delay(settings.DiashowTime);
-            while (!cancellationToken.IsCancellationRequested)
+            while (true)
             {
+                await (SelectedItemModel!.PlaybackCompletedTask ?? Task.Delay(settings.DiashowTime));
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
                 isSelectionChangedByDiashowLoop = true;
                 Diashow_SelectNext();
                 isSelectionChangedByDiashowLoop = false;
-                await Task.Delay(settings.DiashowTime);
             }
         }
 

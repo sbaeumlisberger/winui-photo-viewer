@@ -38,7 +38,7 @@ public class PageModelFactory
                     return mediaFile switch
                     {
                         IBitmapFileInfo => new BitmapFlipViewItemModel(mediaFile, mediaFileContextFlyoutModel, messenger, imageLoaderService),
-                        IVideoFileInfo => new VideoFlipViewItemModel(mediaFile),
+                        IVideoFileInfo => new VideoFlipViewItemModel(mediaFile, mediaFileContextFlyoutModel, messenger),
                         IVectorGraphicFileInfo => new VectorGraphicFlipViewItemModel(mediaFile),
                         _ => throw new Exception($"Unexcpected type of media file: {mediaFile.GetType()}")
                     };

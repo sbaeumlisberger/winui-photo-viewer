@@ -21,6 +21,14 @@
         <Style x:Key="HeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
             <Setter Property="Margin"  Value="0,16,0,4" />
         </Style>
+
+        <Style x:Key="LocationTextBoxStyle" TargetType="TextBox">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Height" Value="28"/>
+        </Style>
         
         <Style x:Key="ItemWithCountListView" TargetType="ListView">
             <Setter Property="ItemContainerStyle">
@@ -84,7 +92,7 @@
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.TitleTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_LocationHeader}" Style="{StaticResource HeaderStyle}"/>
-                    <TextBox IsReadOnly="True" Text="{x:Bind ViewModel.LocationSectionModel.DisplayText, Mode=OneWay}"/>
+                    <TextBox Style="{StaticResource LocationTextBoxStyle}" Text="{x:Bind ViewModel.LocationSectionModel.DisplayText, Mode=OneWay}"/>
                     <StackPanel Margin="0,4,0,0" Spacing="4" Orientation="Horizontal">
                         <Button 
                             Content="{x:Bind res:Strings.MetadataPanel_ShowLocationOnMapButton}"

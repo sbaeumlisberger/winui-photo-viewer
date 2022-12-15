@@ -157,6 +157,7 @@ public class DialogService : IDialogService
         {
             var dialog = (ContentDialog)dialogFactory.Invoke(dialogModel);
             dialog.XamlRoot = window.Content.XamlRoot;
+            dialog.DataContext = dialogModel;
             await dialog.ShowAsync();
         }
         else

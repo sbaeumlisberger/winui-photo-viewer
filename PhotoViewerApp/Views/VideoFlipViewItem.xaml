@@ -7,8 +7,23 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
-        <!-- handle if displayed -->
-        <WebView2 x:Name="webView"/>
-    </Grid>
+    <UserControl.Resources>
+        <local:MediaFileContextMenuHolder 
+            x:Name="mediaFileContextMenuHolder" 
+            DataContext="{x:Bind ViewModel.ContextMenuModel}"/>
+    </UserControl.Resources>
+
+    <MediaPlayerElement 
+        x:Name="mediaPlayerElement"
+        AreTransportControlsEnabled="True"
+        AutoPlay="False"
+        ContextFlyout="{x:Bind mediaFileContextMenuHolder.MediaFileContextMenu}">
+        <MediaPlayerElement.TransportControls>
+            <MediaTransportControls 
+                Margin="128,0,128,8"
+                IsCompact="True"
+                IsZoomButtonVisible="False"/>
+        </MediaPlayerElement.TransportControls>
+    </MediaPlayerElement>
+    
 </UserControl>

@@ -1,13 +1,14 @@
 ﻿using PhotoViewerApp.Utils.Logging;
 using System;
 using System.IO;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 
 namespace PhotoViewerApp.Models;
 
-public class MediaFileInfoBase : IMediaFileInfo
+public abstract class MediaFileInfoBase : IMediaFileInfo
 {
     public string Name => StorageFile.Name + (LinkedStorageFiles.Any() ? "[" + string.Join("|", LinkedStorageFiles.Select(file => file.FileType)) + "]" : string.Empty);
 
@@ -18,6 +19,8 @@ public class MediaFileInfoBase : IMediaFileInfo
     public string FilePath => StorageFile.Path;
 
     public string FileExtension => StorageFile.FileType.ToLower();
+
+    public string ContentType => StorageFile.ContentType;
 
     public virtual IReadOnlyList<IStorageFile> LinkedStorageFiles => Array.Empty<IStorageFile>();
 
@@ -69,13 +72,22 @@ public class MediaFileInfoBase : IMediaFileInfo
         fileSize = basicProperties.Size;
     }
 
+    public abstract Task<Size> GetSizeInPixelsAsync();
+
     public virtual async Task<IRandomAccessStream?> GetThumbnailAsync()
     {
         if (StorageFile is StorageFile storageFile) 
         {
-            await storageFile.GetThumbnailAsync(ThumbnailMode.SingleItem).AsTask().ConfigureAwait(false);
+            return await storageFile.GetThumbnailAsync(ThumbnailMode.SingleItem).AsTask().ConfigureAwait(false);
         }
         return null;
+    }
+
+    public virtual void InvalidateCache()
+    {
+        dateModified = null;
+        fileSize = null;
+        buffer = null;
     }
 
     private async Task<IRandomAccessStream> OpenMTPAsync(FileAccessMode fileAccessMode) 
@@ -120,4 +132,5 @@ public class MediaFileInfoBase : IMediaFileInfo
         memoryStream.Seek(0);
         return memoryStream;
     }
+
 }

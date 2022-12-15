@@ -36,10 +36,10 @@
             SelectionMode="Extended" SelectionChanged="GridView_SelectionChanged">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="models:IMediaFileInfo">
-                    <StackPanel Width="200" DoubleTapped="GridViewItem_DoubleTapped" RightTapped="GridViewItem_RightTapped"
+                    <StackPanel Margin="8" Width="150" DoubleTapped="GridViewItem_DoubleTapped" RightTapped="GridViewItem_RightTapped"
                          ContextFlyout="{Binding ContextMenu, ElementName=uc}"><!--- TODO get rid of Binding -->
-                        <Image Source="{x:Bind Converter={StaticResource MediaFileInfoToThumbnailConverter}}"/>
-                        <TextBlock TextAlignment="Center" Text="{x:Bind Name}"/>
+                        <Image Width="150" Height="150" Stretch="Uniform" Source="{x:Bind Converter={StaticResource MediaFileInfoToThumbnailConverter}}"/>
+                        <TextBlock Margin="0,4,0,0" TextAlignment="Center" Text="{x:Bind Name}"/>
                     </StackPanel>
                 </DataTemplate>
             </GridView.ItemTemplate>

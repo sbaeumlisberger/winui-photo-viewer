@@ -1,4 +1,6 @@
-﻿using Windows.Storage;
+﻿using WIC;
+using Windows.Foundation;
+using Windows.Storage;
 using Windows.Storage.Streams;
 
 namespace PhotoViewerApp.Models;
@@ -48,20 +50,45 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
 
     private List<IStorageFile> linkedStorageFiles = new List<IStorageFile>();
 
+    private Size sizeInPixels = Size.Empty;
+
     public BitmapFileInfo(IStorageFile file) : base(file)
     {
         IsMetadataSupported = JpegFileExtensions.Contains(StorageFile.FileType.ToLower()) || TiffFileExtensions.Contains(StorageFile.FileType.ToLower());
     }
 
-    public void LinkStorageFile(IStorageFile storageFile) 
+    public void LinkStorageFile(IStorageFile storageFile)
     {
         linkedStorageFiles.Add(storageFile);
+    }
+
+    public override async Task<Size> GetSizeInPixelsAsync()
+    {
+        if (sizeInPixels == Size.Empty)
+        {
+            using var fileStream = await OpenAsync(FileAccessMode.Read).ConfigureAwait(false);
+
+            var wic = new WICImagingFactory();
+
+            var decoder = wic.CreateDecoderFromStream(fileStream.AsStream(), WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
+
+            decoder.GetFrame(0).GetSize(out int width, out int height);
+
+            sizeInPixels = new Size(width, height);
+        }
+        return sizeInPixels;
     }
 
     public override async Task<IRandomAccessStream?> GetThumbnailAsync()
     {
         // loading the image directly is much faster and always up-to-date
         return await OpenAsync(FileAccessMode.Read).ConfigureAwait(false);
+    }
+
+    public override void InvalidateCache()
+    {
+        base.InvalidateCache();
+        sizeInPixels = Size.Empty;
     }
 
 }
