@@ -6,12 +6,13 @@ using PhotoViewerApp.Models;
 using PhotoViewerApp.Resources;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
+using PhotoViewerCore.Utils;
 using System.Linq;
 
 namespace PhotoViewerApp.Views;
 
 [ViewRegistration(typeof(OverviewPageModel))]
-public sealed partial class OverviewPage : Page
+public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
 {
     private OverviewPageModel ViewModel => (OverviewPageModel)DataContext;
 
@@ -20,9 +21,7 @@ public sealed partial class OverviewPage : Page
     public OverviewPage()
     {
         DataContext = PageModelFactory.CreateOverviewPageModel(App.Current.Window.DialogService);
-        this.InitializeMVVM<OverviewPageModel>(InitializeComponent,
-            (viewModel) => this.Bindings.Initialize(),
-            (viewModel) => this.Bindings.StopTracking());
+        this.InitializeMVVM();
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

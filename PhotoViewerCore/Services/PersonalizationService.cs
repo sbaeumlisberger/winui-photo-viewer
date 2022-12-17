@@ -10,7 +10,7 @@ public interface IPersonalizationService
 {
     bool CanSetLockScreenBackground { get; }
     bool CanSetDesktopBackground { get; }
-    bool IsFileTypeSupported(IStorageFile file);
+    bool IsFileExtensionSupported(string fileExtension);
     Task SetLockScreenBackgroundAsync(IStorageFile file);
     Task SetDesktopBackgroundAsync(IStorageFile file);
 }
@@ -23,7 +23,7 @@ public class PersonalizationService : IPersonalizationService
     public bool CanSetLockScreenBackground => UserProfilePersonalizationSettings.IsSupported();
     public bool CanSetDesktopBackground => UserProfilePersonalizationSettings.IsSupported();
 
-    public bool IsFileTypeSupported(IStorageFile file) => SupportedFileTypes.Contains(file.FileType.ToLower());
+    public bool IsFileExtensionSupported(string fileExtension) => SupportedFileTypes.Contains(fileExtension.ToLower());
 
     public async Task SetLockScreenBackgroundAsync(IStorageFile file)
     {
@@ -31,7 +31,7 @@ public class PersonalizationService : IPersonalizationService
         {
             throw new PlatformNotSupportedException();
         }
-        if (!IsFileTypeSupported(file))
+        if (!IsFileExtensionSupported(file.FileType))
         {
             throw new ArgumentException("The given file type is not supported.");
         }
@@ -49,7 +49,7 @@ public class PersonalizationService : IPersonalizationService
         {
             throw new PlatformNotSupportedException();
         }
-        if (!IsFileTypeSupported(file))
+        if (!IsFileExtensionSupported(file.FileType))
         {
             throw new ArgumentException("The given file type is not supported.");
         }

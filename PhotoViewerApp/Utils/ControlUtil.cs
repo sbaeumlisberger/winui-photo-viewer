@@ -1,32 +1,40 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using PhotoViewerApp.Utils.Logging;
+using PhotoViewerCore.Utils;
 using System;
 
 namespace PhotoViewerApp.Utils;
 
 internal static class ControlUtil
 {
-
-    public static void InitializeMVVM<T>(this Control control, Action initializeComponent, 
-        Action<T>? connectToViewModel = null, Action<T>? disconnectFromViewModel = null) where T : ViewModelBase
+    public static void InitializeMVVM<TViewModel>(
+        this IMVVMControl<TViewModel> control,
+        Action<TViewModel>? connectToViewModel = null,
+        Action<TViewModel>? disconnectFromViewModel = null)
+        where TViewModel : ViewModelBase
     {
-        if (control.IsLoaded) 
+        if (control.IsLoaded)
         {
             throw new Exception("Control is already loaded");
         }
 
-        T? viewModel = null;
+        TViewModel? viewModel = null;
 
-        void connect(T newViewModel) 
+        void connect(TViewModel newViewModel)
         {
+            Log.Debug($"Connect {control} to {newViewModel}");
             viewModel = newViewModel;
             connectToViewModel?.Invoke(newViewModel);
+            control.InitializeBindings();
             viewModel.OnViewConnected();
         }
 
-        void disconnect(T currentViewModel) 
+        void disconnect(TViewModel currentViewModel)
         {
-            disconnectFromViewModel?.Invoke(currentViewModel);
+            Log.Debug($"Disconnect {control} from {currentViewModel}");
+            disconnectFromViewModel?.Invoke(viewModel);
+            control.StopBindings();
             currentViewModel.OnViewDisconnected();
             viewModel = null;
         }
@@ -35,16 +43,19 @@ internal static class ControlUtil
         {
             control.DataContextChanged += (s, e) =>
             {
-                if (viewModel is T currentViewModel)
+                if (e.NewValue != viewModel)
                 {
-                    disconnect(currentViewModel);
-                }
-                if (control.DataContext is T newViewModel && !ReferenceEquals(newViewModel, viewModel))
-                {
-                    connect(newViewModel);
+                    if (viewModel is TViewModel currentViewModel)
+                    {
+                        disconnect(currentViewModel);
+                    }
+                    if (e.NewValue is TViewModel newViewModel)
+                    {
+                        connect(newViewModel);
+                    }
                 }
             };
-            if (control.DataContext is T newViewModel && !ReferenceEquals(newViewModel, viewModel))
+            if (control.DataContext is TViewModel newViewModel && newViewModel != viewModel)
             {
                 connect(newViewModel);
             }
@@ -52,14 +63,14 @@ internal static class ControlUtil
 
         control.Unloaded += (s, e) =>
         {
-            if (viewModel is T currentViewModel)
+            if (viewModel is TViewModel currentViewModel)
             {
                 disconnect(currentViewModel);
             }
             control.DataContext = null;
         };
 
-        initializeComponent.Invoke();
+        control.LoadComponent();
     }
 
     public static void RegisterPropertyChangedCallbackSafely(this Control control, DependencyProperty property, DependencyPropertyChangedCallback propertyChangedCallback)

@@ -42,8 +42,6 @@ public class DialogService : IDialogService
                 await ShowFileSavePickerModelAsync(fileSavePickerModel); break;
             case MessageDialogModel messageDialogModel:
                 await ShowMessageDialogAsync(messageDialogModel); break;
-            case YesNoDialogModel yesNoDialogModel:
-                await ShowYesNoDialogAsync(yesNoDialogModel); break;
             case LaunchFileDialogModel launchFileDialogModel:
                 await ShowLaunchFileDialogAsync(launchFileDialogModel); break;
             case ShareDialogModel shareDialogModel:
@@ -112,17 +110,6 @@ public class DialogService : IDialogService
         };
         dialog.XamlRoot = window.Content.XamlRoot;
         await dialog.ShowAsync();
-    }
-
-    private async Task ShowYesNoDialogAsync(YesNoDialogModel yesNoDialogModel)
-    {
-        var dialog = new YesNoDialog(
-            yesNoDialogModel.Title,
-            yesNoDialogModel.Message,
-            yesNoDialogModel.RememberMessage);
-        dialog.XamlRoot = window.Content.XamlRoot;
-        yesNoDialogModel.IsYes = await dialog.ShowAsync();
-        yesNoDialogModel.IsRemember = dialog.IsRemember;
     }
 
     private async Task ShowLaunchFileDialogAsync(LaunchFileDialogModel launchFileDialogModel)

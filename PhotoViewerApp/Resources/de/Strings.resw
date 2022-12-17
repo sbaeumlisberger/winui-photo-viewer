@@ -117,6 +117,21 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DeleteLinkedFilesDialog_Message" xml:space="preserve">
+    <value>Möchten Sie die mit dieser Datei verknüpften Dateien löschen?</value>
+  </data>
+  <data name="DeleteLinkedFilesDialog_No" xml:space="preserve">
+    <value>Nein</value>
+  </data>
+  <data name="DeleteLinkedFilesDialog_Remember" xml:space="preserve">
+    <value>Entscheidung merken (Kann in den Einstellungen geändert werden)</value>
+  </data>
+  <data name="DeleteLinkedFilesDialog_Title" xml:space="preserve">
+    <value>Verknüpfte Dateien löschen</value>
+  </data>
+  <data name="DeleteLinkedFilesDialog_Yes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
   <data name="DetailsBar_ColorSpaceAdobeRGB" xml:space="preserve">
     <value>Adobe-RGB-Farbraum</value>
   </data>
@@ -128,6 +143,12 @@
   </data>
   <data name="DetailsBar_NoInformationAvailable" xml:space="preserve">
     <value>Keine Information verfügbar</value>
+  </data>
+  <data name="EditLocationDialog_Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="EditLocationDialog_Save" xml:space="preserve">
+    <value>Speichern</value>
   </data>
   <data name="FlipViewPageCommandBar_CompareButton" xml:space="preserve">
     <value>Vergleichen</value>
@@ -347,11 +368,5 @@
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Einstellungen</value>
-  </data>
-  <data name="YesNoDialog_No" xml:space="preserve">
-    <value>Nein</value>
-  </data>
-  <data name="YesNoDialog_Yes" xml:space="preserve">
-    <value>Ja</value>
   </data>
 </root>

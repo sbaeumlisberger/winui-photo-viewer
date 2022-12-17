@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.VisualBasic;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerCore.Models;
+using PhotoViewerCore.Resources;
 using PhotoViewerCore.Services;
 using PhotoViewerCore.Utils;
 using PhotoViewerCore.ViewModels;
@@ -41,35 +41,34 @@ public class DeleteFilesCommand : AsyncCommandBase<ICollection<IMediaFileInfo>>,
 
     protected override async Task ExecuteAsync(ICollection<IMediaFileInfo> files)
     {
-        bool deleteLinkedFiles = settings.DeleteLinkedFilesOption switch
+        bool deleteLinkedFiles = false;
+
+        if (files.Any(file => file.LinkedStorageFiles.Any()))
         {
-            DeleteLinkedFilesOption.Yes => true,
-            DeleteLinkedFilesOption.No => false,
-            _ => await ShowDeleteLinkedFilesDialog()
-        };
+            deleteLinkedFiles = settings.DeleteLinkedFilesOption switch
+            {
+                DeleteLinkedFilesOption.Yes => true,
+                DeleteLinkedFilesOption.No => false,
+                _ => await ShowDeleteLinkedFilesDialog()
+            };
+        }
 
         var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
         {
             await deleteMediaService.DeleteMediaAsync(file, deleteLinkedFiles);
         });
 
-        messenger.Send(new MediaItemsDeletedMessage(result.ProcessedElements));
+        messenger.Send(new MediaFilesDeletedMessage(result.ProcessedElements));
 
         if (result.HasFailures)
         {
-            await ShowFailuresDialogAsync(result);
+            await ShowErrorDialogAsync(result);
         }
     }
 
     private async Task<bool> ShowDeleteLinkedFilesDialog()
-    { 
-        // TODO translate
-        var askDialogModel = new YesNoDialogModel()
-        {
-            Title = "Verknüpfte Dateien löschen",
-            Message = "Möchten Sie verknüpfte Dateien löschen?",
-            RememberMessage = "Entscheidung merken (Kann in den Einstellungen geändert werden)"
-        };
+    {
+        var askDialogModel = new DeleteLinkedFilesDialogModel();
 
         await dialogService.ShowDialogAsync(askDialogModel);
        
@@ -82,16 +81,15 @@ public class DeleteFilesCommand : AsyncCommandBase<ICollection<IMediaFileInfo>>,
         return askDialogModel.IsYes;
     }
 
-    private async Task ShowFailuresDialogAsync(ProcessingResult<IMediaFileInfo> result)
+    private async Task ShowErrorDialogAsync(ProcessingResult<IMediaFileInfo> result)
     {
-        // TODO translate
-        string message = "The following files could not be deleted:\n";
+        string message = Strings.DeleteFilesErrorDialog_Message + "\n";
         message += string.Join("\n", result.Failures
             .Select(failure => failure.Element.Name + "(" + failure.Exception.Message + ")"));
 
         var failuresDialog = new MessageDialogModel()
         {
-            Title = "Could not delete files",
+            Title = Strings.DeleteFilesErrorDialog_Title,
             Message = message
         };
 

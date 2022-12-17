@@ -175,7 +175,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 
             foreach (var rawFile in rawFilesToLink)
             {
-                var mediaFileInfo = possibleLinkFiles.First(mfi => Path.GetFileNameWithoutExtension(mfi.StorageFile.Name) == Path.GetFileNameWithoutExtension(rawFile.Name));
+                var mediaFileInfo = possibleLinkFiles.First(mfi => Path.GetFileNameWithoutExtension(mfi.FileName) == Path.GetFileNameWithoutExtension(rawFile.Name));
                 mediaFileInfo.LinkStorageFile(rawFile);
             }
         }

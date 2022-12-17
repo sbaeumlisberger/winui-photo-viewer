@@ -7,18 +7,18 @@ namespace PhotoViewerApp.Models;
 
 public class Session
 {
-    public IList<IMediaFileInfo> MediaItems { get; private set; } = Array.Empty<IMediaFileInfo>();
+    public IList<IMediaFileInfo> Files { get; private set; } = Array.Empty<IMediaFileInfo>();
 
     public Session(IMessenger messenger)
     {
-        messenger.Register<MediaItemsLoadedMessage>(this, msg =>
+        messenger.Register<MediaFilesLoadedMessage>(this, msg =>
         {
-            MediaItems = new List<IMediaFileInfo>(msg.MediaItems);
+            Files = new List<IMediaFileInfo>(msg.Files);
         });
 
-        messenger.Register<MediaItemsDeletedMessage>(this, msg =>
+        messenger.Register<MediaFilesDeletedMessage>(this, msg =>
         {
-            msg.MediaItems.ForEach(mediaItem => MediaItems.Remove(mediaItem));
+            msg.Files.ForEach(file => Files.Remove(file));
         });
     }
 

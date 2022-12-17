@@ -2,11 +2,13 @@
 using MetadataAPI;
 using MetadataAPI.Data;
 using PhotoViewerApp.Models;
+using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
 using PhotoViewerCore.Models;
 using PhotoViewerCore.Services;
 using PhotoViewerCore.Utils;
+using PhotoViewerCore.ViewModels;
 using System.Globalization;
 using Windows.Devices.Geolocation;
 using Windows.System;
@@ -29,10 +31,12 @@ namespace MetadataEditModule.ViewModel
         private Location? location;
 
         private readonly ILocationService locationService;
+        private readonly IDialogService dialogService;
 
-        public LocationSectionModel(ILocationService locationService) 
+        public LocationSectionModel(ILocationService locationService, IDialogService dialogService)
         {
             this.locationService = locationService;
+            this.dialogService = dialogService;
         }
 
         public async void UpdateAsync(IList<MetadataView> metadata, CancellationToken cancellationToken)
@@ -78,6 +82,13 @@ namespace MetadataEditModule.ViewModel
             {
                 TargetApplicationPackageFamilyName = "Microsoft.WindowsMaps_8wekyb3d8bbwe"
             });
+        }
+
+
+        [RelayCommand]
+        private async Task EditLocationAsync()
+        {
+            await dialogService.ShowDialogAsync(new EditLocationDialogModel());
         }
 
         private void Update(Location location)

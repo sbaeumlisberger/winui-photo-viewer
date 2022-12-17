@@ -9,9 +9,11 @@ public interface IMediaFlipViewItemModel : INotifyPropertyChanged
 
     bool IsActive { get; set; }
 
+    bool IsDiashowActive { get; set; }
+
     Task? PlaybackCompletedTask => null;
 
-    Task InitializeAsync();
+    Task PrepareAsync();
 
     void Cleanup();
 }

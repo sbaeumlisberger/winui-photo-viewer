@@ -45,6 +45,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     [DependsOn(nameof(SelectedItemModel))]
     public int SelectedItemNumber => SelectedItemModel is null ? 0 : Items.IndexOf(SelectedItemModel) + 1;
 
+    public bool ShowSelectedItemIndicator { get; private set; } = true;
+
     private readonly IDialogService dialogService;
 
     private readonly IMediaFilesLoaderService loadMediaItemsService;
@@ -71,39 +73,48 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         this.mediaFlipViewItemModelFactory = mediaFlipViewItemModelFactory;
         this.settings = settings;
 
-        Messenger.Register<MediaItemsLoadedMessage>(this, msg =>
+        Messenger.Register<MediaFilesLoadedMessage>(this, msg =>
         {
             Log.Debug("MediaItemsLoadedMessage received");
-            SetItems(msg.MediaItems, msg.StartItem);
+            SetItems(msg.Files, msg.StartFile);
         });
 
-        Messenger.Register<MediaItemsDeletedMessage>(this, msg =>
+        Messenger.Register<MediaFilesDeletedMessage>(this, msg =>
         {
-            Items.RemoveAll(itemModel => msg.MediaItems.Contains(itemModel.MediaItem));
+            Items.RemoveAll(itemModel => msg.Files.Contains(itemModel.MediaItem));
         });
 
         Messenger.Register<StartDiashowMessage>(this, msg =>
         {
             IsDiashowActive = true;
+            Items.ForEach(itemModel => itemModel.IsDiashowActive = true);
             IsDiashowLoopActive = true;
+            ShowSelectedItemIndicator = false;
         });
 
         Messenger.Register<ExitDiashowMessage>(this, msg =>
         {
             IsDiashowActive = false;
+            Items.ForEach(itemModel => itemModel.IsDiashowActive = false);
             IsDiashowLoopActive = false;
+            ShowSelectedItemIndicator = true;
         });
     }
 
-    public void SetItems(IEnumerable<IMediaFileInfo> mediaItems, IMediaFileInfo? startItem = null)
+    protected override void OnViewDisconnectedOverride()
+    {
+        diashowLoopCancellationTokenSource?.Cancel();
+    }
+
+    public void SetItems(IEnumerable<IMediaFileInfo> files, IMediaFileInfo? startFile = null)
     {
         Log.Debug("SetItems called");
         Stopwatch sw = Stopwatch.StartNew();
-        Items = new ObservableCollection<IMediaFlipViewItemModel>(mediaItems.Select(mediaFlipViewItemModelFactory.Invoke));
+        Items = new ObservableCollection<IMediaFlipViewItemModel>(files.Select(mediaFlipViewItemModelFactory.Invoke));
         sw.Stop();
         Log.Info($"Create {Items.Count} item models took {sw.ElapsedMilliseconds} ms");
         Log.Debug("Set SelectedItemModel");
-        SelectedItemModel = startItem != null ? Items.FirstOrDefault(itemModel => itemModel.MediaItem == startItem) : Items.FirstOrDefault();
+        SelectedItemModel = startFile != null ? Items.FirstOrDefault(itemModel => itemModel.MediaItem == startFile) : Items.FirstOrDefault();
     }
 
     public void Diashow_SelectPrevious()
@@ -218,19 +229,22 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
             itemModelsToBeLoaded = Array.Empty<IMediaFlipViewItemModel>();
         }
 
-        foreach (var itemModel in loadedItemModels.Except(itemModelsToBeLoaded))
-        {
-            Log.Info($"Cleanup ViewModel for {itemModel.MediaItem.Name}");
-            itemModel.Cleanup();
-        }
+        var itemModlesToCleanup = loadedItemModels.Except(itemModelsToBeLoaded).ToList();
 
         foreach (var itemModel in itemModelsToBeLoaded.Except(loadedItemModels))
         {
-            Log.Info($"Load ViewModel for {itemModel.MediaItem.Name}");
-            _ = itemModel.InitializeAsync();
+            Log.Info($"Prepare ViewModel for {itemModel.MediaItem.Name}");
+            _ = itemModel.PrepareAsync();
         }
 
         loadedItemModels = itemModelsToBeLoaded;
+
+        foreach (var itemModel in itemModlesToCleanup)
+        {
+            Log.Info($"Cleanup ViewModel for {itemModel.MediaItem.Name}");
+            Debug.Assert(!loadedItemModels.Contains(itemModel));
+            itemModel.Cleanup();
+        }
     }
 
     [RelayCommand(CanExecute = nameof(CanSelectPrevious))]
@@ -275,7 +289,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         {
             var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName);
             var result = await loadMediaItemsService.LoadMediaFilesAsync(folder, config);
-            Messenger.Send(new MediaItemsLoadedMessage(result.MediaItems, result.StartItem));
+            Messenger.Send(new MediaFilesLoadedMessage(result.MediaItems, result.StartItem));
         }
     }
 }

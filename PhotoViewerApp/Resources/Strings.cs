@@ -37,6 +37,26 @@ public class Strings {
 	}
 
 	/// <summary>
+    /// Do you want to delete the files linked to this file?
+    /// </summary>
+	public static string DeleteLinkedFilesDialog_Message => Get("DeleteLinkedFilesDialog_Message");	
+	/// <summary>
+    /// No
+    /// </summary>
+	public static string DeleteLinkedFilesDialog_No => Get("DeleteLinkedFilesDialog_No");	
+	/// <summary>
+    /// Remember decision (can be changed in the settings)
+    /// </summary>
+	public static string DeleteLinkedFilesDialog_Remember => Get("DeleteLinkedFilesDialog_Remember");	
+	/// <summary>
+    /// Delete linked files
+    /// </summary>
+	public static string DeleteLinkedFilesDialog_Title => Get("DeleteLinkedFilesDialog_Title");	
+	/// <summary>
+    /// Yes
+    /// </summary>
+	public static string DeleteLinkedFilesDialog_Yes => Get("DeleteLinkedFilesDialog_Yes");	
+	/// <summary>
     /// Adobe RGB color space
     /// </summary>
 	public static string DetailsBar_ColorSpaceAdobeRGB => Get("DetailsBar_ColorSpaceAdobeRGB");	
@@ -52,6 +72,14 @@ public class Strings {
     /// no information available
     /// </summary>
 	public static string DetailsBar_NoInformationAvailable => Get("DetailsBar_NoInformationAvailable");	
+	/// <summary>
+    /// Cancel
+    /// </summary>
+	public static string EditLocationDialog_Cancel => Get("EditLocationDialog_Cancel");	
+	/// <summary>
+    /// Save
+    /// </summary>
+	public static string EditLocationDialog_Save => Get("EditLocationDialog_Save");	
 	/// <summary>
     /// Compare
     /// </summary>
@@ -344,14 +372,6 @@ public class Strings {
     /// Settings
     /// </summary>
 	public static string SettingsPage_Title => Get("SettingsPage_Title");	
-	/// <summary>
-    /// No
-    /// </summary>
-	public static string YesNoDialog_No => Get("YesNoDialog_No");	
-	/// <summary>
-    /// Yes
-    /// </summary>
-	public static string YesNoDialog_Yes => Get("YesNoDialog_Yes");	
 
 	private Strings() {}
 

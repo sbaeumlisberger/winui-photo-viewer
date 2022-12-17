@@ -98,7 +98,8 @@
                             Content="{x:Bind res:Strings.MetadataPanel_ShowLocationOnMapButton}"
                             Command="{x:Bind ViewModel.LocationSectionModel.ShowLocationOnMapCommand}"/>
                         <SplitButton 
-                            Content="{x:Bind res:Strings.MetadataPanel_EditLocationButton}">
+                            Content="{x:Bind res:Strings.MetadataPanel_EditLocationButton}"
+                            Command="{x:Bind ViewModel.LocationSectionModel.EditLocationCommand}">
                             <SplitButton.Flyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem Text="{x:Bind res:Strings.MetadataPanel_ImportFromGpxFileButton}"/>

@@ -59,7 +59,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
         {
             var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName);
             var result = await loadMediaItemsService.LoadMediaFilesAsync(folder, config);
-            Messenger.Send(new MediaItemsLoadedMessage(result.MediaItems, result.StartItem));
+            Messenger.Send(new MediaFilesLoadedMessage(result.MediaItems, result.StartItem));
         }
     }
 

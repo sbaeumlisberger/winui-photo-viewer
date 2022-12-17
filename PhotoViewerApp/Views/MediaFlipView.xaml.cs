@@ -4,27 +4,29 @@ using Microsoft.UI.Xaml.Input;
 using PhotoVieweApp.Utils;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
+using PhotoViewerCore.Utils;
 using System.ComponentModel;
 
 namespace PhotoViewerApp.Views;
-public sealed partial class MediaFlipView : UserControl
+
+public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipViewModel>
 {
     private MediaFlipViewModel ViewModel => (MediaFlipViewModel)DataContext;
 
     public MediaFlipView()
     {
-        this.InitializeMVVM<MediaFlipViewModel>(InitializeComponent,
-            connectToViewModel: (viewModel) =>
-            {
-                ViewModel.PropertyChanged += FlipViewModel_PropertyChanged;
-                Bindings.Initialize();
-                UpdateWindowTitle();
-            },
-            disconnectFromViewModel: (viewModel) =>
-            {
-                viewModel.PropertyChanged -= FlipViewModel_PropertyChanged;
-                Bindings.StopTracking();
-            });
+        this.InitializeMVVM(ConnectToViewModel, DisconnectFromViewModel);
+    }
+
+    private void ConnectToViewModel(MediaFlipViewModel viewModel)
+    {
+        viewModel.PropertyChanged += FlipViewModel_PropertyChanged;
+        UpdateWindowTitle();
+    }
+
+    private void DisconnectFromViewModel(MediaFlipViewModel viewModel)
+    {
+        viewModel.PropertyChanged -= FlipViewModel_PropertyChanged;
     }
 
     private void FlipViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)

@@ -50,10 +50,6 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
     public DetailsBarModel(IMessenger messenger, IMetadataService metadataService) : base(messenger)
     {
         this.metadataService = metadataService;
-    }
-
-    protected override void OnViewConnectedOverride()
-    {
         Messenger.Register<MetadataModifiedMessage>(this, OnReceive);
         Messenger.Register<BitmapImageLoadedMessage>(this, OnReceive);
     }
@@ -154,6 +150,8 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         Log.Debug($"Update details bar for {SelectedItemModel!.MediaItem.Name} with information from image");
         ShowColorProfileIndicator = bitmapImage.ColorSpace.Profile is not null;
         ColorSpaceType = ShowColorProfileIndicator ? bitmapImage.ColorSpace.Type : ColorSpaceType.NotSpecified;
+        
+        // TODO video
         SizeInPixels = bitmapImage.SizeInPixels.Width + "x" + bitmapImage.SizeInPixels.Height + "px";
     }
 

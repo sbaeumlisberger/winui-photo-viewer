@@ -65,7 +65,7 @@ public partial class App : Application
         messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel)));
 
         var loadMediaItemsResult = await loadMediaItemsTask;
-        messenger.Send(new MediaItemsLoadedMessage(loadMediaItemsResult.MediaItems, loadMediaItemsResult.StartItem));
+        messenger.Send(new MediaFilesLoadedMessage(loadMediaItemsResult.MediaItems, loadMediaItemsResult.StartItem));
     }
 
     private void App_UnhandledException(object sender, UnhandledExceptionEventArgs args)

@@ -20,12 +20,23 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <local:MetadataPanel Grid.RowSpan="2" DataContext="{x:Bind ViewModel.MetadataPanelModel}"/>
+        <local:MetadataPanel 
+            Grid.RowSpan="2" 
+            DataContext="{x:Bind ViewModel.MetadataPanelModel}"
+            Visibility="{x:Bind ViewModel.ShowUI, Mode=OneWay}"/>
 
-        <local:DetailsBar Grid.Column="1" DataContext="{x:Bind ViewModel.DetailsBarModel}"/>
+        <local:DetailsBar 
+            Grid.Column="1" 
+            DataContext="{x:Bind ViewModel.DetailsBarModel}"
+            Visibility="{x:Bind ViewModel.ShowUI, Mode=OneWay}"/>
 
-        <local:MediaFlipView Grid.Column="1" Grid.Row="1" DataContext="{x:Bind ViewModel.FlipViewModel}"/>
+        <local:MediaFlipView 
+            Grid.Column="1" Grid.Row="1" 
+            DataContext="{x:Bind ViewModel.FlipViewModel}"/>
 
-        <local:FlipViewPageCommandBar Grid.ColumnSpan="2" Grid.Row="2" DataContext="{x:Bind ViewModel.CommandBarModel}"/>
+            <local:FlipViewPageCommandBar 
+            Grid.ColumnSpan="2" Grid.Row="2" 
+            DataContext="{x:Bind ViewModel.CommandBarModel}"
+            Visibility="{x:Bind ViewModel.ShowUI, Mode=OneWay}"/>
     </Grid>
 </Page>

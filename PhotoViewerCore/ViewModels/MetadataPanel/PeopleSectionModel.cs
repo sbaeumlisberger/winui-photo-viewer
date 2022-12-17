@@ -39,16 +39,12 @@ public partial class PeopleSectionModel : ViewModelBase
     {
         this.writeFilesRunner = writeFilesRunner;
         this.metadataService = metadataService;
-        IsTagPeopleOnPhotoButtonVisible = tagPeopleOnPhotoButtonVisible;       
-    }
+        IsTagPeopleOnPhotoButtonVisible = tagPeopleOnPhotoButtonVisible;
 
-    protected override void OnViewConnectedOverride()
-    {
         if (IsTagPeopleOnPhotoButtonVisible)
         {
             Messenger.Register<TagPeopleToolActiveChangedMeesage>(this, OnTagPeopleToolActiveChangedMessageReceived);
         }
-        UpdateSuggestions();
     }
 
     public void Update(IList<IBitmapFileInfo> files, IList<MetadataView> metadata)

@@ -28,7 +28,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
 
     public bool IsPrinItemVisible => false; // TODO PrintService.IsAvailable && Files.All(media => PhotoPrintJob.CanPrint(media.File));
 
-    public bool IsSetAsItemVisible => Files.Count == 1 && personalizationService.IsFileTypeSupported(Files.First().StorageFile);
+    public bool IsSetAsItemVisible => Files.Count == 1 && personalizationService.IsFileExtensionSupported(Files.First().FileExtension);
 
     public bool IsSetAsDesktopBackgroundItemVisible => personalizationService.CanSetDesktopBackground;
 

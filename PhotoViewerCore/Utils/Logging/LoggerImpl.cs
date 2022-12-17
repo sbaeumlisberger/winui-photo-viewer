@@ -63,7 +63,7 @@ internal class LoggerImpl : ILogger
 
     private void Log(string level, string? message, Exception? exception, string file, int lineNumber)
     {
-        string timestamp = DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        string timestamp = DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
         var fileName = file.Substring(file.IndexOf(@"\PhotoViewer") + @"\PhotoViewer".Length);
 
         string line = ($"{timestamp} | {level} | {fileName}:{lineNumber} | {message ?? exception?.Message ?? ""} \n");

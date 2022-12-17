@@ -62,22 +62,20 @@ namespace PhotoViewerCore.ViewModels
             IMessenger messenger,
             IMetadataService metadataService,
             ILocationService locationService,
+            IDialogService dialogService,
             bool tagPeopleOnPhotoButtonVisible) : base(messenger)
         {
             this.metadataService = metadataService;
 
             TitleTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Title);
-            LocationSectionModel = new LocationSectionModel(locationService);
+            LocationSectionModel = new LocationSectionModel(locationService, dialogService);
             PeopleSectionModel = new PeopleSectionModel(writeFilesRunner, messenger, metadataService, tagPeopleOnPhotoButtonVisible);
             KeywordsSectionModel = new KeywordsSectionModel(writeFilesRunner, messenger, metadataService);
             RatingSectionModel = new RatingSectionModel(writeFilesRunner, metadataService);
             AuthorTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Author);
             CopyrightTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Copyright);
             DateTakenSectionModel = new DateTakenSectionModel();
-        }
 
-        protected override void OnViewConnectedOverride()
-        {
             Messenger.Register<ToggleMetataPanelMessage>(this, OnReceive);
         }
 

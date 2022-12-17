@@ -9,8 +9,7 @@
     mc:Ignorable="d"  
     Style="{StaticResource DefaultCommandBarStyle}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    DefaultLabelPosition="Right"
-    Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
+    DefaultLabelPosition="Right">
 
     <CommandBar.Resources>
         <Style TargetType="AppBarButton" BasedOn="{StaticResource DefaultAppBarButtonStyle}">

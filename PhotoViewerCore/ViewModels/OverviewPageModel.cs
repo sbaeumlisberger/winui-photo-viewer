@@ -39,13 +39,11 @@ public partial class OverviewPageModel : ViewModelBase
         OverviewPageCommandBarModel = overviewPageCommandBarModel;
         MetadataPanelModel = metadataPanelModelFactory.Invoke(false);
         ContextMenuModel = mediaFileContextMenuModel;
-    }
 
-    protected override void OnViewConnectedOverride()
-    {
-        Messenger.Register<MediaItemsLoadedMessage>(this, OnMediaItemsLoadedMessageReceived);
-        Messenger.Register<MediaItemsDeletedMessage>(this, OnMediaItemsDeletedMessageReceived);
-        Items = new ObservableCollection<IMediaFileInfo>(session.MediaItems);
+        Messenger.Register<MediaFilesLoadedMessage>(this, OnMediaItemsLoadedMessageReceived);
+        Messenger.Register<MediaFilesDeletedMessage>(this, OnMediaItemsDeletedMessageReceived);
+
+        Items = new ObservableCollection<IMediaFileInfo>(session.Files);
     }
 
     public void ShowItem(IMediaFileInfo mediaItem)
@@ -53,14 +51,14 @@ public partial class OverviewPageModel : ViewModelBase
         Messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel), mediaItem));
     }
 
-    private void OnMediaItemsLoadedMessageReceived(MediaItemsLoadedMessage msg)
+    private void OnMediaItemsLoadedMessageReceived(MediaFilesLoadedMessage msg)
     {
-        Items = new ObservableCollection<IMediaFileInfo>(msg.MediaItems);
+        Items = new ObservableCollection<IMediaFileInfo>(msg.Files);
     }
 
-    private void OnMediaItemsDeletedMessageReceived(MediaItemsDeletedMessage msg)
+    private void OnMediaItemsDeletedMessageReceived(MediaFilesDeletedMessage msg)
     {
-        msg.MediaItems.ForEach(mediaItem => Items.Remove(mediaItem));
+        msg.Files.ForEach(mediaItem => Items.Remove(mediaItem));
     }
 
     partial void OnSelectedItemsChanged()

@@ -17,16 +17,12 @@ namespace PhotoViewerApp.ViewModels;
 public interface IFlipViewPageCommandBarModel : INotifyPropertyChanged
 {
     IMediaFlipViewItemModel? SelectedItemModel { get; set; }
-
-    bool IsVisible { get; set; }
 }
 
 public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageCommandBarModel
 {
 
     public IMediaFlipViewItemModel? SelectedItemModel { get; set; }
-
-    public bool IsVisible { get; set; } = true;
 
     public IAcceleratedCommand DeleteCommand { get; }
 
@@ -114,7 +110,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         {
             var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName);
             var result = await loadMediaItemsService.LoadMediaFilesAsync(folder, config);
-            Messenger.Send(new MediaItemsLoadedMessage(result.MediaItems, result.StartItem));
+            Messenger.Send(new MediaFilesLoadedMessage(result.MediaItems, result.StartItem));
         }
     }
 

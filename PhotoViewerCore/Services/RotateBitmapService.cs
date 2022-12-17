@@ -51,7 +51,7 @@ internal class RotateBitmapService : IRotateBitmapService
         }
         else
         {
-            await RotateByPixelAsync(bitmapFile.StorageFile);
+            await RotateByPixelAsync(bitmapFile);
         }
     }
 
@@ -81,9 +81,9 @@ internal class RotateBitmapService : IRotateBitmapService
         await metadataService.WriteMetadataAsync(photo, MetadataProperties.Orientation, orientation).ConfigureAwait(false);
     }
 
-    private static async Task RotateByPixelAsync(IStorageFile file)
+    private static async Task RotateByPixelAsync(IBitmapFileInfo file)
     {
-        using (IRandomAccessStream fileStream = await file.OpenAsync(FileAccessMode.ReadWrite).AsTask().ConfigureAwait(false),
+        using (IRandomAccessStream fileStream = await file.OpenAsync(FileAccessMode.ReadWrite).ConfigureAwait(false),
                                    memoryStream = new InMemoryRandomAccessStream())
         {
             BitmapDecoder decoder = await BitmapDecoder.CreateAsync(fileStream).AsTask().ConfigureAwait(false);

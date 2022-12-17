@@ -3,20 +3,18 @@ using PhotoViewerApp.Models;
 using PhotoViewerApp.Resources;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
-
+using PhotoViewerCore.Utils;
 
 namespace PhotoViewerApp.Views;
 
-public sealed partial class DetailsBar : UserControl
+public sealed partial class DetailsBar : UserControl, IMVVMControl<DetailsBarModel>
 {
 
     private DetailsBarModel ViewModel => (DetailsBarModel)DataContext;
 
     public DetailsBar()
     {
-        this.InitializeMVVM<FlipViewPageModel>(InitializeComponent,
-          connectToViewModel: (viewModel) => Bindings.Initialize(),
-          disconnectFromViewModel: (viewModel) => Bindings.StopTracking());
+        this.InitializeMVVM();
     }
 
     private string ColorSpaceTypeToDisplayName(ColorSpaceType colorSpaceType)

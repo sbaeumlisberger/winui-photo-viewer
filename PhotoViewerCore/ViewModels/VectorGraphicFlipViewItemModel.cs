@@ -4,6 +4,7 @@ using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
 using PhotoViewerCore.ViewModels;
 using System.Text;
+using Tocronx.SimpleAsync;
 using Windows.Storage;
 
 namespace PhotoViewerApp.ViewModels;
@@ -12,67 +13,69 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
 {
     public IMediaFileInfo MediaItem { get; }
 
+    public bool IsActive { get; set; } = false;
 
-    [ObservableProperty]
-    private bool isActive;
+    public bool IsDiashowActive { get; set; } = false;
 
-    [ObservableProperty]
-    private string? content;
+    public string? Content { get; private set; }
 
-    [ObservableProperty]
-    public bool isLoadingFailed = false;
+    public bool IsLoadingFailed { get; private set; } = false;
 
-
-    private TaskCompletionSource<bool> loadImageTaskCompletionSource = new TaskCompletionSource<bool>();
+    private readonly CancelableTaskRunner initRunner = new CancelableTaskRunner();
 
     public VectorGraphicFlipViewItemModel(IMediaFileInfo mediaFile)
     {
         MediaItem = mediaFile;
     }
 
-    public async Task InitializeAsync()
+    public async Task PrepareAsync()
     {
-        try
+        await initRunner.RunAndCancelPrevious(async cancellationToken =>
         {
-            loadImageTaskCompletionSource = new TaskCompletionSource<bool>();
-            using var fileStream = await MediaItem.OpenAsync(FileAccessMode.Read);
-            string svgString = await new StreamReader(fileStream.AsStream()).ReadToEndAsync();
-            Content = "<html>\n" +
-                "   <head>\n" +
-                "       <style>\n" +
-                "           body {\n" +
-                "               margin: 0px;\n" +
-                "           }\n" +
-                "           \n" +
-                "           ::-webkit-scrollbar {\n" +
-                "               display: none;\n" +
-                "           }\n" +
-                "           \n" +
-                "           svg {\n" +
-                "               max-width: 100%;\n" +
-                "               max-height: 100%;\n" +
-                "               position: absolute;\n" +
-                "               top: 50%;\n" +
-                "               left: 50%;\n" +
-                "               translate: -50% -50%;\n" +
-                "           }\n" +
-                "       </style>\n" +
-                "   </head>\n" +
-                "   <body>\n" +
-                "       " + svgString + "\n" +
-                "   </body>\n" +
-                "</html>\n";
-        }
-        catch (Exception exception)
-        {
-            Log.Error($"Could not load vector graphic {MediaItem.Name}", exception);
-            IsLoadingFailed = true;
-            loadImageTaskCompletionSource.SetResult(false);
-        }
+            try
+            {
+                IsLoadingFailed = false;
+                using var fileStream = await MediaItem.OpenAsync(FileAccessMode.Read);
+                cancellationToken.ThrowIfCancellationRequested();
+                string svgString = await new StreamReader(fileStream.AsStream()).ReadToEndAsync();
+                cancellationToken.ThrowIfCancellationRequested();
+                Content = "<html>\n" +
+                    "   <head>\n" +
+                    "       <style>\n" +
+                    "           body {\n" +
+                    "               margin: 0px;\n" +
+                    "           }\n" +
+                    "           \n" +
+                    "           ::-webkit-scrollbar {\n" +
+                    "               display: none;\n" +
+                    "           }\n" +
+                    "           \n" +
+                    "           svg {\n" +
+                    "               max-width: 100%;\n" +
+                    "               max-height: 100%;\n" +
+                    "               position: absolute;\n" +
+                    "               top: 50%;\n" +
+                    "               left: 50%;\n" +
+                    "               translate: -50% -50%;\n" +
+                    "           }\n" +
+                    "       </style>\n" +
+                    "   </head>\n" +
+                    "   <body>\n" +
+                    "       " + svgString + "\n" +
+                    "   </body>\n" +
+                    "</html>\n";
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                Log.Error($"Could not load vector graphic {MediaItem.Name}", ex);
+                IsLoadingFailed = true;
+            }
+        });
     }
 
     public void Cleanup()
     {
+        initRunner.RunAndCancelPrevious(cancellationToken => Task.CompletedTask);
         Content = null;
         IsLoadingFailed = false;
     }

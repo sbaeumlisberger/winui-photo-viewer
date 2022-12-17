@@ -37,12 +37,7 @@ public partial class KeywordsSectionModel : ViewModelBase
     {
         this.writeFilesRunner = writeFilesRunner;
         this.metadataService = metadataService;
-    }
-
-    protected override void OnViewConnectedOverride()
-    {
         Messenger.Register<MetadataModifiedMessage>(this, OnReceive);
-        UpdateSuggestions();
     }
 
     public void Update(IList<IBitmapFileInfo> files, IList<MetadataView> metadata)

@@ -20,6 +20,8 @@ public partial class FlipViewPageModel : ViewModelBase
 
     public IMetadataPanelModel MetadataPanelModel { get; }
 
+    public bool ShowUI { get; private set; } = true;
+
     private readonly Session session;
 
     private readonly IDisplayRequestService displayRequestService;
@@ -42,30 +44,27 @@ public partial class FlipViewPageModel : ViewModelBase
         DetailsBarModel = detailsBarModelFactory.Invoke();
         CommandBarModel = flipViewPageCommandBarModelFactory.Invoke(FlipViewModel);
         MetadataPanelModel = metadataPanelModelFactory.Invoke(true);
+
+        FlipViewModel.PropertyChanged += FlipViewModel_PropertyChanged;
+
+        Messenger.Register<StartDiashowMessage>(this, OnStartDiashowMessageReceived);
+        Messenger.Register<ExitDiashowMessage>(this, OnExitDiashowMessageReceived);
     }
 
     public void OnNavigatedTo(object navigationParameter)
-    {
-        FlipViewModel.PropertyChanged += FlipViewModel_PropertyChanged;
-        FlipViewModel.SetItems(session.MediaItems, (IMediaFileInfo?)navigationParameter);
-    }
-
-    protected override void OnViewConnectedOverride()
-    {
-        Messenger.Register<StartDiashowMessage>(this, OnStartDiashowMessageReceived);
-        Messenger.Register<ExitDiashowMessage>(this, OnExitDiashowMessageReceived);
+    {     
+        FlipViewModel.SetItems(session.Files, (IMediaFileInfo?)navigationParameter);
     }
 
     protected override void OnViewDisconnectedOverride()
     {
         FlipViewModel.PropertyChanged -= FlipViewModel_PropertyChanged;
+        DisposeUtil.DisposeSafely(ref displayRequest);
     }
 
     private void OnStartDiashowMessageReceived(StartDiashowMessage msg)
     {
-        DetailsBarModel.IsVisible = false;
-        CommandBarModel.IsVisible = false;
-        MetadataPanelModel.IsVisible = false;
+        ShowUI = false;
         Messenger.Send(new EnterFullscreenMessage());
         try
         {
@@ -79,9 +78,7 @@ public partial class FlipViewPageModel : ViewModelBase
 
     private void OnExitDiashowMessageReceived(ExitDiashowMessage msg)
     {
-        DetailsBarModel.IsVisible = true;
-        CommandBarModel.IsVisible = true;
-        MetadataPanelModel.IsVisible = true;
+        ShowUI = true;
         Messenger.Send(new ExitFullscreenMessage());
         DisposeUtil.DisposeSafely(ref displayRequest);
     }

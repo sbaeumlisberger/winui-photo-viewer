@@ -86,6 +86,7 @@
                 </MenuFlyout>
             </FlyoutBase.AttachedFlyout>
         </FlipView>
+        
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
                 Visibility="{x:Bind ViewModel.ShowNoItemsUI, Mode=OneWay}">
             <TextBlock 
@@ -99,6 +100,7 @@
         </StackPanel>
 
         <StackPanel
+            Visibility="{x:Bind ViewModel.ShowSelectedItemIndicator, Mode=OneWay}"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Padding="8"

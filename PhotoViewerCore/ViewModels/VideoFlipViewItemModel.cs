@@ -1,11 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewerApp.Messages;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
 using PhotoViewerCore.Utils;
 using PhotoViewerCore.ViewModels;
+using Tocronx.SimpleAsync;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
@@ -18,17 +17,20 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     public bool IsActive { get; set; }
 
-    public Task PlaybackCompletedTask => playbackTaskCompletionSource.Task;
+    public bool IsDiashowActive { get; set; }
 
-    public bool AutoPlay { get; set; }
+    public Task PlaybackCompletedTask => WaitForPlaybackToComplete();
 
-    public MediaPlayer MediaPlayer { get; } = new MediaPlayer();
+    public MediaPlayer? MediaPlayer { get; private set; }
+
+    [DependsOn(nameof(IsDiashowActive))]
+    public bool IsContextMenuEnabeld => !IsDiashowActive;
 
     public MediaFileContextMenuModel ContextMenuModel { get; }
 
     private MediaSource? mediaSource;
 
-    private TaskCompletionSource<bool> playbackTaskCompletionSource = new TaskCompletionSource<bool>();
+    private readonly CancelableTaskRunner initRunner = new CancelableTaskRunner();
 
     public VideoFlipViewItemModel(IMediaFileInfo mediaFile, MediaFileContextMenuModel contextMenuModel, IMessenger messenger) : base(messenger)
     {
@@ -37,71 +39,98 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
         ContextMenuModel.Files = new[] { mediaFile };
     }
 
-    public async Task InitializeAsync()
+    public async Task PrepareAsync()
     {
-        Messenger.Register<StartDiashowMessage>(this, OnReceive);
-        Messenger.Register<ExitDiashowMessage>(this, OnReceive);        
+        await initRunner.RunAndCancelPrevious(async cancellationToken =>
+        {
+            using var stream = await MediaItem.OpenAsync(FileAccessMode.Read);
 
-        using var stream = await MediaItem.OpenAsync(FileAccessMode.Read);
+            cancellationToken.ThrowIfCancellationRequested();
 
-        mediaSource = MediaSource.CreateFromStream(stream, MediaItem.ContentType); ;
-        mediaSource.StateChanged += MediaSource_StateChanged;
-        mediaSource.OpenOperationCompleted += MediaSource_OpenOperationCompleted;
+            mediaSource = MediaSource.CreateFromStream(stream, MediaItem.ContentType);
+            mediaSource.StateChanged += MediaSource_StateChanged;
+            mediaSource.OpenOperationCompleted += MediaSource_OpenOperationCompleted;
 
-        MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
-        MediaPlayer.MediaFailed += MediaPlayer_MediaFailed;
-        MediaPlayer.Source = mediaSource;
+            MediaPlayer = new MediaPlayer();
+            MediaPlayer.MediaFailed += MediaPlayer_MediaFailed;
+            MediaPlayer.Source = mediaSource;
+        });
     }
 
     public void Cleanup()
     {
-        Messenger.UnregisterAll(this);
+        initRunner.RunAndCancelPrevious(cancellationToken => Task.CompletedTask);
 
-        if (mediaSource != null)
+        if (this.mediaSource is MediaSource mediaSource)
         {
+            this.mediaSource = null;
             mediaSource.StateChanged -= MediaSource_StateChanged;
             mediaSource.OpenOperationCompleted -= MediaSource_OpenOperationCompleted;
             mediaSource.Dispose();
         }
 
-        MediaPlayer.MediaEnded -= MediaPlayer_MediaEnded;
-        MediaPlayer.MediaFailed -= MediaPlayer_MediaFailed;
-        MediaPlayer.Dispose();
+        if (MediaPlayer is MediaPlayer mediaPlayer)
+        {
+            MediaPlayer = null;
+            mediaPlayer.MediaFailed -= MediaPlayer_MediaFailed;
+            mediaPlayer.Dispose();
+        }
     }
 
     partial void OnIsActiveChanged()
     {
         if (IsActive)
         {
-            if (AutoPlay)
+            if (IsDiashowActive)
             {
-                MediaPlayer.Play();
+                MediaPlayer!.Play();
             }
         }
         else
         {
-            MediaPlayer.Pause();
+            MediaPlayer!.Pause();
             MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
-            playbackTaskCompletionSource = new TaskCompletionSource<bool>();
         }
     }
 
-
-    private void OnReceive(StartDiashowMessage msg)
-    { 
-        if (IsActive)
-        {
-            MediaPlayer.Play();
-      }
-    }
-
-    private void OnReceive(ExitDiashowMessage msg)
+    partial void OnIsDiashowActiveChanged()
     {
         if (IsActive)
         {
-            MediaPlayer.Pause();
+            if (IsDiashowActive)
+            {
+                MediaPlayer!.Play();
+            }
+            else
+            {
+                MediaPlayer!.Pause();
+            }
         }
     }
+
+    private Task WaitForPlaybackToComplete()
+    {
+        if (MediaPlayer is MediaPlayer mediaPlayer)
+        {
+            var taskCompletionSource = new TaskCompletionSource<bool>();
+            mediaPlayer.MediaEnded += mediaPlayer_MediaEnded;
+            mediaPlayer.MediaFailed += mediaPlayer_MediaFailed;
+            void mediaPlayer_MediaEnded(MediaPlayer sender, object args)
+            {
+                sender.MediaEnded -= mediaPlayer_MediaEnded;
+                sender.MediaFailed -= mediaPlayer_MediaFailed;
+                taskCompletionSource.SetResult(true);
+            }
+            void mediaPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
+            {
+                sender.MediaEnded -= mediaPlayer_MediaEnded;
+                sender.MediaFailed -= mediaPlayer_MediaFailed;
+            }
+            return taskCompletionSource.Task;
+        }
+        return Task.CompletedTask;
+    }
+
 
     private void MediaSource_StateChanged(MediaSource sender, MediaSourceStateChangedEventArgs args)
     {
@@ -117,11 +146,6 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
         {
             Log.Error($"Could not open \"{MediaItem.Name}\"", args.Error.ExtendedError);
         }
-    }
-
-    private void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
-    {
-        playbackTaskCompletionSource.SetResult(true);
     }
 
     private void MediaPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)

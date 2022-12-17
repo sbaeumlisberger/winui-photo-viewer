@@ -17,7 +17,8 @@
         x:Name="mediaPlayerElement"
         AreTransportControlsEnabled="True"
         AutoPlay="False"
-        ContextFlyout="{x:Bind mediaFileContextMenuHolder.MediaFileContextMenu}">
+        ContextRequested="MediaPlayerElement_ContextRequested"
+        FlyoutBase.AttachedFlyout="{x:Bind mediaFileContextMenuHolder.MediaFileContextMenu}">
         <MediaPlayerElement.TransportControls>
             <MediaTransportControls 
                 Margin="128,0,128,8"

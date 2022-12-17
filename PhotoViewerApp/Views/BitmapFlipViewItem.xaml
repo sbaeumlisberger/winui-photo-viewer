@@ -20,6 +20,7 @@
             BitmapImage="{x:Bind ViewModel.BitmapImage, Mode=OneWay}" 
             IsEnabled="{x:Bind ViewModel.IsActive, Mode=OneWay}">
             <Grid 
+                Visibility="{x:Bind ViewModel.IsContextMenuEnabeld, Mode=OneWay}"
                 Background="Transparent" 
                 ContextFlyout="{x:Bind mediaFileContextMenuHolder.MediaFileContextMenu}"/>
         </controls:BitmapViewer>
