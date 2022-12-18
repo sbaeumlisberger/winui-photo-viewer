@@ -48,7 +48,7 @@ namespace PhotoViewerCore.Services
                 throw new ArgumentNullException(nameof(geopoint));
             }
 
-            string point = geopoint.Position.Latitude + "," + geopoint.Position.Longitude;
+            string point = geopoint.Position.Latitude.ToInvariantString() + "," + geopoint.Position.Longitude.ToInvariantString();
             var uri = new Uri("http://dev.virtualearth.net/REST/v1/Locations/" + point + ToQueryString(
                ("c", Culture),
                ("key", MapService.ServiceToken)

@@ -56,7 +56,6 @@ public sealed partial class VectorGraphicFlipViewItem : UserControl
     {
         await webView.EnsureCoreWebView2Async();
         webView.NavigateToString(svg);
-        //webView.CoreWebView2.OpenDevToolsWindow();
     }
 
     private async void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)

@@ -52,8 +52,11 @@ public partial class FlipViewPageModel : ViewModelBase
     }
 
     public void OnNavigatedTo(object navigationParameter)
-    {     
-        FlipViewModel.SetItems(session.Files, (IMediaFileInfo?)navigationParameter);
+    {
+        if (session.Files.Any())
+        {
+            FlipViewModel.SetItems(session.Files, (IMediaFileInfo?)navigationParameter);
+        }
     }
 
     protected override void OnViewDisconnectedOverride()

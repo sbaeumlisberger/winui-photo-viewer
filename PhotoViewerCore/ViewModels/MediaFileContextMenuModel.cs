@@ -10,7 +10,6 @@ using PhotoViewerCore.Services;
 using PhotoViewerCore.Utils;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace PhotoViewerCore.ViewModels;
 

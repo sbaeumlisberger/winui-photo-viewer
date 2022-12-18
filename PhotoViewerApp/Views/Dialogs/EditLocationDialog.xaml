@@ -3,17 +3,78 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PhotoViewerApp.Views"
+    xmlns:models="using:PhotoViewerCore.Models"
     xmlns:res="using:PhotoViewerApp.Resources"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="???"
+    Title="{x:Bind res:Strings.EditLocationDialog_Title}"
     PrimaryButtonText="{x:Bind res:Strings.EditLocationDialog_Save}"
     CloseButtonText="{x:Bind res:Strings.EditLocationDialog_Cancel}"
     DefaultButton="Primary">
 
-    <StackPanel Margin="0,8,0,0" Spacing="4">
-     
-    </StackPanel>
+    <ContentDialog.Resources>
+        <x:Double x:Key="ContentDialogMaxWidth">600</x:Double>
+    </ContentDialog.Resources>
+
+    <Pivot Height="540">
+        <PivotItem Header="{x:Bind res:Strings.EditLocationDialog_TabMap}">
+            <StackPanel Margin="0,12,0,0" Spacing="8">
+                <AutoSuggestBox 
+                    x:Name="locationSearchBox"
+                    PlaceholderText="{x:Bind res:Strings.EditLocationDialog_SearchPlaceholder}"
+                    TextChanged="LocationSearchBox_TextChanged"
+                    SuggestionChosen="LocationSearchBox_SuggestionChosen"
+                    UpdateTextOnSelect="False">
+                    <AutoSuggestBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:Location">
+                            <TextBlock Text="{x:Bind Address}"/>
+                        </DataTemplate>
+                    </AutoSuggestBox.ItemTemplate>
+                </AutoSuggestBox>
+                <WebView2 x:Name="mapWebView" Height="400"/>
+                <Grid>
+                    <TextBlock Text="{x:Bind FormatGeopoint(ViewModel.Location.Point), Mode=OneWay}"/>
+                    <Button HorizontalAlignment="Right" Content="{x:Bind res:Strings.EditLocationDialog_RemoveLocation}"/>
+                </Grid>
+            </StackPanel>
+        </PivotItem>
+        <PivotItem Header="{x:Bind res:Strings.EditLocationDialog_TabDetails}">
+            <StackPanel Margin="0,12,0,0" Spacing="12">
+                <TextBox Header="Street and house number" Text="{x:Bind ViewModel.Details.Street, Mode=TwoWay}"/>
+
+                <TextBox Header="Postal code and town" Text="{x:Bind ViewModel.Details.City, Mode=TwoWay}"/>
+
+                <TextBox Header="Region or state" Text="{x:Bind ViewModel.Details.Region, Mode=TwoWay}"/>
+
+                <TextBox Header="Country" Text="{x:Bind ViewModel.Details.Country, Mode=TwoWay}"/>
+
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBox Width="140" Header="Latitude" Text="{x:Bind ViewModel.Details.Latitude, Mode=TwoWay}"/>
+                    <TextBlock VerticalAlignment="Bottom" Height="32" Text="°"/>
+
+                    <TextBox Width="140" Header="Longitude" Text="{x:Bind ViewModel.Details.Longitude, Mode=TwoWay}"/>
+                    <TextBlock VerticalAlignment="Bottom" Height="32" Text="°"/>
+
+                    <Button Margin="8,0,0,0" VerticalAlignment="Bottom">
+                        <SymbolIcon Symbol="Copy"/>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBox Width="80" Header="Altitude" Text="{x:Bind ViewModel.Details.Altitude, Mode=TwoWay}"/>
+                    <TextBlock VerticalAlignment="Bottom" Text="m"/>
+                    
+                    <ComboBox 
+                        Margin="8,0,0,0"
+                        Width="140"
+                        Header="Reference system"
+                        ItemsSource="{x:Bind ViewModel.Details.AvailableAltitudeReferenceSystems}"
+                        SelectedItem="{x:Bind ViewModel.Details.AltitudeReferenceSystem, Mode=TwoWay}"/>
+                </StackPanel>
+            </StackPanel>
+        </PivotItem>
+    </Pivot>
+
 
 </ContentDialog>

@@ -29,6 +29,7 @@ namespace MetadataEditModule.ViewModel
         private bool CanShowLocationOnMap { get; set; } = false;
 
         private Location? location;
+        private Location? completedLocation;
 
         private readonly ILocationService locationService;
         private readonly IDialogService dialogService;
@@ -52,13 +53,13 @@ namespace MetadataEditModule.ViewModel
             GeoTag = allLocationEqual ? geoPoints.FirstOrDefault() : null;
 
             location = new Location(AddressTag?.ToAddress(), GeoTag?.ToGeopoint());
+            completedLocation = location;
             Update(location);
 
-            var completedLocation = await TryGetCompletedLocationAsync(location, cancellationToken);
+            completedLocation = await TryGetCompletedLocationAsync(location, cancellationToken);
 
             if (completedLocation is not null && completedLocation != location)
             {
-                location = completedLocation;
                 Update(completedLocation);
             }
         }
@@ -69,12 +70,14 @@ namespace MetadataEditModule.ViewModel
             GeoTag = null;
             CanShowLocationOnMap = false;
             DisplayText = "";
+            location = null;
+            completedLocation = null;
         }
 
         [RelayCommand(CanExecute = nameof(CanShowLocationOnMap))]
         private async Task ShowLocationOnMapAsync()
         {
-            var geopoint = location!.Point!;
+            var geopoint = completedLocation!.Point!;
             string latitude = geopoint.Position.Latitude.ToString(CultureInfo.InvariantCulture);
             string longitude = geopoint.Position.Longitude.ToString(CultureInfo.InvariantCulture);
             Uri uri = new Uri(@"bingmaps:?collection=point." + latitude + "_" + longitude + "_" + LocationMarker + "&sty=a");
@@ -88,7 +91,7 @@ namespace MetadataEditModule.ViewModel
         [RelayCommand]
         private async Task EditLocationAsync()
         {
-            await dialogService.ShowDialogAsync(new EditLocationDialogModel());
+            await dialogService.ShowDialogAsync(new EditLocationDialogModel(location, locationService));
         }
 
         private void Update(Location location)

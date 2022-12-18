@@ -147,8 +147,23 @@
   <data name="EditLocationDialog_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="EditLocationDialog_RemoveLocation" xml:space="preserve">
+    <value>Remove location</value>
+  </data>
   <data name="EditLocationDialog_Save" xml:space="preserve">
     <value>Save</value>
+  </data>
+  <data name="EditLocationDialog_SearchPlaceholder" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="EditLocationDialog_TabDetails" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="EditLocationDialog_TabMap" xml:space="preserve">
+    <value>Map</value>
+  </data>
+  <data name="EditLocationDialog_Title" xml:space="preserve">
+    <value>Edit location</value>
   </data>
   <data name="FlipViewPageCommandBar_CompareButton" xml:space="preserve">
     <value>Compare</value>

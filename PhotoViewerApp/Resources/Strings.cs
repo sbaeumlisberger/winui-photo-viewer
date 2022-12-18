@@ -77,9 +77,29 @@ public class Strings {
     /// </summary>
 	public static string EditLocationDialog_Cancel => Get("EditLocationDialog_Cancel");	
 	/// <summary>
+    /// Remove location
+    /// </summary>
+	public static string EditLocationDialog_RemoveLocation => Get("EditLocationDialog_RemoveLocation");	
+	/// <summary>
     /// Save
     /// </summary>
 	public static string EditLocationDialog_Save => Get("EditLocationDialog_Save");	
+	/// <summary>
+    /// Search
+    /// </summary>
+	public static string EditLocationDialog_SearchPlaceholder => Get("EditLocationDialog_SearchPlaceholder");	
+	/// <summary>
+    /// Details
+    /// </summary>
+	public static string EditLocationDialog_TabDetails => Get("EditLocationDialog_TabDetails");	
+	/// <summary>
+    /// Map
+    /// </summary>
+	public static string EditLocationDialog_TabMap => Get("EditLocationDialog_TabMap");	
+	/// <summary>
+    /// Edit location
+    /// </summary>
+	public static string EditLocationDialog_Title => Get("EditLocationDialog_Title");	
 	/// <summary>
     /// Compare
     /// </summary>
