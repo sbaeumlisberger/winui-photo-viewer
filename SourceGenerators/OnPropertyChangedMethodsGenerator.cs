@@ -1,75 +1,103 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Text;
+using System.Collections.Immutable;
+using System.Threading;
+using System.Linq;
 
 namespace SourceGenerators;
 
 [Generator]
-public class OnPropertyChangedMethodsGenerator : ISourceGenerator
+public class OnPropertyChangedMethodsGenerator : IIncrementalGenerator
 {
-    public void Initialize(GeneratorInitializationContext context)
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-#if DEBUG
-        if (!Debugger.IsAttached)
-        {
-            //Debugger.Launch();
-        }
-#endif
+        var classes = context.SyntaxProvider
+            .CreateSyntaxProvider(Predicate, Transform)
+            .Where(type => type is not null)
+            .Collect();
+
+        context.RegisterSourceOutput(classes, GenerateCode);
     }
 
-    public void Execute(GeneratorExecutionContext context)
+    private static bool Predicate(SyntaxNode syntaxNode, CancellationToken cancellationToken)
     {
-        var types = Utils.GetAllTypeSymbols(context);
-
-        foreach (var type in types)
-        {
-            string fullName = Utils.GetFullName(type);
-
-            if (type.BaseType?.Name != "ViewModelBase")
-            {
-                continue;
-            }
-
-            List<string> properties = type.GetMembers().OfType<IPropertySymbol>().Select(prop => prop.Name).ToList();
-
-            if (properties.Any())
-            {
-                var source = new StringBuilder();
-                source.AppendLine("using System;");
-                source.AppendLine("using System.ComponentModel;");
-                source.AppendLine("");
-                source.AppendLine("namespace " + fullName.Replace("." + type.Name, "") + ";");
-                source.AppendLine("");
-                source.AppendLine("partial class " + type.Name);
-                source.AppendLine("{");
-                source.AppendLine("  protected override void __EnableOnPropertyChangedMethods()");
-                source.AppendLine("  {");
-                source.AppendLine("    PropertyChanged += (object sender, PropertyChangedEventArgs e) =>");
-                source.AppendLine("    {");
-                source.AppendLine("      switch(e.PropertyName)");
-                source.AppendLine("      {");
-                foreach (string property in properties)
-                {
-                    source.AppendLine("        case \"" + property + "\": On" + property + "Changed(); break;");
-                }
-                source.AppendLine("      }");
-                source.AppendLine("    };");
-                source.AppendLine("  }");
-                source.AppendLine("");
-                foreach (string property in properties)
-                {
-                    source.AppendLine("  partial void On" + property + "Changed();");
-                }
-                source.AppendLine("}");
-                context.AddSource(fullName + ".g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
-            }
-        }
-
-
+        return syntaxNode is ClassDeclarationSyntax;
     }
 
+    private static ITypeSymbol? Transform(GeneratorSyntaxContext context, CancellationToken cancellationToken)
+    {
+        var classDeclaration = (ClassDeclarationSyntax)context.Node;
+        var type = context.SemanticModel.GetDeclaredSymbol(classDeclaration) as ITypeSymbol;
+        return type?.BaseType?.Name == "ViewModelBase" ? type : null;
+    }
+
+    private static void GenerateCode(SourceProductionContext context, ImmutableArray<ITypeSymbol?> classes)
+    {
+        foreach (var @class in classes)
+        {
+            if (@class != null && GenerateCodeForClass(@class) is string code)
+            {
+                var @namespace = @class.ContainingNamespace.IsGlobalNamespace ? null : @class.ContainingNamespace + ".";
+                context.AddSource($"{@namespace}{@class.Name}.g.cs", code);
+            }
+        }
+    }
+
+    private static string? GenerateCodeForClass(ITypeSymbol @class)
+    {
+        var @namespace = @class.ContainingNamespace.IsGlobalNamespace ? null : @class.ContainingNamespace;
+
+        var propertyNames = @class.GetMembers().OfType<IPropertySymbol>().Select(prop => prop.Name).ToList();
+
+        if (propertyNames.Any())
+        {
+            var code = $$"""
+                using System;
+                using System.ComponentModel;
+                
+                {{(@namespace != null ? $"namespace {@namespace};" : "")}}
+
+                partial class {{@class.Name}} 
+                {
+                   protected override void __EnableOnPropertyChangedMethods()
+                   {
+                        PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
+                        {
+                            switch(e.PropertyName)
+                            {
+                                {{GenerateCaseStatements(propertyNames)}}
+                            }
+                        };
+                    }
+
+                    {{GenerateMethodDeclarations(propertyNames)}}
+                }
+                """;
+            return code;
+        }
+        return null;
+    }
+
+    private static string GenerateCaseStatements(List<string> propertyNames)
+    {
+        var stringBuilder = new StringBuilder();
+        foreach (string propertyName in propertyNames)
+        {
+            stringBuilder.AppendLine($"""case "{propertyName}": On{propertyName}Changed(); break;""");
+        }
+        return stringBuilder.ToString();
+    }
+
+    private static string GenerateMethodDeclarations(List<string> propertyNames)
+    {
+        var stringBuilder = new StringBuilder();
+        foreach (string propertyName in propertyNames)
+        {
+            stringBuilder.AppendLine($"partial void On{propertyName}Changed();");
+        }
+        return stringBuilder.ToString();
+    }
 }
-

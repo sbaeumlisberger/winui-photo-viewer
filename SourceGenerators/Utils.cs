@@ -4,9 +4,8 @@ using System.Linq;
 
 namespace SourceGenerators;
 
-internal class Utils
+internal static class Utils
 {
-
     internal static List<INamedTypeSymbol> GetAllTypeSymbols(GeneratorExecutionContext context)
     {
         var types = new List<INamedTypeSymbol>();
@@ -60,6 +59,11 @@ internal class Utils
             return $"{string.Join(".", nss)}.{symbol.Name}";
         }
         return symbol.Name;
+    }
+
+    public static void ReportDiag(this SourceProductionContext context, string id, string message, Location? location = null) 
+    {
+        context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor(id, message, message, "", DiagnosticSeverity.Warning, true), location));
     }
 
 }
