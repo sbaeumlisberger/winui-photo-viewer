@@ -1,78 +1,108 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.Immutable;
+using Microsoft.CodeAnalysis.CSharp;
 using System.Linq;
-using System.Reflection;
 using System.Text;
+using System.Threading;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace SourceGenerators;
 
 [Generator]
-public class DependsOnGenerator : ISourceGenerator
+public class DependsOnGenerator : IIncrementalGenerator
 {
-    public void Initialize(GeneratorInitializationContext context)
+    private record struct Dependency(string PropertyName, string DependsOnPropertyName);
+
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-#if DEBUG
-        if (!Debugger.IsAttached)
-        {
-            //Debugger.Launch();
-        }
-#endif
+        var classes = context.SyntaxProvider
+            .CreateSyntaxProvider(Predicate, Transform)
+            .Where(type => type is not null)
+            .Collect();
+
+        context.RegisterSourceOutput(classes, GenerateCode!);
     }
 
-    public void Execute(GeneratorExecutionContext context)
+    private static bool Predicate(SyntaxNode syntaxNode, CancellationToken cancellationToken)
     {
-        var types = Utils.GetAllTypeSymbols(context);
+        return syntaxNode is ClassDeclarationSyntax classDeclaration
+            && classDeclaration.BaseList?.Types.Any() is true;
+    }
 
-        foreach (var type in types)
+    private static ITypeSymbol? Transform(GeneratorSyntaxContext context, CancellationToken cancellationToken)
+    {
+        var classDeclaration = (ClassDeclarationSyntax)context.Node;
+        var classSymbol = context.SemanticModel.GetDeclaredSymbol(classDeclaration);
+        return classSymbol?.BaseType?.Name == Constants.ViewModelBaseClassName ? classSymbol : null;
+    }
+
+    public void GenerateCode(SourceProductionContext context, ImmutableArray<ITypeSymbol> classes)
+    {
+        foreach (var classSymbol in classes.Distinct(SymbolEqualityComparer.Default).OfType<ITypeSymbol>())
         {
-            string fullName = Utils.GetFullName(type);
-
-            if (type.BaseType?.Name != "ViewModelBase")
+            if (GenerateCodeForClass(classSymbol) is string code)
             {
-                continue;
-            }
-
-            var properties = type.GetMembers().OfType<IPropertySymbol>()
-                .Where(prop => prop.GetAttributes().Any(attr => attr.AttributeClass?.Name == "DependsOnAttribute"))
-                .ToList();
-
-            if (properties.Any())
-            {
-                var source = new StringBuilder();
-                source.AppendLine("using System;");
-                source.AppendLine("using System.ComponentModel;");
-                source.AppendLine("");
-                source.AppendLine("namespace " + fullName.Replace("." + type.Name, "") + ";");
-                source.AppendLine("");
-                source.AppendLine("partial class " + type.Name);
-                source.AppendLine("{");
-                source.AppendLine("  protected override void __EnableDependsOn()");
-                source.AppendLine("  {");
-                source.AppendLine("    PropertyChanged += (object sender, PropertyChangedEventArgs e) =>");
-                source.AppendLine("    {");
-                source.AppendLine("      switch(e.PropertyName)");
-                source.AppendLine("      {");
-                foreach (var group in properties
-                    .GroupBy(prop => prop.GetAttributes().First(attr => attr.AttributeClass?.Name == "DependsOnAttribute").ConstructorArguments.First().Value))
-                {
-                    source.AppendLine("        case \"" + group.Key + "\": OnPropertyChanged(nameof(" + group.First().Name + "));");
-                    foreach (var prop in group)
-                    {
-                        source.AppendLine("          OnPropertyChanged(nameof(" + prop.Name + "));");
-                    }
-                    source.AppendLine("          break;");
-                }
-                source.AppendLine("      }");
-                source.AppendLine("    };");
-                source.AppendLine("  }");
-                source.AppendLine("}");
-                context.AddSource(fullName + ".g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
+                context.AddSource($"{Utils.GetFullName(classSymbol)}.g.cs", code);
             }
         }
+    }
 
+    private static string? GenerateCodeForClass(ITypeSymbol classSymbol)
+    {
+        var @namespace = Utils.GetNamespace(classSymbol);
 
+        var dependencies = classSymbol.GetMembers().OfType<IPropertySymbol>()
+              .Select(property => (property, attribute: property.GetAttribute("DependsOnAttribute")))
+              .Where(tuple => tuple.attribute != null)
+              .SelectMany(tuple => tuple.attribute!.ConstructorArguments
+                  .Select(argument => new Dependency(tuple.property.Name, (string)argument.Value!)))
+              .ToList();
+
+        if (dependencies.Any())
+        {
+            var code = $$"""
+                #nullable enable
+
+                using System;
+                using System.ComponentModel;
+
+                {{(@namespace != null ? $"namespace {@namespace};" : "")}}
+
+                partial class {{classSymbol.Name}} 
+                {
+                    protected override void __EnableDependsOn()
+                    {
+                        PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
+                        {
+                            switch(e.PropertyName)
+                            {
+                                {{Utils.Indent(4, GenerateCaseStatements(dependencies))}}
+                            }
+                        };
+                    }
+                }
+                """;
+            return code;
+        }
+        return null;
+    }
+
+    private static IEnumerable<string> GenerateCaseStatements(List<Dependency> dependencies)
+    {
+        return dependencies.GroupBy(dependency => dependency.DependsOnPropertyName).Select(group => $"""
+            case "{group.Key}":
+                {Utils.Indent(1, GenerateOnPropertyChangedInvocations(group))}                
+                break;
+            """);
+    }
+
+    private static IEnumerable<string> GenerateOnPropertyChangedInvocations(IEnumerable<Dependency> dependencies) 
+    {
+        return dependencies.Select(dependency =>
+            $"OnPropertyChanged(new PropertyChangedEventArgs(nameof({dependency.PropertyName})));");
     }
 
 }

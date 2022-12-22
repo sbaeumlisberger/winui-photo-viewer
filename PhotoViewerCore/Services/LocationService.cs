@@ -7,12 +7,13 @@ using System.Web;
 using Windows.Devices.Geolocation;
 using Windows.Globalization;
 using Windows.Services.Maps;
+using static System.Net.WebRequestMethods;
 
 namespace PhotoViewerCore.Services
 {
     /// <summary>A service to geocode and reverse-geocode location data.</summary>
     public interface ILocationService
-    {     
+    {
         /// <summary>Returns the location of the specified position.</summary>
         Task<Location?> FindLocationAsync(Geopoint geopoint);
 
@@ -30,7 +31,6 @@ namespace PhotoViewerCore.Services
 
         /// <summary>Returns the position of the specified address. If no position is found, null is returned.</summary>
         Task<Geopoint?> FindGeopointAsync(string address);
-
     }
 
     /// <summary>A service to geocode and reverse-geocode location data via the Bing Maps REST Services.</summary>
@@ -39,23 +39,24 @@ namespace PhotoViewerCore.Services
     /// </remarks>
     public class LocationService : ILocationService
     {
+        private const string BaseURL = "http://dev.virtualearth.net/REST/v1";
+
         private string Culture => ApplicationLanguages.Languages.First().Substring(0, 2);
-          
+
         public async Task<Location?> FindLocationAsync(Geopoint geopoint)
         {
             if (geopoint is null)
             {
                 throw new ArgumentNullException(nameof(geopoint));
             }
-
-            string point = geopoint.Position.Latitude.ToInvariantString() + "," + geopoint.Position.Longitude.ToInvariantString();
-            var uri = new Uri("http://dev.virtualearth.net/REST/v1/Locations/" + point + ToQueryString(
+            string point = geopoint.Position.Latitude.ToInvariantString()
+                + "," + geopoint.Position.Longitude.ToInvariantString();
+            var uri = new Uri(BaseURL + "/Locations/" + point + ToQueryString(
                ("c", Culture),
                ("key", MapService.ServiceToken)
             ));
-            var webClient = new WebClient();
-            var responseStream = await webClient.OpenReadTaskAsync(uri).ConfigureAwait(false);
-            var response = await new StreamReader(responseStream).ReadToEndAsync().ConfigureAwait(false);
+            var httpClient = new HttpClient();
+            var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
             return (await ParseLocationsAsync(response).ConfigureAwait(false)).FirstOrDefault();
         }
 
@@ -69,16 +70,14 @@ namespace PhotoViewerCore.Services
             {
                 return Array.Empty<Location>();
             }
-
-            var uri = new Uri("http://dev.virtualearth.net/REST/v1/Locations" + ToQueryString(
+            var uri = new Uri(BaseURL + "/Locations" + ToQueryString(
                 ("query", query),
                 ("c", Culture),
                 ("maxResults", maxResults.ToString()),
                 ("key", MapService.ServiceToken)
             ));
-            var webClient = new WebClient();
-            var responseStream = await webClient.OpenReadTaskAsync(uri).ConfigureAwait(false);
-            var response = await new StreamReader(responseStream).ReadToEndAsync().ConfigureAwait(false);
+            var httpClient = new HttpClient();
+            var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
             return await ParseLocationsAsync(response).ConfigureAwait(false);
         }
 
@@ -107,7 +106,8 @@ namespace PhotoViewerCore.Services
             var locations = new List<Location>();
 
             var json = JsonDocument.Parse(response);
-            var resources = json.RootElement.GetProperty("resourceSets").EnumerateArray().First().GetProperty("resources");
+            var resources = json.RootElement.GetProperty("resourceSets")
+                .EnumerateArray().First().GetProperty("resources");
 
             foreach (var entry in resources.EnumerateArray())
             {
@@ -161,7 +161,9 @@ namespace PhotoViewerCore.Services
 
         private static async Task UpdateElevationDataAsync(List<Location> locations)
         {
-            double[] elevations = await FetchElevationDataAsync(locations.Select(l => l.Point)).ConfigureAwait(false);
+            var geopoints = locations.Select(location => location.Point!).ToList();
+
+            double[] elevations = await FetchElevationDataAsync(geopoints).ConfigureAwait(false);
 
             for (int i = 0; i < locations.Count; i++)
             {
@@ -169,8 +171,8 @@ namespace PhotoViewerCore.Services
                 (
                     new BasicGeoposition()
                     {
-                        Latitude = locations[i].Point.Position.Latitude,
-                        Longitude = locations[i].Point.Position.Longitude,
+                        Latitude = geopoints[i].Position.Latitude,
+                        Longitude = geopoints[i].Position.Longitude,
                         Altitude = elevations[i]
                     },
                     AltitudeReferenceSystem.Ellipsoid
@@ -179,21 +181,23 @@ namespace PhotoViewerCore.Services
             }
         }
 
-        private static async Task<double[]> FetchElevationDataAsync(IEnumerable<Geopoint> points)
+        private static async Task<double[]> FetchElevationDataAsync(IList<Geopoint> geopoints)
         {
             var locations = new List<Location>();
-            var uri = new Uri("http://dev.virtualearth.net/REST/v1/Elevation/List" + ToQueryString(
-                ("points", string.Join(",", points.Select(point =>
-                    point.Position.Latitude.ToString(CultureInfo.InvariantCulture)
-                    + "," + point.Position.Longitude.ToString(CultureInfo.InvariantCulture)))),
+            var uri = new Uri(BaseURL + "/Elevation/List" + ToQueryString(
+                ("points", string.Join(",", geopoints.Select(geopoint =>
+                    geopoint.Position.Latitude.ToInvariantString()
+                    + "," + geopoint.Position.Longitude.ToInvariantString()))),
                 ("heights", "ellipsoid"),
                 ("key", MapService.ServiceToken)
             ));
-            var webClient = new WebClient();
-            var response = await webClient.OpenReadTaskAsync(uri);
-            var json = JsonDocument.Parse(response);
-            var resources = json.RootElement.GetProperty("resourceSets").EnumerateArray().First().GetProperty("resources");
-            return resources.EnumerateArray().First().GetProperty("elevations").EnumerateArray().Select(a => a.GetDouble()).ToArray();
+            var httpClient = new HttpClient();
+            var reponseStream = await httpClient.GetStreamAsync(uri).ConfigureAwait(false);
+            var json = JsonDocument.Parse(reponseStream);
+            var resources = json.RootElement.GetProperty("resourceSets")
+                .EnumerateArray().First().GetProperty("resources");
+            return resources.EnumerateArray().First().GetProperty("elevations")
+                .EnumerateArray().Select(elevation => elevation.GetDouble()).ToArray();
         }
 
         private static string ToQueryString(params (string Key, string Value)[] parameters)
@@ -212,7 +216,7 @@ namespace PhotoViewerCore.Services
             {
                 return property.GetString();
             }
-            return string.Empty;
+            return null;
         }
     }
 

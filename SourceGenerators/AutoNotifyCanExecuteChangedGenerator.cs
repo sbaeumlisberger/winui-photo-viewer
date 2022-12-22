@@ -1,83 +1,112 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
+using System.Threading;
 
 namespace SourceGenerators;
 
 [Generator]
-public class AutoNotifyCanExecuteChangedGenerator : ISourceGenerator
+public class AutoNotifyCanExecuteChangedGenerator : IIncrementalGenerator
 {
-    public void Initialize(GeneratorInitializationContext context)
+    private record struct RelayCommandInfo(string CommandName, string CanExecutePropertyName);
+
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-#if DEBUG
-        if (!Debugger.IsAttached)
-        {
-            //Debugger.Launch();
-        }
-#endif
+        var classes = context.SyntaxProvider
+            .CreateSyntaxProvider(Predicate, Transform)
+            .Where(type => type is not null)
+            .Collect();
+
+        context.RegisterSourceOutput(classes, GenerateCode!);
     }
 
-    public void Execute(GeneratorExecutionContext context)
+    private static bool Predicate(SyntaxNode syntaxNode, CancellationToken cancellationToken)
     {
-        var types = Utils.GetAllTypeSymbols(context);
+        return syntaxNode is ClassDeclarationSyntax classDeclaration
+            && classDeclaration.BaseList?.Types.Any() is true;
+    }
 
-        foreach (var type in types)
+    private static ITypeSymbol? Transform(GeneratorSyntaxContext context, CancellationToken cancellationToken)
+    {
+        var classDeclaration = (ClassDeclarationSyntax)context.Node;
+        var classSymbol = context.SemanticModel.GetDeclaredSymbol(classDeclaration);
+        return classSymbol?.BaseType?.Name == Constants.ViewModelBaseClassName ? classSymbol : null;
+    }
+
+    private static void GenerateCode(SourceProductionContext context, ImmutableArray<ITypeSymbol> classes)
+    {
+        foreach (var classSymbol in classes.OfType<ITypeSymbol>())
         {
-            string className = Utils.GetFullName(type);
-
-            if (type.BaseType?.Name != "ViewModelBase")
+            if (GenerateCodeForClass(classSymbol) is string code)
             {
-                continue;
+                context.AddSource($"{Utils.GetFullName(classSymbol)}.g.cs", code);
             }
+        }
+    }
 
-            List<(string Property, string Command)> list = new();
+    private static string? GenerateCodeForClass(ITypeSymbol classSymbol)
+    {
+        var @namespace = Utils.GetNamespace(classSymbol);
 
-            foreach (var member in type.GetMembers())
+        List<RelayCommandInfo> list = new();
+
+        foreach (var method in classSymbol.GetMembers().OfType<IMethodSymbol>())
+        {
+            if (method.GetAttribute("RelayCommandAttribute") is { } attribute 
+                && attribute.GetArgument("CanExecute") is { } canExecuteArgument)
             {
-                if (member.GetAttributes().FirstOrDefault(attr => attr.AttributeClass!.Name == "RelayCommandAttribute") is { } attribute &&
-                    attribute.NamedArguments.FirstOrDefault(arg => arg.Key == "CanExecute") is { } canExecuteArg)
+                if (canExecuteArgument.Value.Value is string propertyName)
                 {
-                    string? propertyName = canExecuteArg.Value.Value as string;
-                    if (!string.IsNullOrEmpty(propertyName))
-                    {
-                        list.Add((propertyName!, member.Name));
+                    string commandName = method.Name.Replace("Async", "") + "Command";
+                    list.Add(new RelayCommandInfo(commandName, propertyName));
+                }
+            }
+        }
+
+        if (list.Any())
+        {
+            var code = $$"""
+                #nullable enable
+
+                using System;
+                using System.ComponentModel;
+                
+                {{(@namespace != null ? $"namespace {@namespace};" : "")}}
+
+                partial class {{classSymbol.Name}} 
+                {
+                   protected override void __EnableAutoNotifyCanExecuteChanged()
+                   {
+                        PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
+                        {
+                            switch(e.PropertyName)
+                            {
+                                {{Utils.Indent(4, GenerateCaseStatements(list))}}
+                            }
+                        };
                     }
                 }
-            }
-
-            if (list.Any())
-            {
-                var source = new StringBuilder();
-                source.AppendLine("using System;");
-                source.AppendLine("using System.ComponentModel;");
-                source.AppendLine("");
-                source.AppendLine("namespace " + className.Replace("." + type.Name, "") + ";");
-                source.AppendLine("");
-                source.AppendLine("partial class " + type.Name);
-                source.AppendLine("{");
-                source.AppendLine("  protected override void __EnableAutoNotifyCanExecuteChanged()");
-                source.AppendLine("  {");
-                source.AppendLine("    PropertyChanged += (object sender, PropertyChangedEventArgs e) =>");
-                source.AppendLine("    {");
-                source.AppendLine("      switch(e.PropertyName)");
-                source.AppendLine("      {");
-                foreach (var (property, command) in list)
-                {
-                    source.AppendLine("        case \"" + property + "\": " + command.Replace("Async", "") + "Command.NotifyCanExecuteChanged(); break;");
-                }
-                source.AppendLine("      }");
-                source.AppendLine("    };");
-                source.AppendLine("  }");
-                source.AppendLine("}");
-                context.AddSource(className + ".g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
-            }
+                """;
+            return code;
         }
-
-
+        return null;
     }
 
+    private static IEnumerable<string> GenerateCaseStatements(List<RelayCommandInfo> commands)
+    {
+        return commands.GroupBy(commandInfo => commandInfo.CanExecutePropertyName).Select(group =>
+        {
+            string propertyName = group.Key;
+            return $"""
+                case "{propertyName}": 
+                    {Utils.Indent(1, group.Select(commandInfo => commandInfo.CommandName + ".NotifyCanExecuteChanged();"))}
+                    break;
+                """;
+        });
+    }
 }
+
 

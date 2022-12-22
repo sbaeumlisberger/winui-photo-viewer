@@ -27,7 +27,7 @@ public partial class EditLocationDialogModel : ViewModelBase
         Details.LocationDetailsChanged += Details_LocationDetailsChanged;
     }
 
-    private void Details_LocationDetailsChanged(object? sender, Location location)
+    private void Details_LocationDetailsChanged(object? sender, Location? location)
     {
         Location = location;
     }

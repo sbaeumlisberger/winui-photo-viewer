@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
-using System.Text;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Linq;
@@ -19,48 +18,50 @@ public class OnPropertyChangedMethodsGenerator : IIncrementalGenerator
             .Where(type => type is not null)
             .Collect();
 
-        context.RegisterSourceOutput(classes, GenerateCode);
+        context.RegisterSourceOutput(classes, GenerateCode!);
     }
 
     private static bool Predicate(SyntaxNode syntaxNode, CancellationToken cancellationToken)
     {
-        return syntaxNode is ClassDeclarationSyntax;
+        return syntaxNode is ClassDeclarationSyntax classDeclaration
+            && classDeclaration.BaseList?.Types.Any() is true;
     }
 
     private static ITypeSymbol? Transform(GeneratorSyntaxContext context, CancellationToken cancellationToken)
     {
         var classDeclaration = (ClassDeclarationSyntax)context.Node;
-        var type = context.SemanticModel.GetDeclaredSymbol(classDeclaration) as ITypeSymbol;
-        return type?.BaseType?.Name == "ViewModelBase" ? type : null;
+        var classSymbol = context.SemanticModel.GetDeclaredSymbol(classDeclaration);
+        return classSymbol?.BaseType?.Name == Constants.ViewModelBaseClassName ? classSymbol : null;
     }
 
-    private static void GenerateCode(SourceProductionContext context, ImmutableArray<ITypeSymbol?> classes)
+    private static void GenerateCode(SourceProductionContext context, ImmutableArray<ITypeSymbol> classes)
     {
-        foreach (var @class in classes)
+        foreach (var classSymbol in classes)
         {
-            if (@class != null && GenerateCodeForClass(@class) is string code)
+            if (GenerateCodeForClass(classSymbol) is string code)
             {
-                var @namespace = @class.ContainingNamespace.IsGlobalNamespace ? null : @class.ContainingNamespace + ".";
-                context.AddSource($"{@namespace}{@class.Name}.g.cs", code);
+                context.AddSource($"{Utils.GetFullName(classSymbol)}.g.cs", code);
             }
         }
     }
 
-    private static string? GenerateCodeForClass(ITypeSymbol @class)
+    private static string? GenerateCodeForClass(ITypeSymbol classSymbol)
     {
-        var @namespace = @class.ContainingNamespace.IsGlobalNamespace ? null : @class.ContainingNamespace;
+        var @namespace = Utils.GetNamespace(classSymbol);
 
-        var propertyNames = @class.GetMembers().OfType<IPropertySymbol>().Select(prop => prop.Name).ToList();
+        var propertyNames = classSymbol.GetMembers().OfType<IPropertySymbol>().Select(prop => prop.Name).ToList();
 
         if (propertyNames.Any())
         {
             var code = $$"""
+                #nullable enable
+
                 using System;
                 using System.ComponentModel;
                 
                 {{(@namespace != null ? $"namespace {@namespace};" : "")}}
 
-                partial class {{@class.Name}} 
+                partial class {{classSymbol.Name}} 
                 {
                    protected override void __EnableOnPropertyChangedMethods()
                    {
@@ -68,12 +69,12 @@ public class OnPropertyChangedMethodsGenerator : IIncrementalGenerator
                         {
                             switch(e.PropertyName)
                             {
-                                {{GenerateCaseStatements(propertyNames)}}
+                                {{Utils.Indent(4, GenerateCaseStatements(propertyNames))}}
                             }
                         };
                     }
 
-                    {{GenerateMethodDeclarations(propertyNames)}}
+                    {{Utils.Indent(1, GenerateMethodDeclarations(propertyNames))}}
                 }
                 """;
             return code;
@@ -81,23 +82,18 @@ public class OnPropertyChangedMethodsGenerator : IIncrementalGenerator
         return null;
     }
 
-    private static string GenerateCaseStatements(List<string> propertyNames)
+    private static IEnumerable<string> GenerateCaseStatements(List<string> propertyNames)
     {
-        var stringBuilder = new StringBuilder();
-        foreach (string propertyName in propertyNames)
-        {
-            stringBuilder.AppendLine($"""case "{propertyName}": On{propertyName}Changed(); break;""");
-        }
-        return stringBuilder.ToString();
+        return propertyNames.Select(propertyName => $"""
+            case "{propertyName}":
+                On{propertyName}Changed();
+                break;
+            """);
     }
 
-    private static string GenerateMethodDeclarations(List<string> propertyNames)
+    private static IEnumerable<string> GenerateMethodDeclarations(List<string> propertyNames)
     {
-        var stringBuilder = new StringBuilder();
-        foreach (string propertyName in propertyNames)
-        {
-            stringBuilder.AppendLine($"partial void On{propertyName}Changed();");
-        }
-        return stringBuilder.ToString();
+        return propertyNames.Select(propertyName =>
+            $"partial void On{propertyName}Changed();");
     }
 }

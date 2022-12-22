@@ -32,9 +32,9 @@ public class Progress : IProgress<int>
     }
 
     // return false when canceled of failed
-    public async Task<bool> WaitIfPausedAndReport(int increment)
+    public Task<bool> WaitIfPausedAndReport(int increment)
     {
-        return false;
+        return Task.FromResult(false);
     }
 
 }

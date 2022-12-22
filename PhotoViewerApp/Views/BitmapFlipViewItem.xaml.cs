@@ -15,6 +15,5 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
         this.InitializeMVVM();
     }
 
-
 }
 

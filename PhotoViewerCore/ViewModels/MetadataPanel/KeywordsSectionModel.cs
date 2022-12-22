@@ -4,10 +4,8 @@ using MetadataAPI;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
-using PhotoViewerApp.Utils.Logging;
 using PhotoViewerCore.Messages;
 using PhotoViewerCore.Utils;
-using System.Linq;
 using Tocronx.SimpleAsync;
 
 namespace PhotoViewerCore.ViewModels;

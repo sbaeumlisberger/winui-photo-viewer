@@ -2,7 +2,6 @@
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
-using PhotoViewerApp.Views;
 using PhotoViewerCore.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -13,7 +12,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Pickers;
 using Windows.System;
 using WinRT.Interop;
-using WinUIEx;
 
 namespace PhotoViewerApp.Services;
 
@@ -140,17 +138,10 @@ public class DialogService : IDialogService
 
     private async Task ShowCustomDialogAsync(object dialogModel)
     {
-        if (viewRegistrations.ViewFactoriesByViewModelType.TryGetValue(dialogModel.GetType(), out var dialogFactory))
-        {
-            var dialog = (ContentDialog)dialogFactory.Invoke(dialogModel);
-            dialog.XamlRoot = window.Content.XamlRoot;
-            dialog.DataContext = dialogModel;
-            await dialog.ShowAsync();
-        }
-        else
-        {
-            throw new Exception($"No view found for dialog model of type {dialogModel.GetType().FullName}");
-        }
+        var dialog = (ContentDialog)viewRegistrations.CreateViewForViewModelType(dialogModel.GetType());
+        dialog.XamlRoot = window.Content.XamlRoot;
+        dialog.DataContext = dialogModel;
+        await dialog.ShowAsync();
     }
 
     private static DataTransferManager GetDataTransferManagerForWindow([In] IntPtr appWindow)

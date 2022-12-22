@@ -1,52 +1,66 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
-using System.Collections.Generic;
-using System.Diagnostics;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.CSharp;
+using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
+using System.Threading;
 
 namespace SourceGenerators;
 
 [Generator]
-public class IMVVMControlGenerator : ISourceGenerator
+public class IMVVMControlGenerator : IIncrementalGenerator
 {
-    public void Initialize(GeneratorInitializationContext context)
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-#if DEBUG
-        if (!Debugger.IsAttached)
-        {
-            //Debugger.Launch();
-        }
-#endif
+        var classes = context.SyntaxProvider
+            .CreateSyntaxProvider(Predicate, Transform)
+            .Where(type => type is not null)
+            .Collect();
+
+        context.RegisterSourceOutput(classes, GenerateCode!);
     }
 
-    public void Execute(GeneratorExecutionContext context)
+    private static bool Predicate(SyntaxNode syntaxNode, CancellationToken cancellationToken)
     {
-        var types = Utils.GetAllTypeSymbols(context);
+        return syntaxNode is ClassDeclarationSyntax classDeclaration
+            && classDeclaration.BaseList?.Types.Any() is true;
+    }
 
-        foreach (var type in types)
+    private static ITypeSymbol? Transform(GeneratorSyntaxContext context, CancellationToken cancellationToken)
+    {
+        var classDeclaration = (ClassDeclarationSyntax)context.Node;
+        var classSymbol = context.SemanticModel.GetDeclaredSymbol(classDeclaration);
+        return classSymbol?.GetInterface("IMVVMControl") != null ? classSymbol : null;
+    }
+
+    public void GenerateCode(SourceProductionContext context, ImmutableArray<ITypeSymbol> classes)
+    {
+        foreach (var classSymbol in classes.Distinct(SymbolEqualityComparer.Default).OfType<ITypeSymbol>())
         {
-            string fullName = Utils.GetFullName(type);
-
-            if (!type.Interfaces.Any(inf => inf.Name == "IMVVMControl"))
-            {
-                continue;
-            }
-
-            var source = new StringBuilder();
-            source.AppendLine("using System;");
-            source.AppendLine("");
-            source.AppendLine("namespace " + fullName.Replace("." + type.Name, "") + ";");
-            source.AppendLine("");
-            source.AppendLine("partial class " + type.Name);
-            source.AppendLine("{");
-            source.AppendLine("  public void LoadComponent() => InitializeComponent();");
-            source.AppendLine("  public void InitializeBindings() => Bindings.Initialize();");
-            source.AppendLine("  public void StopBindings() => Bindings.StopTracking();");
-            source.AppendLine("}");
-            context.AddSource(fullName + ".g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
+            string code = GenerateCodeForClass(classSymbol);
+            context.AddSource($"{Utils.GetFullName(classSymbol)}.g.cs", code);
         }
+    }
 
+    private static string GenerateCodeForClass(ITypeSymbol classSymbol)
+    {
+        var @namespace = Utils.GetNamespace(classSymbol);
+
+        var code = $$"""
+                #nullable enable
+
+                using System;
+
+                {{(@namespace != null ? $"namespace {@namespace};" : "")}}
+
+                partial class {{classSymbol.Name}} 
+                {
+                    public void LoadComponent() => InitializeComponent();
+                    public void InitializeBindings() => Bindings.Initialize();
+                    public void StopBindings() => Bindings.StopTracking();
+                }
+            """;
+        return code;
     }
 
 }

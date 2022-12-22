@@ -19,6 +19,7 @@ using System.Globalization;
 using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Tocronx.SimpleAsync;
+using Windows.Services.Maps;
 
 namespace PhotoViewerApp.Views;
 
@@ -32,7 +33,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
         <html>
             <head>
                 <meta charset="utf-8" />
-                <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key={{App.MapServiceToken}}' async defer></script>         
+                <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key={{MapService.ServiceToken}}' async defer></script>         
                 <script type="text/javascript">
                    function createMap()
                    {

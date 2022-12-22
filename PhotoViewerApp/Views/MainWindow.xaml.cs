@@ -48,7 +48,7 @@ public sealed partial class MainWindow : WindowEx
 
     private void NavigateToPage(Type pageModelType, object? parameter)
     {
-        frame.Navigate(viewRegistrations.ViewTypeByViewModelType[pageModelType], parameter);
+        frame.Navigate(viewRegistrations.GetViewTypeForViewModelType(pageModelType), parameter);
     }
 
     private AppWindow GetAppWindow()

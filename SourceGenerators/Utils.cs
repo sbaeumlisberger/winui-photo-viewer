@@ -6,64 +6,72 @@ namespace SourceGenerators;
 
 internal static class Utils
 {
-    internal static List<INamedTypeSymbol> GetAllTypeSymbols(GeneratorExecutionContext context)
+    public static string GetFullName(ISymbol symbol)
     {
-        var types = new List<INamedTypeSymbol>();
-
-        GetAllTypeSymbolsRecursive(context.Compilation.Assembly.GlobalNamespace, types);
-
-        return types;
+        var symbolDisplayFormat = new SymbolDisplayFormat(
+            typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
+        return symbol.ToDisplayString(symbolDisplayFormat);
     }
 
-    private static void GetAllTypeSymbolsRecursive(INamespaceSymbol namespaceSymbol, List<INamedTypeSymbol> types)
+    public static string? GetNamespace(ISymbol symbol)
     {
-        foreach (var namespaze in namespaceSymbol.GetNamespaceMembers())
+        if (symbol.ContainingNamespace is { } containingNamespace
+            && !containingNamespace.IsGlobalNamespace)
         {
-            types.AddRange(namespaze.GetTypeMembers());
-            foreach (var type in namespaze.GetTypeMembers())
+            if (GetNamespace(containingNamespace) is string @namespace)
             {
-                types.AddRange(type.GetTypeMembers());
+                return @namespace + "." + containingNamespace.Name;
             }
-            GetAllTypeSymbolsRecursive(namespaze, types);
+            return containingNamespace.Name;
         }
+        return null;
     }
 
-
-    internal static string GetFullName(ISymbol symbol)
+    public static AttributeData? GetAttribute(this ISymbol symbol, string attributeName)
     {
-        var nss = new List<string>();
-        INamespaceSymbol ns;
-
-        if (symbol.ContainingType != null)
-        {
-            nss.Add(symbol.ContainingType.Name);
-            ns = symbol.ContainingType.ContainingNamespace;
-        }
-        else
-        {
-            ns = symbol.ContainingNamespace;
-        }
-
-        while (ns != null)
-        {
-            if (string.IsNullOrWhiteSpace(ns.Name))
-            {
-                break;
-            }
-            nss.Add(ns.Name);
-            ns = ns.ContainingNamespace;
-        }
-        nss.Reverse();
-        if (nss.Any())
-        {
-            return $"{string.Join(".", nss)}.{symbol.Name}";
-        }
-        return symbol.Name;
+        return symbol.GetAttributes().FirstOrDefault(attribute => attribute.AttributeClass?.Name == attributeName);
     }
 
-    public static void ReportDiag(this SourceProductionContext context, string id, string message, Location? location = null) 
+    public static KeyValuePair<string, TypedConstant>? GetArgument(this AttributeData attribute, string argumentName)
     {
-        context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor(id, message, message, "", DiagnosticSeverity.Warning, true), location));
+        return attribute.NamedArguments.FirstOrDefault(argument => argument.Key == argumentName);
+    }
+
+    public static INamedTypeSymbol? GetInterface(this INamedTypeSymbol namedTypeSymbol, string interfaceName)
+    {
+        return namedTypeSymbol.AllInterfaces.FirstOrDefault(interfaceSymbol => interfaceSymbol.Name == interfaceName);
+    }
+
+    public static string Indent(int indent, IEnumerable<string> text)
+    {
+        return IndentLines(indent, text.SelectMany(part => part.Split('\n')));
+    }
+
+    public static string Indent(int indent, string text)
+    {
+        return IndentLines(indent, text.Split('\n'));
+    }
+
+    private static string IndentLines(int indent, IEnumerable<string> lines)
+    {
+        string indentString = new string('\t', indent);
+        return string.Join("\n" + indentString, lines);
+    }
+
+    public static void ReportError(this SourceProductionContext context, string id, string message, Location? location = null)
+    {
+        Report(context, id, message, DiagnosticSeverity.Error, location);
+    }
+
+    public static void ReportWarning(this SourceProductionContext context, string id, string message, Location? location = null)
+    {
+        Report(context, id, message, DiagnosticSeverity.Warning, location);
+    }
+
+    private static void Report(this SourceProductionContext context, string id, string message, DiagnosticSeverity diagnosticSeverity, Location? location = null)
+    {
+        context.ReportDiagnostic(Diagnostic.Create(
+            new DiagnosticDescriptor(id, message, message, "", diagnosticSeverity, true), location));
     }
 
 }
