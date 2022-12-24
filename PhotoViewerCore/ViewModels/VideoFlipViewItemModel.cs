@@ -59,7 +59,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     public void Cleanup()
     {
-        initRunner.RunAndCancelPrevious(cancellationToken => Task.CompletedTask);
+        initRunner.Cancel();
 
         if (this.mediaSource is MediaSource mediaSource)
         {

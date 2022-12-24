@@ -7,11 +7,13 @@ using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerCore.Messages;
 using PhotoViewerCore.Utils;
+using System.Collections.Concurrent;
 using Tocronx.SimpleAsync;
+using Windows.Foundation.Collections;
 
 namespace PhotoViewerCore.ViewModels;
 
-public partial class PeopleSectionModel : ViewModelBase
+public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 {
     public IObservableReadOnlyList<ItemWithCountModel> People => people;
 
@@ -25,19 +27,14 @@ public partial class PeopleSectionModel : ViewModelBase
 
     private ObservableList<ItemWithCountModel> people = new();
 
-    private IList<IBitmapFileInfo> files = Array.Empty<IBitmapFileInfo>();
-
-    private readonly SequentialTaskRunner writeFilesRunner;
-
     private readonly IMetadataService metadataService;
 
     public PeopleSectionModel(
         SequentialTaskRunner writeFilesRunner, 
         IMessenger messenger, 
         IMetadataService metadataService, 
-        bool tagPeopleOnPhotoButtonVisible) : base(messenger)
+        bool tagPeopleOnPhotoButtonVisible) : base(writeFilesRunner, messenger)
     {
-        this.writeFilesRunner = writeFilesRunner;
         this.metadataService = metadataService;
         IsTagPeopleOnPhotoButtonVisible = tagPeopleOnPhotoButtonVisible;
 
@@ -47,19 +44,15 @@ public partial class PeopleSectionModel : ViewModelBase
         }
     }
 
-    public void Update(IList<IBitmapFileInfo> files, IList<MetadataView> metadata)
-    {
-        this.files = files;
-        var values = metadata.Select(m => m.Get(MetadataProperties.People)).ToList();        
+    protected override void OnFilesChanged(IList<MetadataView> metadata)
+    {      
         people.Clear();
-        people.AddRange(values.Flatten().GroupBy(peopleTag => peopleTag.Name.Trim())
-            .Select(group => new ItemWithCountModel(group.Key, group.Count(), values.Count)));
+        people.AddRange(CreateListItemModels(metadata));
     }
 
-    public void Clear()
+    protected override void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty)
     {
-        files = Array.Empty<IBitmapFileInfo>();
-        people.Clear();
+        people.MatchTo(CreateListItemModels(metadata));
     }
 
     private void OnTagPeopleToolActiveChangedMessageReceived(TagPeopleToolActiveChangedMeesage msg)
@@ -70,6 +63,16 @@ public partial class PeopleSectionModel : ViewModelBase
     partial void OnAutoSuggestBoxTextChanged()
     {
         UpdateSuggestions();
+    }
+
+    private List<ItemWithCountModel> CreateListItemModels(IList<MetadataView> metadata) 
+    {
+        return metadata
+            .Select(m => m.Get(MetadataProperties.People))
+            .Flatten()
+            .GroupBy(peopleTag => peopleTag.Name.Trim())
+            .Select(group => new ItemWithCountModel(group.Key, group.Count(), metadata.Count))
+            .ToList();
     }
 
     private void UpdateSuggestions()
@@ -89,9 +92,11 @@ public partial class PeopleSectionModel : ViewModelBase
     {
         string personName = AutoSuggestBoxText.Trim();
 
-        await writeFilesRunner.Enqueue(async () =>
+        await EnqueueWriteFiles(async (files) =>
         {
-            foreach (var file in files)
+            var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
+
+            var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
             {
                 var peopleTagsFromFile = await metadataService.GetMetadataAsync(file, MetadataProperties.People).ConfigureAwait(false);
 
@@ -99,23 +104,21 @@ public partial class PeopleSectionModel : ViewModelBase
                 {
                     peopleTagsFromFile.Add(new PeopleTag(personName));
                     await metadataService.WriteMetadataAsync(file, MetadataProperties.People, peopleTagsFromFile).ConfigureAwait(false);
+                    modifiedFiles.Add(file);
                 }
+            });
+
+            Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.People));
+
+            if (result.IsSuccessful)
+            {
+                AutoSuggestBoxText = string.Empty;
+            }
+            else
+            {
+                // TODO show error message
             }
         });
-        // TODO prallelize, handle errors
-
-        var item = new ItemWithCountModel(personName, people.Count, people.Count);
-
-        if (people.FirstOrDefault(item => item.Value == personName) is { } existingItem)
-        {
-            people[People.IndexOf(existingItem)] = item;
-        }
-        else
-        {
-            people.Add(item);
-        }
-
-        AutoSuggestBoxText = string.Empty;
     }
 
     [RelayCommand]

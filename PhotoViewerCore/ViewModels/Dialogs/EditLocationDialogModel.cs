@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using PhotoViewerApp.Utils;
 using PhotoViewerCore.Models;
 using PhotoViewerCore.Services;
+using PostSharp.Patterns.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,18 +18,23 @@ public partial class EditLocationDialogModel : ViewModelBase
 {
     public Location? Location { get; set; }
 
-    public EditLocationDialogDetailsTabModel Details { get; } = new EditLocationDialogDetailsTabModel();
+    public EditLocationDialogDetailsTabModel Details { get; }
 
     private readonly ILocationService locationService;
 
-    public EditLocationDialogModel(Location? location, ILocationService locationService)
+    private readonly Func<Location?, Task> onSave;
+
+    public EditLocationDialogModel(Location? location, Func<Location?, Task> onSave, ILocationService locationService, IClipboardService clipboardService)
     {
-        Location = location;
         this.locationService = locationService;
-        Details.LocationDetailsChanged += Details_LocationDetailsChanged;
+        this.onSave = onSave;
+        Details = new EditLocationDialogDetailsTabModel(clipboardService);
+        Details.LocationChanged += Details_LocationChanged;
+        Location = location;
+        Details.Update(Location);
     }
 
-    private void Details_LocationDetailsChanged(object? sender, Location? location)
+    private void Details_LocationChanged(object? sender, Location? location)
     {
         Location = location;
     }
@@ -52,4 +59,17 @@ public partial class EditLocationDialogModel : ViewModelBase
     {
         return await locationService.FindLocationsAsync(query);
     }
+
+    [RelayCommand]
+    public void RemoveLocation() 
+    {
+        Location = null;
+    }
+
+    [RelayCommand]
+    public async Task Save()
+    {
+        await onSave.Invoke(Location);
+    }
+
 }

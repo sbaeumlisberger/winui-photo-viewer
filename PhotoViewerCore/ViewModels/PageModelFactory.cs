@@ -48,7 +48,7 @@ public class PageModelFactory
             (flipViewPageModel) => new FlipViewPageCommandBarModel(session, messenger, dialogService,
                 mediaFilesLoaderService, rotateBitmapService, flipViewPageModel, deleteMediaService, settings, deleteFilesCommand),
             displayRequestService,
-            showTagPeopleOnPhotoButton => new MetadataPanelModel(messenger, metadataService, locationService, dialogService, showTagPeopleOnPhotoButton));
+            showTagPeopleOnPhotoButton => new MetadataPanelModel(messenger, metadataService, locationService, dialogService, clipboardService, showTagPeopleOnPhotoButton));
     }
 
     public static OverviewPageModel CreateOverviewPageModel(IDialogService dialogService)
@@ -62,7 +62,7 @@ public class PageModelFactory
             dialogService,
             new OverviewPageCommandBarModel(messenger, dialogService, mediaFilesLoaderService, deleteFilesCommand, settings),
             mediaFileContextFlyoutModel,
-            showTagPeopleOnPhotoButton => new MetadataPanelModel(messenger, metadataService, locationService, dialogService, showTagPeopleOnPhotoButton));
+            showTagPeopleOnPhotoButton => new MetadataPanelModel(messenger, metadataService, locationService, dialogService, clipboardService, showTagPeopleOnPhotoButton));
     }
 
     public static SettingsPageModel CreateSettingsPageModel(IDialogService dialogService)

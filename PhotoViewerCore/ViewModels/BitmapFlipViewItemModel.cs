@@ -58,7 +58,7 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItem
     public void Cleanup()
     {
         Messenger.UnregisterAll(this);
-        loadImageRunner.RunAndCancelPrevious(cancellationToken => Task.CompletedTask);
+        loadImageRunner.Cancel();
         var bitmapImage = BitmapImage;
         BitmapImage = null;
         bitmapImage?.Dispose();

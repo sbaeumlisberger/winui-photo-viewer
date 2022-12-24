@@ -16,6 +16,7 @@
     Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
 
     <UserControl.Resources>
+        <!-- TODO show add title etc. / use view model -->
         <converters:BoolToObjectConverter x:Key="PlaceholderConverter" TrueValue="Multiple values" FalseValue=""/>
 
         <Style x:Key="HeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
@@ -92,7 +93,9 @@
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.TitleTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_LocationHeader}" Style="{StaticResource HeaderStyle}"/>
-                    <TextBox Style="{StaticResource LocationTextBoxStyle}" Text="{x:Bind ViewModel.LocationSectionModel.DisplayText, Mode=OneWay}"/>
+                    <TextBox Style="{StaticResource LocationTextBoxStyle}" 
+                             PlaceholderText="{x:Bind ViewModel.LocationSectionModel.PlaceholderText, Mode=OneWay}"
+                             Text="{x:Bind ViewModel.LocationSectionModel.DisplayText, Mode=OneWay}"/>
                     <StackPanel Margin="0,4,0,0" Spacing="4" Orientation="Horizontal">
                         <Button 
                             Content="{x:Bind res:Strings.MetadataPanel_ShowLocationOnMapButton}"
@@ -142,7 +145,7 @@
                     </Grid>
                     <ToggleButton 
                         Margin="0,4,0,0"
-                        Content="Personen auf Foto markieren"
+                        Content="{x:Bind res:Strings.MetadataPanel_TagPeopleOnPhoto}"
                         Visibility="{x:Bind ViewModel.PeopleSectionModel.IsTagPeopleOnPhotoButtonVisible}"
                         Command="{x:Bind ViewModel.PeopleSectionModel.ToggleTagPeopleOnPhotoCommand}"                       
                         IsChecked="{x:Bind ViewModel.PeopleSectionModel.IsTagPeopleOnPhotoButtonChecked, Mode=OneWay}"/>

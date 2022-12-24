@@ -42,6 +42,20 @@ internal static class Utils
         return namedTypeSymbol.AllInterfaces.FirstOrDefault(interfaceSymbol => interfaceSymbol.Name == interfaceName);
     }
 
+    public static bool Inherits(this INamedTypeSymbol namedTypeSymbol, string typeName) 
+    {
+        var baseType = namedTypeSymbol.BaseType;
+        while (baseType != null) 
+        {
+            if (baseType.Name == typeName)
+            {
+                return true;
+            }
+            baseType = baseType.BaseType;
+        }
+        return false;
+    }
+
     public static string Indent(int indent, IEnumerable<string> text)
     {
         return IndentLines(indent, text.SelectMany(part => part.Split('\n')));

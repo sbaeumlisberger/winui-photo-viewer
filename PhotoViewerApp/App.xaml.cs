@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml;
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
+using PhotoViewerApp.Resources;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
@@ -10,8 +11,11 @@ using PhotoViewerCore.Services;
 using PhotoViewerCore.Utils;
 using System;
 using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.Globalization;
 using Windows.Services.Maps;
 using Windows.Storage;
 using WinUIEx;
@@ -38,13 +42,17 @@ public partial class App : Application
 
         MapService.ServiceToken = MapServiceToken;
 
-        Log.Info($"Application instance created.");
+        string language = ApplicationLanguages.Languages.First();
+        Strings.Culture = new CultureInfo(language);
+        PhotoViewerCore.Resources.Strings.Culture = new CultureInfo(language);
+
+        Log.Info("Application instance created.");
     }
 
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
-        Log.Info($"Application launched.");
+        Log.Info("Application launched.");
 
         var settingsService = new SettingsService();
         var settings = await settingsService.LoadSettingsAsync();

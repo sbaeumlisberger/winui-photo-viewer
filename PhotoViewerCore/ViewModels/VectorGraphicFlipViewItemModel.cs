@@ -2,6 +2,7 @@
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
+using PhotoViewerCore.Utils;
 using PhotoViewerCore.ViewModels;
 using System.Text;
 using Tocronx.SimpleAsync;
@@ -75,7 +76,7 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
 
     public void Cleanup()
     {
-        initRunner.RunAndCancelPrevious(cancellationToken => Task.CompletedTask);
+        initRunner.Cancel();
         Content = null;
         IsLoadingFailed = false;
     }

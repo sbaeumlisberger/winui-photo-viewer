@@ -20,6 +20,8 @@ using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Tocronx.SimpleAsync;
 using Windows.Services.Maps;
+using Windows.ApplicationModel.DataTransfer;
+using System.Security.Cryptography;
 
 namespace PhotoViewerApp.Views;
 
@@ -28,22 +30,23 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
 {
     private EditLocationDialogModel ViewModel => (EditLocationDialogModel)DataContext;
 
-    private string BingMapHtml { get; } = $$"""
+    private string BingMapHtml { get; } = $$$"""
         <!DOCTYPE html>
         <html>
             <head>
                 <meta charset="utf-8" />
-                <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key={{MapService.ServiceToken}}' async defer></script>         
+                <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key={{{MapService.ServiceToken}}}' async defer></script>         
                 <script type="text/javascript">
                    function createMap()
                    {
-                     window.map = new Microsoft.Maps.Map('#map', {});
-                     Microsoft.Maps.Events.addHandler(map, 'click', function (e) { handleClick('mapClick', e); });
+                       window.map = new Microsoft.Maps.Map('#map', {});
+                       Microsoft.Maps.Events.addHandler(map, 'click', function (e) { handleClick('mapClick', e); });
+                       window.chrome.webview.postMessage({ event: "mapReady" });
                    }
                    
                    function handleClick(id, e) {
-                     map.entities.clear();
-                     window.chrome.webview.postMessage(e.location);
+                       map.entities.clear();
+                       window.chrome.webview.postMessage({ event: "mapClick", location: e.location });
                    }
                 </script>
             </head>
@@ -58,58 +61,84 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
     public EditLocationDialog()
     {
         this.InitializeMVVM(OnViewModelConnected, OnViewModelDisconnected);
-        Loaded += EditLocationDialog_Loaded;
     }
 
-    private void OnViewModelConnected(EditLocationDialogModel viewModel)
+    private async void OnViewModelConnected(EditLocationDialogModel viewModel)
     {
         viewModel.PropertyChanged += ViewModel_PropertyChanged;
+        await mapWebView.EnsureCoreWebView2Async();
+        mapWebView.NavigateToString(BingMapHtml);
+        mapWebView.WebMessageReceived += MapWebView_WebMessageReceived;
     }
 
     private void OnViewModelDisconnected(EditLocationDialogModel viewModel)
     {
         viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+        mapWebView.WebMessageReceived -= MapWebView_WebMessageReceived;
     }
 
     private async void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(EditLocationDialogModel.Location))
+        if (e.PropertyName == nameof(ViewModel.Location) && pivot.SelectedIndex == 0)
         {
             await ShowLocationOnMapAsync(ViewModel.Location);
         }
     }
 
-    private async void EditLocationDialog_Loaded(object sender, RoutedEventArgs e)
+    private async void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        await mapWebView.EnsureCoreWebView2Async();
-        mapWebView.NavigateToString(BingMapHtml);
-        mapWebView.WebMessageReceived += MapWebView_WebMessageReceived;
-        await ShowLocationOnMapAsync(ViewModel.Location);
+        if (pivot.SelectedIndex == 0 && e.RemovedItems.Count == 1)
+        {
+            await ShowLocationOnMapAsync(ViewModel.Location);
+        }
     }
 
-    private void MapWebView_WebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
+    private async void MapWebView_WebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
     {
         var data = JsonSerializer.Deserialize<JsonNode>(args.WebMessageAsJson)!;
-        double latitude = data["latitude"]!.GetValue<double>();
-        double longitude = data["longitude"]!.GetValue<double>();
-        ViewModel.OnMapClicked(latitude, longitude);
+        string eventType = data["event"]!.GetValue<string>();
+        if (eventType == "mapReady")
+        {
+            await ShowLocationOnMapAsync(ViewModel.Location);
+        }
+        else if (eventType == "mapClick")
+        {
+            double latitude = data["location"]!["latitude"]!.GetValue<double>();
+            double longitude = data["location"]!["longitude"]!.GetValue<double>();
+            ViewModel.OnMapClicked(latitude, longitude);
+        }
     }
 
     private async Task ShowLocationOnMapAsync(Location? location)
     {
-        if (location?.Point is null)
+        Geopoint? geopoint = null;
+
+        if (location?.Geopoint != null)
         {
+            geopoint = location.Geopoint;
+        }
+        else if (location?.Address != null)
+        {
+            geopoint = await new LocationService().FindGeopointAsync(location.Address);
+        }
+
+        if (geopoint is null)
+        {
+            await mapWebView.ExecuteScriptAsync("map.entities.clear();");
             return;
         }
 
-        double latitude = location.Point!.Position.Latitude;
-        double longitude = location.Point.Position.Longitude;
+        double latitude = geopoint.Position.Latitude;
+        double longitude = geopoint.Position.Longitude;
+
+        string title = location?.Address?.ToString() ?? geopoint.ToDecimalString();
 
         var script = $$"""
             map.entities.clear();
             var mapLocation = new Microsoft.Maps.Location({{latitude.ToInvariantString()}}, {{longitude.ToInvariantString()}});
-            var pushpin = new Microsoft.Maps.Pushpin(mapLocation, { title: '{{location.Address}}'});
+            var pushpin = new Microsoft.Maps.Pushpin(mapLocation, { title: '{{title}}'});
             map.entities.push(pushpin);
+            map.setView({ center: mapLocation, zoom: 10 });
             """;
 
         await mapWebView.ExecuteScriptAsync(script);
@@ -117,11 +146,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
 
     private string FormatGeopoint(Geopoint? geopoint)
     {
-        if (geopoint is null)
-        {
-            return "";
-        }
-        return geopoint.Position.Latitude + "° " + geopoint.Position.Longitude + "°";
+        return geopoint != null ? geopoint.ToDecimalString() : "";
     }
 
     private void LocationSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
@@ -136,6 +161,38 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
         {
             locationSearchBox.ItemsSource = await ViewModel.FindLocationsAsync(sender.Text);
         });
+    }
+
+    private async void LatitudeTextBox_Paste(object sender, TextControlPasteEventArgs e)
+    {
+        if (string.IsNullOrEmpty(latitudeTextBox.Text))
+        {
+            e.Handled = true;
+
+            var dataPackage = Clipboard.GetContent();
+            if (dataPackage.Contains(StandardDataFormats.Text))
+            {
+                try
+                {
+                    var text = await dataPackage.GetTextAsync();
+
+                    if (text.Contains(","))
+                    {
+                        string[] parts = text.Split(',', StringSplitOptions.TrimEntries);
+                        latitudeTextBox.Text = parts[0];
+                        longitudeTextBox.Text = parts[1];
+                    }
+                    else
+                    {
+                        latitudeTextBox.Text = text;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Paste coordinates failed", ex);
+                }
+            }
+        }
     }
 
 }

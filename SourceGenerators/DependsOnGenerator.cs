@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace SourceGenerators;
 
@@ -36,7 +37,9 @@ public class DependsOnGenerator : IIncrementalGenerator
     {
         var classDeclaration = (ClassDeclarationSyntax)context.Node;
         var classSymbol = context.SemanticModel.GetDeclaredSymbol(classDeclaration);
-        return classSymbol?.BaseType?.Name == Constants.ViewModelBaseClassName ? classSymbol : null;
+        if (classSymbol is null) return null;
+        bool inheritsViewModelBase = classSymbol.Inherits(Constants.ViewModelBaseClassName);
+        return inheritsViewModelBase && !classSymbol.IsAbstract ? classSymbol : null;
     }
 
     public void GenerateCode(SourceProductionContext context, ImmutableArray<ITypeSymbol> classes)
@@ -57,8 +60,8 @@ public class DependsOnGenerator : IIncrementalGenerator
         var dependencies = classSymbol.GetMembers().OfType<IPropertySymbol>()
               .Select(property => (property, attribute: property.GetAttribute("DependsOnAttribute")))
               .Where(tuple => tuple.attribute != null)
-              .SelectMany(tuple => tuple.attribute!.ConstructorArguments
-                  .Select(argument => new Dependency(tuple.property.Name, (string)argument.Value!)))
+              .SelectMany(tuple => tuple.attribute!.ConstructorArguments[0].Values
+                  .Select(value => new Dependency(tuple.property.Name, (string)value.Value!)))
               .ToList();
 
         if (dependencies.Any())

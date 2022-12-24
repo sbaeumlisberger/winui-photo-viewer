@@ -31,7 +31,9 @@ public class OnPropertyChangedMethodsGenerator : IIncrementalGenerator
     {
         var classDeclaration = (ClassDeclarationSyntax)context.Node;
         var classSymbol = context.SemanticModel.GetDeclaredSymbol(classDeclaration);
-        return classSymbol?.BaseType?.Name == Constants.ViewModelBaseClassName ? classSymbol : null;
+        if (classSymbol is null) return null;
+        bool inheritsViewModelBase = classSymbol.Inherits(Constants.ViewModelBaseClassName);
+        return inheritsViewModelBase && !classSymbol.IsAbstract ? classSymbol : null;
     }
 
     private static void GenerateCode(SourceProductionContext context, ImmutableArray<ITypeSymbol> classes)

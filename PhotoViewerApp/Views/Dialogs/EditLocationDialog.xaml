@@ -10,6 +10,7 @@
     mc:Ignorable="d"
     Title="{x:Bind res:Strings.EditLocationDialog_Title}"
     PrimaryButtonText="{x:Bind res:Strings.EditLocationDialog_Save}"
+    PrimaryButtonCommand="{x:Bind ViewModel.SaveCommand}"
     CloseButtonText="{x:Bind res:Strings.EditLocationDialog_Cancel}"
     DefaultButton="Primary">
 
@@ -17,7 +18,7 @@
         <x:Double x:Key="ContentDialogMaxWidth">600</x:Double>
     </ContentDialog.Resources>
 
-    <Pivot Height="540">
+    <Pivot x:Name="pivot" Height="540" SelectionChanged="Pivot_SelectionChanged">
         <PivotItem Header="{x:Bind res:Strings.EditLocationDialog_TabMap}">
             <StackPanel Margin="0,12,0,0" Spacing="8">
                 <AutoSuggestBox 
@@ -34,41 +35,53 @@
                 </AutoSuggestBox>
                 <WebView2 x:Name="mapWebView" Height="400"/>
                 <Grid>
-                    <TextBlock Text="{x:Bind FormatGeopoint(ViewModel.Location.Point), Mode=OneWay}"/>
-                    <Button HorizontalAlignment="Right" Content="{x:Bind res:Strings.EditLocationDialog_RemoveLocation}"/>
+                    <TextBlock Text="{x:Bind FormatGeopoint(ViewModel.Location.Geopoint), FallbackValue={x:Null}, Mode=OneWay}"/>
+                    <Button HorizontalAlignment="Right" Content="{x:Bind res:Strings.EditLocationDialog_RemoveLocation}"
+                            Command="{x:Bind ViewModel.RemoveLocationCommand}"/>
                 </Grid>
             </StackPanel>
         </PivotItem>
         <PivotItem Header="{x:Bind res:Strings.EditLocationDialog_TabDetails}">
-            <StackPanel Margin="0,12,0,0" Spacing="12">
-                <TextBox Header="Street and house number" Text="{x:Bind ViewModel.Details.Street, Mode=TwoWay}"/>
+            <StackPanel Margin="0,12,0,0" Spacing="16">
+                <TextBox Header="{x:Bind res:Strings.EditLocationDialog_StreetLabel}" 
+                         Text="{x:Bind ViewModel.Details.Street, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <TextBox Header="Postal code and town" Text="{x:Bind ViewModel.Details.City, Mode=TwoWay}"/>
+                <TextBox Header="{x:Bind res:Strings.EditLocationDialog_CityLabel}" 
+                         Text="{x:Bind ViewModel.Details.City, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <TextBox Header="Region or state" Text="{x:Bind ViewModel.Details.Region, Mode=TwoWay}"/>
+                <TextBox Header="{x:Bind res:Strings.EditLocationDialog_RegionLabel}"
+                         Text="{x:Bind ViewModel.Details.Region, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <TextBox Header="Country" Text="{x:Bind ViewModel.Details.Country, Mode=TwoWay}"/>
+                <TextBox Header="{x:Bind res:Strings.EditLocationDialog_CountryLabel}" 
+                         Text="{x:Bind ViewModel.Details.Country, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <StackPanel Orientation="Horizontal" Spacing="4">
-                    <TextBox Width="140" Header="Latitude" Text="{x:Bind ViewModel.Details.Latitude, Mode=TwoWay}"/>
-                    <TextBlock VerticalAlignment="Bottom" Height="32" Text="°"/>
+                    <TextBox x:Name="latitudeTextBox" Width="140" InputScope="Number"
+                             Header="{x:Bind res:Strings.EditLocationDialog_LatitudeLabel}" 
+                             Text="{x:Bind ViewModel.Details.Latitude, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                             Paste="LatitudeTextBox_Paste"/>
 
-                    <TextBox Width="140" Header="Longitude" Text="{x:Bind ViewModel.Details.Longitude, Mode=TwoWay}"/>
-                    <TextBlock VerticalAlignment="Bottom" Height="32" Text="°"/>
+                    <TextBox x:Name="longitudeTextBox" Margin="8,0,0,0" Width="140" InputScope="Number"
+                             Header="{x:Bind res:Strings.EditLocationDialog_LongitudeLabel}" 
+                             Text="{x:Bind ViewModel.Details.Longitude, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <Button Margin="8,0,0,0" VerticalAlignment="Bottom">
+                    <Button Margin="8,0,0,0" VerticalAlignment="Bottom"
+                        ToolTipService.ToolTip="{x:Bind res:Strings.EditLocationDialog_CopyCoordinatesTooltip}" 
+                        Command="{x:Bind ViewModel.Details.CopyCoordinatesCommand}">
                         <SymbolIcon Symbol="Copy"/>
                     </Button>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Spacing="4">
-                    <TextBox Width="80" Header="Altitude" Text="{x:Bind ViewModel.Details.Altitude, Mode=TwoWay}"/>
+                    <TextBox Width="80" InputScope="Number"
+                             Header="{x:Bind res:Strings.EditLocationDialog_AltitudeLabel}" 
+                             Text="{x:Bind ViewModel.Details.Altitude, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     <TextBlock VerticalAlignment="Bottom" Text="m"/>
                     
                     <ComboBox 
                         Margin="8,0,0,0"
                         Width="140"
-                        Header="Reference system"
+                        Header="{x:Bind res:Strings.EditLocationDialog_AltitudeReferenceSystemLabel}" 
                         ItemsSource="{x:Bind ViewModel.Details.AvailableAltitudeReferenceSystems}"
                         SelectedItem="{x:Bind ViewModel.Details.AltitudeReferenceSystem, Mode=TwoWay}"/>
                 </StackPanel>

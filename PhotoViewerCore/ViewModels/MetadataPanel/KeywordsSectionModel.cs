@@ -6,11 +6,12 @@ using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerCore.Messages;
 using PhotoViewerCore.Utils;
+using System.Collections.Concurrent;
 using Tocronx.SimpleAsync;
 
 namespace PhotoViewerCore.ViewModels;
 
-public partial class KeywordsSectionModel : ViewModelBase
+public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
 {
     public IObservableReadOnlyList<ItemWithCountModel> Keywords => keywords;
 
@@ -20,36 +21,28 @@ public partial class KeywordsSectionModel : ViewModelBase
 
     private ObservableList<ItemWithCountModel> keywords = new();
 
-    private IList<IBitmapFileInfo> files = Array.Empty<IBitmapFileInfo>();
-
-    private IList<MetadataView> metadata = Array.Empty<MetadataView>();
-
-    private readonly SequentialTaskRunner writeFilesRunner;
-
     private readonly IMetadataService metadataService;
 
     public KeywordsSectionModel(
-        SequentialTaskRunner writeFilesRunner,
-        IMessenger messenger,
-        IMetadataService metadataService) : base(messenger)
+        SequentialTaskRunner writeFilesRunner, 
+        IMessenger messenger, 
+        IMetadataService metadataService) : base(writeFilesRunner, messenger)
     {
-        this.writeFilesRunner = writeFilesRunner;
         this.metadataService = metadataService;
-        Messenger.Register<MetadataModifiedMessage>(this, OnReceive);
     }
 
-    public void Update(IList<IBitmapFileInfo> files, IList<MetadataView> metadata)
+    protected override void OnFilesChanged(IList<MetadataView> metadata)
     {
-        this.files = files;
-        this.metadata = metadata;
         keywords.Clear();
-        keywords.AddRange(CreateListItemModels());
+        keywords.AddRange(CreateListItemModels(metadata));
     }
 
-    public void Clear()
+    protected override void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty)
     {
-        files = Array.Empty<IBitmapFileInfo>();
-        keywords.Clear();
+        if (metadataProperty == MetadataProperties.Keywords)
+        {
+            keywords.MatchTo(CreateListItemModels(metadata));
+        }
     }
 
     partial void OnAutoSuggestBoxTextChanged()
@@ -57,28 +50,14 @@ public partial class KeywordsSectionModel : ViewModelBase
         UpdateSuggestions();
     }
 
-    private void OnReceive(MetadataModifiedMessage msg)
+    private List<ItemWithCountModel> CreateListItemModels(IList<MetadataView> metadata)
     {
-        if (msg.Files.Intersect(files).Any() && msg.MetadataProperty == MetadataProperties.Keywords)
-        {
-            RunOnUIThread(() =>
-            {
-                keywords.MatchTo(CreateListItemModels());
-
-                if (keywords.FirstOrDefault(listItem => listItem.Value == AutoSuggestBoxText.Trim())
-                        is ItemWithCountModel listItem && listItem.Count == listItem.Total)
-                {
-                    AutoSuggestBoxText = string.Empty;
-                }
-            });
-        }
-    }
-
-    private IList<ItemWithCountModel> CreateListItemModels()
-    {
-        var values = metadata.Select(m => m.Get(MetadataProperties.Keywords)).ToList();
-        return values.Flatten().GroupBy(x => x)
-            .Select(group => new ItemWithCountModel(group.Key, group.Count(), values.Count)).ToList();
+        return metadata
+            .Select(m => m.Get(MetadataProperties.Keywords))
+            .Flatten()
+            .GroupBy(keyword => keyword)
+            .Select(group => new ItemWithCountModel(group.Key, group.Count(), metadata.Count))
+            .ToList();
     }
 
 
@@ -98,19 +77,21 @@ public partial class KeywordsSectionModel : ViewModelBase
     private async Task AddKeywordAsync()
     {
         string keyword = AutoSuggestBoxText.Trim();
-        await AddKeywordToFilesAsync(keyword, files.ToList());
+        await AddKeywordToFilesAsync(keyword);
     }
 
     [RelayCommand]
     private async Task RemoveKeywordAsync(string keyword)
     {
-        await RemoveKeywordFromFilesAsync(keyword, files.ToList());
+        await RemoveKeywordFromFilesAsync(keyword);
     }
 
-    private async Task AddKeywordToFilesAsync(string keyword, IList<IBitmapFileInfo> files)
+    private async Task AddKeywordToFilesAsync(string keyword)
     {
-        await writeFilesRunner.Enqueue(async () =>
+        await EnqueueWriteFiles(async (files) =>
         {
+            var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
+
             var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
             {
                 var keywordsOfFile = await metadataService.GetMetadataAsync(file, MetadataProperties.Keywords).ConfigureAwait(false);
@@ -119,17 +100,29 @@ public partial class KeywordsSectionModel : ViewModelBase
                 {
                     var keywords = keywordsOfFile.Append(keyword).ToArray();
                     await metadataService.WriteMetadataAsync(file, MetadataProperties.Keywords, keywords).ConfigureAwait(false);
+                    modifiedFiles.Add(file);
                 }
-            }).ConfigureAwait(false);
-            Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Keywords));
-            // TODO show error message
-        }).ConfigureAwait(false); ;
+            });
+
+            Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.Keywords));
+
+            if (result.IsSuccessful)
+            {
+                AutoSuggestBoxText = string.Empty;
+            }
+            else 
+            {
+                // TODO show error message
+            }
+        });
     }
 
-    private async Task RemoveKeywordFromFilesAsync(string keyword, IList<IBitmapFileInfo> files)
+    private async Task RemoveKeywordFromFilesAsync(string keyword)
     {
-        await writeFilesRunner.Enqueue(async () =>
+        await EnqueueWriteFiles(async (files) =>
         {
+            var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
+
             var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
             {
                 var keywordsOfFile = await metadataService.GetMetadataAsync(file, MetadataProperties.Keywords).ConfigureAwait(false);
@@ -138,10 +131,17 @@ public partial class KeywordsSectionModel : ViewModelBase
                 {
                     var keywords = keywordsOfFile.Except(Enumerable.Repeat(keyword, 1)).ToArray();
                     await metadataService.WriteMetadataAsync(file, MetadataProperties.Keywords, keywords).ConfigureAwait(false);
+                    modifiedFiles.Add(file);
                 }
-            }).ConfigureAwait(false);
-            Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Keywords));
-            // TODO show error message
-        }).ConfigureAwait(false); ;
+            });
+
+            Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.Keywords));
+            
+            if (result.HasFailures)
+            {
+                // TODO show error message
+            }
+        });
     }
+
 }

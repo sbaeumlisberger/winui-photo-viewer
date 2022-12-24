@@ -38,7 +38,7 @@ public partial class MetadataTextboxModel : ViewModelBase
 
     private readonly System.Timers.Timer timer = new System.Timers.Timer(WaitTime.TotalMilliseconds) { AutoReset = false };
 
-    private IList<IBitmapFileInfo> files = Array.Empty<IBitmapFileInfo>();
+    private IReadOnlyList<IBitmapFileInfo> files = Array.Empty<IBitmapFileInfo>();
 
     public MetadataTextboxModel(SequentialTaskRunner writeFilesRunner, IMetadataService metadataService, IMetadataProperty<string> metadataProperty)
     {
@@ -56,7 +56,7 @@ public partial class MetadataTextboxModel : ViewModelBase
         timer.Elapsed += (_, _) => _ = WriteValueAsync();
     }
 
-    public void Update(IList<IBitmapFileInfo> files, IList<MetadataView> metadata)
+    public void Update(IReadOnlyList<IBitmapFileInfo> files, IList<MetadataView> metadata)
     {
         this.files = files;
 

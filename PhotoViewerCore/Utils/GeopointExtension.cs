@@ -1,9 +1,15 @@
 ﻿using MetadataAPI.Data;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 
 namespace PhotoViewerCore.Utils;
 
-public static class GeoTagUtil
+public static class GeopointExtension
 {
     public static GeoTag ToGeoTag(this Geopoint geopoint)
     {
@@ -16,14 +22,9 @@ public static class GeoTagUtil
         };
     }
 
-    public static Geopoint ToGeopoint(this GeoTag geoTag)
+    public static string ToDecimalString(this Geopoint geopoint, int decimals = 6)
     {
-        var geoPositon = new BasicGeoposition()
-        {
-            Latitude = geoTag.Latitude,
-            Longitude = geoTag.Longitude,
-            Altitude = geoTag.Altitude ?? 0
-        };
-        return new Geopoint(geoPositon, (AltitudeReferenceSystem)geoTag.AltitudeReference);
+        return geopoint.Position.Latitude.ToString("N" + decimals, CultureInfo.InvariantCulture)
+            + ", " + geopoint.Position.Longitude.ToString("N" + decimals, CultureInfo.InvariantCulture);
     }
 }

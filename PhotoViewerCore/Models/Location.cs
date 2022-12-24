@@ -6,11 +6,11 @@ public record Location
 {
     public Address? Address { get; }
 
-    public Geopoint? Point { get; }
+    public Geopoint? Geopoint { get; }
 
     public Location(Address? address, Geopoint? point)
     {
         Address = address;
-        Point = point;
+        Geopoint = point;
     }
 }

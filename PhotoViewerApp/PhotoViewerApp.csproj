@@ -34,16 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\LockScreenLogo.scale-200.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
     <PackageReference Include="MetadataAPI" Version="1.4.3" />
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.0.4" />
@@ -52,6 +42,14 @@
     <PackageReference Include="WIC.DotNet" Version="1.2.0" />
     <PackageReference Include="WinUIEx" Version="2.0.0" />
     <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PRIResource Include="Resources\Strings.de.resx" />
+    <PRIResource Include="Resources\Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </PRIResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -147,19 +145,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Strings.tt</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Update="Resources\en\Strings.resw">
-      <Generator>ReswPlusAdvancedGenerator</Generator>
-    </PRIResource>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\.editorconfig" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Include="C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\.editorconfig" />
+    <Compile Update="Resources\Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   
 </Project>

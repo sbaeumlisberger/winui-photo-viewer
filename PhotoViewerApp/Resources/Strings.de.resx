@@ -118,270 +118,297 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DeleteLinkedFilesDialog_Message" xml:space="preserve">
-    <value>Do you want to delete the files linked to this file?</value>
+    <value>Möchten Sie die mit dieser Datei verknüpften Dateien löschen?</value>
   </data>
   <data name="DeleteLinkedFilesDialog_No" xml:space="preserve">
-    <value>No</value>
+    <value>Nein</value>
   </data>
   <data name="DeleteLinkedFilesDialog_Remember" xml:space="preserve">
-    <value>Remember decision (can be changed in the settings)</value>
+    <value>Entscheidung merken (Kann in den Einstellungen geändert werden)</value>
   </data>
   <data name="DeleteLinkedFilesDialog_Title" xml:space="preserve">
-    <value>Delete linked files</value>
+    <value>Verknüpfte Dateien löschen</value>
   </data>
   <data name="DeleteLinkedFilesDialog_Yes" xml:space="preserve">
-    <value>Yes</value>
+    <value>Ja</value>
   </data>
   <data name="DetailsBar_ColorSpaceAdobeRGB" xml:space="preserve">
-    <value>Adobe RGB color space</value>
+    <value>Adobe-RGB-Farbraum</value>
   </data>
   <data name="DetailsBar_ColorSpaceSRGB" xml:space="preserve">
-    <value>sRGB color space</value>
+    <value>sRGB-Farbraum</value>
   </data>
   <data name="DetailsBar_ColorSpaceUnknown" xml:space="preserve">
-    <value>Unknown color space</value>
+    <value>Unbekannter Fabraum</value>
   </data>
   <data name="DetailsBar_NoInformationAvailable" xml:space="preserve">
-    <value>no information available</value>
+    <value>Keine Information verfügbar</value>
+  </data>
+  <data name="EditLocationDialog_AltitudeLabel" xml:space="preserve">
+    <value>Altitude</value>
+  </data>
+  <data name="EditLocationDialog_AltitudeReferenceSystemLabel" xml:space="preserve">
+    <value>Referenzsystem</value>
   </data>
   <data name="EditLocationDialog_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Abbrechen</value>
+  </data>
+  <data name="EditLocationDialog_CityLabel" xml:space="preserve">
+    <value>Postleitzahl und Stadt</value>
+  </data>
+  <data name="EditLocationDialog_CopyCoordinatesTooltip" xml:space="preserve">
+    <value>Koordinaten kopieren</value>
+  </data>
+  <data name="EditLocationDialog_CountryLabel" xml:space="preserve">
+    <value>Land</value>
+  </data>
+  <data name="EditLocationDialog_LatitudeLabel" xml:space="preserve">
+    <value>Latitude</value>
+  </data>
+  <data name="EditLocationDialog_LongitudeLabel" xml:space="preserve">
+    <value>Longitude</value>
+  </data>
+  <data name="EditLocationDialog_RegionLabel" xml:space="preserve">
+    <value>Region / Bundesland</value>
   </data>
   <data name="EditLocationDialog_RemoveLocation" xml:space="preserve">
-    <value>Remove location</value>
+    <value>Ortsangabe entfernen</value>
   </data>
   <data name="EditLocationDialog_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Speichern</value>
   </data>
   <data name="EditLocationDialog_SearchPlaceholder" xml:space="preserve">
-    <value>Search</value>
+    <value>Suchen</value>
+  </data>
+  <data name="EditLocationDialog_StreetLabel" xml:space="preserve">
+    <value>Straße und Hausnummer</value>
   </data>
   <data name="EditLocationDialog_TabDetails" xml:space="preserve">
     <value>Details</value>
   </data>
   <data name="EditLocationDialog_TabMap" xml:space="preserve">
-    <value>Map</value>
+    <value>Karte</value>
   </data>
   <data name="EditLocationDialog_Title" xml:space="preserve">
-    <value>Edit location</value>
+    <value>Ortsangabe bearbeiten</value>
   </data>
   <data name="FlipViewPageCommandBar_CompareButton" xml:space="preserve">
-    <value>Compare</value>
+    <value>Vergleichen</value>
   </data>
   <data name="FlipViewPageCommandBar_CropButton" xml:space="preserve">
-    <value>Crop</value>
+    <value>Zuschneiden</value>
   </data>
   <data name="FlipViewPageCommandBar_DeleteButton" xml:space="preserve">
-    <value>Delete</value>
+    <value>Löschen</value>
   </data>
   <data name="FlipViewPageCommandBar_DiashowButton" xml:space="preserve">
-    <value>Start diashow</value>
+    <value>Diashow starten</value>
   </data>
   <data name="FlipViewPageCommandBar_MetadataButton" xml:space="preserve">
-    <value>Show metadata</value>
+    <value>Metadata anzeigen</value>
   </data>
   <data name="FlipViewPageCommandBar_NextButton" xml:space="preserve">
-    <value>Next</value>
+    <value>Weiter</value>
   </data>
   <data name="FlipViewPageCommandBar_OpenFolderButton" xml:space="preserve">
-    <value>Open folder</value>
+    <value>Ordner öffnen</value>
   </data>
   <data name="FlipViewPageCommandBar_OverviewButton" xml:space="preserve">
     <value>Zur Übersicht wechseln</value>
   </data>
   <data name="FlipViewPageCommandBar_PreviousButton" xml:space="preserve">
-    <value>Previous</value>
+    <value>Zurück</value>
   </data>
   <data name="FlipViewPageCommandBar_RotateButton" xml:space="preserve">
-    <value>Rotate left</value>
+    <value>Drehen nach rechts</value>
   </data>
   <data name="FlipViewPageCommandBar_SettingsButton" xml:space="preserve">
-    <value>Settings</value>
+    <value>Einstellungen</value>
   </data>
   <data name="ItemWithCount_All" xml:space="preserve">
-    <value>All</value>
+    <value>Alle</value>
   </data>
   <data name="MediaFileContextMenu_Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Löschen</value>
   </data>
   <data name="MediaFileContextMenu_Open" xml:space="preserve">
-    <value>Copy</value>
+    <value>Kopieren</value>
   </data>
   <data name="MediaFileContextMenu_OpenInNewWindows" xml:space="preserve">
-    <value>Open in new window</value>
+    <value>In neuem Fentster öffnen</value>
   </data>
   <data name="MediaFileContextMenu_OpenWidth" xml:space="preserve">
-    <value>Open with ...</value>
+    <value>Öffnen mit ...</value>
   </data>
   <data name="MediaFileContextMenu_Print" xml:space="preserve">
-    <value>Print</value>
+    <value>Drucken</value>
   </data>
   <data name="MediaFileContextMenu_Properties" xml:space="preserve">
-    <value>Properties</value>
+    <value>Eigenschaften</value>
   </data>
   <data name="MediaFileContextMenu_Rotate" xml:space="preserve">
-    <value>Rotate</value>
+    <value>Drehen</value>
   </data>
   <data name="MediaFileContextMenu_SetAs" xml:space="preserve">
-    <value>Set as ...</value>
+    <value>Festlegen als ...</value>
   </data>
   <data name="MediaFileContextMenu_SetAsDesktopBackground" xml:space="preserve">
-    <value>Desktop background</value>
+    <value>Dektop-Hintergrund</value>
   </data>
   <data name="MediaFileContextMenu_SetAsLockscreenBackground" xml:space="preserve">
-    <value>Lockscreen</value>
+    <value>Sperrbildschirm</value>
   </data>
   <data name="MediaFileContextMenu_Share" xml:space="preserve">
-    <value>Share</value>
+    <value>Teilen</value>
   </data>
   <data name="MediaFlipView_DisableDiashowLoop" xml:space="preserve">
-    <value>Pause</value>
+    <value>Pausieren</value>
   </data>
   <data name="MediaFlipView_EnableDiashowLoop" xml:space="preserve">
-    <value>Resume</value>
+    <value>Fortsetzen</value>
   </data>
   <data name="MediaFlipView_ExitDiashow" xml:space="preserve">
-    <value>Exit</value>
+    <value>Beenden</value>
   </data>
   <data name="MetadataPanel_AddDateTakenButton" xml:space="preserve">
-    <value>Add date taken</value>
+    <value>Aufnahmedatum hinzufügen</value>
   </data>
   <data name="MetadataPanel_AddKeywordPlaceholder" xml:space="preserve">
-    <value>Add keyword</value>
+    <value>Schlagwort hinzufügen</value>
   </data>
   <data name="MetadataPanel_AddPersonPlaceholder" xml:space="preserve">
-    <value>Add person</value>
+    <value>Person hinzufügen</value>
   </data>
   <data name="MetadataPanel_AnyFileNotSupported" xml:space="preserve">
-    <value>The selected file does not support metadata</value>
+    <value>Die ausgwählte Datei unterstützt keine Metadaten</value>
   </data>
   <data name="MetadataPanel_AuthorsHeader" xml:space="preserve">
-    <value>Authors</value>
+    <value>Autoren</value>
   </data>
   <data name="MetadataPanel_CloseButtonToolTip" xml:space="preserve">
-    <value>Close</value>
+    <value>Schließen</value>
   </data>
   <data name="MetadataPanel_CopyrightHeader" xml:space="preserve">
     <value>Copyright</value>
   </data>
   <data name="MetadataPanel_DateTakenHeader" xml:space="preserve">
-    <value>Date Taken</value>
+    <value>Aufnamedatum</value>
   </data>
   <data name="MetadataPanel_EditLocationButton" xml:space="preserve">
-    <value>Edit</value>
+    <value>Bearbeiten</value>
   </data>
   <data name="MetadataPanel_ImportFromGpxFileButton" xml:space="preserve">
-    <value>Import from GPX file</value>
+    <value>Von GPX-Datei importieren</value>
   </data>
   <data name="MetadataPanel_KeywordsHeader" xml:space="preserve">
-    <value>Keywords</value>
+    <value>Schlagwörter</value>
   </data>
   <data name="MetadataPanel_LocationHeader" xml:space="preserve">
-    <value>Location</value>
-  </data>
-  <data name="MetadataPanel_LocationMarker" xml:space="preserve">
-    <value>place taken</value>
+    <value>Aufnahmeort</value>
   </data>
   <data name="MetadataPanel_NoDateTakenPresent" xml:space="preserve">
-    <value>No date taken</value>
+    <value>Keine Aufnahmedatum</value>
   </data>
   <data name="MetadataPanel_PeopleHeader" xml:space="preserve">
-    <value>People</value>
+    <value>Personen</value>
   </data>
   <data name="MetadataPanel_RatingHeader" xml:space="preserve">
-    <value>Rating</value>
+    <value>Bewertung</value>
   </data>
   <data name="MetadataPanel_RemoveKeyword" xml:space="preserve">
-    <value>Remove keyword</value>
+    <value>Schlagwort entfernen</value>
   </data>
   <data name="MetadataPanel_ShiftDateTakenButton" xml:space="preserve">
-    <value>Shift date taken</value>
+    <value>Aufnahmedaten verschieben</value>
   </data>
   <data name="MetadataPanel_ShowLocationOnMapButton" xml:space="preserve">
-    <value>Show on map</value>
+    <value>Auf Karte anzeigen</value>
+  </data>
+  <data name="MetadataPanel_TagPeopleOnPhoto" xml:space="preserve">
+    <value>Personen auf Foto markieren</value>
   </data>
   <data name="MetadataPanel_Title" xml:space="preserve">
-    <value>Metadata</value>
+    <value>Metadaten</value>
   </data>
   <data name="MetadataPanel_TitleHeader" xml:space="preserve">
-    <value>Title</value>
+    <value>Titel</value>
   </data>
   <data name="NoItemsMessage" xml:space="preserve">
-    <value>Nothing to show</value>
+    <value>Keine Fotos zum Anzeigen vorhanden</value>
   </data>
   <data name="OpenFolderButton" xml:space="preserve">
-    <value>Open folder</value>
+    <value>Ordner öffnen</value>
   </data>
   <data name="OverviewPage_Title" xml:space="preserve">
-    <value>Overview</value>
+    <value>Übersicht</value>
   </data>
   <data name="PropertiesDialog_Camera" xml:space="preserve">
-    <value>Camera</value>
+    <value>Kamera</value>
   </data>
   <data name="PropertiesDialog_Close" xml:space="preserve">
-    <value>Close</value>
+    <value>Schließen</value>
   </data>
   <data name="PropertiesDialog_DateTaken" xml:space="preserve">
-    <value>Date taken</value>
+    <value>Aufnahmedatum</value>
   </data>
   <data name="PropertiesDialog_Dimensions" xml:space="preserve">
-    <value>Dimensions</value>
+    <value>Abmessungen</value>
   </data>
   <data name="PropertiesDialog_FileName" xml:space="preserve">
-    <value>File name</value>
+    <value>Dateiname</value>
   </data>
   <data name="PropertiesDialog_FilePath" xml:space="preserve">
-    <value>File path</value>
+    <value>Dateipfad</value>
   </data>
   <data name="PropertiesDialog_FileSize" xml:space="preserve">
-    <value>File size</value>
+    <value>Dateigröße</value>
   </data>
   <data name="PropertiesDialog_FNumber" xml:space="preserve">
-    <value>Aperture</value>
+    <value>Blende</value>
   </data>
   <data name="PropertiesDialog_FocalLength" xml:space="preserve">
-    <value>Focal length</value>
+    <value>Brennweite</value>
   </data>
   <data name="PropertiesDialog_ISO" xml:space="preserve">
     <value>ISO</value>
   </data>
   <data name="PropertiesDialog_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Im Explorer anzeigen</value>
   </data>
   <data name="PropertiesDialog_ShutterSpeed" xml:space="preserve">
-    <value>Shutter speed</value>
+    <value>Belichtungszeit</value>
   </data>
   <data name="PropertiesDialog_Title" xml:space="preserve">
-    <value>Properties</value>
+    <value>Eigenschaften</value>
   </data>
   <data name="SettingsPage_AppearanceSectionTittle" xml:space="preserve">
-    <value>Appearance</value>
+    <value>Anzeige</value>
   </data>
   <data name="SettingsPage_AutoShowDetailsBarToogle" xml:space="preserve">
-    <value>Show details bar in startup</value>
+    <value>Leiste mit Details beim Starten öffnen</value>
   </data>
   <data name="SettingsPage_AutoShowMetadataPanelToogle" xml:space="preserve">
-    <value>Show metadata view on startup</value>
+    <value>Ansicht zum Bearbeiten der Metadaten beim Starten öffnen</value>
   </data>
   <data name="SettingsPage_BackButtonTooltip" xml:space="preserve">
-    <value>Back</value>
+    <value>Zurück</value>
   </data>
   <data name="SettingsPage_DeleteLinkedFilesOption_Ask" xml:space="preserve">
-    <value>Ask</value>
+    <value>Nachfragen</value>
   </data>
   <data name="SettingsPage_DeleteLinkedFilesOption_No" xml:space="preserve">
-    <value>Never</value>
+    <value>Nie</value>
   </data>
   <data name="SettingsPage_DeleteLinkedFilesOption_Yes" xml:space="preserve">
-    <value>Always</value>
+    <value>Immer</value>
   </data>
   <data name="SettingsPage_DiashowTimeLabel" xml:space="preserve">
-    <value>Time span in seconds how long photos are displayed in the diashow</value>
+    <value>Zeitspanne in Sekunden, wie lange Fotos in der Diashow angezeigt werden</value>
   </data>
   <data name="SettingsPage_ShowDeleteAnimationToggle" xml:space="preserve">
-    <value>Show delete animation</value>
+    <value>Animation beim Löschen von Dateien anzeigen</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
-    <value>Settings</value>
+    <value>Einstellungen</value>
   </data>
 </root>

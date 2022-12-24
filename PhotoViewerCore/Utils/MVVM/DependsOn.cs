@@ -8,10 +8,7 @@ namespace PhotoViewerCore.Utils;
 
 public class DependsOnAttribute : Attribute
 {
-    public string Property { get; }
-
-    public DependsOnAttribute(string property)
+    public DependsOnAttribute(params string[] properties)
     {
-        Property = property;
     }
 }

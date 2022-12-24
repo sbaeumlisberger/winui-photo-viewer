@@ -45,6 +45,9 @@ public class ViewModelBase : ObservableObject
 
     protected void RunOnUIThread(Action action)
     {
-        synchronizationContext.Send(_ => action(), null);
+        if (SynchronizationContext.Current != synchronizationContext)
+        {
+            synchronizationContext.Post(_ => action(), null);
+        }
     }
 }

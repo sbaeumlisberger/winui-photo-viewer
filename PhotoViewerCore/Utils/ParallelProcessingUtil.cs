@@ -38,7 +38,7 @@ namespace PhotoViewerCore.Utils
     public static class ParallelProcessingUtil
     {
 
-        public static async Task<ProcessingResult<T>> ProcessParallelAsync<T>(ICollection<T> elements, Func<T, Task> processElement, int numberOfThreads = 4, Progress? progress = null, ErrorMode errorHandling = ErrorMode.Log)
+        public static async Task<ProcessingResult<T>> ProcessParallelAsync<T>(IReadOnlyCollection<T> elements, Func<T, Task> processElement, int numberOfThreads = 4, Progress? progress = null, ErrorMode errorHandling = ErrorMode.Log)
         {
             progress?.Initialize(true, true, elements.Count);
 

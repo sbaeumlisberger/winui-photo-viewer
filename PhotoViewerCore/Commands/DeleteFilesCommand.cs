@@ -2,7 +2,6 @@
 using PhotoViewerApp.Messages;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
-using PhotoViewerApp.Utils;
 using PhotoViewerCore.Models;
 using PhotoViewerCore.Resources;
 using PhotoViewerCore.Services;
@@ -15,7 +14,7 @@ namespace PhotoViewerCore.Commands;
 
 public interface IDeleteFilesCommand : IAcceleratedCommand, ICommand { }
 
-public class DeleteFilesCommand : AsyncCommandBase<ICollection<IMediaFileInfo>>, IDeleteFilesCommand
+public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFileInfo>>, IDeleteFilesCommand
 {
     public VirtualKey AcceleratorKey => VirtualKey.Delete;
 
@@ -34,12 +33,12 @@ public class DeleteFilesCommand : AsyncCommandBase<ICollection<IMediaFileInfo>>,
         this.settings = settings;
     }
 
-    protected override bool CanExecute(ICollection<IMediaFileInfo> parameter)
+    protected override bool CanExecute(IReadOnlyCollection<IMediaFileInfo> parameter)
     {
         return parameter.Any();
     }
 
-    protected override async Task ExecuteAsync(ICollection<IMediaFileInfo> files)
+    protected override async Task ExecuteAsync(IReadOnlyCollection<IMediaFileInfo> files)
     {
         bool deleteLinkedFiles = false;
 

@@ -41,7 +41,7 @@ namespace PhotoViewerCore.Services
     {
         private const string BaseURL = "http://dev.virtualearth.net/REST/v1";
 
-        private string Culture => ApplicationLanguages.Languages.First().Substring(0, 2);
+        private string BingCultureCode => CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 
         public async Task<Location?> FindLocationAsync(Geopoint geopoint)
         {
@@ -52,8 +52,9 @@ namespace PhotoViewerCore.Services
             string point = geopoint.Position.Latitude.ToInvariantString()
                 + "," + geopoint.Position.Longitude.ToInvariantString();
             var uri = new Uri(BaseURL + "/Locations/" + point + ToQueryString(
-               ("c", Culture),
-               ("key", MapService.ServiceToken)
+                ("key", MapService.ServiceToken),
+                ("culture", BingCultureCode),
+                ("verboseplacenames", "true")                         
             ));
             var httpClient = new HttpClient();
             var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
@@ -71,10 +72,11 @@ namespace PhotoViewerCore.Services
                 return Array.Empty<Location>();
             }
             var uri = new Uri(BaseURL + "/Locations" + ToQueryString(
-                ("query", query),
-                ("c", Culture),
-                ("maxResults", maxResults.ToString()),
-                ("key", MapService.ServiceToken)
+                ("key", MapService.ServiceToken),
+                ("culture", BingCultureCode),
+                ("verboseplacenames", "true"),
+                ("query", query),                
+                ("maxResults", maxResults.ToString())                         
             ));
             var httpClient = new HttpClient();
             var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
@@ -93,12 +95,12 @@ namespace PhotoViewerCore.Services
 
         public async Task<Geopoint?> FindGeopointAsync(Address address)
         {
-            return (await FindLocationAsync(address.ToString()).ConfigureAwait(false))?.Point;
+            return (await FindLocationAsync(address.ToString()).ConfigureAwait(false))?.Geopoint;
         }
 
         public async Task<Geopoint?> FindGeopointAsync(string address)
         {
-            return (await FindLocationAsync(address).ConfigureAwait(false))?.Point;
+            return (await FindLocationAsync(address).ConfigureAwait(false))?.Geopoint;
         }
 
         private static async Task<List<Location>> ParseLocationsAsync(string response)
@@ -161,7 +163,7 @@ namespace PhotoViewerCore.Services
 
         private static async Task UpdateElevationDataAsync(List<Location> locations)
         {
-            var geopoints = locations.Select(location => location.Point!).ToList();
+            var geopoints = locations.Select(location => location.Geopoint!).ToList();
 
             double[] elevations = await FetchElevationDataAsync(geopoints).ConfigureAwait(false);
 
@@ -185,11 +187,11 @@ namespace PhotoViewerCore.Services
         {
             var locations = new List<Location>();
             var uri = new Uri(BaseURL + "/Elevation/List" + ToQueryString(
+                ("key", MapService.ServiceToken),
                 ("points", string.Join(",", geopoints.Select(geopoint =>
                     geopoint.Position.Latitude.ToInvariantString()
                     + "," + geopoint.Position.Longitude.ToInvariantString()))),
-                ("heights", "ellipsoid"),
-                ("key", MapService.ServiceToken)
+                ("heights", "ellipsoid")               
             ));
             var httpClient = new HttpClient();
             var reponseStream = await httpClient.GetStreamAsync(uri).ConfigureAwait(false);

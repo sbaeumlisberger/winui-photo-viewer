@@ -33,24 +33,17 @@ namespace PhotoViewerCore.ViewModels
         public bool IsAnyFileNotSupported => !AreAllFilesSupported;
 
         public MetadataTextboxModel TitleTextboxModel { get; }
-
         public LocationSectionModel LocationSectionModel { get; }
-
         public PeopleSectionModel PeopleSectionModel { get; }
-
         public KeywordsSectionModel KeywordsSectionModel { get; }
-
         public RatingSectionModel RatingSectionModel { get; }
-
         public MetadataTextboxModel AuthorTextboxModel { get; }
-
         public MetadataTextboxModel CopyrightTextboxModel { get; }
-
         public DateTakenSectionModel DateTakenSectionModel { get; }
 
         public IReadOnlyList<IMediaFileInfo> Files { get; set; } = Array.Empty<IMediaFileInfo>();
 
-        private IList<IBitmapFileInfo> supportedFiles = Array.Empty<IBitmapFileInfo>();
+        private IReadOnlyList<IBitmapFileInfo> supportedFiles = Array.Empty<IBitmapFileInfo>();
 
         private readonly IMetadataService metadataService;
 
@@ -63,12 +56,13 @@ namespace PhotoViewerCore.ViewModels
             IMetadataService metadataService,
             ILocationService locationService,
             IDialogService dialogService,
+            IClipboardService clipboardService,
             bool tagPeopleOnPhotoButtonVisible) : base(messenger)
         {
             this.metadataService = metadataService;
 
             TitleTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Title);
-            LocationSectionModel = new LocationSectionModel(locationService, dialogService);
+            LocationSectionModel = new LocationSectionModel(writeFilesRunner, metadataService, locationService, dialogService, clipboardService, messenger);
             PeopleSectionModel = new PeopleSectionModel(writeFilesRunner, messenger, metadataService, tagPeopleOnPhotoButtonVisible);
             KeywordsSectionModel = new KeywordsSectionModel(writeFilesRunner, messenger, metadataService);
             RatingSectionModel = new RatingSectionModel(writeFilesRunner, metadataService);
@@ -77,11 +71,19 @@ namespace PhotoViewerCore.ViewModels
             DateTakenSectionModel = new DateTakenSectionModel();
 
             Messenger.Register<ToggleMetataPanelMessage>(this, OnReceive);
+            Messenger.Register<MetadataModifiedMessage>(this, OnReceive);
         }
 
         private void OnReceive(ToggleMetataPanelMessage msg)
         {
             IsVisible = !IsVisible;
+        }
+
+        private void OnReceive(MetadataModifiedMessage msg)
+        {
+            LocationSectionModel.UpdateMetadataModified(msg.MetadataProperty);
+            PeopleSectionModel.UpdateMetadataModified(msg.MetadataProperty);
+            KeywordsSectionModel.UpdateMetadataModified(msg.MetadataProperty);
         }
 
         partial void OnFilesChanged()
@@ -95,33 +97,18 @@ namespace PhotoViewerCore.ViewModels
 
         private async Task Update(CancellationToken cancellationToken)
         {
-            if (AreAllFilesSupported)
-            {
-                var metadata = await Task.WhenAll(supportedFiles.Select(metadataService.GetMetadataAsync));
-                cancellationToken.ThrowIfCancellationRequested();
+            var metadata = await Task.WhenAll(supportedFiles.Select(metadataService.GetMetadataAsync));
+            cancellationToken.ThrowIfCancellationRequested();
 
-                TitleTextboxModel.Update(supportedFiles, metadata);
-                LocationSectionModel.UpdateAsync(metadata, cancellationToken);
-                PeopleSectionModel.Update(supportedFiles, metadata);
-                KeywordsSectionModel.Update(supportedFiles, metadata);
-                RatingSectionModel.Update(supportedFiles, metadata);
-                AuthorTextboxModel.Update(supportedFiles, metadata);
-                CopyrightTextboxModel.Update(supportedFiles, metadata);
-                DateTakenSectionModel.Update(metadata);
-            }
-            else
-            {
-                TitleTextboxModel.Clear();
-                LocationSectionModel.Clear();
-                PeopleSectionModel.Clear();
-                KeywordsSectionModel.Clear();
-                RatingSectionModel.Clear();
-                AuthorTextboxModel.Clear();
-                CopyrightTextboxModel.Clear();
-                DateTakenSectionModel.Clear();
-            }
+            TitleTextboxModel.Update(supportedFiles, metadata);
+            LocationSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+            PeopleSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+            KeywordsSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+            RatingSectionModel.Update((IList<IBitmapFileInfo>)supportedFiles, metadata);
+            AuthorTextboxModel.Update(supportedFiles, metadata);
+            CopyrightTextboxModel.Update(supportedFiles, metadata);
+            DateTakenSectionModel.Update(metadata);
         }
-
 
         [RelayCommand]
         private void Close()

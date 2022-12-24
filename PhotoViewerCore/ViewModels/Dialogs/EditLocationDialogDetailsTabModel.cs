@@ -1,14 +1,19 @@
-﻿using PhotoViewerApp.Utils;
+﻿using CommunityToolkit.Mvvm.Input;
+using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
 using PhotoViewerCore.Models;
+using PhotoViewerCore.Services;
+using PhotoViewerCore.Utils;
 using PostSharp.Patterns.Model;
+using System.ComponentModel;
+using System.Globalization;
 using Windows.Devices.Geolocation;
 
 namespace PhotoViewerCore.ViewModels;
 
 public partial class EditLocationDialogDetailsTabModel : ViewModelBase
 {
-    public event EventHandler<Location?>? LocationDetailsChanged;
+    public event EventHandler<Location?>? LocationChanged;
 
     public string Street { get; set; } = string.Empty;
 
@@ -28,34 +33,54 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
 
     public IList<AltitudeReferenceSystem> AvailableAltitudeReferenceSystems => Enum.GetValues<AltitudeReferenceSystem>();
 
+    [DependsOn(nameof(Latitude), nameof(Longitude))]
+    private bool CanCopyCoordinates => Latitude.Trim() != string.Empty && Longitude.Trim() != string.Empty;
+
+    private readonly IClipboardService clipboardService;
+
+    private Location? location;
+
     private bool isUpdating = false;
 
-    public EditLocationDialogDetailsTabModel() 
+    public EditLocationDialogDetailsTabModel(IClipboardService clipboardService)
     {
+        this.clipboardService = clipboardService;
         PropertyChanged += EditLocationDialogDetailsTabModel_PropertyChanged;
     }
 
-    private void EditLocationDialogDetailsTabModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void EditLocationDialogDetailsTabModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (!isUpdating && TryParseLocation(out var location))
         {
-            LocationDetailsChanged?.Invoke(this, location);
+            this.location = location;
+            LocationChanged?.Invoke(this, location);
         }
     }
 
     public void Update(Location? location)
     {
+        if (location == this.location)
+        {
+            return;
+        }
         isUpdating = true;
+        this.location = location;
         Street = location?.Address?.Street ?? string.Empty;
         City = location?.Address?.City ?? string.Empty;
         Region = location?.Address?.Region ?? string.Empty;
         Country = location?.Address?.Country ?? string.Empty;
-        Latitude = location?.Point?.Position.Latitude.ToString() ?? string.Empty;
-        Longitude = location?.Point?.Position.Longitude.ToString() ?? string.Empty;
-        Altitude = location?.Point?.Position.Altitude.ToString() ?? string.Empty;
-        AltitudeReferenceSystem = location?.Point?.AltitudeReferenceSystem ?? AltitudeReferenceSystem.Unspecified;
+        Latitude = location?.Geopoint?.Position.Latitude.ToInvariantString() ?? string.Empty;
+        Longitude = location?.Geopoint?.Position.Longitude.ToInvariantString() ?? string.Empty;
+        Altitude = location?.Geopoint?.Position.Altitude.ToString() ?? string.Empty;
+        AltitudeReferenceSystem = location?.Geopoint?.AltitudeReferenceSystem ?? AltitudeReferenceSystem.Unspecified;
         NotifyPropertyChangedServices.RaiseEventsImmediate(this);
         isUpdating = false;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanCopyCoordinates))]
+    public void CopyCoordinates()
+    {
+        clipboardService.CopyText(Latitude + ", " + Longitude);
     }
 
     public bool TryParseLocation(out Location? location)
@@ -80,23 +105,23 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
             {
                 geopoint = new Geopoint(new BasicGeoposition()
                 {
-                    Latitude = double.Parse(Latitude),
-                    Longitude = double.Parse(Longitude),
+                    Latitude = double.Parse(Latitude, CultureInfo.InvariantCulture),
+                    Longitude = double.Parse(Longitude, CultureInfo.InvariantCulture),
                     Altitude = !string.IsNullOrEmpty(Altitude) ? double.Parse(Altitude) : 0,
                 }, AltitudeReferenceSystem);
             }
 
-            if (address is not null && geopoint is not null)
+            if (address is not null || geopoint is not null)
             {
                 location = new Location(address, geopoint);
             }
             else
             {
                 location = null;
-            }         
+            }
             return true;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Log.Error("Failed to process input", ex); // TODO
             location = null;

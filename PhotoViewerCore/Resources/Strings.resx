@@ -118,9 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DeleteFilesErrorDialog_Message" xml:space="preserve">
-    <value>Die folgenden Dateien konnten nicht gelöscht werden:</value>
+    <value>The following files could not be deleted:</value>
   </data>
   <data name="DeleteFilesErrorDialog_Title" xml:space="preserve">
-    <value>Fehler beim Löschen</value>
+    <value>Could not delete files</value>
+  </data>
+  <data name="MetadataPanel_LocationPlaceholder" xml:space="preserve">
+    <value>No place taken specified</value>
+  </data>
+  <data name="MetadataPanel_LocationPlaceholderMultipleValues" xml:space="preserve">
+    <value>Different values</value>
   </data>
 </root>
