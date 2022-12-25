@@ -1,4 +1,5 @@
 ﻿using PhotoViewerCore.Models;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using Windows.Storage;
 
@@ -35,16 +36,20 @@ public class SettingsService : ISettingsService
 
     public async Task SaveSettingsAsync(ApplicationSettings settings)
     {
-        using var stream = File.OpenWrite(SettingsFilePath);
+        using var stream = File.Open(SettingsFilePath, FileMode.Create);
         await JsonSerializer.SerializeAsync(stream, settings);
     }
 
     public async Task ExportSettingsAsync(IStorageFile file)
     {
         var settings = await LoadSettingsAsync();
-        using var stream = File.OpenWrite(file.Path);
-        var options = new JsonSerializerOptions() { WriteIndented = true };
-        await JsonSerializer.SerializeAsync(stream, settings, options);
+        using var stream = File.Open(file.Path, FileMode.Create);
+        var jsonOptions = new JsonSerializerOptions() 
+        { 
+            WriteIndented = true, 
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping 
+        };
+        await JsonSerializer.SerializeAsync(stream, settings, jsonOptions);
     }
 
     public async Task<ApplicationSettings> ImportSettingsAsync(IStorageFile file)

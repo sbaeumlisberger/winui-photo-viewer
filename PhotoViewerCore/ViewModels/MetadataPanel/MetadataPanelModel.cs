@@ -51,24 +51,26 @@ namespace PhotoViewerCore.ViewModels
 
         private readonly SequentialTaskRunner writeFilesRunner = new SequentialTaskRunner();
 
-        public MetadataPanelModel(
+        internal MetadataPanelModel(
             IMessenger messenger,
             IMetadataService metadataService,
             ILocationService locationService,
             IDialogService dialogService,
             IClipboardService clipboardService,
+            ISuggestionsService peopleSuggestionsService,
+            ISuggestionsService keywordSuggestionsService,
             bool tagPeopleOnPhotoButtonVisible) : base(messenger)
         {
             this.metadataService = metadataService;
 
             TitleTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Title);
             LocationSectionModel = new LocationSectionModel(writeFilesRunner, metadataService, locationService, dialogService, clipboardService, messenger);
-            PeopleSectionModel = new PeopleSectionModel(writeFilesRunner, messenger, metadataService, tagPeopleOnPhotoButtonVisible);
-            KeywordsSectionModel = new KeywordsSectionModel(writeFilesRunner, messenger, metadataService);
+            PeopleSectionModel = new PeopleSectionModel(writeFilesRunner, messenger, metadataService, peopleSuggestionsService, tagPeopleOnPhotoButtonVisible);
+            KeywordsSectionModel = new KeywordsSectionModel(writeFilesRunner, messenger, metadataService, keywordSuggestionsService);
             RatingSectionModel = new RatingSectionModel(writeFilesRunner, metadataService);
             AuthorTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Author);
             CopyrightTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Copyright);
-            DateTakenSectionModel = new DateTakenSectionModel();
+            DateTakenSectionModel = new DateTakenSectionModel(writeFilesRunner);
 
             Messenger.Register<ToggleMetataPanelMessage>(this, OnReceive);
             Messenger.Register<MetadataModifiedMessage>(this, OnReceive);
@@ -88,7 +90,7 @@ namespace PhotoViewerCore.ViewModels
             RatingSectionModel.UpdateMetadataModified(msg.MetadataProperty);
             AuthorTextboxModel.UpdateMetadataModified(msg.MetadataProperty);
             CopyrightTextboxModel.UpdateMetadataModified(msg.MetadataProperty);
-            // TODO DateTakenSectionModel.UpdateMetadataModified(msg.MetadataProperty);
+            DateTakenSectionModel.UpdateMetadataModified(msg.MetadataProperty);
         }
 
         partial void OnFilesChanged()
@@ -112,7 +114,7 @@ namespace PhotoViewerCore.ViewModels
             RatingSectionModel.UpdateFilesChanged(supportedFiles, metadata);
             AuthorTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
             CopyrightTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
-            DateTakenSectionModel.Update(metadata);
+            DateTakenSectionModel.UpdateFilesChanged(supportedFiles, metadata);
         }
 
         [RelayCommand]

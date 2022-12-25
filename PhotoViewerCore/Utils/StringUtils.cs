@@ -15,4 +15,9 @@ public static class StringUtils
     {
         return d.ToString(CultureInfo.InvariantCulture);
     }
+
+    public static string StripEnd(this string s, string stripString)
+    {
+        return s.EndsWith(stripString) ? s.Substring(0, s.Length - stripString.Length) : s;
+    }
 }

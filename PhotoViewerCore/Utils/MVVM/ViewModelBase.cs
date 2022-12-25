@@ -1,11 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewerCore.Messages;
-using PostSharp.Patterns.Model;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using PhotoViewerCore.Utils;
 
 namespace PhotoViewerApp.Utils;
 
-[NotifyPropertyChanged(ExcludeExplicitProperties = true)]
 public class ViewModelBase : ObservableObject
 {
     protected virtual void __EnableAutoNotifyCanExecuteChanged() { }

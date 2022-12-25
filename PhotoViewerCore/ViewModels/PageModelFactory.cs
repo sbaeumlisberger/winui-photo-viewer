@@ -27,14 +27,26 @@ public class PageModelFactory
     public static FlipViewPageModel CreateFlipViewPageModel(IDialogService dialogService)
     {
         var settings = ApplicationSettingsProvider.GetSettings();
-        var deleteFilesCommand = new DeleteFilesCommand(messenger, deleteMediaService, dialogService, settingService, settings);
+        var deleteFilesCommand = new DeleteFilesCommand(
+            messenger, 
+            deleteMediaService,
+            dialogService,
+            settingService, 
+            settings);
         return new FlipViewPageModel(
             session,
             messenger,
             () => new MediaFlipViewModel(messenger, dialogService, mediaFilesLoaderService,
                 (mediaFile) =>
                 {
-                    var mediaFileContextFlyoutModel = new MediaFileContextMenuModel(messenger, metadataService, personalizationService, rotateBitmapService, dialogService, clipboardService, deleteFilesCommand);
+                    var mediaFileContextFlyoutModel = new MediaFileContextMenuModel(
+                        messenger, 
+                        metadataService, 
+                        personalizationService,
+                        rotateBitmapService, 
+                        dialogService, 
+                        clipboardService, 
+                        deleteFilesCommand);
                     return mediaFile switch
                     {
                         IBitmapFileInfo => new BitmapFlipViewItemModel(mediaFile, mediaFileContextFlyoutModel, messenger, imageLoaderService),
@@ -45,24 +57,64 @@ public class PageModelFactory
                 },
                 settings),
             () => new DetailsBarModel(messenger, metadataService),
-            (flipViewPageModel) => new FlipViewPageCommandBarModel(session, messenger, dialogService,
-                mediaFilesLoaderService, rotateBitmapService, flipViewPageModel, deleteMediaService, settings, deleteFilesCommand),
+            (flipViewPageModel) => new FlipViewPageCommandBarModel(
+                session, 
+                messenger,
+                dialogService,
+                mediaFilesLoaderService, 
+                rotateBitmapService,
+                flipViewPageModel, 
+                deleteMediaService, 
+                settings, 
+                deleteFilesCommand),
             displayRequestService,
-            showTagPeopleOnPhotoButton => new MetadataPanelModel(messenger, metadataService, locationService, dialogService, clipboardService, showTagPeopleOnPhotoButton));
+            showTagPeopleOnPhotoButton => new MetadataPanelModel(
+                messenger,
+                metadataService,
+                locationService,
+                dialogService, 
+                clipboardService,
+                new SuggestionsService("people"),
+                new SuggestionsService("keywords"),
+                showTagPeopleOnPhotoButton));
     }
 
     public static OverviewPageModel CreateOverviewPageModel(IDialogService dialogService)
     {
         var settings = ApplicationSettingsProvider.GetSettings();
-        var deleteFilesCommand = new DeleteFilesCommand(messenger, deleteMediaService, dialogService, settingService, settings);
-        var mediaFileContextFlyoutModel = new MediaFileContextMenuModel(messenger, metadataService, personalizationService, rotateBitmapService, dialogService, clipboardService, deleteFilesCommand);
+        var deleteFilesCommand = new DeleteFilesCommand(
+            messenger, 
+            deleteMediaService,
+            dialogService, 
+            settingService,
+            settings);
+        var mediaFileContextFlyoutModel = new MediaFileContextMenuModel(
+            messenger, 
+            metadataService, 
+            personalizationService,
+            rotateBitmapService, 
+            dialogService,
+            clipboardService,
+            deleteFilesCommand);
         return new OverviewPageModel(
             session,
             messenger,
             dialogService,
-            new OverviewPageCommandBarModel(messenger, dialogService, mediaFilesLoaderService, deleteFilesCommand, settings),
+            new OverviewPageCommandBarModel(
+                messenger, dialogService, 
+                mediaFilesLoaderService, 
+                deleteFilesCommand, 
+                settings),
             mediaFileContextFlyoutModel,
-            showTagPeopleOnPhotoButton => new MetadataPanelModel(messenger, metadataService, locationService, dialogService, clipboardService, showTagPeopleOnPhotoButton));
+            showTagPeopleOnPhotoButton => new MetadataPanelModel(
+                messenger, 
+                metadataService,
+                locationService, 
+                dialogService, 
+                clipboardService,
+                new SuggestionsService("people"),
+                new SuggestionsService("keywords"),           
+                showTagPeopleOnPhotoButton));
     }
 
     public static SettingsPageModel CreateSettingsPageModel(IDialogService dialogService)

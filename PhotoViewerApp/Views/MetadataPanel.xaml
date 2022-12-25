@@ -127,9 +127,12 @@
                         </Grid.ColumnDefinitions>
                         <AutoSuggestBox                               
                             Text="{x:Bind ViewModel.PeopleSectionModel.AutoSuggestBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            ItemsSource="{x:Bind ViewModel.KeywordsSectionModel.Suggestions, Mode=OneWay}"
-                            PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddPersonPlaceholder}"                               
-                            utils:EnterKeyExtension.Command="{x:Bind ViewModel.KeywordsSectionModel.AddKeywordCommand}">
+                            ItemsSource="{x:Bind ViewModel.PeopleSectionModel.Suggestions, Mode=OneWay}"
+                            PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddPersonPlaceholder}"       
+                            GotFocus="{x:Bind ViewModel.PeopleSectionModel.OnAutoSuggestBoxFocused}"
+                            utils:AutoSuggestBoxExtension.ShowSuggestionListWhenEmpty="True"
+                            utils:AutoSuggestBoxExtension.AllowPopupToOverflow="True"
+                            utils:EnterKeyExtension.Command="{x:Bind ViewModel.PeopleSectionModel.AddPersonCommand}">
                         </AutoSuggestBox>
                         <Button
                             Grid.Column="1" Margin="4,0,0,0" Width="32" Height="32" Padding="0"
@@ -175,7 +178,10 @@
                         <AutoSuggestBox
                             Text="{x:Bind ViewModel.KeywordsSectionModel.AutoSuggestBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             ItemsSource="{x:Bind ViewModel.KeywordsSectionModel.Suggestions, Mode=OneWay}"
-                            PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddKeywordPlaceholder}"                            
+                            PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddKeywordPlaceholder}"   
+                            GotFocus="{x:Bind ViewModel.KeywordsSectionModel.OnAutoSuggestBoxFocused}"
+                            utils:AutoSuggestBoxExtension.ShowSuggestionListWhenEmpty="True"
+                            utils:AutoSuggestBoxExtension.AllowPopupToOverflow="True"
                             utils:EnterKeyExtension.Command="{x:Bind ViewModel.KeywordsSectionModel.AddKeywordCommand}">
                         </AutoSuggestBox>
                         <Button

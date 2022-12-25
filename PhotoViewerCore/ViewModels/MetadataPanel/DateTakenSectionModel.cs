@@ -8,10 +8,11 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tocronx.SimpleAsync;
 
 namespace PhotoViewerCore.ViewModels;
 
-public partial class DateTakenSectionModel : ViewModelBase
+public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
 {
     public bool IsNotPresent { get; private set; }
 
@@ -25,7 +26,22 @@ public partial class DateTakenSectionModel : ViewModelBase
 
     public string RangeText { get; private set; } = "";
 
-    public void Update(IList<MetadataView> metadata)
+    public DateTakenSectionModel(SequentialTaskRunner writeFilesRunner) : base(writeFilesRunner, null!) {}
+
+    protected override void OnFilesChanged(IList<MetadataView> metadata)
+    {
+        Update(metadata);
+    }
+
+    protected override void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty)
+    {
+        if (metadataProperty == MetadataProperties.DateTaken)
+        {
+            Update(metadata);
+        }
+    }
+
+    private void Update(IList<MetadataView> metadata)
     {
         var values = metadata.Select(m => m.Get(MetadataProperties.DateTaken)).ToList();
         
@@ -56,16 +72,6 @@ public partial class DateTakenSectionModel : ViewModelBase
         }
     }
 
-    public void Clear()
-    {
-        IsNotPresent = true;
-        IsSingleValue = false;
-        IsRange = false;
-        Date = null;
-        Time = null;
-        RangeText = "";
-    }
-
     [RelayCommand]
     private void AddDateTaken() 
     {
@@ -80,6 +86,7 @@ public partial class DateTakenSectionModel : ViewModelBase
 
     private string FormatDate(DateTimeOffset date)
     {
-        return date.ToString("g", CultureInfo.InstalledUICulture);
+        return date.ToString("g");
     }
+
 }

@@ -8,7 +8,8 @@ namespace PhotoViewerApp.Utils;
 public static class EnterKeyExtension
 {
 
-    public static readonly DependencyProperty CommandProperty = DependencyProperty.RegisterAttached("Command", typeof(ICommand), typeof(EnterKeyExtension), new PropertyMetadata(null, OnCommandChanged));
+    public static readonly DependencyProperty CommandProperty = DependencyPropertyHelper.RegisterAttached(
+        typeof(EnterKeyExtension), nameof(CommandProperty), typeof(ICommand), null, OnCommandChanged);
 
     public static ICommand GetCommand(DependencyObject obj)
     {

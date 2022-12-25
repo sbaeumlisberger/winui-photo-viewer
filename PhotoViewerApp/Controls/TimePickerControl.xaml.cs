@@ -10,7 +10,7 @@ namespace PhotoViewerApp.Controls;
 public sealed partial class TimePickerControl : UserControl
 {
 
-    public static readonly DependencyProperty TimeProperty = DependencyProperty<TimePickerControl>.Register(nameof(Time), typeof(TimeSpan?), null, (obj, args) => { obj.TimePickerControl_TimeChanged(); });
+    public static readonly DependencyProperty TimeProperty = DependencyPropertyHelper<TimePickerControl>.Register(nameof(Time), typeof(TimeSpan?), null, (obj, args) => { obj.TimePickerControl_TimeChanged(); });
 
     public event TypedEventHandler<TimePickerControl, EventArgs>? TimeChanged;
 

@@ -2,17 +2,16 @@
 
 namespace PhotoViewerCore.Models;
 
-[ObservableObject]
-public partial class ApplicationSettings
+public partial class ApplicationSettings : ObservableObject
 {
-    [ObservableProperty] private bool showDeleteAnimation = true;
-    [ObservableProperty] private bool autoOpenMetadataPanel = false;
-    [ObservableProperty] private bool autoOpenDetailsBar = false;
-    [ObservableProperty] private TimeSpan diashowTime = TimeSpan.FromSeconds(3);
+    public bool ShowDeleteAnimation { get; set; } = true;
+    public bool AutoOpenMetadataPanel { get; set; } = false;
+    public bool AutoOpenDetailsBar { get; set; } = false;
+    public TimeSpan DiashowTime { get; set; } = TimeSpan.FromSeconds(3);
 
-    [ObservableProperty] private bool linkRawFiles = true;
-    [ObservableProperty] private string rawFilesFolderName = "RAWs";
-    [ObservableProperty] private DeleteLinkedFilesOption deleteLinkedFilesOption = DeleteLinkedFilesOption.Ask;
+    public bool LinkRawFiles { get; set; } = true;
+    public string RawFilesFolderName { get; set; } = "RAWs";
+    public DeleteLinkedFilesOption DeleteLinkedFilesOption { get; set; } = DeleteLinkedFilesOption.Ask;
 
-    [ObservableProperty] private bool includeVideos = true;
+    public bool IncludeVideos { get; set; } = true;
 }

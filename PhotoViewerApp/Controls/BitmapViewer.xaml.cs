@@ -14,11 +14,11 @@ namespace PhotoViewerApp.Controls;
 
 public sealed partial class BitmapViewer : UserControl
 {
-    public static readonly DependencyProperty BitmapImageProperty = DependencyProperty<BitmapViewer>.Register(nameof(BitmapImage), typeof(IBitmapImage));
+    public static readonly DependencyProperty BitmapImageProperty = DependencyPropertyHelper<BitmapViewer>.Register(nameof(BitmapImage), typeof(IBitmapImage));
 
-    public static readonly DependencyProperty IsScaleUpEnabeldProperty = DependencyProperty<BitmapViewer>.Register(nameof(IsScaleUpEnabeld), typeof(bool), false);
+    public static readonly DependencyProperty IsScaleUpEnabeldProperty = DependencyPropertyHelper<BitmapViewer>.Register(nameof(IsScaleUpEnabeld), typeof(bool), false);
 
-    public static new readonly DependencyProperty ContentProperty = DependencyProperty<BitmapViewer>.Register(nameof(Content), typeof(object));
+    public static new readonly DependencyProperty ContentProperty = DependencyPropertyHelper<BitmapViewer>.Register(nameof(Content), typeof(object));
 
     public IBitmapImage? BitmapImage { get => (IBitmapImage?)GetValue(BitmapImageProperty); set => SetValue(BitmapImageProperty, value); }
 

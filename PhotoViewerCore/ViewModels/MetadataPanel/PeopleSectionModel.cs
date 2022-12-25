@@ -6,6 +6,7 @@ using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerCore.Messages;
+using PhotoViewerCore.Services;
 using PhotoViewerCore.Utils;
 using System.Collections.Concurrent;
 using Tocronx.SimpleAsync;
@@ -19,7 +20,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 
     public string AutoSuggestBoxText { get; set; } = string.Empty;
 
-    public IList<string> Suggestions { get; } = Array.Empty<string>();
+    public IReadOnlyList<string> Suggestions { get; private set; } = Array.Empty<string>();
 
     public bool IsTagPeopleOnPhotoButtonVisible { get; }
 
@@ -29,13 +30,17 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 
     private readonly IMetadataService metadataService;
 
-    public PeopleSectionModel(
+    private readonly ISuggestionsService suggestionsService;
+
+    internal PeopleSectionModel(
         SequentialTaskRunner writeFilesRunner, 
         IMessenger messenger, 
-        IMetadataService metadataService, 
+        IMetadataService metadataService,
+        ISuggestionsService suggestionsService,
         bool tagPeopleOnPhotoButtonVisible) : base(writeFilesRunner, messenger)
     {
         this.metadataService = metadataService;
+        this.suggestionsService = suggestionsService;
         IsTagPeopleOnPhotoButtonVisible = tagPeopleOnPhotoButtonVisible;
 
         if (IsTagPeopleOnPhotoButtonVisible)
@@ -65,6 +70,11 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
         UpdateSuggestions();
     }
 
+    public void OnAutoSuggestBoxFocused()
+    {
+        UpdateSuggestions();
+    }
+
     private List<ItemWithCountModel> CreateListItemModels(IList<MetadataView> metadata) 
     {
         return metadata
@@ -79,11 +89,11 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
     {
         if (AutoSuggestBoxText == string.Empty)
         {
-            // TODO show recent
+            Suggestions = suggestionsService.GetRecentSuggestions();
         }
         else
         {
-            // TODO find matches
+            Suggestions = suggestionsService.FindMatches(AutoSuggestBoxText);
         }
     }
 
@@ -113,6 +123,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
             if (result.IsSuccessful)
             {
                 AutoSuggestBoxText = string.Empty;
+                await suggestionsService.AddSuggestionAsync(personName);
             }
             else
             {
