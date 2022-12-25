@@ -81,9 +81,14 @@ namespace PhotoViewerCore.ViewModels
 
         private void OnReceive(MetadataModifiedMessage msg)
         {
+            TitleTextboxModel.UpdateMetadataModified(msg.MetadataProperty);
             LocationSectionModel.UpdateMetadataModified(msg.MetadataProperty);
             PeopleSectionModel.UpdateMetadataModified(msg.MetadataProperty);
             KeywordsSectionModel.UpdateMetadataModified(msg.MetadataProperty);
+            RatingSectionModel.UpdateMetadataModified(msg.MetadataProperty);
+            AuthorTextboxModel.UpdateMetadataModified(msg.MetadataProperty);
+            CopyrightTextboxModel.UpdateMetadataModified(msg.MetadataProperty);
+            // TODO DateTakenSectionModel.UpdateMetadataModified(msg.MetadataProperty);
         }
 
         partial void OnFilesChanged()
@@ -100,13 +105,13 @@ namespace PhotoViewerCore.ViewModels
             var metadata = await Task.WhenAll(supportedFiles.Select(metadataService.GetMetadataAsync));
             cancellationToken.ThrowIfCancellationRequested();
 
-            TitleTextboxModel.Update(supportedFiles, metadata);
+            TitleTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
             LocationSectionModel.UpdateFilesChanged(supportedFiles, metadata);
             PeopleSectionModel.UpdateFilesChanged(supportedFiles, metadata);
             KeywordsSectionModel.UpdateFilesChanged(supportedFiles, metadata);
-            RatingSectionModel.Update((IList<IBitmapFileInfo>)supportedFiles, metadata);
-            AuthorTextboxModel.Update(supportedFiles, metadata);
-            CopyrightTextboxModel.Update(supportedFiles, metadata);
+            RatingSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+            AuthorTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
+            CopyrightTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
             DateTakenSectionModel.Update(metadata);
         }
 

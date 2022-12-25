@@ -16,9 +16,6 @@
     Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
 
     <UserControl.Resources>
-        <!-- TODO show add title etc. / use view model -->
-        <converters:BoolToObjectConverter x:Key="PlaceholderConverter" TrueValue="Multiple values" FalseValue=""/>
-
         <Style x:Key="HeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
             <Setter Property="Margin"  Value="0,16,0,4" />
         </Style>
@@ -87,8 +84,8 @@
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_TitleHeader}" Style="{StaticResource HeaderStyle}"/>
                     <TextBox 
-                        Text="{x:Bind ViewModel.TitleTextboxModel.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        PlaceholderText="{x:Bind ViewModel.TitleTextboxModel.HasMultipleValues, Mode=OneWay, Converter={StaticResource PlaceholderConverter}}"
+                        Text="{x:Bind ViewModel.TitleTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.TitleTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_TitlePlaceholder), Mode=OneWay}"
                         utils:EnterKeyExtension.Command="{x:Bind ViewModel.TitleTextboxModel.SignalTypingCompletedCommand}"/>
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.TitleTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
@@ -198,16 +195,16 @@
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_AuthorsHeader}" Style="{StaticResource HeaderStyle}"/>
                     <TextBox
-                        Text="{x:Bind ViewModel.AuthorTextboxModel.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        PlaceholderText="{x:Bind ViewModel.AuthorTextboxModel.HasMultipleValues, Mode=OneWay, Converter={StaticResource PlaceholderConverter}}"
+                        Text="{x:Bind ViewModel.AuthorTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.TitleTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_AuthorPlaceholder), Mode=OneWay}"     
                         utils:EnterKeyExtension.Command="{x:Bind ViewModel.AuthorTextboxModel.SignalTypingCompletedCommand}"/>
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.AuthorTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_CopyrightHeader}" Style="{StaticResource HeaderStyle}"/>
                     <TextBox
-                        Text="{x:Bind ViewModel.CopyrightTextboxModel.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        PlaceholderText="{x:Bind ViewModel.CopyrightTextboxModel.HasMultipleValues, Mode=OneWay, Converter={StaticResource PlaceholderConverter}}"
-                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.CopyrightTextboxModel.SignalTypingCompletedCommand}"/>
+                        Text="{x:Bind ViewModel.CopyrightTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.CopyrightTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_CopyrightPlaceholder), Mode=OneWay}"
+                       utils:EnterKeyExtension.Command="{x:Bind ViewModel.CopyrightTextboxModel.SignalTypingCompletedCommand}"/>
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.CopyrightTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_DateTakenHeader}" Style="{StaticResource HeaderStyle}"/>                                       

@@ -556,6 +556,15 @@ namespace PhotoViewerApp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add author.
+        /// </summary>
+        internal static string MetadataPanel_AuthorPlaceholder {
+            get {
+                return ResourceManager.GetString("MetadataPanel_AuthorPlaceholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Authors.
         /// </summary>
         internal static string MetadataPanel_AuthorsHeader {
@@ -583,11 +592,29 @@ namespace PhotoViewerApp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add copyright.
+        /// </summary>
+        internal static string MetadataPanel_CopyrightPlaceholder {
+            get {
+                return ResourceManager.GetString("MetadataPanel_CopyrightPlaceholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Date Taken.
         /// </summary>
         internal static string MetadataPanel_DateTakenHeader {
             get {
                 return ResourceManager.GetString("MetadataPanel_DateTakenHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Different Values.
+        /// </summary>
+        internal static string MetadataPanel_DifferentValuesPlaceholder {
+            get {
+                return ResourceManager.GetString("MetadataPanel_DifferentValuesPlaceholder", resourceCulture);
             }
         }
         
@@ -705,6 +732,15 @@ namespace PhotoViewerApp.Resources {
         internal static string MetadataPanel_TitleHeader {
             get {
                 return ResourceManager.GetString("MetadataPanel_TitleHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add title.
+        /// </summary>
+        internal static string MetadataPanel_TitlePlaceholder {
+            get {
+                return ResourceManager.GetString("MetadataPanel_TitlePlaceholder", resourceCulture);
             }
         }
         

@@ -1,77 +1,75 @@
 ﻿using MetadataAPI;
 using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.Utils.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PhotoViewerCore.Utils;
 using Tocronx.SimpleAsync;
-using Windows.Storage;
 
 namespace PhotoViewerCore.ViewModels
 {
-    public partial class RatingSectionModel : ViewModelBase
+    public partial class RatingSectionModel : MetadataPanelSectionModelBase
     {
-        public int Rating { get; set; }
-
-        private readonly SequentialTaskRunner writeFilesRunner;
+        public int Rating
+        {
+            get => rating;
+            set
+            {
+                if (SetProperty(ref rating, value))
+                {
+                    OnRatingChangedExternal();
+                }
+            }
+        }
+        private int rating = 0;
 
         private readonly IMetadataService metadataService;
 
-        private IList<IBitmapFileInfo> files = Array.Empty<IBitmapFileInfo>();
-
         public RatingSectionModel(SequentialTaskRunner writeFilesRunner, IMetadataService metadataService)
+            : base(writeFilesRunner, null!)
         {
-            this.writeFilesRunner = writeFilesRunner;
             this.metadataService = metadataService;
         }
 
-        public void Update(IList<IBitmapFileInfo> files, IList<MetadataView> metadata)
+        protected override void OnFilesChanged(IList<MetadataView> metadata)
         {
-            this.files = files;
+            Update(metadata);
+        }
+
+        protected override void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty)
+        {
+            if (metadataProperty == MetadataProperties.Rating)
+            {
+                Update(metadata);
+            }
+        }
+
+        public void Update(IList<MetadataView> metadata)
+        {           
             var values = metadata.Select(m => m.Get(MetadataProperties.Rating)).ToList();
             bool allEqual = values.All(x => x == values.FirstOrDefault());
-            Rating = allEqual ? values.FirstOrDefault() : 0;
+            rating = allEqual ? values.FirstOrDefault() : 0;
+            OnPropertyChanged(nameof(Rating));
         }
 
-        public void Clear()
+        private async void OnRatingChangedExternal()
         {
-            files = Array.Empty<IBitmapFileInfo>();
-            Rating = 0;
+            await WriteFilesAsync(Rating);            
         }
 
-        async partial void OnRatingChanged()
+        private async Task WriteFilesAsync(int rating) 
         {
-            if (!this.files.Any())
+            await EnqueueWriteFiles(async (files) =>
             {
-                return;
-            }
-
-            try
-            {
-                await WriteFilesAsync(Rating, files.ToList());
-            }
-            catch (Exception e)
-            {
-                //  TODO handle errors and revert rating
-                Log.Error("WriteFiles failed", e);
-            }
-        }
-
-        private async Task WriteFilesAsync(int rating, IList<IBitmapFileInfo> files) 
-        {
-            await writeFilesRunner.Enqueue(async () =>
-            {
-                // TODO prallelize
-                foreach (var file in files)
-                {
-                    if (!Equals(rating, await metadataService.GetMetadataAsync(file, MetadataProperties.Rating)))
+                var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
+                {                
+                    if (!Equals(rating, await metadataService.GetMetadataAsync(file, MetadataProperties.Rating).ConfigureAwait(false)))
                     {
-                        await metadataService.WriteMetadataAsync(file, MetadataProperties.Rating, rating);
+                        await metadataService.WriteMetadataAsync(file, MetadataProperties.Rating, rating).ConfigureAwait(false);
                     }
+                });
+
+                if (result.HasFailures) 
+                { 
+                    // TODO show error
                 }
             });
         }

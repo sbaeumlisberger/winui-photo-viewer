@@ -282,6 +282,9 @@
   <data name="MetadataPanel_AnyFileNotSupported" xml:space="preserve">
     <value>The selected file does not support metadata</value>
   </data>
+  <data name="MetadataPanel_AuthorPlaceholder" xml:space="preserve">
+    <value>Add author</value>
+  </data>
   <data name="MetadataPanel_AuthorsHeader" xml:space="preserve">
     <value>Authors</value>
   </data>
@@ -291,8 +294,14 @@
   <data name="MetadataPanel_CopyrightHeader" xml:space="preserve">
     <value>Copyright</value>
   </data>
+  <data name="MetadataPanel_CopyrightPlaceholder" xml:space="preserve">
+    <value>Add copyright</value>
+  </data>
   <data name="MetadataPanel_DateTakenHeader" xml:space="preserve">
     <value>Date Taken</value>
+  </data>
+  <data name="MetadataPanel_DifferentValuesPlaceholder" xml:space="preserve">
+    <value>Different Values</value>
   </data>
   <data name="MetadataPanel_EditLocationButton" xml:space="preserve">
     <value>Edit</value>
@@ -332,6 +341,9 @@
   </data>
   <data name="MetadataPanel_TitleHeader" xml:space="preserve">
     <value>Title</value>
+  </data>
+  <data name="MetadataPanel_TitlePlaceholder" xml:space="preserve">
+    <value>Add title</value>
   </data>
   <data name="NoItemsMessage" xml:space="preserve">
     <value>Nothing to show</value>

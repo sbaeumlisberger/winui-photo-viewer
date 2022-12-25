@@ -4,33 +4,32 @@ using PhotoViewerApp.Models;
 using PhotoViewerApp.Services;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.Utils.Logging;
+using PhotoViewerCore.Utils;
 using Tocronx.SimpleAsync;
 using Windows.Foundation.Collections;
 
 namespace PhotoViewerCore.ViewModels;
 
-public partial class MetadataTextboxModel : ViewModelBase
+public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 {
     private static readonly TimeSpan WaitTime = TimeSpan.FromSeconds(1);
 
-    public string Value
+    public string Text
     {
-        get => _Value;
+        get => text;
         set
         {
-            if (SetProperty(ref _Value, value))
+            if (SetProperty(ref text, value))
             {
-                OnValueChangedExternal();
+                OnTextChangedExternal();
             }
         }
     }
-    private string _Value = string.Empty;
+    private string text = string.Empty;
 
     public bool HasMultipleValues { get; private set; }
 
     public bool IsWriting { get; private set; }
-
-    private readonly SequentialTaskRunner writeFilesRunner;
 
     private readonly IMetadataService metadataService;
 
@@ -38,28 +37,41 @@ public partial class MetadataTextboxModel : ViewModelBase
 
     private readonly System.Timers.Timer timer = new System.Timers.Timer(WaitTime.TotalMilliseconds) { AutoReset = false };
 
-    private IReadOnlyList<IBitmapFileInfo> files = Array.Empty<IBitmapFileInfo>();
-
-    public MetadataTextboxModel(SequentialTaskRunner writeFilesRunner, IMetadataService metadataService, IMetadataProperty<string> metadataProperty)
+    public MetadataTextboxModel(
+        SequentialTaskRunner writeFilesRunner, 
+        IMetadataService metadataService, 
+        IMetadataProperty<string> metadataProperty) : base(writeFilesRunner, null!)
     {
-        this.writeFilesRunner = writeFilesRunner;
         this.metadataService = metadataService;
         this.metadataProperty = metadataProperty;
         timer.Elapsed += (_, _) => _ = WriteValueAsync();
     }
 
-    public MetadataTextboxModel(SequentialTaskRunner writeFilesRunner, IMetadataService metadataService, IMetadataProperty<string[]> metadataProperty)
+    public MetadataTextboxModel(
+        SequentialTaskRunner writeFilesRunner, 
+        IMetadataService metadataService, 
+        IMetadataProperty<string[]> metadataProperty) : base(writeFilesRunner, null!)
     {
-        this.writeFilesRunner = writeFilesRunner;
         this.metadataService = metadataService;
         this.metadataProperty = metadataProperty;
         timer.Elapsed += (_, _) => _ = WriteValueAsync();
     }
 
-    public void Update(IReadOnlyList<IBitmapFileInfo> files, IList<MetadataView> metadata)
+    protected override void OnFilesChanged(IList<MetadataView> metadata)
     {
-        this.files = files;
+        Update(metadata);
+    }
 
+    protected override void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty)
+    {
+        if (metadataProperty == this.metadataProperty)
+        {
+            Update(metadata);
+        }
+    }
+
+    public void Update(IList<MetadataView> metadata)
+    {
         IList<string> values;
 
         if (metadataProperty is IMetadataProperty<string> stringProperty)
@@ -70,35 +82,29 @@ public partial class MetadataTextboxModel : ViewModelBase
         {
             values = metadata.Select(m => string.Join("; ", m.Get(stringArrayProperty))).ToList();
         }
-        else 
+        else
         {
             throw new Exception("metadataProperty is invalid");
         }
 
+        _ = EnsureValueWrittenAsync();
+
         if (values.Any())
         {
-            _ = EnsureValueWrittenAsync();
             HasMultipleValues = values.Any(v => !Equals(v, values.First()));
-            _Value = HasMultipleValues ? string.Empty : values.First();
-            OnPropertyChanged(nameof(Value));
+            text = HasMultipleValues ? string.Empty : values.First();
+            OnPropertyChanged(nameof(Text));
         }
         else
-        {
-            Clear();
+        { 
+            HasMultipleValues = false;
+            text = string.Empty;
+            OnPropertyChanged(nameof(Text));
         }
-    }
-
-    public void Clear()
-    {
-        _ = EnsureValueWrittenAsync();
-        files = Array.Empty<IBitmapFileInfo>();
-        HasMultipleValues = false;
-        _Value = string.Empty;
-        OnPropertyChanged(nameof(Value));
     }
 
     /// <summary>
-    /// e.g. Enter key pressed
+    /// e.g. enter key pressed
     /// </summary>
     [RelayCommand]
     private async void SignalTypingCompleted()
@@ -111,7 +117,7 @@ public partial class MetadataTextboxModel : ViewModelBase
         }
     }
 
-    private void OnValueChangedExternal()
+    private void OnTextChangedExternal()
     {
         timer.Stop();
         timer.Start();
@@ -123,30 +129,22 @@ public partial class MetadataTextboxModel : ViewModelBase
         if (timer.Enabled)
         {
             timer.Stop();
-            await WriteFilesAsync(Value, files.ToList());
+            await WriteFilesAsync(Text);
         }
     }
 
     private async Task WriteValueAsync()
     {
         RunOnUIThread(() => IsWriting = true);
-        try
-        {
-            await WriteFilesAsync(Value, files.ToList());
-        }
-        catch(Exception e) 
-        {
-            // TODO handle erros
-            Log.Error("WriteFiles failed", e);
-        }
+        await WriteFilesAsync(Text).ConfigureAwait(false);
         RunOnUIThread(() => IsWriting = false);
     }
 
-    private async Task WriteFilesAsync(string value, IList<IBitmapFileInfo> files)
+    private async Task WriteFilesAsync(string value)
     {
-        await writeFilesRunner.Enqueue(async () =>
+        await EnqueueWriteFiles(async (files) =>
         {
-            foreach (var file in files)
+            var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
             {
                 if (metadataProperty is IMetadataProperty<string> stringProperty)
                 {
@@ -167,9 +165,12 @@ public partial class MetadataTextboxModel : ViewModelBase
                 {
                     throw new Exception("metadataProperty is invalid");
                 }
+            });
+
+            if(result.HasFailures)
+            {
+                // TODO show error
             }
         });
-        // TODO prallelize, handle errors
     }
-
 }

@@ -76,8 +76,12 @@ public class DependsOnGenerator : IIncrementalGenerator
 
                 partial class {{classSymbol.Name}} 
                 {
+                    {{Utils.Indent(1, GenerateFields(dependencies))}}
+
                     protected override void __EnableDependsOn()
                     {
+                        {{Utils.Indent(2, GenerateInitializationStatements(dependencies))}}
+
                         PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
                         {
                             switch(e.PropertyName)
@@ -92,6 +96,17 @@ public class DependsOnGenerator : IIncrementalGenerator
         }
         return null;
     }
+    private static IEnumerable<string> GenerateInitializationStatements(List<Dependency> dependencies)
+    {
+        return dependencies.GroupBy(dependency => dependency.PropertyName)
+            .Select(group => $"_{group.Key} = {group.Key};"); ;
+    }
+
+    private static IEnumerable<string> GenerateFields(List<Dependency> dependencies)
+    {
+        return dependencies.GroupBy(dependency => dependency.PropertyName)
+            .Select(group => $"private object? _{group.Key};"); ;
+    }
 
     private static IEnumerable<string> GenerateCaseStatements(List<Dependency> dependencies)
     {
@@ -104,8 +119,18 @@ public class DependsOnGenerator : IIncrementalGenerator
 
     private static IEnumerable<string> GenerateOnPropertyChangedInvocations(IEnumerable<Dependency> dependencies) 
     {
-        return dependencies.Select(dependency =>
-            $"OnPropertyChanged(new PropertyChangedEventArgs(nameof({dependency.PropertyName})));");
+        return dependencies.Select(dependency => 
+        {
+            string propertyName = dependency.PropertyName;
+            string fieldName = "_" + dependency.PropertyName;
+            return $$"""
+                if(!Equals({{propertyName}}, {{fieldName}}))
+                {
+                    {{fieldName}} = {{propertyName}};
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof({{propertyName}})));
+                }              
+                """;
+        });
     }
 
 }
