@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Source>C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\Assets\Icon-Color.png</Source>
+    <SmallTileSource>C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\Assets\Icon-Color.png</SmallTileSource>
+    <MediumTileSource>C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\Assets\Icon-Color.png</MediumTileSource>
+    <WideTileSource>C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\Assets\Icon-Color.png</WideTileSource>
+    <LargeTileSource>C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\Assets\Icon-Color.png</LargeTileSource>
+    <AppIconSource>C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\Assets\Icon-Color.png</AppIconSource>
+    <SplashScreenSource>C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\Assets\Icon-Color.png</SplashScreenSource>
+    <PackageLogoSource>C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\Assets\Icon-Color.png</PackageLogoSource>
+    <ActiveDebugProfile>PhotoViewerApp (Package)</ActiveDebugProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="App.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Controls\RatingControl.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <Page Update="Views\PeopleTagTool.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\SelectionRect.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <None Update="Controls\TimePickerControl.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Views\Dialogs\PropertiesDialog.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <Page Update="Views\Dialogs\EditLocationDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Dialogs\DeleteLinkedFilesDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\MediaFileContextMenu.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\OverviewPageCommandBar.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\ItemWithCount.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\MetadataPanel.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\BitmapViewer.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SettingsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\VideoFlipViewItem.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\VectorGraphicFlipViewItem.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\MediaFlipView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\BitmapFlipViewItem.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\OverviewPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\FlipViewPageCommandBar.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\DetailsBar.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\FlipViewPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <None Update="Views\MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+</Project>

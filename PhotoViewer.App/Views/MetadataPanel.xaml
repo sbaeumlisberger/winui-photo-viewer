@@ -1,0 +1,249 @@
+﻿<UserControl
+    x:Class="PhotoViewerApp.Views.MetadataPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewerApp.Views"       
+    xmlns:viewModels="using:PhotoViewerCore.ViewModels"
+    xmlns:converters="using:PhotoViewerApp.Converters"
+    xmlns:controls="using:PhotoViewerApp.Controls"   
+    xmlns:utils="using:PhotoViewerApp.Utils"
+    xmlns:res="using:PhotoViewer.App.Resources"    
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Name="uc"
+    Width="320"
+    Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
+
+    <UserControl.Resources>
+        <Style x:Key="HeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+            <Setter Property="Margin"  Value="0,16,0,4" />
+        </Style>
+
+        <Style x:Key="LocationTextBoxStyle" TargetType="TextBox">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Height" Value="28"/>
+        </Style>
+        
+        <Style x:Key="ItemWithCountListView" TargetType="ListView">
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Padding" Value="4"/>
+                        <Setter Property="MinHeight" Value="0"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="SelectionMode" Value="None"/>
+            <Setter Property="MaxHeight"  Value="300"/>
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <StackPanel/>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <RelativePanel Padding="16,16,8,16">
+            <TextBlock
+                Style="{StaticResource TitleTextBlockStyle}"
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                Text="{x:Bind res:Strings.MetadataPanel_Title}" />
+            <Button             
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                Padding="4"
+                Command="{x:Bind ViewModel.CloseCommand}"  
+                ToolTipService.ToolTip="{x:Bind res:Strings.MetadataPanel_CloseButtonToolTip}">
+                <SymbolIcon Symbol="ClosePane" />
+            </Button>
+        </RelativePanel>
+
+        <ScrollViewer Grid.Row="1" Grid.Column="0" VerticalScrollBarVisibility="Auto">
+
+            <StackPanel VerticalAlignment="Top" Padding="16,0,16,16">
+                
+                <!-- show "select any file" message for overview page if no files selected -->
+                <StackPanel Visibility="{x:Bind ViewModel.IsAnyFileNotSupported, Mode=OneWay}">                 
+                    <TextBlock Margin="0,16,0,0" Text="{x:Bind res:Strings.MetadataPanel_AnyFileNotSupported}"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind ViewModel.AreAllFilesSupported, Mode=OneWay}">
+
+                    <TextBlock Text="{x:Bind res:Strings.MetadataPanel_TitleHeader}" Style="{StaticResource HeaderStyle}"/>
+                    <TextBox 
+                        Text="{x:Bind ViewModel.TitleTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.TitleTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_TitlePlaceholder), Mode=OneWay}"
+                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.TitleTextboxModel.SignalTypingCompletedCommand}"/>
+                    <ProgressBar IsIndeterminate="{x:Bind ViewModel.TitleTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
+
+                    <TextBlock Text="{x:Bind res:Strings.MetadataPanel_LocationHeader}" Style="{StaticResource HeaderStyle}"/>
+                    <TextBox Style="{StaticResource LocationTextBoxStyle}" 
+                             PlaceholderText="{x:Bind ViewModel.LocationSectionModel.PlaceholderText, Mode=OneWay}"
+                             Text="{x:Bind ViewModel.LocationSectionModel.DisplayText, Mode=OneWay}"/>
+                    <StackPanel Margin="0,4,0,0" Spacing="4" Orientation="Horizontal">
+                        <Button 
+                            Content="{x:Bind res:Strings.MetadataPanel_ShowLocationOnMapButton}"
+                            Command="{x:Bind ViewModel.LocationSectionModel.ShowLocationOnMapCommand}"/>
+                        <SplitButton 
+                            Content="{x:Bind res:Strings.MetadataPanel_EditLocationButton}"
+                            Command="{x:Bind ViewModel.LocationSectionModel.EditLocationCommand}">
+                            <SplitButton.Flyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="{x:Bind res:Strings.MetadataPanel_ImportFromGpxFileButton}"/>
+                                </MenuFlyout>
+                            </SplitButton.Flyout>
+                        </SplitButton>
+                    </StackPanel>
+
+                    <TextBlock Text="{x:Bind res:Strings.MetadataPanel_PeopleHeader}" Style="{StaticResource HeaderStyle}"/>
+                    <ListView 
+                        ItemsSource="{x:Bind ViewModel.PeopleSectionModel.People, Mode=OneWay}" 
+                        Style="{StaticResource ItemWithCountListView}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="viewModels:ItemWithCountModel">
+                                <local:ItemWithCount>
+                                </local:ItemWithCount>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <Grid Margin="0,4,0,0">
+                        <!--ColumnDefinitions="*,Auto"-->
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <AutoSuggestBox       
+                            Text="{x:Bind ViewModel.PeopleSectionModel.AutoSuggestBoxText, Mode=TwoWay}"                          
+                            TextChanged="PeopleAutoSuggestBox_TextChanged"
+                            GotFocus="PeopleAutoSuggestBox_GotFocus"
+                            PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddPersonPlaceholder}"
+                            utils:AutoSuggestBoxExtension.AllowPopupToOverflow="True"
+                            utils:EnterKeyExtension.Command="{x:Bind ViewModel.PeopleSectionModel.AddPersonCommand}">
+                        </AutoSuggestBox>
+                        <Button
+                            Grid.Column="1" Margin="4,0,0,0" Width="32" Height="32" Padding="0"
+                            Command="{x:Bind ViewModel.PeopleSectionModel.AddPersonCommand}">
+                            <SymbolIcon Symbol="Add" />
+                        </Button>
+                        <ProgressRing
+                            Grid.Column="1" Width="32" Height="32"
+                            IsActive="{x:Bind ViewModel.PeopleSectionModel.AddPersonCommand.IsRunning, Mode=OneWay}" />
+                    </Grid>
+                    <ToggleButton 
+                        Margin="0,4,0,0"
+                        Content="{x:Bind res:Strings.MetadataPanel_TagPeopleOnPhoto}"
+                        Visibility="{x:Bind ViewModel.PeopleSectionModel.IsTagPeopleOnPhotoButtonVisible}"
+                        Command="{x:Bind ViewModel.PeopleSectionModel.ToggleTagPeopleOnPhotoCommand}"                       
+                        IsChecked="{x:Bind ViewModel.PeopleSectionModel.IsTagPeopleOnPhotoButtonChecked, Mode=OneWay}"/>
+
+                    <TextBlock Text="{x:Bind res:Strings.MetadataPanel_KeywordsHeader}" Style="{StaticResource HeaderStyle}"/>
+                    <ListView 
+                        ItemsSource="{x:Bind ViewModel.KeywordsSectionModel.Keywords, Mode=OneWay}" 
+                        Style="{StaticResource ItemWithCountListView}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="viewModels:ItemWithCountModel">
+                                <local:ItemWithCount>
+                                    <local:ItemWithCount.ContextFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem
+                                                Text="{x:Bind res:Strings.MetadataPanel_RemoveKeyword}"
+                                                Command="{Binding ViewModel.KeywordsSectionModel.RemoveKeywordCommand, Mode=OneTime, ElementName=uc}"
+                                                CommandParameter="{x:Bind Value}"/>
+                                        </MenuFlyout>
+                                    </local:ItemWithCount.ContextFlyout>
+                                </local:ItemWithCount>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <Grid Margin="0,4,0,0">
+                        <!--ColumnDefinitions="*,Auto"-->
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <AutoSuggestBox
+                            Text="{x:Bind ViewModel.KeywordsSectionModel.AutoSuggestBoxText, Mode=TwoWay}"                            
+                            TextChanged="KeywordAutoSuggestBox_TextChanged"
+                            GotFocus="KeywordAutoSuggestBox_GotFocus"
+                            PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddKeywordPlaceholder}"   
+                            utils:AutoSuggestBoxExtension.AllowPopupToOverflow="True"
+                            utils:EnterKeyExtension.Command="{x:Bind ViewModel.KeywordsSectionModel.AddKeywordCommand}">
+                        </AutoSuggestBox>
+                        <Button
+                            Grid.Column="1" Margin="4,0,0,0" Width="32" Height="32" Padding="0"
+                            Command="{x:Bind ViewModel.KeywordsSectionModel.AddKeywordCommand}">
+                            <SymbolIcon Symbol="Add" />
+                        </Button>
+                        <ProgressRing
+                            Grid.Column="1" Width="32" Height="32"
+                            IsActive="{x:Bind ViewModel.KeywordsSectionModel.AddKeywordCommand.IsRunning, Mode=OneWay}" />
+                    </Grid>
+
+                    <TextBlock Text="{x:Bind res:Strings.MetadataPanel_RatingHeader}" Style="{StaticResource HeaderStyle}"/>
+                    <controls:RatingControl 
+                        HorizontalAlignment="Left"
+                        Rating="{x:Bind ViewModel.RatingSectionModel.Rating, Mode=TwoWay}"/>
+
+                    <TextBlock Text="{x:Bind res:Strings.MetadataPanel_AuthorsHeader}" Style="{StaticResource HeaderStyle}"/>
+                    <TextBox
+                        Text="{x:Bind ViewModel.AuthorTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.TitleTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_AuthorPlaceholder), Mode=OneWay}"     
+                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.AuthorTextboxModel.SignalTypingCompletedCommand}"/>
+                    <ProgressBar IsIndeterminate="{x:Bind ViewModel.AuthorTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
+
+                    <TextBlock Text="{x:Bind res:Strings.MetadataPanel_CopyrightHeader}" Style="{StaticResource HeaderStyle}"/>
+                    <TextBox
+                        Text="{x:Bind ViewModel.CopyrightTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.CopyrightTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_CopyrightPlaceholder), Mode=OneWay}"
+                       utils:EnterKeyExtension.Command="{x:Bind ViewModel.CopyrightTextboxModel.SignalTypingCompletedCommand}"/>
+                    <ProgressBar IsIndeterminate="{x:Bind ViewModel.CopyrightTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
+
+                    <TextBlock Text="{x:Bind res:Strings.MetadataPanel_DateTakenHeader}" Style="{StaticResource HeaderStyle}"/>                                       
+                    <StackPanel
+                        Spacing="4"
+                        Visibility="{x:Bind ViewModel.DateTakenSectionModel.IsSingleValue, Mode=OneWay}">
+                        <DatePicker
+                            SelectedDate="{x:Bind ViewModel.DateTakenSectionModel.Date, Mode=OneWay}"/>
+                        <controls:TimePickerControl
+                            Time="{x:Bind ViewModel.DateTakenSectionModel.Time, Mode=OneWay}"/>
+                    </StackPanel>
+                    <StackPanel 
+                        Spacing="4"
+                        Visibility="{x:Bind ViewModel.DateTakenSectionModel.IsNotPresent, Mode=OneWay}">
+                        <TextBlock                      
+                            Text="{x:Bind res:Strings.MetadataPanel_NoDateTakenPresent}"/>
+                        <Button
+                            Content="{x:Bind res:Strings.MetadataPanel_AddDateTakenButton}"
+                            Command="{x:Bind ViewModel.DateTakenSectionModel.AddDateTakenCommand}"/>
+                    </StackPanel>
+                    <StackPanel
+                        Spacing="4"
+                        Visibility="{x:Bind ViewModel.DateTakenSectionModel.IsRange, Mode=OneWay}">
+                        <TextBlock
+                            Text="{x:Bind ViewModel.DateTakenSectionModel.RangeText, Mode=OneWay}"/>
+                        <Button
+                            Content="{x:Bind res:Strings.MetadataPanel_ShiftDateTakenButton}"
+                            Command="{x:Bind ViewModel.DateTakenSectionModel.ShiftDateTakenCommand}"/>                   
+                    </StackPanel>
+                </StackPanel>
+                
+            </StackPanel>
+            
+        </ScrollViewer>
+
+    </Grid>
+
+</UserControl>

@@ -1,0 +1,127 @@
+<UserControl
+    x:Class="PhotoViewerApp.Views.PeopleTagTool"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewerApp.Views"
+    xmlns:converters="using:PhotoViewerApp.Converters"
+    xmlns:viewModels="using:PhotoViewer.Core.ViewModels"    
+    xmlns:foundation="using:Windows.Foundation"
+    xmlns:res="using:PhotoViewer.App.Resources"
+    xmlns:controls="using:PhotoViewerApp.Controls"
+    xmlns:utils="using:PhotoViewerApp.Utils"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Name="control">
+
+    <UserControl.Resources>
+        <ScaleTransform
+            x:Key="UIScaleTransform" 
+            ScaleX="{x:Bind ViewModel.UIScaleFactor, Mode=OneWay}"
+            ScaleY="{x:Bind ViewModel.UIScaleFactor, Mode=OneWay}"/>
+        
+        <converters:BoolToObjectConverter x:Name="BoolToOpacityConverter">
+            <converters:BoolToObjectConverter.TrueValue>
+                <x:Double>1</x:Double>
+            </converters:BoolToObjectConverter.TrueValue>
+            <converters:BoolToObjectConverter.FalseValue>
+                <x:Double>0</x:Double>
+            </converters:BoolToObjectConverter.FalseValue>
+        </converters:BoolToObjectConverter>
+    </UserControl.Resources>
+
+    <Grid>
+        <ItemsControl ItemsSource="{x:Bind ViewModel.TaggedPeople, Mode=OneWay}" IsTabStop="False">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:PeopleTagViewModel">
+                    <StackPanel
+                        Opacity="{x:Bind IsVisible, Converter={StaticResource BoolToOpacityConverter}, Mode=OneWay}"
+                        PointerEntered="PeopleTag_PointerEntered"
+                        PointerExited="PeopleTag_PointerExited"
+                        Loaded="PeopleTagUI_Loaded"
+                        Background="Transparent">
+                        <Rectangle Stroke="White" StrokeThickness="1"/>
+                        <!--{x:Bind Scale(1, ViewModel.UIScaleFactor), Mode=OneWay}-->
+                        <TextBlock
+                            HorizontalAlignment="Center" 
+                            RenderTransformOrigin="0.5,0"
+                            RenderTransform="{StaticResource UIScaleTransform}"
+                            Text="{x:Bind Name}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas SizeChanged="PeopleTagsCanvas_SizeChanged"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+        <ItemsControl ItemsSource="{x:Bind ViewModel.SuggestedFaces, Mode=OneWay}" IsTabStop="False">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="foundation:Rect">
+                    <Rectangle
+                        Loaded="SuggestedFaceUI_Loaded"
+                        Stroke="Black" 
+                        StrokeThickness="1"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas SizeChanged="SuggestedFacesCanvas_SizeChanged"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+        <Canvas 
+            x:Name="selectionCanvas"
+            Visibility="{x:Bind ViewModel.IsActive, Mode=OneWay}"
+            Background="Transparent" 
+            Loaded="SelectionCanvas_Loaded"
+            PointerPressed="SelectionCanvas_PointerPressed" 
+            PointerReleased="SelectionCanvas_PointerReleased">
+
+            <controls:SelectionRect 
+                x:Name="selectionRect"
+                Visibility="Collapsed"
+                UIScaleFactor="{x:Bind ViewModel.UIScaleFactor, Mode=OneWay}"
+                InteractionStarted="SelectionRect_InteractionStarted"
+                InteractionEnded="SelectionRect_InteractionEnded"/>
+
+            <StackPanel                           
+                x:Name="autoSuggestBoxContainer"                
+                Visibility="Collapsed"
+                RenderTransformOrigin="0.5,0"
+                RenderTransform="{StaticResource UIScaleTransform}">
+                <StackPanel
+                    Margin="0,8,0,8"     
+                    Orientation="Horizontal"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    CornerRadius="4">
+                    <AutoSuggestBox
+                        x:Name="autoSuggestBox"                                         
+                        MinWidth="160"                        
+                        CornerRadius="4,0,0,4"
+                        Text="{x:Bind ViewModel.AutoSuggestBoxText, Mode=TwoWay}"                          
+                        TextChanged="AutoSuggestBox_TextChanged"
+                        GettingFocus="AutoSuggestBox_GettingFocus"
+                        PlaceholderText="{x:Bind res:Strings.TagPeopleTool_NamePlaceholder}"
+                        utils:AutoSuggestBoxExtension.AllowPopupToOverflow="True"
+                        utils:AutoSuggestBoxExtension.SuggestionListDirection="Down"                        
+                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.AddPersonCommand}"
+                        PreviewKeyDown="AutoSuggestBox_PreviewKeyDown"
+                        QueryIcon="Accept"/>
+                    <Button CornerRadius="0">
+                        <SymbolIcon Symbol="Cancel"/>
+                    </Button>
+                    <Button CornerRadius="0,4,4,0" Command="{x:Bind ViewModel.AddPersonCommand}">
+                        <SymbolIcon Symbol="Accept" />
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+
+        </Canvas>
+
+    </Grid>
+
+</UserControl>
