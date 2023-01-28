@@ -75,7 +75,7 @@ internal static class ControlUtil
         control.LoadComponent();
     }
 
-    public static void RegisterPropertyChangedCallbackSafely(this Control control, DependencyProperty property, DependencyPropertyChangedCallback propertyChangedCallback)
+    public static long RegisterPropertyChangedCallbackSafely(this Control control, DependencyProperty property, DependencyPropertyChangedCallback propertyChangedCallback)
     {
         long token = control.RegisterPropertyChangedCallback(property, propertyChangedCallback);
 
@@ -85,6 +85,8 @@ internal static class ControlUtil
             control.UnregisterPropertyChangedCallback(property, token);
         }
         control.Unloaded += UserControl_Unloaded;
+
+        return token;
     }
 
 }

@@ -106,7 +106,7 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There exists already a people tag with the name &quot;{}&quot;.
+        ///   Looks up a localized string similar to There already exists a people tag with the name &quot;{0}&quot;.
         /// </summary>
         public static string PeopleTagAlreadyExistingDialog_Message {
             get {

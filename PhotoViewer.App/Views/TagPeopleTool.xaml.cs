@@ -19,13 +19,13 @@ using Windows.System;
 using Windows.UI.Core;
 
 namespace PhotoViewerApp.Views;
-public sealed partial class PeopleTagTool : UserControl, IMVVMControl<TagPeopleToolModel>
+public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleToolModel>
 {
     private const double DefaultFaceBoxSize = 100;
 
     private TagPeopleToolModel ViewModel => (TagPeopleToolModel)DataContext;
 
-    public PeopleTagTool()
+    public TagPeopleTool()
     {
         this.InitializeMVVM(ConnectToViewModel, DisconnectFromViewModel);
     }
@@ -248,4 +248,11 @@ public sealed partial class PeopleTagTool : UserControl, IMVVMControl<TagPeopleT
         }
     }
 
+    private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        if(args.ChosenSuggestion is null) // user pressed enter or clicked query button
+        {
+            ViewModel.AddPersonCommand.Execute(null);
+        }
+    }
 }

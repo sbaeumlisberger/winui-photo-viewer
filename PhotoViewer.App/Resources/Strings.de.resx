@@ -273,6 +273,9 @@
   <data name="MediaFlipView_ExitDiashow" xml:space="preserve">
     <value>Beenden</value>
   </data>
+  <data name="MessageDialog_PrimaryButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
   <data name="MetadataPanel_AddDateTakenButton" xml:space="preserve">
     <value>Aufnahmedatum hinzufügen</value>
   </data>
@@ -284,6 +287,9 @@
   </data>
   <data name="MetadataPanel_AnyFileNotSupported" xml:space="preserve">
     <value>Die ausgwählte Datei unterstützt keine Metadaten</value>
+  </data>
+  <data name="MetadataPanel_ApplyKeywordToAll" xml:space="preserve">
+    <value>Auf alle anwenden</value>
   </data>
   <data name="MetadataPanel_AuthorPlaceholder" xml:space="preserve">
     <value>Autor hinzufügen</value>
@@ -329,6 +335,9 @@
   </data>
   <data name="MetadataPanel_RemoveKeyword" xml:space="preserve">
     <value>Schlagwort entfernen</value>
+  </data>
+  <data name="MetadataPanel_RemovePeopleTag" xml:space="preserve">
+    <value>Personenmarkierung entfernen</value>
   </data>
   <data name="MetadataPanel_ShiftDateTakenButton" xml:space="preserve">
     <value>Aufnahmedaten verschieben</value>

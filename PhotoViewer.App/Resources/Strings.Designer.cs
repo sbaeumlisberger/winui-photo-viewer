@@ -529,6 +529,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        internal static string MessageDialog_PrimaryButtonText {
+            get {
+                return ResourceManager.GetString("MessageDialog_PrimaryButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add date taken.
         /// </summary>
         internal static string MetadataPanel_AddDateTakenButton {
@@ -561,6 +570,15 @@ namespace PhotoViewer.App.Resources {
         internal static string MetadataPanel_AnyFileNotSupported {
             get {
                 return ResourceManager.GetString("MetadataPanel_AnyFileNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply to all.
+        /// </summary>
+        internal static string MetadataPanel_ApplyKeywordToAll {
+            get {
+                return ResourceManager.GetString("MetadataPanel_ApplyKeywordToAll", resourceCulture);
             }
         }
         
@@ -696,6 +714,15 @@ namespace PhotoViewer.App.Resources {
         internal static string MetadataPanel_RemoveKeyword {
             get {
                 return ResourceManager.GetString("MetadataPanel_RemoveKeyword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove people tag.
+        /// </summary>
+        internal static string MetadataPanel_RemovePeopleTag {
+            get {
+                return ResourceManager.GetString("MetadataPanel_RemovePeopleTag", resourceCulture);
             }
         }
         

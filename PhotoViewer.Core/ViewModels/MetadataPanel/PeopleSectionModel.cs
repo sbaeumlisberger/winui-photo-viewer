@@ -120,6 +120,33 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
     }
 
     [RelayCommand]
+    private async Task RemovePeopleTagAsync(string personName)
+    {
+        await EnqueueWriteFiles(async (files) =>
+        {
+            var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
+
+            var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
+            {
+                var peopleTags = await metadataService.GetMetadataAsync(file, MetadataProperties.People).ConfigureAwait(false);
+
+                if (peopleTags.RemoveFirst(peopleTag => peopleTag.Name == personName))
+                {      
+                    await metadataService.WriteMetadataAsync(file, MetadataProperties.People, peopleTags).ConfigureAwait(false);
+                    modifiedFiles.Add(file);
+                }
+            });
+
+            Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.People));
+
+            if (result.HasFailures)
+            {
+                // TODO show error message
+            }
+        });
+    }
+
+        [RelayCommand]
     private void ToggleTagPeopleOnPhoto()
     {
         Messenger.Send(new TagPeopleToolActiveChangedMeesage(!IsTagPeopleOnPhotoButtonChecked));

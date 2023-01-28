@@ -133,7 +133,7 @@
     <value>Different values</value>
   </data>
   <data name="PeopleTagAlreadyExistingDialog_Message" xml:space="preserve">
-    <value>There exists already a people tag with the name "{}"</value>
+    <value>There already exists a people tag with the name "{0}"</value>
   </data>
   <data name="PeopleTagAlreadyExistingDialog_Title" xml:space="preserve">
     <value>Person already tagged</value>

@@ -25,8 +25,8 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
     private readonly ISuggestionsService suggestionsService;
 
     internal KeywordsSectionModel(
-        SequentialTaskRunner writeFilesRunner, 
-        IMessenger messenger, 
+        SequentialTaskRunner writeFilesRunner,
+        IMessenger messenger,
         IMetadataService metadataService,
         ISuggestionsService suggestionsService) : base(writeFilesRunner, messenger)
     {
@@ -48,9 +48,9 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
         }
     }
 
-    public IReadOnlyList<string> FindSuggestions(string query)  
+    public IReadOnlyList<string> FindSuggestions(string query)
     {
-        return suggestionsService.FindMatches(query);       
+        return suggestionsService.FindMatches(query);
     }
 
     public IReadOnlyList<string> GetRecentSuggestions()
@@ -123,7 +123,35 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
             });
 
             Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.Keywords));
-            
+
+            if (result.HasFailures)
+            {
+                // TODO show error message
+            }
+        });
+    }
+
+    [RelayCommand]
+    private async Task ApplyKeywordToAllAsync(string keyword)
+    {
+        await EnqueueWriteFiles(async (files) =>
+        {
+            var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
+
+            var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
+            {
+                var keywordsOfFile = await metadataService.GetMetadataAsync(file, MetadataProperties.Keywords).ConfigureAwait(false);
+
+                if (!keywordsOfFile.Contains(keyword))
+                {
+                    var keywords = keywordsOfFile.Append(keyword).ToArray();
+                    await metadataService.WriteMetadataAsync(file, MetadataProperties.Keywords, keywords).ConfigureAwait(false);
+                    modifiedFiles.Add(file);
+                }
+            });
+
+            Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.Keywords));
+
             if (result.HasFailures)
             {
                 // TODO show error message

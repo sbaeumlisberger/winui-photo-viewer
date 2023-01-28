@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using PhotoViewer.App.Resources;
 using PhotoViewerApp.Utils;
 using PhotoViewerApp.ViewModels;
 using PhotoViewerCore.ViewModels;
@@ -104,7 +105,8 @@ public class DialogService : IDialogService
         var dialog = new ContentDialog()
         {
             Title = messageDialogModel.Title,
-            Content = messageDialogModel.Message
+            Content = messageDialogModel.Message,
+            PrimaryButtonText = Strings.MessageDialog_PrimaryButtonText,
         };
         dialog.XamlRoot = window.Content.XamlRoot;
         await dialog.ShowAsync();

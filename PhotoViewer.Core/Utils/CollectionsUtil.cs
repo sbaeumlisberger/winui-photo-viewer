@@ -15,6 +15,20 @@ public static class CollectionsUtil
         }
     }
 
+    public static bool RemoveFirst<T>(this IList<T> list, Predicate<T> predicate)
+    {
+        for (int i = list.Count - 1; i >= 0; i--)
+        {
+            if (predicate(list[i]))
+            {
+                list.RemoveAt(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
     {
         foreach (var element in enumerable)

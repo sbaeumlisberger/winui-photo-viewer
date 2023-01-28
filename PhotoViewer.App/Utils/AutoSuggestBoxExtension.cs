@@ -20,28 +20,31 @@ public enum SuggestionListDirection
 
 public static class AutoSuggestBoxExtension
 {
-    public static readonly DependencyProperty AllowPopupToOverflowProperty = DependencyPropertyHelper.RegisterAttached(
-       typeof(AutoSuggestBoxExtension), nameof(AllowPopupToOverflowProperty), false, OnAllowPopupToOverflowChanged);
+    public static readonly DependencyProperty IsSuggestionListOverflowEnabledProperty = DependencyPropertyHelper.RegisterAttached(
+       typeof(AutoSuggestBoxExtension), nameof(IsSuggestionListOverflowEnabledProperty), false, OnIsSuggestionListOverflowEnabledChanged);
 
     public static readonly DependencyProperty SuggestionListDirectionProperty = DependencyPropertyHelper.RegisterAttached(
        typeof(AutoSuggestBoxExtension), nameof(SuggestionListDirectionProperty), SuggestionListDirection.Auto, OnSuggestionListDirectionChanged);
 
-    private static readonly DependencyProperty VerticalOffsetCallbackTokenProperty = DependencyPropertyHelper.RegisterAttached<long?>
-        (typeof(AutoSuggestBoxExtension), nameof(VerticalOffsetCallbackTokenProperty), null);
+    private static readonly DependencyProperty IsSuggestionListOpenChangedCallbackTokenProperty = DependencyPropertyHelper.RegisterAttached<long?>
+    (typeof(AutoSuggestBoxExtension), nameof(IsSuggestionListOpenChangedCallbackTokenProperty), null);
 
-    public static bool GetAllowPopupToOverflow(DependencyObject obj) => (bool)obj.GetValue(AllowPopupToOverflowProperty);
-    public static void SetAllowPopupToOverflow(DependencyObject obj, bool value) => obj.SetValue(AllowPopupToOverflowProperty, value);
+    private static readonly DependencyProperty VerticalOffsetChangedCallbackTokenProperty = DependencyPropertyHelper.RegisterAttached<long?>
+        (typeof(AutoSuggestBoxExtension), nameof(VerticalOffsetChangedCallbackTokenProperty), null);
+
+    public static bool GetIsSuggestionListOverflowEnabled(DependencyObject obj) => (bool)obj.GetValue(IsSuggestionListOverflowEnabledProperty);
+    public static void SetIsSuggestionListOverflowEnabled(DependencyObject obj, bool value) => obj.SetValue(IsSuggestionListOverflowEnabledProperty, value);
 
     public static SuggestionListDirection GetSuggestionListDirection(DependencyObject obj) => (SuggestionListDirection)obj.GetValue(SuggestionListDirectionProperty);
     public static void SetSuggestionListDirection(DependencyObject obj, SuggestionListDirection value) => obj.SetValue(SuggestionListDirectionProperty, value);
 
-    private static void OnAllowPopupToOverflowChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+    private static void OnIsSuggestionListOverflowEnabledChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
     {
-        WhenLoaded((AutoSuggestBox)obj, autoSuggestBox =>
+        WhenSuggestionListOpened((AutoSuggestBox)obj, autoSuggestBox =>
         {
             var suggestionsContainer = FindSuggestionsContainer(autoSuggestBox);
 
-            if (GetAllowPopupToOverflow(autoSuggestBox))
+            if (GetIsSuggestionListOverflowEnabled(autoSuggestBox))
             {
                 suggestionsContainer.SizeChanged += SuggestionsContainer_SizeChanged;
             }
@@ -54,20 +57,20 @@ public static class AutoSuggestBoxExtension
 
     private static void OnSuggestionListDirectionChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
     {
-        WhenLoaded((AutoSuggestBox)obj, autoSuggestBox =>
+        WhenSuggestionListOpened((AutoSuggestBox)obj, autoSuggestBox =>
         {
             var suggestionListDirection = GetSuggestionListDirection(autoSuggestBox);
 
             var popup = FindSuggestionsPopup(autoSuggestBox);
 
-            if (autoSuggestBox.GetValue(VerticalOffsetCallbackTokenProperty) is long verticalOffsetCallbackToken)
+            if (autoSuggestBox.GetValue(VerticalOffsetChangedCallbackTokenProperty) is long verticalOffsetCallbackToken)
             {
                 popup.UnregisterPropertyChangedCallback(Popup.VerticalOffsetProperty, verticalOffsetCallbackToken);
             }
 
             if (suggestionListDirection == SuggestionListDirection.Down)
             {
-                autoSuggestBox.SetValue(VerticalOffsetCallbackTokenProperty, popup.RegisterPropertyChangedCallback(Popup.VerticalOffsetProperty, (obj, dp) =>
+                autoSuggestBox.SetValue(VerticalOffsetChangedCallbackTokenProperty, popup.RegisterPropertyChangedCallback(Popup.VerticalOffsetProperty, (obj, dp) =>
                 {
                     ListView listView = (ListView)((Border)popup.Child).Child;
 
@@ -84,7 +87,7 @@ public static class AutoSuggestBoxExtension
             }
             else if (suggestionListDirection == SuggestionListDirection.Up)
             {
-                autoSuggestBox.SetValue(VerticalOffsetCallbackTokenProperty, popup.RegisterPropertyChangedCallback(Popup.VerticalOffsetProperty, (obj, dp) =>
+                autoSuggestBox.SetValue(VerticalOffsetChangedCallbackTokenProperty, popup.RegisterPropertyChangedCallback(Popup.VerticalOffsetProperty, (obj, dp) =>
                 {
                     ListView listView = (ListView)((Border)popup.Child).Child;
 
@@ -104,7 +107,7 @@ public static class AutoSuggestBoxExtension
 
     private static void SuggestionsContainer_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        var suggestionsContainer = ((Border)sender);
+        var suggestionsContainer = (Border)sender;
         suggestionsContainer.MinWidth = !double.IsNaN(suggestionsContainer.Width) ? suggestionsContainer.Width : 0;
         suggestionsContainer.Width = double.NaN;
     }
@@ -117,27 +120,24 @@ public static class AutoSuggestBoxExtension
 
     private static Popup FindSuggestionsPopup(AutoSuggestBox autoSuggestBox)
     {
-        autoSuggestBox.ApplyTemplate();
         return (Popup)autoSuggestBox.FindChild("SuggestionsPopup")!;
     }
 
-    private static void WhenLoaded(AutoSuggestBox autoSuggestBox, Action<AutoSuggestBox> callback)
+    private static void WhenSuggestionListOpened(AutoSuggestBox autoSuggestBox, Action<AutoSuggestBox> callback)
     {
-        void AutoSuggestBox_Loaded(object sender, RoutedEventArgs e)
+        if (autoSuggestBox.GetValue(IsSuggestionListOpenChangedCallbackTokenProperty) is long token)
         {
-            autoSuggestBox.Loaded -= AutoSuggestBox_Loaded;
-            callback(autoSuggestBox);
+            autoSuggestBox.UnregisterPropertyChangedCallback(AutoSuggestBox.IsSuggestionListOpenProperty, token);
         }
 
-        if (!autoSuggestBox.IsLoaded)
-        {
-            autoSuggestBox.Loaded -= AutoSuggestBox_Loaded;
-            autoSuggestBox.Loaded += AutoSuggestBox_Loaded;
-        }
+        token = default;
+        token = autoSuggestBox.RegisterPropertyChangedCallbackSafely(AutoSuggestBox.IsSuggestionListOpenProperty, isSuggestionListOpenPropertyChangedCallback);
+        autoSuggestBox.SetValue(IsSuggestionListOpenChangedCallbackTokenProperty, token); 
 
-        if (autoSuggestBox.IsLoaded)
+        void isSuggestionListOpenPropertyChangedCallback(DependencyObject sender, DependencyProperty dp) 
         {
-            autoSuggestBox.Loaded -= AutoSuggestBox_Loaded;
+            autoSuggestBox.UnregisterPropertyChangedCallback(AutoSuggestBox.IsSuggestionListOpenProperty, token);
+            autoSuggestBox.SetValue(IsSuggestionListOpenChangedCallbackTokenProperty, null);
             callback(autoSuggestBox);
         }
     }

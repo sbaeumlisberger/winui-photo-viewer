@@ -115,6 +115,15 @@
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="viewModels:ItemWithCountModel">
                                 <local:ItemWithCount>
+                                    <local:ItemWithCount.ContextFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem
+                                                Icon="Delete"
+                                                Text="{x:Bind res:Strings.MetadataPanel_RemovePeopleTag}"
+                                                Command="{Binding ViewModel.PeopleSectionModel.RemovePeopleTagCommand, Mode=OneTime, ElementName=uc}"
+                                                CommandParameter="{x:Bind Value}"/>
+                                        </MenuFlyout>
+                                    </local:ItemWithCount.ContextFlyout>
                                 </local:ItemWithCount>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -130,7 +139,7 @@
                             TextChanged="PeopleAutoSuggestBox_TextChanged"
                             GotFocus="PeopleAutoSuggestBox_GotFocus"
                             PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddPersonPlaceholder}"
-                            utils:AutoSuggestBoxExtension.AllowPopupToOverflow="True"
+                            utils:AutoSuggestBoxExtension.IsSuggestionListOverflowEnabled="True"
                             utils:EnterKeyExtension.Command="{x:Bind ViewModel.PeopleSectionModel.AddPersonCommand}">
                         </AutoSuggestBox>
                         <Button
@@ -159,8 +168,14 @@
                                     <local:ItemWithCount.ContextFlyout>
                                         <MenuFlyout>
                                             <MenuFlyoutItem
+                                                Icon="Delete"
                                                 Text="{x:Bind res:Strings.MetadataPanel_RemoveKeyword}"
                                                 Command="{Binding ViewModel.KeywordsSectionModel.RemoveKeywordCommand, Mode=OneTime, ElementName=uc}"
+                                                CommandParameter="{x:Bind Value}"/>
+                                            <MenuFlyoutItem
+                                                Icon="Add"
+                                                Text="{x:Bind res:Strings.MetadataPanel_ApplyKeywordToAll}"
+                                                Command="{Binding ViewModel.KeywordsSectionModel.ApplyKeywordToAllCommand, Mode=OneTime, ElementName=uc}"
                                                 CommandParameter="{x:Bind Value}"/>
                                         </MenuFlyout>
                                     </local:ItemWithCount.ContextFlyout>
@@ -179,7 +194,7 @@
                             TextChanged="KeywordAutoSuggestBox_TextChanged"
                             GotFocus="KeywordAutoSuggestBox_GotFocus"
                             PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddKeywordPlaceholder}"   
-                            utils:AutoSuggestBoxExtension.AllowPopupToOverflow="True"
+                            utils:AutoSuggestBoxExtension.IsSuggestionListOverflowEnabled="True"
                             utils:EnterKeyExtension.Command="{x:Bind ViewModel.KeywordsSectionModel.AddKeywordCommand}">
                         </AutoSuggestBox>
                         <Button

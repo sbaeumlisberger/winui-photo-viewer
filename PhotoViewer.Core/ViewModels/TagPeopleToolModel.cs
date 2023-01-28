@@ -2,8 +2,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
 using MetadataAPI.Data;
-using Microsoft.Graphics.Canvas;
-using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.ViewModels;
 using PhotoViewerApp.Models;
@@ -13,13 +11,6 @@ using PhotoViewerApp.Utils.Logging;
 using PhotoViewerCore.Messages;
 using PhotoViewerCore.Services;
 using PhotoViewerCore.Utils;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.FaceAnalysis;
@@ -50,7 +41,7 @@ public partial class TagPeopleToolModel : ViewModelBase
 
     private readonly IDialogService dialogService;
 
-    private IBitmapFileInfo bitmapFile;
+    private readonly IBitmapFileInfo bitmapFile;
 
     private readonly ObservableList<Rect> suggestedFaces = new ObservableList<Rect>();
 
@@ -159,9 +150,14 @@ public partial class TagPeopleToolModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task AddPerson()
+    private async Task AddPersonAsync()
     {
         string personName = AutoSuggestBoxText.Trim();
+
+        if (personName == string.Empty) 
+        {
+            return;
+        }
 
         var people = await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People);
 
@@ -170,7 +166,7 @@ public partial class TagPeopleToolModel : ViewModelBase
             await dialogService.ShowDialogAsync(new MessageDialogModel()
             {
                 Title = Strings.PeopleTagAlreadyExistingDialog_Title,
-                Message = Strings.PeopleTagAlreadyExistingDialog_Message,
+                Message = string.Format(Strings.PeopleTagAlreadyExistingDialog_Message, personName),
             });
             return;
         }

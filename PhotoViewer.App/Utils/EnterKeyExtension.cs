@@ -27,11 +27,11 @@ public static class EnterKeyExtension
 
         if (e.NewValue != null && e.OldValue == null)
         {
-            uiElement.KeyDown += UIElement_KeyDown;
+            uiElement.PreviewKeyDown += UIElement_KeyDown;
         }
         else if (e.NewValue == null)
         {
-            uiElement.KeyDown -= UIElement_KeyDown;
+            uiElement.PreviewKeyDown -= UIElement_KeyDown;
         }
     }
 

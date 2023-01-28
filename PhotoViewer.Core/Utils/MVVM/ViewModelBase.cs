@@ -22,7 +22,6 @@ public class ViewModelBase : ObservableObject
         synchronizationContext = SynchronizationContext.Current!;
         __EnableAutoNotifyCanExecuteChanged();
         __EnableOnPropertyChangedMethods();
-        __EnableDependsOn();
     }
 
     public void OnViewConnected() 

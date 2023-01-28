@@ -30,7 +30,7 @@
     <None Remove="Views\MetadataPanel.xaml" />
     <None Remove="Views\OverviewPage.xaml" />
     <None Remove="Views\OverviewPageCommandBar.xaml" />
-    <None Remove="Views\PeopleTagTool.xaml" />
+    <None Remove="Views\TagPeopleTool.xaml" />
     <None Remove="Views\VectorGraphicFlipViewItem.xaml" />
     <None Remove="Views\VideoFlipViewItem.xaml" />
   </ItemGroup>
@@ -145,7 +145,7 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Strings.cs</LastGenOutput>
     </None>
-    <Page Update="Views\PeopleTagTool.xaml">
+    <Page Update="Views\TagPeopleTool.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Compile Update="Resources\Strings.cs">
