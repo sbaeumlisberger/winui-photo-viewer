@@ -1,11 +1,11 @@
 ﻿using Microsoft.UI.Xaml.Controls;
-using PhotoViewerApp.Models;
+using PhotoViewer.App.Models;
 using PhotoViewer.App.Resources;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.ViewModels;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.ViewModels;
 using PhotoViewerCore.Utils;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 
 public sealed partial class DetailsBar : UserControl, IMVVMControl<DetailsBarModel>
 {

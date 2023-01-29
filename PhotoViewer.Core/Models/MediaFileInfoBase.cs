@@ -1,4 +1,4 @@
-﻿using PhotoViewerApp.Utils.Logging;
+﻿using PhotoViewer.App.Utils.Logging;
 using System;
 using System.IO;
 using Windows.Foundation;
@@ -6,7 +6,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 
-namespace PhotoViewerApp.Models;
+namespace PhotoViewer.App.Models;
 
 public abstract class MediaFileInfoBase : IMediaFileInfo
 {

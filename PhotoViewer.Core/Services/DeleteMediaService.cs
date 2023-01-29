@@ -1,7 +1,7 @@
-﻿using PhotoViewerApp.Models;
+﻿using PhotoViewer.App.Models;
 using Windows.Storage;
 
-namespace PhotoViewerApp.Services;
+namespace PhotoViewer.App.Services;
 
 public interface IDeleteMediaService
 {

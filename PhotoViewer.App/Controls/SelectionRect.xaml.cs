@@ -4,13 +4,13 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using PhotoVieweApp.Utils;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Utils;
 using System;
 using System.Diagnostics;
 using Windows.Foundation;
 using Windows.System;
 
-namespace PhotoViewerApp.Controls;
+namespace PhotoViewer.App.Controls;
 public sealed partial class SelectionRect : UserControl
 {
 

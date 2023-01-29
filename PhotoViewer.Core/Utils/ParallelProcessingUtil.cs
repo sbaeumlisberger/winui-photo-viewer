@@ -1,5 +1,5 @@
-﻿using PhotoViewerApp.Utils;
-using PhotoViewerApp.Utils.Logging;
+﻿using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewerApp.Messages;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Services;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Messages;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils;
 using PhotoViewerCore.Commands;
 using PhotoViewerCore.Models;
 using PhotoViewerCore.Utils;
@@ -12,7 +12,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 using Windows.Storage;
 
-namespace PhotoViewerApp.ViewModels;
+namespace PhotoViewer.App.ViewModels;
 
 public interface IOverviewPageCommandBarModel : INotifyPropertyChanged
 {

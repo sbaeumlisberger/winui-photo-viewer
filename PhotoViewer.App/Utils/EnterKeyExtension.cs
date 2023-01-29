@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Input;
 using System.Windows.Input;
 using Windows.System;
 
-namespace PhotoViewerApp.Utils;
+namespace PhotoViewer.App.Utils;
 
 public static class EnterKeyExtension
 {

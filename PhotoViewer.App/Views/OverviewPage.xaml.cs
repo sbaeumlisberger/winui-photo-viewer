@@ -2,22 +2,22 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using PhotoViewerApp.Models;
+using PhotoVieweApp.Utils;
+using PhotoViewer.App.Models;
 using PhotoViewer.App.Resources;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.ViewModels;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.ViewModels;
+using PhotoViewer.Core.ViewModels;
 using PhotoViewerCore;
 using PhotoViewerCore.Utils;
 using System.Linq;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 
 [ViewRegistration(typeof(OverviewPageModel))]
 public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
 {
     private OverviewPageModel ViewModel => (OverviewPageModel)DataContext;
-
-    public MenuFlyout ContextMenu => MediaFileContextMenuHolder.MediaFileContextMenu;
 
     public OverviewPage()
     {
@@ -30,23 +30,31 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
         App.Current.Window.Title = Strings.OverviewPage_Title;
     }
 
-    private void GridViewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-    {
-        IMediaFileInfo mediaItem = (IMediaFileInfo)((FrameworkElement)sender).DataContext;
-        ViewModel.ShowItem(mediaItem);
-    }
-
     private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         ViewModel.SelectedItems = gridView.SelectedItems.Cast<IMediaFileInfo>().ToList();
     }
-
-    private void GridViewItem_RightTapped(object sender, RightTappedRoutedEventArgs e)
+    private void OverviewItem_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
     {
-        var itemModel = ((FrameworkElement)sender).DataContext;
-        if (!ViewModel.SelectedItems.Contains(itemModel))
+        if (sender.DataContext is IMediaFileInfo mediaFile)
         {
-            gridView.SelectedItem = itemModel;
+            sender.DataContext = ViewModel.GetItemModel(mediaFile);
         }
+    }
+
+    private void OverviewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+        var itemModel = (OverviewItemModel)((FrameworkElement)sender).DataContext;
+        ViewModel.ShowItem(itemModel.MediaFile);
+    }
+
+    private void OverviewItem_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+    {
+        var itemModel = (OverviewItemModel)((FrameworkElement)sender).DataContext;
+        if (!ViewModel.SelectedItems.Contains(itemModel.MediaFile))
+        {
+            gridView.SelectedItem = itemModel.MediaFile;
+        }
+        gridView.ShowAttachedFlyout(args);
     }
 }

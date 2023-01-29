@@ -1,17 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewerApp.Messages;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Services;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Messages;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewerCore.Messages;
 using PhotoViewerCore.ViewModels;
 using PhotoViewerCore.Utils;
 using Tocronx.SimpleAsync;
 using PhotoViewerCore.Services;
 
-namespace PhotoViewerApp.ViewModels;
+namespace PhotoViewer.App.ViewModels;
 
 public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItemModel
 {

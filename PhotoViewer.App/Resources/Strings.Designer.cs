@@ -799,6 +799,33 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This photo is tagged with keywords.
+        /// </summary>
+        internal static string OverviewItem_KeywordsSymbol_Tooltip {
+            get {
+                return ResourceManager.GetString("OverviewItem_KeywordsSymbol_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This photo has location information.
+        /// </summary>
+        internal static string OverviewItem_LocationSymbol_Tooltip {
+            get {
+                return ResourceManager.GetString("OverviewItem_LocationSymbol_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This photo has people tags.
+        /// </summary>
+        internal static string OverviewItem_PeopleSymbol_Tooltip {
+            get {
+                return ResourceManager.GetString("OverviewItem_PeopleSymbol_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Overview.
         /// </summary>
         internal static string OverviewPage_Title {

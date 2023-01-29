@@ -1,6 +1,6 @@
 ﻿using MetadataAPI;
 
-namespace PhotoViewerApp.Models;
+namespace PhotoViewer.App.Models;
 public class MetadataView
 {
     public IDictionary<string, object?> Source { get; }

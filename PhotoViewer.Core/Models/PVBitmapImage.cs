@@ -2,7 +2,7 @@
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 
-namespace PhotoViewerApp.Models;
+namespace PhotoViewer.App.Models;
 
 public class PVBitmapImage : IBitmapImage
 {

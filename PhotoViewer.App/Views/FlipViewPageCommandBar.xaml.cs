@@ -1,10 +1,10 @@
 ﻿using Microsoft.UI.Xaml.Controls;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.ViewModels;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.ViewModels;
 using System.Collections.Generic;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 
 public sealed partial class FlipViewPageCommandBar : CommandBar
 {

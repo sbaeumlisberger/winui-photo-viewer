@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhotoViewerApp.Utils;
+namespace PhotoViewer.App.Utils;
 internal static class VisualTreeUtil
 {
 

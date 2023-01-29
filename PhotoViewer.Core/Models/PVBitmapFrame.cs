@@ -1,7 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Windows.Foundation;
 
-namespace PhotoViewerApp.Models;
+namespace PhotoViewer.App.Models;
 
 public class PVBitmapFrame : IBitmapFrame
 {

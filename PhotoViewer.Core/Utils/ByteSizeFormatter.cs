@@ -1,4 +1,4 @@
-﻿namespace PhotoViewerApp.Utils;
+﻿namespace PhotoViewer.App.Utils;
 
 public static class ByteSizeFormatter
 {

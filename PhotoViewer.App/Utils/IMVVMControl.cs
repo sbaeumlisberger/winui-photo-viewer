@@ -24,6 +24,8 @@ namespace PhotoViewerCore.Utils
 
         void InitializeBindings();
 
+        void UpdateBindings();
+
         void StopBindings();
 
     }

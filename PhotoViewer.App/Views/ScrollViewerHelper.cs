@@ -6,7 +6,7 @@ using System;
 using Windows.Foundation;
 using Windows.System;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 
 internal static class ScrollViewerHelper
 {

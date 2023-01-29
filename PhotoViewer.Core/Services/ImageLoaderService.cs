@@ -1,7 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
-using PhotoViewerApp.Exceptions;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Exceptions;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Utils;
 using System.Runtime.InteropServices;
 using System.Text;
 using WIC;
@@ -9,7 +9,7 @@ using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace PhotoViewerApp.Services;
+namespace PhotoViewer.App.Services;
 
 public interface IImageLoaderService
 {

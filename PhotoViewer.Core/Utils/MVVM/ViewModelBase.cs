@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewerCore.Utils;
 
-namespace PhotoViewerApp.Utils;
+namespace PhotoViewer.App.Utils;
 
 public class ViewModelBase : ObservableObject
 {

@@ -2,7 +2,7 @@
 using PhotoViewerCore.Utils;
 using System;
 
-namespace PhotoViewerApp.Utils;
+namespace PhotoViewer.App.Utils;
 
 public class DependencyPropertyHelper<TDependencyObject> where TDependencyObject : DependencyObject
 {

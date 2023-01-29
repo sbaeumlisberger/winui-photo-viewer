@@ -1,5 +1,5 @@
-﻿using PhotoViewerApp.Models;
+﻿using PhotoViewer.App.Models;
 
-namespace PhotoViewerApp.Messages;
+namespace PhotoViewer.App.Messages;
 
 public record class MediaFilesLoadedMessage(List<IMediaFileInfo> Files, IMediaFileInfo? StartFile);

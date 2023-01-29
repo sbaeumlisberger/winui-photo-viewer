@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
 
-namespace PhotoViewerApp.Utils.Logging;
+namespace PhotoViewer.App.Utils.Logging;
 
 internal static class ExceptionFormatter
 {

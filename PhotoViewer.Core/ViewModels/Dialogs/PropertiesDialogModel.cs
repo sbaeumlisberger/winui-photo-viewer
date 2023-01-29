@@ -4,10 +4,10 @@ using CommunityToolkit.Mvvm.Input;
 using MetadataAPI;
 using MetadataAPI.Data;
 using Microsoft.VisualBasic;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Services;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using Windows.Storage;
 using Windows.System;
 

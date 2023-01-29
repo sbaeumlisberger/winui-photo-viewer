@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Services;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;

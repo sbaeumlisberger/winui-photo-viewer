@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.System;
 
-namespace PhotoViewerApp.Utils;
+namespace PhotoViewer.App.Utils;
 public enum SuggestionListDirection
 {
     Auto,

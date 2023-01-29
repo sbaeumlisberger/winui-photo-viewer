@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using Windows.Storage;
 
-namespace PhotoViewerApp.Utils.Logging;
+namespace PhotoViewer.App.Utils.Logging;
 
 public static class Log
 {

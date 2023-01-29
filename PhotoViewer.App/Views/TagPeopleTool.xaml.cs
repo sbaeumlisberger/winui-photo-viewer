@@ -7,8 +7,8 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
 using PhotoVieweApp.Utils;
 using PhotoViewer.Core.ViewModels;
-using PhotoViewerApp.Controls;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Controls;
+using PhotoViewer.App.Utils;
 using PhotoViewerCore.Utils;
 using PhotoViewerCore.ViewModels;
 using System;
@@ -18,7 +18,7 @@ using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Core;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleToolModel>
 {
     private const double DefaultFaceBoxSize = 100;

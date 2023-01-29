@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
-using PhotoViewerApp.Messages;
-using PhotoViewerApp.Models;
+using PhotoViewer.App.Messages;
+using PhotoViewer.App.Models;
 using PhotoViewer.App.Resources;
-using PhotoViewerApp.Services;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.Utils.Logging;
-using PhotoViewerApp.ViewModels;
+using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.App.ViewModels;
 using PhotoViewerCore.Services;
 using PhotoViewerCore.Utils;
 using System;
@@ -21,7 +21,7 @@ using Windows.Storage;
 using WinUIEx;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
-namespace PhotoViewerApp;
+namespace PhotoViewer.App;
 
 public partial class App : Application
 {

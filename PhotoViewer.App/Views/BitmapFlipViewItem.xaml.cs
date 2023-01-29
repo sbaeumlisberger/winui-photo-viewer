@@ -1,12 +1,12 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.ViewModels;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.ViewModels;
 using PhotoViewerCore.Utils;
 using PhotoViewerCore.ViewModels;
 using System.ComponentModel;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 
 public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<BitmapFlipViewItemModel>
 {
@@ -20,11 +20,11 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
 
     private void ConnectToViewModel(BitmapFlipViewItemModel viewModel)
     {
-        ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+        viewModel.PropertyChanged += ViewModel_PropertyChanged;
     }
     private void DisconnectFromViewModel(BitmapFlipViewItemModel viewModel)
     {
-        ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
+        viewModel.PropertyChanged -= ViewModel_PropertyChanged;
     }
 
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)

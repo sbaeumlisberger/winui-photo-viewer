@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using PhotoViewerCore.ViewModels;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 public sealed partial class ItemWithCount : UserControl
 {
     public ItemWithCountModel ViewModel => (ItemWithCountModel)DataContext;

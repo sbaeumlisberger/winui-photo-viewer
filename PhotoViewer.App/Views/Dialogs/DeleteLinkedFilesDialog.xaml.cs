@@ -1,8 +1,8 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using PhotoViewerCore.ViewModels;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Utils;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 
 [ViewRegistration(typeof(DeleteLinkedFilesDialogModel))]
 public sealed partial class DeleteLinkedFilesDialog : ContentDialog

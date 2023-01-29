@@ -1,12 +1,12 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Resources;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Utils;
 using PhotoViewerCore.Utils;
 using PhotoViewerCore.ViewModels;
 using System;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPanelModel>
 {
     public MetadataPanelModel ViewModel => (MetadataPanelModel)DataContext;

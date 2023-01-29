@@ -363,6 +363,15 @@
   <data name="OpenFolderButton" xml:space="preserve">
     <value>Open folder</value>
   </data>
+  <data name="OverviewItem_KeywordsSymbol_Tooltip" xml:space="preserve">
+    <value>This photo is tagged with keywords</value>
+  </data>
+  <data name="OverviewItem_LocationSymbol_Tooltip" xml:space="preserve">
+    <value>This photo has location information</value>
+  </data>
+  <data name="OverviewItem_PeopleSymbol_Tooltip" xml:space="preserve">
+    <value>This photo has people tags</value>
+  </data>
   <data name="OverviewPage_Title" xml:space="preserve">
     <value>Overview</value>
   </data>

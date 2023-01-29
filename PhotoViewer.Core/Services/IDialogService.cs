@@ -1,4 +1,4 @@
-﻿namespace PhotoViewerApp.Services;
+﻿namespace PhotoViewer.App.Services;
 
 public interface IDialogService
 {

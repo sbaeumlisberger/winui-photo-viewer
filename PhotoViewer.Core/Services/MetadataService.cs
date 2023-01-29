@@ -1,11 +1,11 @@
 ﻿using MetadataAPI;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Utils.Logging;
 using System.Runtime.CompilerServices;
 using WIC;
 using Windows.Storage;
 
-namespace PhotoViewerApp.Services;
+namespace PhotoViewer.App.Services;
 
 public interface IMetadataService
 {

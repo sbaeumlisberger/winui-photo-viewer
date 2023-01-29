@@ -28,13 +28,14 @@
     <None Remove="Views\MediaFileContextMenu.xaml" />
     <None Remove="Views\MediaFlipView.xaml" />
     <None Remove="Views\MetadataPanel.xaml" />
+    <None Remove="Views\OverviewItem.xaml" />
     <None Remove="Views\OverviewPage.xaml" />
     <None Remove="Views\OverviewPageCommandBar.xaml" />
     <None Remove="Views\TagPeopleTool.xaml" />
     <None Remove="Views\VectorGraphicFlipViewItem.xaml" />
     <None Remove="Views\VideoFlipViewItem.xaml" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
     <PackageReference Include="MetadataAPI" Version="1.4.3" />
@@ -131,6 +132,15 @@
     <Page Update="Views\MediaFileContextMenu.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+	<Page Update="Views\OverviewItem.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	</Page>
+	<Page Update="Views\TagPeopleTool.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	</Page>
+	<Page Update="Controls\SelectionRect.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	</Page>
   </ItemGroup>
   
   <ItemGroup>
@@ -138,16 +148,10 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Page Update="Controls\SelectionRect.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <None Update="Resources\Strings.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Strings.cs</LastGenOutput>
     </None>
-    <Page Update="Views\TagPeopleTool.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Compile Update="Resources\Strings.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

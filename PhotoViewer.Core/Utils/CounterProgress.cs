@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace PhotoViewerApp.Utils;
+namespace PhotoViewer.App.Utils;
 
 // TODO implement thread-safe
 public class Progress : IProgress<int>

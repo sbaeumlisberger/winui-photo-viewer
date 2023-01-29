@@ -2,7 +2,7 @@
 using Windows.Foundation;
 using Windows.Storage;
 
-namespace PhotoViewerApp.Models;
+namespace PhotoViewer.App.Models;
 
 public interface IVideoFileInfo : IMediaFileInfo
 {

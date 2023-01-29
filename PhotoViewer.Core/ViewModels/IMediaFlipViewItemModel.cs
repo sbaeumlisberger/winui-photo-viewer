@@ -1,4 +1,4 @@
-﻿using PhotoViewerApp.Models;
+﻿using PhotoViewer.App.Models;
 using System.ComponentModel;
 
 namespace PhotoViewerCore.ViewModels;

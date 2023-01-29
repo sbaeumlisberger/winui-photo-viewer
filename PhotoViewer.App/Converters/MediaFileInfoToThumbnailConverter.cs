@@ -1,20 +1,18 @@
 ﻿using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media.Imaging;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Utils.Logging;
 using System;
 using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.FileProperties;
 
-namespace PhotoViewerApp.Converters;
+namespace PhotoViewer.App.Converters;
 
 public class MediaFileInfoToThumbnailConverter : IValueConverter
 {
 
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        BitmapImage bitmapImage = new BitmapImage();
+        var bitmapImage = new BitmapImage();
         _ = TryLoadThumbnailAsync((IMediaFileInfo)value, bitmapImage);
         return bitmapImage;
     }
@@ -22,6 +20,13 @@ public class MediaFileInfoToThumbnailConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         throw new NotImplementedException();
+    }
+
+    public static async Task<BitmapImage> ConvertAsync(IMediaFileInfo mediaFile) 
+    {
+        var bitmapImage = new BitmapImage();
+        await TryLoadThumbnailAsync(mediaFile, bitmapImage);
+        return bitmapImage;
     }
 
     private static async Task TryLoadThumbnailAsync(IMediaFileInfo mediaFile, BitmapImage bitmapImage)

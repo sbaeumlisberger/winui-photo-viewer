@@ -1,12 +1,12 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using PhotoViewer.App.Resources;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Utils;
 using PhotoViewerCore;
 using PhotoViewerCore.Models;
 using PhotoViewerCore.ViewModels;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 
 [ViewRegistration(typeof(SettingsPageModel))]
 public sealed partial class SettingsPage : Page

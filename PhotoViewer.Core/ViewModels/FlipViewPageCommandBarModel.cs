@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewerApp.Messages;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Services;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Messages;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewerCore.Commands;
 using PhotoViewerCore.Models;
 using PhotoViewerCore.Utils;
@@ -14,7 +14,7 @@ using System.Diagnostics;
 using System.Windows.Input;
 using Windows.Storage;
 
-namespace PhotoViewerApp.ViewModels;
+namespace PhotoViewer.App.ViewModels;
 
 public interface IFlipViewPageCommandBarModel : INotifyPropertyChanged
 {

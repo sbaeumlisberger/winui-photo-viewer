@@ -1,15 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewer.Core.Models;
-using PhotoViewerApp.Messages;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Services;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Messages;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewerCore.Utils;
 using PhotoViewerCore.ViewModels;
 using System.ComponentModel;
 
-namespace PhotoViewerApp.ViewModels;
+namespace PhotoViewer.App.ViewModels;
 
 public partial class FlipViewPageModel : ViewModelBase
 {

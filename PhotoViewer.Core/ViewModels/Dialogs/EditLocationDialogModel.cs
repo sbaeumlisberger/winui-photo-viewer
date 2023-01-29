@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Utils;
 using PhotoViewerCore.Models;
 using PhotoViewerCore.Services;
 using System;

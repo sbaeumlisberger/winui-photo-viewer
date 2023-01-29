@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using MetadataAPI;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Utils;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

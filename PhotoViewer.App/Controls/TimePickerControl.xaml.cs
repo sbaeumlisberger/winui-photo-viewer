@@ -1,11 +1,11 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Utils;
 using System;
 using System.Linq;
 using Windows.Foundation;
 
-namespace PhotoViewerApp.Controls;
+namespace PhotoViewer.App.Controls;
 
 public sealed partial class TimePickerControl : UserControl
 {

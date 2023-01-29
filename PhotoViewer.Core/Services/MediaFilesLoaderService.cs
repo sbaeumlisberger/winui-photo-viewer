@@ -1,5 +1,5 @@
-﻿using PhotoViewerApp.Models;
-using PhotoViewerApp.Utils.Logging;
+﻿using PhotoViewer.App.Models;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewerCore.Utils;
 using System.Diagnostics;
 using System.Formats.Tar;
@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 
-namespace PhotoViewerApp.Services;
+namespace PhotoViewer.App.Services;
 
 public record class LoadMediaFilesResult(List<IMediaFileInfo> MediaItems, IMediaFileInfo? StartItem);
 

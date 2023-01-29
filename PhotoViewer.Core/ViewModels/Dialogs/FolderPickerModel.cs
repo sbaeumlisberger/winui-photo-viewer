@@ -1,7 +1,7 @@
 ﻿using Windows.Storage;
 using Windows.Storage.Pickers;
 
-namespace PhotoViewerApp.ViewModels;
+namespace PhotoViewer.App.ViewModels;
 
 public sealed class FolderPickerModel
 {

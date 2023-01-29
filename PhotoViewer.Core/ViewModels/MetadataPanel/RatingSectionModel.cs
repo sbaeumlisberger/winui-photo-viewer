@@ -1,6 +1,6 @@
 ﻿using MetadataAPI;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Services;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
 using PhotoViewerCore.Utils;
 using Tocronx.SimpleAsync;
 

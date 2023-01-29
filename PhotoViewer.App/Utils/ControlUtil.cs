@@ -1,12 +1,12 @@
 ﻿using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewerCore.Utils;
 using System;
 using System.Reflection;
 
-namespace PhotoViewerApp.Utils;
+namespace PhotoViewer.App.Utils;
 
 internal static class ControlUtil
 {
@@ -28,7 +28,7 @@ internal static class ControlUtil
             Log.Debug($"Connect {control} to {newViewModel}");
             viewModel = newViewModel;
             connectToViewModel?.Invoke(newViewModel);
-            control.InitializeBindings();
+            control.UpdateBindings(); // TODO ?
             viewModel.OnViewConnected();
         }
 

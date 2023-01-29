@@ -2,16 +2,16 @@
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using PhotoViewerApp.Messages;
-using PhotoViewerApp.Services;
+using PhotoViewer.App.Messages;
+using PhotoViewer.App.Services;
 using PhotoViewerCore.Utils;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Utils.Logging;
 using System;
 using WinRT.Interop;
 using WinUIEx;
 using PhotoViewerCore;
 
-namespace PhotoViewerApp;
+namespace PhotoViewer.App;
 
 public sealed partial class MainWindow : WindowEx
 {

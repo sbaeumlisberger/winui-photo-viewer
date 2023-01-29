@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewerApp.Messages;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Services;
+using PhotoViewer.App.Messages;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
 using PhotoViewerCore.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewerCore.Services;

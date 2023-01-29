@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using MetadataAPI;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Services;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewerCore.Utils;
 using Tocronx.SimpleAsync;
 using Windows.Foundation.Collections;

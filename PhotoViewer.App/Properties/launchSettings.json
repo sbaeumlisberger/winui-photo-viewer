@@ -1,10 +1,10 @@
 {
   "profiles": {
-    "PhotoViewerApp (Package)": {
+    "PhotoViewer.App (Package)": {
       "commandName": "MsixPackage",
       "nativeDebugging": false
     },
-    "PhotoViewerApp (Unpackaged)": {
+    "PhotoViewer.App (Unpackaged)": {
       "commandName": "Project",
       "nativeDebugging": false
     }

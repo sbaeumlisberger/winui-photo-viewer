@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewerCore.Utils;
 using PhotoViewerCore.ViewModels;
 using Tocronx.SimpleAsync;
@@ -9,7 +9,7 @@ using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
 
-namespace PhotoViewerApp.ViewModels;
+namespace PhotoViewer.App.ViewModels;
 
 public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemModel
 {

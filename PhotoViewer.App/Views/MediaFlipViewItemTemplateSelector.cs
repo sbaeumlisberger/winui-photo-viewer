@@ -1,9 +1,9 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using PhotoViewerApp.ViewModels;
+using PhotoViewer.App.ViewModels;
 using System;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 
 public class MediaFlipViewItemTemplateSelector : DataTemplateSelector
 {

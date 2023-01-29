@@ -57,6 +57,7 @@ public class IMVVMControlGenerator : IIncrementalGenerator
                 {
                     public void LoadComponent() => InitializeComponent();
                     public void InitializeBindings() => Bindings.Initialize();
+                    public void UpdateBindings() => Bindings.Update();
                     public void StopBindings() => Bindings.StopTracking();
                 }
             """;

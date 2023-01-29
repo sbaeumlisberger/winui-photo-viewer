@@ -1,10 +1,10 @@
 ﻿using Microsoft.Graphics.Canvas;
-using PhotoViewerApp.Models;
+using PhotoViewer.App.Models;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 
-namespace PhotoViewerApp.Services;
+namespace PhotoViewer.App.Services;
 
 public interface IGifImageLoaderService
 {

@@ -1,7 +1,7 @@
-﻿using PhotoViewerApp.Utils.Logging;
+﻿using PhotoViewer.App.Utils.Logging;
 using Windows.System.Display;
 
-namespace PhotoViewerApp.Services;
+namespace PhotoViewer.App.Services;
 
 public interface IDisplayRequestService
 {

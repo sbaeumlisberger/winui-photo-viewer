@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Data;
 using System;
 
-namespace PhotoViewerApp.Converters;
+namespace PhotoViewer.App.Converters;
 
 public class BoolToObjectConverter : IValueConverter
 {

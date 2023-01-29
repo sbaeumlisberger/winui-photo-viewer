@@ -4,13 +4,13 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.Views;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.Views;
 using System;
 using Windows.Foundation;
 
-namespace PhotoViewerApp.Controls;
+namespace PhotoViewer.App.Controls;
 
 public sealed partial class BitmapViewer : UserControl
 {

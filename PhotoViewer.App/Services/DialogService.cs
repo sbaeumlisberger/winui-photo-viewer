@@ -1,8 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Resources;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.ViewModels;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.ViewModels;
 using PhotoViewerCore.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using Windows.Storage.Pickers;
 using Windows.System;
 using WinRT.Interop;
 
-namespace PhotoViewerApp.Services;
+namespace PhotoViewer.App.Services;
 
 public class DialogService : IDialogService
 {

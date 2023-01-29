@@ -1,9 +1,9 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using PhotoViewerCore.ViewModels;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Utils;
 using PhotoViewerCore.Utils;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 
 [ViewRegistration(typeof(PropertiesDialogModel))]
 public sealed partial class PropertiesDialog : ContentDialog, IMVVMControl<PropertiesDialogModel>

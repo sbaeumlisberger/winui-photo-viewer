@@ -2,12 +2,12 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using PhotoVieweApp.Utils;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.ViewModels;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.ViewModels;
 using PhotoViewerCore.Utils;
 using System.ComponentModel;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 
 public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipViewModel>
 {

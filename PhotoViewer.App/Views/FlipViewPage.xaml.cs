@@ -1,11 +1,11 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.ViewModels;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.ViewModels;
 using PhotoViewerCore;
 using PhotoViewerCore.Utils;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 
 [ViewRegistration(typeof(FlipViewPageModel))]
 public sealed partial class FlipViewPage : Page, IMVVMControl<FlipViewPageModel>

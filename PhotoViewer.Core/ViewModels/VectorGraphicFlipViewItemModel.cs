@@ -1,14 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewerCore.Utils;
 using PhotoViewerCore.ViewModels;
 using System.Text;
 using Tocronx.SimpleAsync;
 using Windows.Storage;
 
-namespace PhotoViewerApp.ViewModels;
+namespace PhotoViewer.App.ViewModels;
 
 public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipViewItemModel
 {

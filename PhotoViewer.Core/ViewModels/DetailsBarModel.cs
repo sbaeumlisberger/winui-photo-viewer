@@ -1,17 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
 using MetadataAPI.Data;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Services;
-using PhotoViewerApp.Utils;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewerCore.Messages;
 using PhotoViewerCore.Utils;
 using PhotoViewerCore.ViewModels;
 using System.ComponentModel;
 using Tocronx.SimpleAsync;
 
-namespace PhotoViewerApp.ViewModels;
+namespace PhotoViewer.App.ViewModels;
 
 public interface IDetailsBarModel : INotifyPropertyChanged
 {

@@ -1,11 +1,11 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Display;
 using Microsoft.UI;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Utils.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace PhotoViewerApp.Utils;
+namespace PhotoViewer.App.Utils;
 
 interface IColorProfileProvider
 {

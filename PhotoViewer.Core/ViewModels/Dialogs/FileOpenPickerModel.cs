@@ -1,6 +1,6 @@
 ﻿using Windows.Storage;
 
-namespace PhotoViewerApp.ViewModels;
+namespace PhotoViewer.App.ViewModels;
 
 public sealed class FileOpenPickerModel
 {

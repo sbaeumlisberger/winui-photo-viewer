@@ -1,13 +1,13 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.UI;
-using PhotoViewerApp.Models;
+using PhotoViewer.App.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Foundation;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 
 public class AnimatedBitmapRenderer : IDisposable
 {

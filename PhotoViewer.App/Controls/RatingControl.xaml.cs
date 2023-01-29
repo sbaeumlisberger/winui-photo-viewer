@@ -4,12 +4,12 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Utils;
 using System;
 using Windows.UI;
 using Windows.UI.Core;
 
-namespace PhotoViewerApp.Controls;
+namespace PhotoViewer.App.Controls;
 
 public class RatingChangedEventArgs
 {

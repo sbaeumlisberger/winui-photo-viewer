@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
-using PhotoViewerApp.ViewModels;
+using PhotoViewer.App.ViewModels;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 
 public sealed partial class OverviewPageCommandBar : CommandBar
 {

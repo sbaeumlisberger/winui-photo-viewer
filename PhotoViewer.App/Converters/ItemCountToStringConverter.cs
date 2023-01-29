@@ -3,7 +3,7 @@ using PhotoViewer.App.Resources;
 using PhotoViewerCore.ViewModels;
 using System;
 
-namespace PhotoViewerApp.Converters;
+namespace PhotoViewer.App.Converters;
 
 public class ItemCountToStringConverter : IValueConverter
 {

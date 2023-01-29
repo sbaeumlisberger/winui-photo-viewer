@@ -1,12 +1,12 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using PhotoViewerCore.ViewModels;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Utils;
 using PhotoViewerCore.Utils;
 using System.Text.Encodings.Web;
 using Windows.UI.WebUI;
 using System;
 using Microsoft.Web.WebView2.Core;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Utils.Logging;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Windows.Devices.Geolocation;
@@ -23,7 +23,7 @@ using Windows.Services.Maps;
 using Windows.ApplicationModel.DataTransfer;
 using System.Security.Cryptography;
 
-namespace PhotoViewerApp.Views;
+namespace PhotoViewer.App.Views;
 
 [ViewRegistration(typeof(EditLocationDialogModel))]
 public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<EditLocationDialogModel>

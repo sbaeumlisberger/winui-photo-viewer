@@ -2,9 +2,9 @@
 using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
 using MetadataAPI.Data;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Services;
-using PhotoViewerApp.Utils.Logging;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewerCore.Messages;
 using PhotoViewerCore.Models;
 using PhotoViewer.Core.Resources;

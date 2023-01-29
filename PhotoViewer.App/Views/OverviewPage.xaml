@@ -1,10 +1,10 @@
 ﻿<Page
-    x:Class="PhotoViewerApp.Views.OverviewPage"
+    x:Class="PhotoViewer.App.Views.OverviewPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:PhotoViewerApp.Views"
-    xmlns:converters="using:PhotoViewerApp.Converters"
-    xmlns:models="using:PhotoViewerApp.Models"
+    xmlns:local="using:PhotoViewer.App.Views"
+    xmlns:converters="using:PhotoViewer.App.Converters"
+    xmlns:models="using:PhotoViewer.App.Models"
     xmlns:resources="using:PhotoViewer.App.Resources"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -14,9 +14,7 @@
 
     <Page.Resources>
         <converters:MediaFileInfoToThumbnailConverter x:Key="MediaFileInfoToThumbnailConverter"/>
-        <local:MediaFileContextMenuHolder 
-            x:Name="MediaFileContextMenuHolder" 
-            DataContext="{x:Bind ViewModel.ContextMenuModel}"/>
+        <local:MediaFileContextMenuHolder x:Name="mediaFileContextMenuHolder" DataContext="{x:Bind ViewModel.ContextMenuModel}"/>
     </Page.Resources>
 
     <Grid>
@@ -32,15 +30,17 @@
 
         <local:MetadataPanel Grid.RowSpan="2" DataContext="{x:Bind ViewModel.MetadataPanelModel}"/>
 
-        <GridView x:Name="gridView" Grid.Column="1" Padding="8" ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" 
-            SelectionMode="Extended" SelectionChanged="GridView_SelectionChanged">
+        <GridView x:Name="gridView" Grid.Column="1" Padding="8"
+            ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" 
+            SelectionMode="Extended" SelectionChanged="GridView_SelectionChanged" 
+            FlyoutBase.AttachedFlyout="{x:Bind mediaFileContextMenuHolder.MediaFileContextMenu}">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="models:IMediaFileInfo">
-                    <StackPanel Margin="8" Width="150" DoubleTapped="GridViewItem_DoubleTapped" RightTapped="GridViewItem_RightTapped"
-                         ContextFlyout="{Binding ContextMenu, ElementName=uc}"><!--- TODO get rid of Binding -->
-                        <Image Width="150" Height="150" Stretch="Uniform" Source="{x:Bind Converter={StaticResource MediaFileInfoToThumbnailConverter}}"/>
-                        <TextBlock Margin="0,4,0,0" TextAlignment="Center" Text="{x:Bind Name}"/>
-                    </StackPanel>
+                    <local:OverviewItem 
+                        Margin="8"
+                        DataContextChanged="OverviewItem_DataContextChanged"
+                        DoubleTapped="OverviewItem_DoubleTapped"
+                        ContextRequested="OverviewItem_ContextRequested"/>
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>

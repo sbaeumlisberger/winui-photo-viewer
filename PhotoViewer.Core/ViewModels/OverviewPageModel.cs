@@ -1,14 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewerApp.Messages;
-using PhotoViewerApp.Models;
-using PhotoViewerApp.Services;
-using PhotoViewerApp.Utils;
+using PhotoViewer.App.Messages;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils;
 using PhotoViewerCore.ViewModels;
 using System.Collections.ObjectModel;
 using PhotoViewerCore.Utils;
 using PhotoViewer.Core.Models;
+using Microsoft.UI.Xaml.Controls;
+using PhotoViewer.Core.ViewModels;
 
-namespace PhotoViewerApp.ViewModels;
+namespace PhotoViewer.App.ViewModels;
 
 public partial class OverviewPageModel : ViewModelBase
 {
@@ -50,6 +52,11 @@ public partial class OverviewPageModel : ViewModelBase
     public void ShowItem(IMediaFileInfo mediaItem)
     {
         Messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel), mediaItem));
+    }
+
+    public OverviewItemModel GetItemModel(IMediaFileInfo mediaFile) 
+    {
+        return new OverviewItemModel(mediaFile, Messenger, new MetadataService()); // TODO
     }
 
     private void OnMediaItemsLoadedMessageReceived(MediaFilesLoadedMessage msg)
