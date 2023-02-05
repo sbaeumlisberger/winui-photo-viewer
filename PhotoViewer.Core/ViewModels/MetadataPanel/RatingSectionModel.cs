@@ -1,10 +1,10 @@
 ﻿using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Utils;
 using Tocronx.SimpleAsync;
 
-namespace PhotoViewerCore.ViewModels
+namespace PhotoViewer.Core.ViewModels
 {
     public partial class RatingSectionModel : MetadataPanelSectionModelBase
     {

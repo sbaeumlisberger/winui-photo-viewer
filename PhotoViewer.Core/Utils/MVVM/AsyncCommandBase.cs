@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Windows.Input;
 
-namespace PhotoViewerCore.Utils;
+namespace PhotoViewer.Core.Utils;
 
 public abstract class AsyncCommandBase<T> : ICommand
 {

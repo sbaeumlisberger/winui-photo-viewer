@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PhotoViewer.App.Utils;
-using PhotoViewerCore.Models;
-using PhotoViewerCore.Services;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 
-namespace PhotoViewerCore.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public partial class EditLocationDialogModel : ViewModelBase
 {

@@ -5,13 +5,13 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
-using PhotoViewerCore.Models;
-using PhotoViewerCore.ViewModels;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.ViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using Windows.Storage;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Utils;
 using Microsoft.Graphics.Canvas.Text;
 
 namespace PhotoViewer.App.ViewModels;

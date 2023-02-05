@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace PhotoViewerCore.Utils;
+namespace PhotoViewer.Core.Utils;
 
 public static class StorageItemUtil
 {

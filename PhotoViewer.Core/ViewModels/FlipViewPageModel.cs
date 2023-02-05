@@ -5,8 +5,8 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
-using PhotoViewerCore.Utils;
-using PhotoViewerCore.ViewModels;
+using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels;
 using System.ComponentModel;
 
 namespace PhotoViewer.App.ViewModels;

@@ -1,4 +1,4 @@
-﻿namespace PhotoViewerCore.ViewModels;
+﻿namespace PhotoViewer.Core.ViewModels;
 
 public record class ItemWithCountModel
 {

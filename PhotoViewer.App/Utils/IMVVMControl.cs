@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
 
-namespace PhotoViewerCore.Utils
+namespace PhotoViewer.Core.Utils
 {
     public interface IMVVMControl<T>
     {

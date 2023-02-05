@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace PhotoViewerCore.Utils;
+namespace PhotoViewer.Core.Utils;
 
 public interface IObservableReadOnlyList<T> : IReadOnlyList<T>, INotifyCollectionChanged, INotifyPropertyChanged
 {

@@ -7,8 +7,10 @@ using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
-using PhotoViewerCore.Services;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Utils;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -38,17 +40,14 @@ public partial class App : Application
         UnhandledException += App_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
-        this.InitializeComponent();
-
         MapService.ServiceToken = MapServiceToken;
 
         string language = ApplicationLanguages.Languages.First();
         Strings.Culture = new CultureInfo(language);
         PhotoViewer.Core.Resources.Strings.Culture = new CultureInfo(language);
 
-        Log.Info("Application instance created.");
+        this.InitializeComponent();
     }
-
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -65,7 +64,7 @@ public partial class App : Application
 
         var messenger = StrongReferenceMessenger.Default;
 
-        Window = new MainWindow(messenger);
+        Window = new MainWindow(messenger);     
         Window.Activate();
 
         await ColorProfileProvider.Instance.InitializeAsync(Window.GetAppWindow().Id);

@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Data;
 using PhotoViewer.App.Resources;
-using PhotoViewerCore.ViewModels;
+using PhotoViewer.Core.ViewModels;
 using System;
 
 namespace PhotoViewer.App.Converters;

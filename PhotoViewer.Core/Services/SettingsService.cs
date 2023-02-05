@@ -1,9 +1,9 @@
-﻿using PhotoViewerCore.Models;
+﻿using PhotoViewer.Core.Models;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using Windows.Storage;
 
-namespace PhotoViewerCore.Services;
+namespace PhotoViewer.Core.Services;
 
 public interface ISettingsService
 {

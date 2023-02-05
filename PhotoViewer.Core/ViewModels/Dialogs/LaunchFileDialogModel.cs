@@ -1,6 +1,6 @@
 ﻿using Windows.Storage;
 
-namespace PhotoViewerCore.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public class LaunchFileDialogModel
 {

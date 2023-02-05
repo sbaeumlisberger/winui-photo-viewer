@@ -35,9 +35,9 @@
                 Visibility="{x:Bind ViewModel.ShowColorProfileIndicator, Mode=OneWay}"
                 ToolTipService.ToolTip="{x:Bind ColorSpaceTypeToDisplayName(ViewModel.ColorSpaceType), Mode=OneWay}"/>
             <TextBlock 
-                Text="{x:Bind ViewModel.SizeInPixels, Mode=OneWay}"/>
-            <TextBlock 
                 Text="{x:Bind ViewModel.CameraDetails, Mode=OneWay}"/>
+            <TextBlock 
+                Text="{x:Bind ViewModel.SizeInPixels, Mode=OneWay}"/>
             <TextBlock 
                 Text="{x:Bind ViewModel.FileSize, Mode=OneWay}"/>
         </StackPanel>

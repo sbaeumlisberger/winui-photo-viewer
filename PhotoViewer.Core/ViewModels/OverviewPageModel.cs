@@ -3,9 +3,9 @@ using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
-using PhotoViewerCore.ViewModels;
+using PhotoViewer.Core.ViewModels;
 using System.Collections.ObjectModel;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.Models;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.Core.ViewModels;
@@ -24,21 +24,13 @@ public partial class OverviewPageModel : ViewModelBase
 
     public IOverviewPageCommandBarModel OverviewPageCommandBarModel { get; }
 
-    private readonly ApplicationSession session;
-
-    private readonly IDialogService dialogService;
-
     public OverviewPageModel(
         ApplicationSession session,
         IMessenger messenger,
-        IDialogService dialogService,
         IOverviewPageCommandBarModel overviewPageCommandBarModel,
         IMediaFileContextMenuModel mediaFileContextMenuModel,
         MetadataPanelModelFactory metadataPanelModelFactory) : base(messenger)
     {
-        this.session = session;
-        this.dialogService = dialogService;
-
         OverviewPageCommandBarModel = overviewPageCommandBarModel;
         MetadataPanelModel = metadataPanelModelFactory.Invoke(false);
         ContextMenuModel = mediaFileContextMenuModel;

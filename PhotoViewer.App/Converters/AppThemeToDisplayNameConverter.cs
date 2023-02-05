@@ -5,15 +5,15 @@ using System;
 
 namespace PhotoViewer.App.Converters;
 
-public class DeleteLinkedFilesOptionToDisplayNameConverter : IValueConverter
+public class AppThemeToDisplayNameConverter : IValueConverter
 {
     public object? Convert(object value, Type targetType, object parameter, string language)
     {
-        return (DeleteLinkedFilesOption)value switch
+        return (AppTheme)value switch
         {
-            DeleteLinkedFilesOption.Ask => Strings.SettingsPage_DeleteLinkedFilesOption_Ask,
-            DeleteLinkedFilesOption.Yes => Strings.SettingsPage_DeleteLinkedFilesOption_Yes,
-            DeleteLinkedFilesOption.No => Strings.SettingsPage_DeleteLinkedFilesOption_No,
+            AppTheme.System => Strings.AppTheme_System,
+            AppTheme.Light => Strings.AppTheme_Light,
+            AppTheme.Dark => Strings.AppTheme_Dark,
             _ => throw new ArgumentOutOfRangeException(nameof(value))
         };
     }

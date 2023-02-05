@@ -6,13 +6,14 @@ using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
-using PhotoViewerCore.Messages;
-using PhotoViewerCore.Services;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Utils;
 using System.ComponentModel;
 using Tocronx.SimpleAsync;
 
-namespace PhotoViewerCore.ViewModels
+namespace PhotoViewer.Core.ViewModels
 {
     public delegate IMetadataPanelModel MetadataPanelModelFactory(bool tagPeopleOnPhotoButtonVisible);
 
@@ -25,7 +26,7 @@ namespace PhotoViewerCore.ViewModels
 
     public partial class MetadataPanelModel : ViewModelBase, IMetadataPanelModel
     {
-        public bool IsVisible { get; set; } = true;
+        public bool IsVisible { get; set; } = false;
 
         public bool AreAllFilesSupported { get; private set; } = false;
         
@@ -58,18 +59,22 @@ namespace PhotoViewerCore.ViewModels
             IClipboardService clipboardService,
             ISuggestionsService peopleSuggestionsService,
             ISuggestionsService keywordSuggestionsService,
+            IGpxService gpxService,
+            ApplicationSettings applicationSettings,
             bool tagPeopleOnPhotoButtonVisible) : base(messenger)
         {
             this.metadataService = metadataService;
 
             TitleTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Title);
-            LocationSectionModel = new LocationSectionModel(writeFilesRunner, metadataService, locationService, dialogService, clipboardService, messenger);
+            LocationSectionModel = new LocationSectionModel(writeFilesRunner, metadataService, locationService, dialogService, clipboardService, gpxService, messenger);
             PeopleSectionModel = new PeopleSectionModel(writeFilesRunner, messenger, metadataService, peopleSuggestionsService, tagPeopleOnPhotoButtonVisible);
             KeywordsSectionModel = new KeywordsSectionModel(writeFilesRunner, messenger, metadataService, keywordSuggestionsService);
             RatingSectionModel = new RatingSectionModel(writeFilesRunner, metadataService);
             AuthorTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Author);
             CopyrightTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Copyright);
             DateTakenSectionModel = new DateTakenSectionModel(writeFilesRunner);
+
+            IsVisible = applicationSettings.AutoOpenMetadataPanel;
 
             Messenger.Register<ToggleMetataPanelMessage>(this, OnReceive);
             Messenger.Register<MetadataModifiedMessage>(this, OnReceive);

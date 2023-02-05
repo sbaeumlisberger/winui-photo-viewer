@@ -61,6 +61,33 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dark.
+        /// </summary>
+        internal static string AppTheme_Dark {
+            get {
+                return ResourceManager.GetString("AppTheme_Dark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Light.
+        /// </summary>
+        internal static string AppTheme_Light {
+            get {
+                return ResourceManager.GetString("AppTheme_Light", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to System.
+        /// </summary>
+        internal static string AppTheme_System {
+            get {
+                return ResourceManager.GetString("AppTheme_System", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reload.
         /// </summary>
         internal static string BitmapFlipViewItem_ReloadButton {
@@ -826,11 +853,56 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} Elemente, {1} ausgewählt.
+        /// </summary>
+        internal static string OverviewPage_SelectionInfo {
+            get {
+                return ResourceManager.GetString("OverviewPage_SelectionInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Overview.
         /// </summary>
         internal static string OverviewPage_Title {
             get {
                 return ResourceManager.GetString("OverviewPage_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Large thumbnails.
+        /// </summary>
+        internal static string OverviewPageCommandBar_LargeThumbs {
+            get {
+                return ResourceManager.GetString("OverviewPageCommandBar_LargeThumbs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Medium thumbnails.
+        /// </summary>
+        internal static string OverviewPageCommandBar_MediumThumbs {
+            get {
+                return ResourceManager.GetString("OverviewPageCommandBar_MediumThumbs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Small thumbnails.
+        /// </summary>
+        internal static string OverviewPageCommandBar_SmallThumbs {
+            get {
+                return ResourceManager.GetString("OverviewPageCommandBar_SmallThumbs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View.
+        /// </summary>
+        internal static string OverviewPageCommandBar_ViewButton {
+            get {
+                return ResourceManager.GetString("OverviewPageCommandBar_ViewButton", resourceCulture);
             }
         }
         
@@ -961,7 +1033,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show details bar in startup.
+        ///   Looks up a localized string similar to Show detailed information bar on startup.
         /// </summary>
         internal static string SettingsPage_AutoShowDetailsBarToogle {
             get {
@@ -1029,6 +1101,15 @@ namespace PhotoViewer.App.Resources {
         internal static string SettingsPage_ShowDeleteAnimationToggle {
             get {
                 return ResourceManager.GetString("SettingsPage_ShowDeleteAnimationToggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Theme.
+        /// </summary>
+        internal static string SettingsPage_ThemeHeader {
+            get {
+                return ResourceManager.GetString("SettingsPage_ThemeHeader", resourceCulture);
             }
         }
         

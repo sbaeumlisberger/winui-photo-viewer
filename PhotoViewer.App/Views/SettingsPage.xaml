@@ -4,21 +4,25 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PhotoViewer.App.Views"
     xmlns:converters="using:PhotoViewer.App.Converters"
-    xmlns:models="using:PhotoViewerCore.Models"
+    xmlns:models="using:PhotoViewer.Core.Models"
     xmlns:res="using:PhotoViewer.App.Resources"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    Loaded="{x:Bind ViewModel.OnViewLoaded}"
-    Unloaded="{x:Bind ViewModel.OnViewUnloaded}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
         <converters:TimeSpanToDoubleConverter x:Key="TimeSpanToDoubleConverter"/>
         <converters:DeleteLinkedFilesOptionToDisplayNameConverter x:Key="DeleteLinkedFilesOptionToDisplayNameConverter"/>
+        <converters:AppThemeToDisplayNameConverter x:Key="AppThemeToDisplayNameConverter"/>
     </Page.Resources>
 
-    <Grid Margin="32">
+    <Grid Margin="48,32,48,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -33,23 +37,38 @@
             <TextBlock Margin="8,0,0,0" Style="{ThemeResource TitleTextBlockStyle}" Text="{x:Bind res:Strings.SettingsPage_Title}"/>
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1">
-            <StackPanel>
+        <ScrollViewer Grid.Row="1" Margin="0,0,16,0">
+            <StackPanel Padding="0,0,0,32">
                 <TextBlock 
                     Margin="0,8,0,8"
                     Style="{ThemeResource SubtitleTextBlockStyle}" 
                     Text="{x:Bind res:Strings.SettingsPage_AppearanceSectionTittle}"/>
+                <RadioButtons 
+                    Header="{x:Bind res:Strings.SettingsPage_ThemeHeader}"
+                    MaxColumns="3" 
+                    ItemsSource="{x:Bind ViewModel.AvailableThemes}" 
+                    SelectedItem="{x:Bind ViewModel.Settings.Theme, Mode=OneWay}"
+                    SelectionChanged="Theme_SelectionChanged">
+                    <RadioButtons.ItemTemplate>
+                        <DataTemplate x:DataType="models:AppTheme">
+                            <TextBlock Text="{x:Bind Converter={StaticResource AppThemeToDisplayNameConverter}}"/>
+                        </DataTemplate>
+                    </RadioButtons.ItemTemplate>
+                </RadioButtons>
                 <ToggleSwitch 
+                    Margin="0,12,0,0"
                     Header="{x:Bind res:Strings.SettingsPage_ShowDeleteAnimationToggle}"
                     IsOn="{x:Bind ViewModel.Settings.ShowDeleteAnimation, Mode=TwoWay}"/>
                 <ToggleSwitch 
+                    Margin="0,4,0,0"
                     Header="{x:Bind res:Strings.SettingsPage_AutoShowMetadataPanelToogle}"                              
                     IsOn="{x:Bind ViewModel.Settings.AutoOpenMetadataPanel, Mode=TwoWay}"/>
                 <ToggleSwitch 
-                    Header="{x:Bind res:Strings.SettingsPage_AutoShowDetailsBarToogle}" 
-                              
+                    Margin="0,4,0,0"
+                    Header="{x:Bind res:Strings.SettingsPage_AutoShowDetailsBarToogle}"                               
                     IsOn="{x:Bind ViewModel.Settings.AutoOpenDetailsBar, Mode=TwoWay}"/>
                 <TextBlock 
+                    Margin="0,4,0,0"
                     Text="{x:Bind res:Strings.SettingsPage_DiashowTimeLabel}"/>
                 <NumberBox 
                     Margin="0,4,0,0" HorizontalAlignment="Left" MinWidth="100" SpinButtonPlacementMode="Compact"                           
@@ -70,13 +89,13 @@
                     </ToggleSwitch.Header>
                 </ToggleSwitch>
                 <TextBlock 
-                    Margin="0,16,0,0"
+                    Margin="0,8,0,0"
                     Text="Ordnername für RAW-Dateien"/>
                 <TextBlock 
                     Foreground="{ThemeResource SystemColorDisabledTextBrush}" 
                     Text="Spezifziert den Namen für einen Unterordner der nach RAW-Dateien durchsucht wird"/>
                 <TextBox 
-                    Margin="0,8,0,0" HorizontalAlignment="Left" MinWidth="200"
+                    Margin="0,4,0,0" HorizontalAlignment="Left" MinWidth="200"
                     Text="{x:Bind ViewModel.Settings.RawFilesFolderName, Mode=TwoWay}"/>
                 <TextBlock
                     Margin="0,16,0,0" 
@@ -109,7 +128,29 @@
                     <Button Content="Wiederherstellen..." Command="{x:Bind ViewModel.ImportCommand}"/>
                 </StackPanel>
                 <Button Margin="0,12,0,0" Content="Alle Einstellungen zurücksetzen" Command="{x:Bind ViewModel.ResetCommand}"/>
+            </StackPanel>
+        </ScrollViewer>
 
+        <ScrollViewer Grid.Column="1" Grid.Row="1" Margin="16,0,0,0">
+            <StackPanel Padding="0,0,0,32">
+                <TextBlock
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="About"/>
+                <TextBlock Text="WinUI Photo Viewer"/>
+                <TextBlock Text="Version 0.0.0"/>
+                <TextBlock Text="© Sebastian Bäumlisberger"/>
+                <HyperlinkButton 
+                    Padding="0"
+                    Content="GitHub"
+                    NavigateUri="https://github.com/sbaeumlisberger/winui-photo-viewer"/>              
+
+                <TextBlock 
+                    Margin="0,32,0,8" 
+                    Style="{ThemeResource SubtitleTextBlockStyle}" 
+                    Text="Logging"/>
+                    <Button 
+                        Content="Logdatei öffnen"
+                        Command="{x:Bind ViewModel.ShowLogCommand}"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

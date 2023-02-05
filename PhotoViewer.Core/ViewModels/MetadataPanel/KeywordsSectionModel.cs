@@ -4,13 +4,13 @@ using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
-using PhotoViewerCore.Messages;
-using PhotoViewerCore.Services;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Utils;
 using System.Collections.Concurrent;
 using Tocronx.SimpleAsync;
 
-namespace PhotoViewerCore.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
 {

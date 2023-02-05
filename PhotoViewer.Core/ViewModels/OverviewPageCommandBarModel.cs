@@ -4,10 +4,11 @@ using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
-using PhotoViewerCore.Commands;
-using PhotoViewerCore.Models;
-using PhotoViewerCore.Utils;
-using PhotoViewerCore.ViewModels;
+using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Commands;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels;
 using System.ComponentModel;
 using System.Windows.Input;
 using Windows.Storage;
@@ -65,6 +66,12 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
             await rotateBitmapService.RotateClockwise90DegreesAsync(bitmapFile).ConfigureAwait(false);
         });
         result.ProcessedElements.ForEach(bitmapFile => Messenger.Send(new BitmapRotatedMesssage(bitmapFile)));
+    }
+
+    [RelayCommand]
+    private void ChangeThumbnailSize(double newThumbnailSize) 
+    {
+        Messenger.Send(new ChangeThumbnailSizeMessage(newThumbnailSize));
     }
 
     [RelayCommand]

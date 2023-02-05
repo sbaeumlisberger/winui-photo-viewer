@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tocronx.SimpleAsync;
 
-namespace PhotoViewerCore.Utils
+namespace PhotoViewer.Core.Utils
 {
     internal static class CancelableTaskRunnerExtension
     {

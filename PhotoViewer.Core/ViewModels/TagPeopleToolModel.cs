@@ -8,14 +8,14 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
-using PhotoViewerCore.Messages;
-using PhotoViewerCore.Services;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Utils;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.FaceAnalysis;
 
-namespace PhotoViewerCore.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public partial class TagPeopleToolModel : ViewModelBase
 {

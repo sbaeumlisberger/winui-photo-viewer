@@ -2,8 +2,8 @@
 using Microsoft.UI.Xaml.Navigation;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
-using PhotoViewerCore;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core;
+using PhotoViewer.Core.Utils;
 
 namespace PhotoViewer.App.Views;
 

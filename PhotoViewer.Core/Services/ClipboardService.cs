@@ -1,7 +1,7 @@
 ﻿using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 
-namespace PhotoViewerCore.Services;
+namespace PhotoViewer.Core.Services;
 
 public interface IClipboardService
 {

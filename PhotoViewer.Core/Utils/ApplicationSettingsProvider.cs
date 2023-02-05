@@ -1,6 +1,6 @@
-﻿using PhotoViewerCore.Models;
+﻿using PhotoViewer.Core.Models;
 
-namespace PhotoViewerCore.Utils;
+namespace PhotoViewer.Core.Utils;
 
 public static class ApplicationSettingsProvider
 {

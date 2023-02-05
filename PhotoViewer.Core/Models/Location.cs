@@ -1,6 +1,6 @@
 ﻿using Windows.Devices.Geolocation;
 
-namespace PhotoViewerCore.Models;
+namespace PhotoViewer.Core.Models;
 
 public record Location
 {

@@ -11,7 +11,7 @@ using PhotoViewer.App.Utils.Logging;
 using Windows.Storage;
 using Windows.System;
 
-namespace PhotoViewerCore.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public partial class PropertiesDialogModel : ViewModelBase
 {

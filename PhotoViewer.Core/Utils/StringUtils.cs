@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace PhotoViewerCore.Utils;
+namespace PhotoViewer.Core.Utils;
 
 public static class StringUtils
 {

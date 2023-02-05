@@ -1,5 +1,5 @@
-﻿using PhotoViewerCore.Models;
-using PhotoViewerCore.Utils;
+﻿using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Utils;
 using System.Globalization;
 using System.Net;
 using System.Text.Json;
@@ -9,7 +9,7 @@ using Windows.Globalization;
 using Windows.Services.Maps;
 using static System.Net.WebRequestMethods;
 
-namespace PhotoViewerCore.Services
+namespace PhotoViewer.Core.Services
 {
     /// <summary>A service to geocode and reverse-geocode location data.</summary>
     public interface ILocationService

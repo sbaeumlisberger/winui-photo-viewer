@@ -5,9 +5,10 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
-using PhotoViewerCore.Messages;
-using PhotoViewerCore.Utils;
-using PhotoViewerCore.ViewModels;
+using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels;
 using System.ComponentModel;
 using Tocronx.SimpleAsync;
 
@@ -24,7 +25,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 {
     public IMediaFlipViewItemModel? SelectedItemModel { get; set; }
 
-    public bool IsVisible { get; set; } = true;
+    public bool IsVisible { get; set; } = false;
 
     public bool ShowNoInformationAvailableMessage => SelectedItemModel == null;
 
@@ -46,9 +47,10 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 
     private readonly CancelableTaskRunner updateRunner = new CancelableTaskRunner();
 
-    public DetailsBarModel(IMessenger messenger, IMetadataService metadataService) : base(messenger)
+    public DetailsBarModel(IMessenger messenger, IMetadataService metadataService, ApplicationSettings settings) : base(messenger)
     {
         this.metadataService = metadataService;
+        IsVisible = settings.AutoOpenDetailsBar;
         Messenger.Register<MetadataModifiedMessage>(this, OnReceive);
         Messenger.Register<BitmapImageLoadedMessage>(this, OnReceive);
     }

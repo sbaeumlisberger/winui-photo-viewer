@@ -5,6 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhotoViewerCore.Messages;
+namespace PhotoViewer.Core.Messages;
 
 public record class BitmapImageLoadedMessage(IBitmapFileInfo BitmapFile, IBitmapImage BitmapImage);

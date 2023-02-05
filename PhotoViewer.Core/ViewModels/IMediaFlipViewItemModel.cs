@@ -1,7 +1,7 @@
 ﻿using PhotoViewer.App.Models;
 using System.ComponentModel;
 
-namespace PhotoViewerCore.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public interface IMediaFlipViewItemModel : INotifyPropertyChanged
 {

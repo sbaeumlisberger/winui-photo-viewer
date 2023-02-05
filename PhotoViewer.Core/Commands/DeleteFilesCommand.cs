@@ -2,15 +2,15 @@
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
-using PhotoViewerCore.Models;
+using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
-using PhotoViewerCore.Services;
-using PhotoViewerCore.Utils;
-using PhotoViewerCore.ViewModels;
+using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels;
 using System.Windows.Input;
 using Windows.System;
 
-namespace PhotoViewerCore.Commands;
+namespace PhotoViewer.Core.Commands;
 
 public interface IDeleteFilesCommand : IAcceleratedCommand, ICommand { }
 

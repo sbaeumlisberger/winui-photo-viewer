@@ -2,7 +2,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Utils.Logging;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Utils;
 using System;
 using System.Reflection;
 

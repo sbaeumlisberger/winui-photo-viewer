@@ -4,14 +4,14 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
-using PhotoViewerCore.Commands;
-using PhotoViewerCore.Models;
-using PhotoViewerCore.Services;
-using PhotoViewerCore.Utils;
-using PhotoViewerCore.ViewModels;
+using PhotoViewer.Core.Commands;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels;
 using System.Diagnostics;
 
-namespace PhotoViewerCore;
+namespace PhotoViewer.Core;
 
 public class ViewModelFactory
 {
@@ -29,6 +29,7 @@ public class ViewModelFactory
     private readonly ISettingsService settingService = new SettingsService();
     private readonly IPersonalizationService personalizationService = new PersonalizationService();
     private readonly IClipboardService clipboardService = new ClipboardService();
+    private readonly IGpxService gpxService = new GpxService();
     private readonly ISuggestionsService peopleSuggestionsService = new SuggestionsService("people");
     private readonly ISuggestionsService keywordsSuggestionsService = new SuggestionsService("keywords");
     private readonly ApplicationSettings settings = ApplicationSettingsProvider.GetSettings();
@@ -58,7 +59,7 @@ public class ViewModelFactory
                 mediaFilesLoaderService,
                 (mediaFile) => CreateMediaFlipViewItemModel(mediaFile, deleteFilesCommand),
                 settings),
-            () => new DetailsBarModel(messenger, metadataService),
+            () => new DetailsBarModel(messenger, metadataService, settings),
             (flipViewPageModel) => new FlipViewPageCommandBarModel(
                 messenger,
                 dialogService,
@@ -77,6 +78,8 @@ public class ViewModelFactory
                 clipboardService,
                 peopleSuggestionsService,
                 keywordsSuggestionsService,
+                gpxService,
+                settings,
                 showTagPeopleOnPhotoButton));
         sw.Stop();
         Debug.WriteLine($"CreateFlipViewPageModel took {sw.ElapsedMilliseconds}ms");
@@ -97,7 +100,6 @@ public class ViewModelFactory
         return new OverviewPageModel(
             applicationSession,
             messenger,
-            dialogService,
             new OverviewPageCommandBarModel(
                 messenger,
                 dialogService,
@@ -114,6 +116,8 @@ public class ViewModelFactory
                 clipboardService,
                 peopleSuggestionsService,
                 keywordsSuggestionsService,
+                gpxService,
+                settings,
                 showTagPeopleOnPhotoButton));
     }
 

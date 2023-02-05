@@ -5,11 +5,11 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
-using PhotoViewerCore.Messages;
-using PhotoViewerCore.ViewModels;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.ViewModels;
+using PhotoViewer.Core.Utils;
 using Tocronx.SimpleAsync;
-using PhotoViewerCore.Services;
+using PhotoViewer.Core.Services;
 
 namespace PhotoViewer.App.ViewModels;
 

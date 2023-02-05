@@ -4,8 +4,9 @@ using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
-using PhotoViewerCore.Messages;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ public partial class OverviewItemModel : ViewModelBase
 
     public string DisplayName { get; }
 
-    public double ThumbnailSize { get; } = 256;
+    public double ThumbnailSize { get; private set; } = 160;
 
     public bool HasKeywords { get; private set; } = false;
 
@@ -43,14 +44,20 @@ public partial class OverviewItemModel : ViewModelBase
 
     protected async override void OnViewConnectedOverride()
     {
+        Messenger.Register<ChangeThumbnailSizeMessage>(this, Receive);
         Messenger.Register<BitmapRotatedMesssage>(this, Receive);
 
         if (MediaFile is IBitmapFileInfo bitmapFile && bitmapFile.IsMetadataSupported)
         {
             Messenger.Register<MetadataModifiedMessage>(this, Receive);
             await LoadMetadataInfoAsync(bitmapFile);
-        } 
+        }
     }
+    private void Receive(ChangeThumbnailSizeMessage msg)
+    {
+        ThumbnailSize = msg.NewThumbnailSize;        
+    }
+
     private void Receive(BitmapRotatedMesssage msg)
     {
         if (msg.Bitmap == MediaFile)

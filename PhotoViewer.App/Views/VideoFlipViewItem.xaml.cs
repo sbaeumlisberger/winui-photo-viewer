@@ -5,7 +5,7 @@ using Microsoft.Web.WebView2.Core;
 using PhotoVieweApp.Utils;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Utils;
 using System;
 using System.ComponentModel;
 using System.IO;

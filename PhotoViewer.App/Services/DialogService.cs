@@ -1,9 +1,11 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.UI;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using PhotoViewer.App.Resources;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
-using PhotoViewerCore.ViewModels;
+using PhotoViewer.Core.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -108,7 +110,7 @@ public class DialogService : IDialogService
             Content = messageDialogModel.Message,
             PrimaryButtonText = Strings.MessageDialog_PrimaryButtonText,
         };
-        dialog.XamlRoot = window.Content.XamlRoot;
+        InitializeContentDialog(dialog);
         await dialog.ShowAsync();
     }
 
@@ -141,9 +143,15 @@ public class DialogService : IDialogService
     private async Task ShowCustomDialogAsync(object dialogModel)
     {
         var dialog = (ContentDialog)viewRegistrations.CreateViewForViewModelType(dialogModel.GetType());
-        dialog.XamlRoot = window.Content.XamlRoot;
+        InitializeContentDialog(dialog);
         dialog.DataContext = dialogModel;
         await dialog.ShowAsync();
+    }
+
+    private void InitializeContentDialog(ContentDialog dialog) 
+    {
+        dialog.XamlRoot = window.Content.XamlRoot;
+        dialog.RequestedTheme = ((FrameworkElement)window.Content).RequestedTheme;
     }
 
     private static DataTransferManager GetDataTransferManagerForWindow([In] IntPtr appWindow)

@@ -8,8 +8,9 @@ using PhotoViewer.App.Resources;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.ViewModels;
-using PhotoViewerCore;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core;
+using PhotoViewer.Core.Utils;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PhotoViewer.App.Views;
@@ -56,5 +57,10 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
             gridView.SelectedItem = itemModel.MediaFile;
         }
         gridView.ShowAttachedFlyout(args);
+    }
+
+    private string FormatSelectionInfo(IReadOnlyList<IMediaFileInfo> items, IReadOnlyList<IMediaFileInfo> selectedItems) 
+    {
+        return string.Format(Strings.OverviewPage_SelectionInfo, items.Count, selectedItems.Count);
     }
 }

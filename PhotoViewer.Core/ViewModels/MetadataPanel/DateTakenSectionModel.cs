@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tocronx.SimpleAsync;
 
-namespace PhotoViewerCore.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
 {

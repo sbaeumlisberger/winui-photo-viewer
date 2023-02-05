@@ -4,11 +4,11 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Utils;
 using Tocronx.SimpleAsync;
 using Windows.Foundation.Collections;
 
-namespace PhotoViewerCore.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 {

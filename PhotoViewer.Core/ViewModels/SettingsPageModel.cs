@@ -3,15 +3,18 @@ using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
-using PhotoViewerCore.Models;
-using PhotoViewerCore.Services;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Utils;
 using System.ComponentModel;
 using Tocronx.SimpleAsync;
 using Windows.Storage;
+using Windows.System;
 
-namespace PhotoViewerCore.ViewModels
+namespace PhotoViewer.Core.ViewModels
 {
     public partial class SettingsPageModel : ViewModelBase
     {
@@ -20,6 +23,8 @@ namespace PhotoViewerCore.ViewModels
         private readonly ISettingsService settingsService;
 
         private readonly SequentialTaskRunner saveSettingsTaskRunner = new SequentialTaskRunner();
+
+        public IList<AppTheme> AvailableThemes { get; } = Enum.GetValues<AppTheme>();
 
         public IList<DeleteLinkedFilesOption> AvailableDeleteLinkedFilesOptions { get; } = Enum.GetValues<DeleteLinkedFilesOption>();
 
@@ -36,12 +41,12 @@ namespace PhotoViewerCore.ViewModels
             Settings = settings;
         }
 
-        public void OnViewLoaded()
+        protected override void OnViewConnectedOverride()
         {
             Settings.PropertyChanged += Settings_PropertyChanged;
         }
 
-        public void OnViewUnloaded()
+        protected override void OnViewDisconnectedOverride()
         {
             Settings.PropertyChanged -= Settings_PropertyChanged;
         }
@@ -96,6 +101,12 @@ namespace PhotoViewerCore.ViewModels
         private async Task ResetAsync()
         {
             await settingsService.SaveSettingsAsync(new ApplicationSettings());
+        }
+
+        [RelayCommand]
+        private async Task ShowLogAsync()
+        {
+            await Launcher.LaunchFileAsync(await Log.GetLogFileAsync());
         }
 
     }

@@ -1,6 +1,6 @@
 ﻿using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils.Logging;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Utils;
 using System.Diagnostics;
 using System.Formats.Tar;
 using System.IO;

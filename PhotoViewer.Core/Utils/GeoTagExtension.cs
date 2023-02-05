@@ -1,7 +1,7 @@
 ﻿using MetadataAPI.Data;
 using Windows.Devices.Geolocation;
 
-namespace PhotoViewerCore.Utils;
+namespace PhotoViewer.Core.Utils;
 
 public static class GeoTagExtension
 {

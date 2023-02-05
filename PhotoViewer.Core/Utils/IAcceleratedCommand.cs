@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
 using Windows.System;
 
-namespace PhotoViewerCore.Utils;
+namespace PhotoViewer.Core.Utils;
 
 public interface IAcceleratedCommand : ICommand
 {

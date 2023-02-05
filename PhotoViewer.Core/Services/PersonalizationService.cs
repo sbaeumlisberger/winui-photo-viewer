@@ -4,7 +4,7 @@ using Windows.System.UserProfile;
 using Windows.UI;
 using Windows.UI.Notifications;
 
-namespace PhotoViewerCore.Services;
+namespace PhotoViewer.Core.Services;
 
 public interface IPersonalizationService
 {

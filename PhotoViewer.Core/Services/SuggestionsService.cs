@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace PhotoViewerCore.Services
+namespace PhotoViewer.Core.Services
 {
     internal interface ISuggestionsService
     {

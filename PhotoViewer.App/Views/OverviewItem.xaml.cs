@@ -4,7 +4,7 @@ using PhotoViewer.Core.ViewModels;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Utils;
 using System;
 using Windows.Foundation;
 using System.Linq;

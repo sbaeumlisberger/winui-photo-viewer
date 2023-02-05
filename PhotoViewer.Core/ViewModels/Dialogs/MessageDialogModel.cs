@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhotoViewerCore.ViewModels
+namespace PhotoViewer.Core.ViewModels
 {
     public class MessageDialogModel
     {

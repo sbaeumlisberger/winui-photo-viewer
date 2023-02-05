@@ -117,6 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AppTheme_Dark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="AppTheme_Light" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="AppTheme_System" xml:space="preserve">
+    <value>System</value>
+  </data>
   <data name="BitmapFlipViewItem_ReloadButton" xml:space="preserve">
     <value>Reload</value>
   </data>
@@ -372,6 +381,21 @@
   <data name="OverviewItem_PeopleSymbol_Tooltip" xml:space="preserve">
     <value>This photo has people tags</value>
   </data>
+  <data name="OverviewPageCommandBar_LargeThumbs" xml:space="preserve">
+    <value>Large thumbnails</value>
+  </data>
+  <data name="OverviewPageCommandBar_MediumThumbs" xml:space="preserve">
+    <value>Medium thumbnails</value>
+  </data>
+  <data name="OverviewPageCommandBar_SmallThumbs" xml:space="preserve">
+    <value>Small thumbnails</value>
+  </data>
+  <data name="OverviewPageCommandBar_ViewButton" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="OverviewPage_SelectionInfo" xml:space="preserve">
+    <value>{0} Elemente, {1} ausgewählt</value>
+  </data>
   <data name="OverviewPage_Title" xml:space="preserve">
     <value>Overview</value>
   </data>
@@ -418,7 +442,7 @@
     <value>Appearance</value>
   </data>
   <data name="SettingsPage_AutoShowDetailsBarToogle" xml:space="preserve">
-    <value>Show details bar in startup</value>
+    <value>Show detailed information bar on startup</value>
   </data>
   <data name="SettingsPage_AutoShowMetadataPanelToogle" xml:space="preserve">
     <value>Show metadata view on startup</value>
@@ -440,6 +464,9 @@
   </data>
   <data name="SettingsPage_ShowDeleteAnimationToggle" xml:space="preserve">
     <value>Show delete animation</value>
+  </data>
+  <data name="SettingsPage_ThemeHeader" xml:space="preserve">
+    <value>Theme</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Settings</value>

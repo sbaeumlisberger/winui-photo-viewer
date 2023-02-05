@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Utils;
 
 namespace PhotoViewer.App.Utils;
 

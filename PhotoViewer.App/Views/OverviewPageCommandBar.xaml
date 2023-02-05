@@ -38,6 +38,42 @@
             <KeyboardAccelerator Key="{x:Bind ViewModel.DeleteCommand.AcceleratorKey}"/>
         </AppBarButton.KeyboardAccelerators>
     </AppBarButton>
+    <AppBarButton Icon="View" Label="{x:Bind res:Strings.OverviewPageCommandBar_ViewButton}">
+        <AppBarButton.Flyout>
+            <MenuFlyout>
+                <MenuFlyoutItem
+                    Text="{x:Bind res:Strings.OverviewPageCommandBar_LargeThumbs}"
+                    Command="{x:Bind ViewModel.ChangeThumbnailSizeCommand}">
+                    <MenuFlyoutItem.CommandParameter>
+                        <x:Double>224</x:Double>
+                    </MenuFlyoutItem.CommandParameter>
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE978;"/>
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    Text="{x:Bind res:Strings.OverviewPageCommandBar_MediumThumbs}"
+                    Command="{x:Bind ViewModel.ChangeThumbnailSizeCommand}">
+                    <MenuFlyoutItem.CommandParameter>
+                        <x:Double>160</x:Double>
+                    </MenuFlyoutItem.CommandParameter>
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEA5F;"/>
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    Text="{x:Bind res:Strings.OverviewPageCommandBar_SmallThumbs}"
+                    Command="{x:Bind ViewModel.ChangeThumbnailSizeCommand}">
+                    <MenuFlyoutItem.CommandParameter>
+                        <x:Double>96</x:Double>
+                    </MenuFlyoutItem.CommandParameter>
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEA60;"/>
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+            </MenuFlyout>
+        </AppBarButton.Flyout>
+    </AppBarButton>
         
     <CommandBar.SecondaryCommands>
         <AppBarButton 

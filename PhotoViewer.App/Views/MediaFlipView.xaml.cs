@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Input;
 using PhotoVieweApp.Utils;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
-using PhotoViewerCore.Utils;
+using PhotoViewer.Core.Utils;
 using System.ComponentModel;
 
 namespace PhotoViewer.App.Views;
