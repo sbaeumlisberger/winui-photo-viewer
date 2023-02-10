@@ -27,15 +27,15 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     public TagPeopleTool()
     {
-        this.InitializeMVVM(ConnectToViewModel, DisconnectFromViewModel);
+        this.InitializeMVVM();
     }
 
-    private void ConnectToViewModel(TagPeopleToolModel viewModel)
+    partial void ConnectToViewModel(TagPeopleToolModel viewModel)
     {
         viewModel.PropertyChanged += ViewModel_PropertyChanged;
     }
 
-    private void DisconnectFromViewModel(TagPeopleToolModel viewModel)
+    partial void DisconnectFromViewModel(TagPeopleToolModel viewModel)
     {
         viewModel.PropertyChanged -= ViewModel_PropertyChanged;
     }

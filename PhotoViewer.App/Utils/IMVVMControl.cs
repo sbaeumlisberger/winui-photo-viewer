@@ -6,27 +6,30 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
 
-namespace PhotoViewer.Core.Utils
+namespace PhotoViewer.App.Utils;
+
+public interface IMVVMControl<T>
 {
-    public interface IMVVMControl<T>
-    {
-        event RoutedEventHandler Loaded;
+    event RoutedEventHandler Loaded;
 
-        event RoutedEventHandler Unloaded;
+    event RoutedEventHandler Unloaded;
 
-        event TypedEventHandler<FrameworkElement, DataContextChangedEventArgs> DataContextChanged;
+    event TypedEventHandler<FrameworkElement, DataContextChangedEventArgs> DataContextChanged;
 
-        bool IsLoaded { get; }
+    bool IsLoaded { get; }
 
-        object? DataContext { get; set; }
+    object? DataContext { get; set; }
 
-        void LoadComponent();
+    void LoadComponent();
 
-        void InitializeBindings();
+    void InitializeBindings();
 
-        void UpdateBindings();
+    void UpdateBindings();
 
-        void StopBindings();
+    void StopBindings();
 
-    }
+    void ConnectToViewModel(T viewModel);
+
+    void DisconnectFromViewModel(T viewModel);
+
 }

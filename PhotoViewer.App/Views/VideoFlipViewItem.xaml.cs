@@ -19,15 +19,17 @@ public sealed partial class VideoFlipViewItem : UserControl, IMVVMControl<VideoF
 
     public VideoFlipViewItem()
     {
-        this.InitializeMVVM(
-           connectToViewModel: viewModel =>
-           {
-               mediaPlayerElement.SetMediaPlayer(viewModel.MediaPlayer);
-           },
-           disconnectFromViewModel: viewModel =>
-           {
-               mediaPlayerElement.SetMediaPlayer(null);
-           });
+        this.InitializeMVVM();
+    }
+
+    partial void ConnectToViewModel(VideoFlipViewItemModel viewModel)
+    { 
+        mediaPlayerElement.SetMediaPlayer(viewModel.MediaPlayer); 
+    }
+
+    partial void DisconnectFromViewModel(VideoFlipViewItemModel viewModel)
+    { 
+        mediaPlayerElement.SetMediaPlayer(null);
     }
 
     private void MediaPlayerElement_ContextRequested(UIElement sender, ContextRequestedEventArgs args)

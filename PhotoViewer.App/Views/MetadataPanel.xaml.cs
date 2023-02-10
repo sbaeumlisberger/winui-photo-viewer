@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Resources;
 using PhotoViewer.App.Utils;
+using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System;
@@ -13,17 +14,19 @@ public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPa
 
     public MetadataPanel()
     {
-        this.InitializeMVVM(
-            connectToViewModel: (viewModel) =>
-            {
-                viewModel.PeopleSectionModel.OnViewConnected();
-                viewModel.KeywordsSectionModel.OnViewConnected();
-            },
-            disconnectFromViewModel: (viewModel) =>
-            {
-                viewModel.PeopleSectionModel.OnViewDisconnected();
-                viewModel.KeywordsSectionModel.OnViewDisconnected();
-            });
+        this.InitializeMVVM();
+    }
+
+    partial void ConnectToViewModel(MetadataPanelModel viewModel)
+    {
+        viewModel.PeopleSectionModel.OnViewConnected();
+        viewModel.KeywordsSectionModel.OnViewConnected();
+    }
+
+    partial void DisconnectFromViewModel(MetadataPanelModel viewModel)
+    {
+        viewModel.PeopleSectionModel.OnViewDisconnected();
+        viewModel.KeywordsSectionModel.OnViewDisconnected();
     }
 
     private string ResolvePlaceholder(bool hasDifferentValues, string placeholder)

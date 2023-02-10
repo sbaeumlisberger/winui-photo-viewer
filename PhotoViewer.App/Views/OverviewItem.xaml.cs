@@ -21,15 +21,15 @@ public sealed partial class OverviewItem : UserControl, IMVVMControl<OverviewIte
 
     public OverviewItem()
     {
-        this.InitializeMVVM(ConnectToViewModel, DisconnectFromViewModel);
+        this.InitializeMVVM();
     }
 
-    private void ConnectToViewModel(OverviewItemModel viewModel) 
+    partial void ConnectToViewModel(OverviewItemModel viewModel) 
     {
         viewModel.ThumbnailInvalidated += ViewModel_ThumbnailInvalidated;
     }
 
-    private void DisconnectFromViewModel(OverviewItemModel viewModel)
+    partial void DisconnectFromViewModel(OverviewItemModel viewModel)
     {
         viewModel.ThumbnailInvalidated -= ViewModel_ThumbnailInvalidated;
     }

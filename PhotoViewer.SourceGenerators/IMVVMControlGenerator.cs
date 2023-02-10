@@ -10,6 +10,9 @@ namespace SourceGenerators;
 [Generator]
 public class IMVVMControlGenerator : IIncrementalGenerator
 {
+
+    private static readonly string InterfaceName = "IMVVMControl";
+
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var classes = context.SyntaxProvider
@@ -30,7 +33,7 @@ public class IMVVMControlGenerator : IIncrementalGenerator
     {
         var classDeclaration = (ClassDeclarationSyntax)context.Node;
         var classSymbol = context.SemanticModel.GetDeclaredSymbol(classDeclaration);
-        return classSymbol?.GetInterface("IMVVMControl") != null ? classSymbol : null;
+        return classSymbol?.GetInterface(InterfaceName) != null ? classSymbol : null;
     }
 
     public void GenerateCode(SourceProductionContext context, ImmutableArray<ITypeSymbol> classes)
@@ -46,6 +49,9 @@ public class IMVVMControlGenerator : IIncrementalGenerator
     {
         var @namespace = Utils.GetNamespace(classSymbol);
 
+        var interfaceSymbol = classSymbol.Interfaces.First(i => i.Name == InterfaceName);
+        string viewModelType = Utils.GetFullName(interfaceSymbol.TypeArguments.First());
+
         var code = $$"""
                 #nullable enable
 
@@ -59,6 +65,12 @@ public class IMVVMControlGenerator : IIncrementalGenerator
                     public void InitializeBindings() => Bindings.Initialize();
                     public void UpdateBindings() => Bindings.Update();
                     public void StopBindings() => Bindings.StopTracking();
+
+                    partial void ConnectToViewModel({{viewModelType}} viewModel);     
+                    partial void DisconnectFromViewModel({{viewModelType}} viewModel);    
+
+                    void PhotoViewer.App.Utils.IMVVMControl<{{viewModelType}}>.ConnectToViewModel({{viewModelType}} viewModel) => ConnectToViewModel(viewModel);     
+                    void PhotoViewer.App.Utils.IMVVMControl<{{viewModelType}}>.DisconnectFromViewModel({{viewModelType}} viewModel) => DisconnectFromViewModel(viewModel);   
                 }
             """;
         return code;

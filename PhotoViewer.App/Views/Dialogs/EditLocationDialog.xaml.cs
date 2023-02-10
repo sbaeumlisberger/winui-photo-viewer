@@ -60,10 +60,10 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
 
     public EditLocationDialog()
     {
-        this.InitializeMVVM(OnViewModelConnected, OnViewModelDisconnected);
+        this.InitializeMVVM();
     }
 
-    private async void OnViewModelConnected(EditLocationDialogModel viewModel)
+    async partial void ConnectToViewModel(EditLocationDialogModel viewModel)
     {
         viewModel.PropertyChanged += ViewModel_PropertyChanged;
         await mapWebView.EnsureCoreWebView2Async();
@@ -71,7 +71,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
         mapWebView.WebMessageReceived += MapWebView_WebMessageReceived;
     }
 
-    private void OnViewModelDisconnected(EditLocationDialogModel viewModel)
+    partial void DisconnectFromViewModel(EditLocationDialogModel viewModel)
     {
         viewModel.PropertyChanged -= ViewModel_PropertyChanged;
         mapWebView.WebMessageReceived -= MapWebView_WebMessageReceived;

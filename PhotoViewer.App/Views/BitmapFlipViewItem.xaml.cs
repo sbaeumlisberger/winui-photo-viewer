@@ -14,15 +14,16 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
 
     public BitmapFlipViewItem()
     {
-        this.InitializeMVVM(ConnectToViewModel, DisconnectFromViewModel);
+        this.InitializeMVVM();
         bitmapViewer.ScrollViewer.ViewChanged += ScrollViewer_ViewChanged;
     }
 
-    private void ConnectToViewModel(BitmapFlipViewItemModel viewModel)
+    partial void ConnectToViewModel(BitmapFlipViewItemModel viewModel)
     {
         viewModel.PropertyChanged += ViewModel_PropertyChanged;
     }
-    private void DisconnectFromViewModel(BitmapFlipViewItemModel viewModel)
+
+    partial void DisconnectFromViewModel(BitmapFlipViewItemModel viewModel)
     {
         viewModel.PropertyChanged -= ViewModel_PropertyChanged;
     }

@@ -1,20 +1,13 @@
-﻿using Microsoft.UI.Input;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Utils.Logging;
-using PhotoViewer.Core.Utils;
 using System;
-using System.Reflection;
 
 namespace PhotoViewer.App.Utils;
 
 internal static class ControlUtil
 {
-    public static void InitializeMVVM<TViewModel>(
-        this IMVVMControl<TViewModel> control,
-        Action<TViewModel>? connectToViewModel = null,
-        Action<TViewModel>? disconnectFromViewModel = null)
-        where TViewModel : ViewModelBase
+    public static void InitializeMVVM<TViewModel>(this IMVVMControl<TViewModel> control) where TViewModel : ViewModelBase
     {
         if (control.IsLoaded)
         {
@@ -27,7 +20,7 @@ internal static class ControlUtil
         {
             Log.Debug($"Connect {control} to {newViewModel}");
             viewModel = newViewModel;
-            connectToViewModel?.Invoke(newViewModel);
+            control.ConnectToViewModel(newViewModel);
             control.UpdateBindings(); // TODO ?
             viewModel.OnViewConnected();
         }
@@ -35,7 +28,7 @@ internal static class ControlUtil
         void disconnect(TViewModel currentViewModel)
         {
             Log.Debug($"Disconnect {control} from {currentViewModel}");
-            disconnectFromViewModel?.Invoke(viewModel);
+            control.DisconnectFromViewModel(viewModel);
             control.StopBindings();
             currentViewModel.OnViewDisconnected();
             viewModel = null;
