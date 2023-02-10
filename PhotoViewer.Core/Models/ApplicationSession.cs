@@ -8,18 +8,20 @@ namespace PhotoViewer.Core.Models;
 
 public class ApplicationSession
 {
-    public IList<IMediaFileInfo> Files { get; private set; } = Array.Empty<IMediaFileInfo>();
+    public IReadOnlyList<IMediaFileInfo> Files => files;
+
+    private List<IMediaFileInfo> files = new List<IMediaFileInfo>();
 
     public ApplicationSession(IMessenger messenger)
     {
         messenger.Register<MediaFilesLoadedMessage>(this, msg =>
         {
-            Files = new List<IMediaFileInfo>(msg.Files);
+            files = new List<IMediaFileInfo>(msg.Files);
         });
 
         messenger.Register<MediaFilesDeletedMessage>(this, msg =>
         {
-            msg.Files.ForEach(file => Files.Remove(file));
+            msg.Files.ForEach(file => files.Remove(file));
         });
     }
 

@@ -56,12 +56,12 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
                 }
             }
 
-            mediaFiles = ConvertFilesToMediaFiles(files, config.LinkRAWs);
+            mediaFiles = ConvertFilesToMediaFiles(files, config.LinkRAWs, config.IncludeVideos);
             startMediaFile = FindStartMediaFile(mediaFiles, startFile);
         }
         else if (activatedEventArgs is IFileActivatedEventArgs fileActivatedEventArgs)
         {
-            mediaFiles = ConvertFilesToMediaFiles(fileActivatedEventArgs.Files.Cast<IStorageFile>().ToList(), config.LinkRAWs);
+            mediaFiles = ConvertFilesToMediaFiles(fileActivatedEventArgs.Files.Cast<IStorageFile>().ToList(), config.LinkRAWs, config.IncludeVideos);
             startMediaFile = mediaFiles.FirstOrDefault();
         }
         else
@@ -104,12 +104,12 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             }
         }
 
-        var mediaFiles = ConvertFilesToMediaFiles(files, config.LinkRAWs);
+        var mediaFiles = ConvertFilesToMediaFiles(files, config.LinkRAWs, config.IncludeVideos);
         var startMediaFile = mediaFiles.FirstOrDefault();
         return new LoadMediaFilesResult(mediaFiles, startMediaFile);
     }
 
-    private List<IMediaFileInfo> ConvertFilesToMediaFiles(IReadOnlyList<IStorageFile> files, bool linkRAWs)
+    private List<IMediaFileInfo> ConvertFilesToMediaFiles(IReadOnlyList<IStorageFile> files, bool linkRAWs, bool includeVideos)
     {
         Stopwatch sw = Stopwatch.StartNew();
 
@@ -142,7 +142,10 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             }
             else if (VideoFileInfo.SupportedFileExtensions.Contains(fileExtension))
             {
-                mediaFiles.Add(new VideoFileInfo(file));
+                if (includeVideos)
+                {
+                    mediaFiles.Add(new VideoFileInfo(file));
+                }
             }
             else if (VectorGraphicFileInfo.SupportedFileExtensions.Contains(fileExtension))
             {

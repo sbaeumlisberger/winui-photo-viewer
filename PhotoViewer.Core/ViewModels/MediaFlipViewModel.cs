@@ -286,7 +286,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         await dialogService.ShowDialogAsync(folderPickerModel);
         if (folderPickerModel.Folder is StorageFolder folder)
         {
-            var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName);
+            var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName, settings.IncludeVideos);
             var result = await loadMediaItemsService.LoadMediaFilesAsync(folder, config);
             Messenger.Send(new MediaFilesLoadedMessage(result.MediaItems, result.StartItem));
         }

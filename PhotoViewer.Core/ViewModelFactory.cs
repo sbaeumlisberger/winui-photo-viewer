@@ -68,7 +68,8 @@ public class ViewModelFactory
                 flipViewPageModel.SelectPreviousCommand,
                 flipViewPageModel.SelectNextCommand,
                 settings,
-                deleteFilesCommand),
+                deleteFilesCommand,
+                new MoveRawFilesToSubfolderCommand(applicationSession, settings, dialogService)),
             displayRequestService,
             showTagPeopleOnPhotoButton => new MetadataPanelModel(
                 messenger,

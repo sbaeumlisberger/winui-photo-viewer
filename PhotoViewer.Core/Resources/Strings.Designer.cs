@@ -106,6 +106,42 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The following files could not be moved:.
+        /// </summary>
+        public static string MoveRawFilesToSubfolderDialog_ErrorMessage {
+            get {
+                return ResourceManager.GetString("MoveRawFilesToSubfolderDialog_ErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Moving RAW files to subfolder..
+        /// </summary>
+        public static string MoveRawFilesToSubfolderDialog_InProgressMessage {
+            get {
+                return ResourceManager.GetString("MoveRawFilesToSubfolderDialog_InProgressMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All RAW files were successfully moved to a subfolder..
+        /// </summary>
+        public static string MoveRawFilesToSubfolderDialog_SuccessMessage {
+            get {
+                return ResourceManager.GetString("MoveRawFilesToSubfolderDialog_SuccessMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move RAW files to subfolder..
+        /// </summary>
+        public static string MoveRawFilesToSubfolderDialog_Title {
+            get {
+                return ResourceManager.GetString("MoveRawFilesToSubfolderDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There already exists a people tag with the name &quot;{0}&quot;.
         /// </summary>
         public static string PeopleTagAlreadyExistingDialog_Message {

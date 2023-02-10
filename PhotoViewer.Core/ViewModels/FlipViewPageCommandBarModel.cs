@@ -32,6 +32,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     public ICommand SelectNextCommand { get; }
 
+    public ICommand MoveRawFilesToSubfolderCommand { get; }
+
     public bool CanStartDiashow { get; private set; } = false;
 
     public bool CanRotate { get; private set; } = false;
@@ -44,7 +46,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     private readonly ApplicationSettings settings;
 
-    public FlipViewPageCommandBarModel(
+    internal FlipViewPageCommandBarModel(
         IMessenger messenger,
         IDialogService dialogService,
         IMediaFilesLoaderService loadMediaItemsService,
@@ -52,7 +54,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         ICommand selectPreviousCommand,
         ICommand selectNextCommand,
         ApplicationSettings settings,
-        IDeleteFilesCommand deleteFilesCommand) : base(messenger)
+        IDeleteFilesCommand deleteFilesCommand,
+        IMoveRawFilesToSubfolderCommand moveRawFilesToSubfolderCommand) : base(messenger)
     {
         this.dialogService = dialogService;
         this.loadMediaItemsService = loadMediaItemsService;
@@ -62,6 +65,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         DeleteCommand = deleteFilesCommand;
         SelectPreviousCommand = selectPreviousCommand;
         SelectNextCommand = selectNextCommand;
+        MoveRawFilesToSubfolderCommand = moveRawFilesToSubfolderCommand;
     }
 
     partial void OnSelectedItemModelChanged()
@@ -110,7 +114,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         await dialogService.ShowDialogAsync(folderPickerModel);
         if (folderPickerModel.Folder is StorageFolder folder)
         {
-            var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName);
+            var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName, settings.IncludeVideos);
             var result = await loadMediaItemsService.LoadMediaFilesAsync(folder, config);
             Messenger.Send(new MediaFilesLoadedMessage(result.MediaItems, result.StartItem));
         }

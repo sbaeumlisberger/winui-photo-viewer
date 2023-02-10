@@ -132,6 +132,18 @@
   <data name="MetadataPanel_LocationPlaceholderMultipleValues" xml:space="preserve">
     <value>Different values</value>
   </data>
+  <data name="MoveRawFilesToSubfolderDialog_ErrorMessage" xml:space="preserve">
+    <value>The following files could not be moved:</value>
+  </data>
+  <data name="MoveRawFilesToSubfolderDialog_InProgressMessage" xml:space="preserve">
+    <value>Moving RAW files to subfolder.</value>
+  </data>
+  <data name="MoveRawFilesToSubfolderDialog_SuccessMessage" xml:space="preserve">
+    <value>All RAW files were successfully moved to a subfolder.</value>
+  </data>
+  <data name="MoveRawFilesToSubfolderDialog_Title" xml:space="preserve">
+    <value>Move RAW files to subfolder.</value>
+  </data>
   <data name="PeopleTagAlreadyExistingDialog_Message" xml:space="preserve">
     <value>There already exists a people tag with the name "{0}"</value>
   </data>

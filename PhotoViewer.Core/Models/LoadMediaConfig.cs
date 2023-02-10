@@ -3,5 +3,6 @@
 public record class LoadMediaConfig
 (
     bool LinkRAWs,
-    string? RAWsFolderName
+    string? RAWsFolderName,
+    bool IncludeVideos
 );

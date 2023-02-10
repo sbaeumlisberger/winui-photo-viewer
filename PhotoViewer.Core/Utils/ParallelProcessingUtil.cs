@@ -38,10 +38,8 @@ namespace PhotoViewer.Core.Utils
     public static class ParallelProcessingUtil
     {
 
-        public static async Task<ProcessingResult<T>> ProcessParallelAsync<T>(IReadOnlyCollection<T> elements, Func<T, Task> processElement, int numberOfThreads = 4, Progress? progress = null, ErrorMode errorHandling = ErrorMode.Log)
+        public static async Task<ProcessingResult<T>> ProcessParallelAsync<T>(IReadOnlyCollection<T> elements, Func<T, Task> processElement, int numberOfThreads = 4, ErrorMode errorHandling = ErrorMode.Log)
         {
-            progress?.Initialize(true, true, elements.Count);
-
             bool aborted = false;
 
             var processedElements = new ConcurrentBag<T>();
@@ -80,14 +78,8 @@ namespace PhotoViewer.Core.Utils
                                     break;
                                 case ErrorMode.Abort:
                                     aborted = true;
-                                    progress?.Fail();
                                     return;
                             }
-                        }
-
-                        if (progress != null && !await progress.WaitIfPausedAndReport(1).ConfigureAwait(false))
-                        {
-                            return;
                         }
                     }
                 }));

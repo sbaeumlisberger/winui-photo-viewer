@@ -77,9 +77,19 @@
             Label="{x:Bind res:Strings.FlipViewPageCommandBar_OpenFolderButton}"
             Command="{x:Bind ViewModel.OpenFolderCommand}"/>
         <AppBarButton 
+            Icon="Manage" 
+            Label="Tools"
+            Command="{x:Bind ViewModel.NavigateToSettingsPageCommand}">
+            <AppBarButton.Flyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem Text="Move RAW files to subfolder" Command="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand}"/>
+                </MenuFlyout>
+            </AppBarButton.Flyout>
+        </AppBarButton>
+                <AppBarButton 
             Icon="Setting" 
             Label="{x:Bind res:Strings.FlipViewPageCommandBar_SettingsButton}"
-            Command="{x:Bind ViewModel.NavigateToSettingsPageCommand}"/>
+            Command="{x:Bind ViewModel.NavigateToSettingsPageCommand}"/>    
     </CommandBar.SecondaryCommands>
     
 </CommandBar>

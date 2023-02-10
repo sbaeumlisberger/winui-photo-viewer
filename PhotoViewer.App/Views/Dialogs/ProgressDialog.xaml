@@ -1,0 +1,26 @@
+﻿<ContentDialog
+    x:Class="PhotoViewer.App.Views.ProgressDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewer.App.Views"
+    xmlns:res="using:PhotoViewer.App.Resources"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    SecondaryButtonText="{x:Bind CanCancelToSecondaryButtonText(ViewModel.Progress.CanCancel), Mode=OneWay}"
+    SecondaryButtonCommand="{x:Bind ViewModel.Progress.CancelCommand}"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.Progress.IsCompleted, Mode=OneWay}"
+    PrimaryButtonText="{x:Bind res:Strings.ProgressDialog_CloseButton}"    
+    Title="{x:Bind ViewModel.Title, Mode=OneWay}">
+
+    <StackPanel Margin="0,8,0,0" Spacing="4">
+        <TextBlock Text="{x:Bind ViewModel.Message, Mode=OneWay}"/>
+
+        <ProgressBar Value="{x:Bind ToPercent(ViewModel.Progress.Value), Mode=OneWay}" Visibility="{x:Bind ViewModel.Progress.IsActive, Mode=OneWay}"/>
+        <Grid Margin="0,8,0,0" Visibility="{x:Bind ViewModel.Progress.IsActive, Mode=OneWay}">
+            <TextBlock Text="{x:Bind FormatTimeSpan(ViewModel.Progress.EstimatedTimeRemaining), Mode=OneWay}"/>
+            <TextBlock HorizontalAlignment="Right" Text="{x:Bind FormatAsPercent(ViewModel.Progress.Value), Mode=OneWay}"/>
+        </Grid>
+    </StackPanel>
+
+</ContentDialog>

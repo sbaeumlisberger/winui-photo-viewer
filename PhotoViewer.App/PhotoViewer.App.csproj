@@ -19,6 +19,7 @@
     <None Remove="Controls\SelectionRect.xaml" />
     <None Remove="Views\Dialogs\DeleteLinkedFilesDialog.xaml" />
     <None Remove="Views\Dialogs\EditLocationDialog.xaml" />
+    <None Remove="Views\Dialogs\ProgressDialog.xaml" />
     <None Remove="Views\FlipViewPage.xaml" />
     <None Remove="Views\BitmapFlipViewItem.xaml" />
     <None Remove="Views\BitmapViewer.xaml" />
@@ -37,13 +38,13 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
     <PackageReference Include="MetadataAPI" Version="1.4.3" />
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.0.4" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
     <PackageReference Include="WIC.DotNet" Version="1.2.0" />
-    <PackageReference Include="WinUIEx" Version="2.0.0" />
+    <PackageReference Include="WinUIEx" Version="2.1.0" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -68,6 +69,10 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Page Update="Views\Dialogs\ProgressDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Dialogs\EditLocationDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>

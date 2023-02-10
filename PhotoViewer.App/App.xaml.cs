@@ -59,7 +59,7 @@ public partial class App : Application
 
         var loadMediaItemsService = new MediaFilesLoaderService();
         var activatedEventArgs = AppInstance.GetActivatedEventArgs();
-        var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName);
+        var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName, settings.IncludeVideos);
         var loadMediaItemsTask = loadMediaItemsService.LoadMediaFilesAsync(activatedEventArgs, config);
 
         var messenger = StrongReferenceMessenger.Default;

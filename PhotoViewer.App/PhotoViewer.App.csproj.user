@@ -21,6 +21,9 @@
     <None Update="Controls\RatingControl.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Views\Dialogs\ProgressDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\TagPeopleTool.xaml">
       <SubType>Designer</SubType>
     </Page>

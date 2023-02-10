@@ -132,6 +132,18 @@
   <data name="MetadataPanel_LocationPlaceholderDifferentValues" xml:space="preserve">
     <value>Unterschiedliche Werte</value>
   </data>
+  <data name="MoveRawFilesToSubfolderDialog_ErrorMessage" xml:space="preserve">
+    <value>Die folgenden Dateien konnten nicht verschoben werden:</value>
+  </data>
+  <data name="MoveRawFilesToSubfolderDialog_InProgressMessage" xml:space="preserve">
+    <value>RAW-Dateien werden in Unterordner verschoben.</value>
+  </data>
+  <data name="MoveRawFilesToSubfolderDialog_SuccessMessage" xml:space="preserve">
+    <value>Alle RAW-Dateien wurden erfolgreich in einen Unterordner verschoben.</value>
+  </data>
+  <data name="MoveRawFilesToSubfolderDialog_Title" xml:space="preserve">
+    <value>RAW-Dateien in Unterordner verschieben.</value>
+  </data>
   <data name="PeopleTagAlreadyExistingDialog_Message" xml:space="preserve">
     <value>Es exisitert bereits eine Personenmarkierung mit dem Namen "{0}"</value>
   </data>

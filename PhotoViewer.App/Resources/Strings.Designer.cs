@@ -907,6 +907,24 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string ProgressDialog_CancelButton {
+            get {
+                return ResourceManager.GetString("ProgressDialog_CancelButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        internal static string ProgressDialog_CloseButton {
+            get {
+                return ResourceManager.GetString("ProgressDialog_CloseButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Camera.
         /// </summary>
         internal static string PropertiesDialog_Camera {

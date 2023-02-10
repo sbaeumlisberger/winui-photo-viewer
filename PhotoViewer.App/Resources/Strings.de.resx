@@ -399,6 +399,12 @@
   <data name="OverviewPage_Title" xml:space="preserve">
     <value>Übersicht</value>
   </data>
+  <data name="ProgressDialog_CancelButton" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="ProgressDialog_CloseButton" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
   <data name="PropertiesDialog_Camera" xml:space="preserve">
     <value>Kamera</value>
   </data>
