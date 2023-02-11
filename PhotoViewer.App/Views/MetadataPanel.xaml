@@ -11,9 +11,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    x:Name="uc"
-    Width="320"
-    Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
+    x:Name="uc">
 
     <UserControl.Resources>
         <Style x:Key="HeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
@@ -50,7 +48,11 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid 
+        Width="320"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+        Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

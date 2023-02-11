@@ -35,6 +35,8 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItem
 
     public TagPeopleToolModel? PeopleTagToolModel { get; }
 
+    public bool CanTagPeople => PeopleTagToolModel != null;
+
     private readonly IImageLoaderService imageLoadService;
 
     private readonly CancelableTaskRunner loadImageRunner = new CancelableTaskRunner();

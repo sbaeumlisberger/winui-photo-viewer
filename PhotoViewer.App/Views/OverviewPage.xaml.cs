@@ -23,7 +23,7 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
     public OverviewPage()
     {
         DataContext = ViewModelFactory.Instance.CreateOverviewPageModel();
-        this.InitializeMVVM();
+        this.InitializeComponentMVVM();
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

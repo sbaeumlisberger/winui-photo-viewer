@@ -14,7 +14,7 @@ public sealed partial class MediaFileContextMenuHolder : UserControl, IMVVMContr
 
     public MediaFileContextMenuHolder()
     {
-        this.InitializeMVVM();
+        this.InitializeComponentMVVM();
         MediaFileContextMenu = (MenuFlyout)Resources[nameof(MediaFileContextMenu)];
     }
 }

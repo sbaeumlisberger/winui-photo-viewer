@@ -21,7 +21,7 @@ public sealed partial class OverviewItem : UserControl, IMVVMControl<OverviewIte
 
     public OverviewItem()
     {
-        this.InitializeMVVM();
+        this.InitializeComponentMVVM();
     }
 
     partial void ConnectToViewModel(OverviewItemModel viewModel) 

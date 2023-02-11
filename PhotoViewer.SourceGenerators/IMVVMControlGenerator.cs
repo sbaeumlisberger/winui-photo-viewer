@@ -52,25 +52,31 @@ public class IMVVMControlGenerator : IIncrementalGenerator
         var interfaceSymbol = classSymbol.Interfaces.First(i => i.Name == InterfaceName);
         string viewModelType = Utils.GetFullName(interfaceSymbol.TypeArguments.First());
 
+
         var code = $$"""
                 #nullable enable
 
                 using System;
+                using Microsoft.UI.Xaml;
+                using PhotoViewer.App.Utils;
 
                 {{(@namespace != null ? $"namespace {@namespace};" : "")}}
 
                 partial class {{classSymbol.Name}} 
                 {
-                    public void LoadComponent() => InitializeComponent();
-                    public void InitializeBindings() => Bindings.Initialize();
-                    public void UpdateBindings() => Bindings.Update();
-                    public void StopBindings() => Bindings.StopTracking();
+                    //public static DependencyProperty ViewModel2Property { get; } = DependencyProperty.Register(nameof(ViewModel), typeof({{classSymbol.Name}}), typeof({{viewModelType}}), new PropertyMetadata(null));
+            
+                    //public {{viewModelType}} ViewModel2 { get => ({{viewModelType}})GetValue(ViewModel2Property); set => SetValue(ViewModel2Property, value); }
+
+                    void IMVVMControl<{{viewModelType}}>.InitializeComponent() => InitializeComponent();
+                    void IMVVMControl<{{viewModelType}}>.UpdateBindings() => Bindings.Update();
+                    void IMVVMControl<{{viewModelType}}>.StopBindings() => Bindings.StopTracking();
 
                     partial void ConnectToViewModel({{viewModelType}} viewModel);     
                     partial void DisconnectFromViewModel({{viewModelType}} viewModel);    
 
-                    void PhotoViewer.App.Utils.IMVVMControl<{{viewModelType}}>.ConnectToViewModel({{viewModelType}} viewModel) => ConnectToViewModel(viewModel);     
-                    void PhotoViewer.App.Utils.IMVVMControl<{{viewModelType}}>.DisconnectFromViewModel({{viewModelType}} viewModel) => DisconnectFromViewModel(viewModel);   
+                    void IMVVMControl<{{viewModelType}}>.ConnectToViewModel({{viewModelType}} viewModel) => ConnectToViewModel(viewModel);     
+                    void IMVVMControl<{{viewModelType}}>.DisconnectFromViewModel({{viewModelType}} viewModel) => DisconnectFromViewModel(viewModel);   
                 }
             """;
         return code;

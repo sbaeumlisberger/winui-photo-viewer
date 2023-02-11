@@ -24,7 +24,10 @@
                 Visibility="{x:Bind ViewModel.IsContextMenuEnabeld, Mode=OneWay}"
                 Background="Transparent" 
                 ContextFlyout="{x:Bind mediaFileContextMenuHolder.MediaFileContextMenu}">
-                <local:TagPeopleTool DataContext="{x:Bind ViewModel.PeopleTagToolModel}"/>
+                <local:TagPeopleTool
+                    x:Name="tagPeopleTool"
+                    x:Load="{x:Bind ViewModel.CanTagPeople}"
+                    DataContext="{x:Bind ViewModel.PeopleTagToolModel}"/>
             </Grid>
         </controls:BitmapViewer>
 

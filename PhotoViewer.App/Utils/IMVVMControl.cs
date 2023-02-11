@@ -8,7 +8,7 @@ using Windows.Foundation;
 
 namespace PhotoViewer.App.Utils;
 
-public interface IMVVMControl<T>
+public interface IMVVMControl<T> where T : ViewModelBase
 {
     event RoutedEventHandler Loaded;
 
@@ -20,9 +20,7 @@ public interface IMVVMControl<T>
 
     object? DataContext { get; set; }
 
-    void LoadComponent();
-
-    void InitializeBindings();
+    void InitializeComponent();
 
     void UpdateBindings();
 

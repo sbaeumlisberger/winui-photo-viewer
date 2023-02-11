@@ -13,7 +13,7 @@ public sealed partial class PropertiesDialog : ContentDialog, IMVVMControl<Prope
 
     public PropertiesDialog()
     {
-        this.InitializeMVVM();
+        this.InitializeComponentMVVM();
     }
 
 }

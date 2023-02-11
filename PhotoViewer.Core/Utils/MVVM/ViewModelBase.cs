@@ -10,8 +10,6 @@ public class ViewModelBase : ObservableObject
 
     protected virtual void __EnableOnPropertyChangedMethods() { }
 
-    protected virtual void __EnableDependsOn() { }
-
     protected IMessenger Messenger { get; }
 
     private readonly SynchronizationContext synchronizationContext;

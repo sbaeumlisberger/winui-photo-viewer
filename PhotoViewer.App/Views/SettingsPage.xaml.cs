@@ -21,7 +21,7 @@ public sealed partial class SettingsPage : Page, IMVVMControl<SettingsPageModel>
     public SettingsPage()
     {
         DataContext = ViewModelFactory.Instance.CreateSettingsPageModel();
-        this.InitializeMVVM();
+        this.InitializeComponentMVVM();
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

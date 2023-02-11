@@ -7,13 +7,8 @@ namespace PhotoViewer.App.Utils;
 
 internal static class ControlUtil
 {
-    public static void InitializeMVVM<TViewModel>(this IMVVMControl<TViewModel> control) where TViewModel : ViewModelBase
+    public static void InitializeComponentMVVM<TViewModel>(this IMVVMControl<TViewModel> control) where TViewModel : ViewModelBase
     {
-        if (control.IsLoaded)
-        {
-            throw new Exception("Control is already loaded");
-        }
-
         TViewModel? viewModel = null;
 
         void connect(TViewModel newViewModel)
@@ -21,7 +16,10 @@ internal static class ControlUtil
             Log.Debug($"Connect {control} to {newViewModel}");
             viewModel = newViewModel;
             control.ConnectToViewModel(newViewModel);
-            control.UpdateBindings(); // TODO ?
+            if(control.IsLoaded)
+            {
+                control.UpdateBindings();
+            }
             viewModel.OnViewConnected();
         }
 
@@ -34,28 +32,6 @@ internal static class ControlUtil
             viewModel = null;
         }
 
-        control.Loaded += (s, e) =>
-        {
-            control.DataContextChanged += (s, e) =>
-            {
-                if (e.NewValue != viewModel)
-                {
-                    if (viewModel is TViewModel currentViewModel)
-                    {
-                        disconnect(currentViewModel);
-                    }
-                    if (e.NewValue is TViewModel newViewModel)
-                    {
-                        connect(newViewModel);
-                    }
-                }
-            };
-            if (control.DataContext is TViewModel newViewModel && newViewModel != viewModel)
-            {
-                connect(newViewModel);
-            }
-        };
-
         control.Unloaded += (s, e) =>
         {
             if (viewModel is TViewModel currentViewModel)
@@ -65,7 +41,22 @@ internal static class ControlUtil
             control.DataContext = null;
         };
 
-        control.LoadComponent();
+        control.DataContextChanged += (s, e) =>
+        {
+            if (e.NewValue != viewModel)
+            {
+                if (viewModel is TViewModel currentViewModel)
+                {
+                    disconnect(currentViewModel);
+                }
+                if (e.NewValue is TViewModel newViewModel)
+                {
+                    connect(newViewModel);
+                }
+            }
+        };
+
+        control.InitializeComponent();
     }
 
     public static long RegisterPropertyChangedCallbackSafely(this Control control, DependencyProperty property, DependencyPropertyChangedCallback propertyChangedCallback)

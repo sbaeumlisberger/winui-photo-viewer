@@ -9,8 +9,6 @@ using PhotoVieweApp.Utils;
 using PhotoViewer.Core.ViewModels;
 using PhotoViewer.App.Controls;
 using PhotoViewer.App.Utils;
-using PhotoViewer.Core.Utils;
-using PhotoViewer.Core.ViewModels;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -27,7 +25,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     public TagPeopleTool()
     {
-        this.InitializeMVVM();
+        this.InitializeComponentMVVM();
     }
 
     partial void ConnectToViewModel(TagPeopleToolModel viewModel)

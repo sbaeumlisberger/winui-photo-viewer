@@ -14,7 +14,7 @@ public sealed partial class DetailsBar : UserControl, IMVVMControl<DetailsBarMod
 
     public DetailsBar()
     {
-        this.InitializeMVVM();
+        this.InitializeComponentMVVM();
     }
 
     private string ColorSpaceTypeToDisplayName(ColorSpaceType colorSpaceType)

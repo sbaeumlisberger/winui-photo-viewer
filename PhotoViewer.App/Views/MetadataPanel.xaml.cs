@@ -14,7 +14,7 @@ public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPa
 
     public MetadataPanel()
     {
-        this.InitializeMVVM();
+        this.InitializeComponentMVVM();
     }
 
     partial void ConnectToViewModel(MetadataPanelModel viewModel)

@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
 using System;
 using System.ComponentModel;
@@ -8,37 +9,29 @@ using System.Threading.Tasks;
 
 namespace PhotoViewer.App.Views;
 
-public sealed partial class VectorGraphicFlipViewItem : UserControl
+public sealed partial class VectorGraphicFlipViewItem : UserControl, IMVVMControl<VectorGraphicFlipViewItemModel>
 {
-    private VectorGraphicFlipViewItemModel? ViewModel { get; set; }
+    private VectorGraphicFlipViewItemModel ViewModel  => (VectorGraphicFlipViewItemModel) DataContext;
 
     public VectorGraphicFlipViewItem()
     {
-        this.InitializeComponent();
-
+        this.InitializeComponentMVVM();
         ScrollViewerHelper.EnableAdvancedZoomBehaviour(scrollViewer);
-
-        DataContextChanged += VectorGraphicFlipViewItem_DataContextChanged;
     }
 
-    private async void VectorGraphicFlipViewItem_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+    async partial void ConnectToViewModel(VectorGraphicFlipViewItemModel viewModel)
     {
-        if (ViewModel != null)
+        viewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+        if (viewModel.Content is string svg)
         {
-            ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
+            await ShowSvgAsync(svg);
         }
+    }
 
-        ViewModel = (VectorGraphicFlipViewItemModel)DataContext;
-
-        if (ViewModel != null)
-        {
-            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-
-            if (ViewModel.Content is string svg)
-            {
-                await ShowSvgAsync(svg);
-            }
-        }
+    partial void DisconnectFromViewModel(VectorGraphicFlipViewItemModel viewModel)
+    {
+        viewModel.PropertyChanged -= ViewModel_PropertyChanged;
     }
 
     private async void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)

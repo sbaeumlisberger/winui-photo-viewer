@@ -5,7 +5,6 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Messages;
-using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Utils;
 using System;
 using System.Collections.Generic;

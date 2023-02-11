@@ -10,7 +10,7 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class ProgressDialogModel : ViewModelBase
 {
-    public required string Title { get; set; }
-    public required string Message { get; set; }
-    public required Progress Progress { get; init; }
+    public /*required*/ string Title { get; set; }
+    public /*required*/ string Message { get; set; }
+    public /*required*/ Progress Progress { get; init; }
 }

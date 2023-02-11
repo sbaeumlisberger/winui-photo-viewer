@@ -6,10 +6,13 @@
     xmlns:res="using:PhotoViewer.App.Resources"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
+    mc:Ignorable="d">
 
-    <RelativePanel Padding="4" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <RelativePanel 
+        Padding="4"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"   
+        Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
+        
         <TextBlock 
             RelativePanel.AlignLeftWithPanel="True" 
             Text="{x:Bind ViewModel.DateFormatted, Mode=OneWay}"/>

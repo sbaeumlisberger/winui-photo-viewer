@@ -15,7 +15,7 @@ public sealed partial class FlipViewPage : Page, IMVVMControl<FlipViewPageModel>
     public FlipViewPage()
     {
         DataContext = ViewModelFactory.Instance.CreateFlipViewPageModel();
-        this.InitializeMVVM();
+        this.InitializeComponentMVVM();
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

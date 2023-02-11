@@ -60,7 +60,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
 
     public EditLocationDialog()
     {
-        this.InitializeMVVM();
+        this.InitializeComponentMVVM();
     }
 
     async partial void ConnectToViewModel(EditLocationDialogModel viewModel)

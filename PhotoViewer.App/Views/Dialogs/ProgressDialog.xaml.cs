@@ -18,7 +18,7 @@ public sealed partial class ProgressDialog : ContentDialog, IMVVMControl<Progres
 
     public ProgressDialog()
     {
-        this.InitializeMVVM();
+        this.InitializeComponentMVVM();
     }
 
     private string? CanCancelToSecondaryButtonText(bool canCancel) => canCancel ? Strings.ProgressDialog_CancelButton : null;

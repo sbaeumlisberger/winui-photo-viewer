@@ -15,7 +15,7 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
 
     public MediaFlipView()
     {
-        this.InitializeMVVM();
+        this.InitializeComponentMVVM();
     }
 
     partial void ConnectToViewModel(MediaFlipViewModel viewModel)
