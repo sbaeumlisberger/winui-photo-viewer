@@ -99,18 +99,38 @@
                     Command="{x:Bind ViewModel.OpenFolderCommand}"/>
         </StackPanel>
 
-        <StackPanel
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                Visibility="{x:Bind ViewModel.ShowLoadingUI, Mode=OneWay}">
+            <TextBlock 
+                    HorizontalAlignment="Center" 
+                    Text="{x:Bind res:Strings.LoadingFilesMessage}"/>
+            <ProgressRing
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Center"
+                    IsActive="{x:Bind ViewModel.ShowLoadingUI, Mode=OneWay}"/>
+        </StackPanel>
+
+        <Grid
             Visibility="{x:Bind ViewModel.ShowSelectedItemIndicator, Mode=OneWay}"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Padding="8"
             Margin="12"
             CornerRadius="4"
-            Background="{ThemeResource SystemControlBackgroundAltMediumBrush}"
-            Orientation="Horizontal">
-            <TextBlock Text="{x:Bind ViewModel.SelectedItemNumber, Mode=OneWay}"/>
-            <TextBlock Text="/" Margin="4,0,4,0"/>
-            <TextBlock Text="{x:Bind ViewModel.Items.Count, Mode=OneWay}"/>
-        </StackPanel>
+            Background="{ThemeResource SystemControlBackgroundAltMediumBrush}">
+            <StackPanel
+                Orientation="Horizontal"
+                Visibility="{x:Bind ViewModel.IsNotLoadingMoreFiles, Mode=OneWay}">
+                <TextBlock Text="{x:Bind ViewModel.SelectedItemNumber, Mode=OneWay}"/>
+                <TextBlock Text="/" Margin="4,0,4,0"/>
+                <TextBlock Text="{x:Bind ViewModel.Items.Count, Mode=OneWay}"/>
+            </StackPanel>
+            <ProgressRing 
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Height="18"
+                Width="18"
+                IsActive="{x:Bind ViewModel.IsLoadingMoreFiles, Mode=OneWay}"/>
+        </Grid>
     </Grid>
 </UserControl>

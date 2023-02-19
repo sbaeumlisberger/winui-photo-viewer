@@ -10,6 +10,7 @@ using PhotoViewer.Core.ViewModels;
 using PhotoViewer.Core.Utils;
 using Tocronx.SimpleAsync;
 using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Models;
 
 namespace PhotoViewer.App.ViewModels;
 
@@ -62,7 +63,7 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItem
 
     partial void OnIsSelectedChanged()
     {
-        if (PeopleTagToolModel != null) 
+        if (PeopleTagToolModel != null)
         {
             PeopleTagToolModel.IsEnabeld = IsSelected;
         }
@@ -109,17 +110,20 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItem
                 IsLoadingImageFailed = false;
                 ErrorMessage = string.Empty;
 
-                var bitmapImage = await imageLoadService.LoadFromFileAsync((IBitmapFileInfo)MediaItem, cancellationToken);
+                var bitmapFile = (IBitmapFileInfo)MediaItem;
+
+                var bitmapImage = await ImagePreloadService.Instance.GetPreloadedImageAsync(bitmapFile) ??
+                    await imageLoadService.LoadFromFileAsync(bitmapFile, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
                 BitmapImage = bitmapImage;
                 IsLoading = false;
 
-                Messenger.Send(new BitmapImageLoadedMessage((IBitmapFileInfo)MediaItem, bitmapImage));
-                Log.Info($"Loaded {MediaItem.Name} sucessfully");
+                Messenger.Send(new BitmapImageLoadedMessage(bitmapFile, bitmapImage));
+                Log.Info($"Loaded {MediaItem.DisplayName} sucessfully");
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                Log.Error($"Failed to load {MediaItem.Name}", ex);
+                Log.Error($"Failed to load {MediaItem.DisplayName}", ex);
                 IsLoading = false;
                 IsLoadingImageFailed = true;
                 ErrorMessage = ex.Message;

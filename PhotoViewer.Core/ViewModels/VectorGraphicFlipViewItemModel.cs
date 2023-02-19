@@ -68,7 +68,7 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                Log.Error($"Could not load vector graphic {MediaItem.Name}", ex);
+                Log.Error($"Could not load vector graphic {MediaItem.DisplayName}", ex);
                 IsLoadingFailed = true;
             }
         });

@@ -43,6 +43,8 @@ namespace PhotoViewer.Core.Services
 
         private string BingCultureCode => CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 
+        private readonly string mapServiceToken = AppData.MapServiceToken;
+
         public async Task<Location?> FindLocationAsync(Geopoint geopoint)
         {
             if (geopoint is null)
@@ -52,7 +54,7 @@ namespace PhotoViewer.Core.Services
             string point = geopoint.Position.Latitude.ToInvariantString()
                 + "," + geopoint.Position.Longitude.ToInvariantString();
             var uri = new Uri(BaseURL + "/Locations/" + point + ToQueryString(
-                ("key", MapService.ServiceToken),
+                ("key", mapServiceToken),
                 ("culture", BingCultureCode),
                 ("verboseplacenames", "true")                         
             ));
@@ -72,7 +74,7 @@ namespace PhotoViewer.Core.Services
                 return Array.Empty<Location>();
             }
             var uri = new Uri(BaseURL + "/Locations" + ToQueryString(
-                ("key", MapService.ServiceToken),
+                ("key", mapServiceToken),
                 ("culture", BingCultureCode),
                 ("verboseplacenames", "true"),
                 ("query", query),                
@@ -103,7 +105,7 @@ namespace PhotoViewer.Core.Services
             return (await FindLocationAsync(address).ConfigureAwait(false))?.Geopoint;
         }
 
-        private static async Task<List<Location>> ParseLocationsAsync(string response)
+        private async Task<List<Location>> ParseLocationsAsync(string response)
         {
             var locations = new List<Location>();
 
@@ -161,7 +163,7 @@ namespace PhotoViewer.Core.Services
             return new Location(address, point);
         }
 
-        private static async Task UpdateElevationDataAsync(List<Location> locations)
+        private async Task UpdateElevationDataAsync(List<Location> locations)
         {
             var geopoints = locations.Select(location => location.Geopoint!).ToList();
 
@@ -183,11 +185,11 @@ namespace PhotoViewer.Core.Services
             }
         }
 
-        private static async Task<double[]> FetchElevationDataAsync(IList<Geopoint> geopoints)
+        private async Task<double[]> FetchElevationDataAsync(IList<Geopoint> geopoints)
         {
             var locations = new List<Location>();
             var uri = new Uri(BaseURL + "/Elevation/List" + ToQueryString(
-                ("key", MapService.ServiceToken),
+                ("key", mapServiceToken),
                 ("points", string.Join(",", geopoints.Select(geopoint =>
                     geopoint.Position.Latitude.ToInvariantString()
                     + "," + geopoint.Position.Longitude.ToInvariantString()))),

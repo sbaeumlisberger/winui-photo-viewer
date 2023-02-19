@@ -12,6 +12,7 @@ using WinUIEx;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using System.ComponentModel;
+using PhotoViewer.Core.Messages;
 
 namespace PhotoViewer.App;
 
@@ -19,27 +20,25 @@ public sealed partial class MainWindow : WindowEx
 {
     private readonly ViewRegistrations viewRegistrations = ViewRegistrations.Instance;
 
-    private readonly ApplicationSettings settings;
-
     public MainWindow(IMessenger messenger)
     {      
         this.InitializeComponent();
         Closed += MainWindow_Closed;
-        ViewModelFactory.Instance.Initialize(new DialogService(this));
+        ViewModelFactory.Initialize(messenger, new DialogService(this));
+        messenger.Register<ChangeWindowTitleMessage>(this, msg => Title = msg.NewTitle);
         messenger.Register<EnterFullscreenMessage>(this, _ => EnterFullscreen());
         messenger.Register<ExitFullscreenMessage>(this, _ => ExitFullscreen());
         messenger.Register<NavigateToPageMessage>(this, msg => NavigateToPage(msg.PageType, msg.Parameter));
         messenger.Register<NavigateBackMessage>(this, _ => frame.GoBack());
-        settings = ApplicationSettingsProvider.GetSettings();
-        settings.PropertyChanged += Settings_PropertyChanged;
-        ApplyTheme(settings.Theme);
+        messenger.Register<SettingsChangedMessage>(this, msg => OnSettingsChanged(msg.ChangedSetting));
+        ApplyTheme(ApplicationSettingsProvider.GetSettings().Theme);
     }
 
-    private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnSettingsChanged(string? changedSetting)
     {
-        if (e.PropertyName == nameof(ApplicationSettings.Theme))
+        if (changedSetting is null || changedSetting == nameof(ApplicationSettings.Theme))
         {
-            ApplyTheme(settings.Theme);
+            ApplyTheme(ApplicationSettingsProvider.GetSettings().Theme);
         }
     }
 

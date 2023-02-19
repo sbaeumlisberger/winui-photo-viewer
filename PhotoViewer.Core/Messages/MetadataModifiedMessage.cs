@@ -1,5 +1,5 @@
 ﻿using MetadataAPI;
-using PhotoViewer.App.Models;
+using PhotoViewer.Core.Models;
 
 namespace PhotoViewer.Core.Messages;
 

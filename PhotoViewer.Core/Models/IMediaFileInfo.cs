@@ -1,4 +1,5 @@
-﻿using Windows.Foundation;
+﻿using System.Numerics;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
@@ -7,7 +8,7 @@ namespace PhotoViewer.App.Models;
 
 public interface IMediaFileInfo
 {
-    string Name { get; }
+    string DisplayName { get; }
 
     IStorageFile StorageFile { get; }
 

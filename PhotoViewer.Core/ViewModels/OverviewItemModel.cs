@@ -5,6 +5,7 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ public partial class OverviewItemModel : ViewModelBase
     public OverviewItemModel(IMediaFileInfo mediaFile, IMessenger messenger, IMetadataService metadataService) : base(messenger)
     {
         MediaFile = mediaFile;
-        DisplayName = mediaFile.Name;
+        DisplayName = mediaFile.DisplayName;
         this.metadataService = metadataService;
     }
 

@@ -52,7 +52,8 @@ internal class ColorProfileProvider : IColorProfileProvider
             var colorProfileStream = await displayInformation.GetColorProfileAsync().AsTask().ConfigureAwait(false);
             if (colorProfileStream is null) return null;
             byte[] colorProfileBytes = await colorProfileStream.ReadBytesAsync().ConfigureAwait(false);
-            return ColorManagementProfile.CreateCustom(colorProfileBytes);
+            var colorProfile = ColorManagementProfile.CreateCustom(colorProfileBytes);
+            return colorProfile;
         }
         catch (Exception ex)
         {

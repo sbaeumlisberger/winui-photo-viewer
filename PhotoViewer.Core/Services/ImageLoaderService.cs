@@ -2,6 +2,8 @@
 using PhotoViewer.App.Exceptions;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using System.Runtime.InteropServices;
 using System.Text;
 using WIC;
@@ -31,7 +33,7 @@ public class ImageLoaderService : IImageLoaderService
     {
         try
         {
-            if (file.FileExtension == ".gif")
+            if (file.FileExtension.ToLower() == ".gif")
             {
                 return await LoadGifAsync(file, cancellationToken).ConfigureAwait(false);
             }
@@ -55,7 +57,7 @@ public class ImageLoaderService : IImageLoaderService
         using (var fileStream = await file.OpenAsync(FileAccessMode.Read).ConfigureAwait(false))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return await gifImageLoaderService.LoadAsync(file.Name, Device, fileStream, cancellationToken).ConfigureAwait(false);
+            return await gifImageLoaderService.LoadAsync(file.DisplayName, Device, fileStream, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -71,13 +73,13 @@ public class ImageLoaderService : IImageLoaderService
             {
                 var canvasBitmap = await CanvasBitmap.LoadAsync(Device, fileStream).AsTask(cancellationToken).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
-                return new PVBitmapImage(file.Name, canvasBitmap, colorSpace);
+                return new PVBitmapImage(file.DisplayName, canvasBitmap, colorSpace);
             }
             catch (ArgumentException ex) when (ex.HResult == -2147024809)
             {
                 var canvasVirtualBitmap = await CanvasVirtualBitmap.LoadAsync(Device, fileStream).AsTask(cancellationToken).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
-                return new PVVirtualBitmapImage(file.Name, canvasVirtualBitmap, colorSpace);
+                return new PVVirtualBitmapImage(file.DisplayName, canvasVirtualBitmap, colorSpace);
             }
         }
     }

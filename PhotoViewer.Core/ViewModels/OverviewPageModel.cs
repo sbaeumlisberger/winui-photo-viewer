@@ -34,7 +34,7 @@ public partial class OverviewPageModel : ViewModelBase
         MetadataPanelModel = metadataPanelModelFactory.Invoke(false);
         ContextMenuModel = mediaFileContextMenuModel;
 
-        Messenger.Register<MediaFilesLoadedMessage>(this, OnMediaItemsLoadedMessageReceived);
+        Messenger.Register<MediaFilesLoadingMessage>(this, OnMediaItemsLoadedMessageReceived);
         Messenger.Register<MediaFilesDeletedMessage>(this, OnMediaItemsDeletedMessageReceived);
 
         Items = new ObservableCollection<IMediaFileInfo>(session.Files);
@@ -50,9 +50,9 @@ public partial class OverviewPageModel : ViewModelBase
         return new OverviewItemModel(mediaFile, Messenger, new MetadataService()); // TODO
     }
 
-    private void OnMediaItemsLoadedMessageReceived(MediaFilesLoadedMessage msg)
+    private async void OnMediaItemsLoadedMessageReceived(MediaFilesLoadingMessage msg)
     {
-        Items = new ObservableCollection<IMediaFileInfo>(msg.Files);
+        Items = new ObservableCollection<IMediaFileInfo>((await msg.LoadMediaFilesTask.WaitForResultAsync()).MediaFiles); // TODO error handling
     }
 
     private void OnMediaItemsDeletedMessageReceived(MediaFilesDeletedMessage msg)

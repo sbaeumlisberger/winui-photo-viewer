@@ -18,30 +18,6 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         this.InitializeComponentMVVM();
     }
 
-    partial void ConnectToViewModel(MediaFlipViewModel viewModel)
-    {
-        viewModel.PropertyChanged += FlipViewModel_PropertyChanged;
-        UpdateWindowTitle();
-    }
-
-    partial void DisconnectFromViewModel(MediaFlipViewModel viewModel)
-    {
-        viewModel.PropertyChanged -= FlipViewModel_PropertyChanged;
-    }
-
-    private void FlipViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(ViewModel.SelectedItemModel))
-        {
-            UpdateWindowTitle();
-        }
-    }
-
-    private void UpdateWindowTitle()
-    {
-        App.Current.Window.Title = ViewModel.SelectedItemModel?.MediaItem.Name ?? "";
-    }
-
     private void FlipView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
         if (ViewModel.IsDiashowActive)

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
 using MetadataAPI.Data;
+using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
@@ -53,6 +54,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         IsVisible = settings.AutoOpenDetailsBar;
         Messenger.Register<MetadataModifiedMessage>(this, OnReceive);
         Messenger.Register<BitmapImageLoadedMessage>(this, OnReceive);
+        Messenger.Register<MediaFilesLoadingMessage>(this, OnReceive);
     }
 
     private void OnReceive(MetadataModifiedMessage msg)
@@ -79,6 +81,16 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         if (IsVisible && msg.BitmapFile == SelectedItemModel?.MediaItem)
         {
             UpdateFromBitmapImage(msg.BitmapImage);
+        }
+    }
+
+    private async void OnReceive(MediaFilesLoadingMessage msg)
+    {
+        await msg.LoadMediaFilesTask.WaitForResultAsync();
+        if (SelectedItemModel != null)
+        {
+            // linked files may have been changed
+            FileName = SelectedItemModel.MediaItem.DisplayName;
         }
     }
 
@@ -125,9 +137,9 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
     {
         return updateRunner.RunAndCancelPrevious(async (cancellationToken) =>
         {
-            Log.Debug($"Update details bar for {itemModel.MediaItem.Name}");
+            Log.Debug($"Update details bar for {itemModel.MediaItem.DisplayName}");
 
-            FileName = itemModel.MediaItem.Name;
+            FileName = itemModel.MediaItem.DisplayName;
 
             if (itemModel.MediaItem is IBitmapFileInfo bitmapFile)
             {
@@ -148,7 +160,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 
     private void UpdateFromBitmapImage(IBitmapImage bitmapImage)
     {
-        Log.Debug($"Update details bar for {SelectedItemModel!.MediaItem.Name} with information from image");
+        Log.Debug($"Update details bar for {SelectedItemModel!.MediaItem.DisplayName} with information from loaded image");
         ShowColorProfileIndicator = bitmapImage.ColorSpace.Profile is not null;
         ColorSpaceType = ShowColorProfileIndicator ? bitmapImage.ColorSpace.Type : ColorSpaceType.NotSpecified;
         
@@ -182,27 +194,35 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
             cancellationToken.ThrowIfCancellationRequested();
             FileSize = ByteSizeFormatter.Format(fileSize);
         }
+        catch (OperationCanceledException)
+        {
+            Log.Info($"Update details bar for {bitmapFile.DisplayName} canceled");
+        }
         catch (Exception ex)
         {
-            Log.Error("Error on update details bar", ex);
+            Log.Error($"Error on update details bar for {bitmapFile.DisplayName}", ex);
         }
     }
 
-    private async Task UpdateFromMediaFileAsync(IMediaFileInfo mediaItem, CancellationToken cancellationToken)
+    private async Task UpdateFromMediaFileAsync(IMediaFileInfo mediaFile, CancellationToken cancellationToken)
     {
         try
         {
-            var date = await mediaItem.GetDateModifiedAsync();
+            var date = await mediaFile.GetDateModifiedAsync();
             cancellationToken.ThrowIfCancellationRequested();
             DateFormatted = date.ToString("g");
 
-            ulong fileSize = await mediaItem.GetFileSizeAsync();
+            ulong fileSize = await mediaFile.GetFileSizeAsync();
             cancellationToken.ThrowIfCancellationRequested();
             FileSize = ByteSizeFormatter.Format(fileSize);
         }
+        catch (OperationCanceledException)
+        {
+            Log.Info($"Update details bar for {mediaFile.DisplayName} canceled");
+        }
         catch (Exception ex)
         {
-            Log.Error("Error on update details bar", ex);
+            Log.Error($"Error on update details bar for {mediaFile.DisplayName}", ex);
         }
     }
 

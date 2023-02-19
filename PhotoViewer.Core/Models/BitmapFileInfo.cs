@@ -1,14 +1,14 @@
-﻿using WIC;
+﻿using PhotoViewer.App.Models;
+using WIC;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace PhotoViewer.App.Models;
+namespace PhotoViewer.Core.Models;
 
 public interface IBitmapFileInfo : IMediaFileInfo
 {
     bool IsMetadataSupported { get; }
-
     void LinkStorageFile(IStorageFile storageFile);
 }
 
@@ -24,7 +24,7 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
     public static readonly IReadOnlyList<string> HeifFileExtensions = new[] { ".heic", ".heif" };
     public static readonly IReadOnlyList<string> WebpFileExtensions = new[] { ".webp" };
 
-    public static readonly IReadOnlyCollection<string> CommonFileExtensions =
+    public static readonly IReadOnlySet<string> CommonFileExtensions =
          BmpFileExtensions
         .Concat(GifFileExtensions)
         .Concat(IcoFileExtensions)

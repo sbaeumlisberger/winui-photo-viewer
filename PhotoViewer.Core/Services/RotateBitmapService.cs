@@ -1,6 +1,6 @@
 ﻿using MetadataAPI;
 using MetadataAPI.Data;
-using PhotoViewer.App.Models;
+using PhotoViewer.Core.Models;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;

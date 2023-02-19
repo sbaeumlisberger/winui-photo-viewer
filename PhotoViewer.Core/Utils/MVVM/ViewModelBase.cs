@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewer.Core.Utils;
 
 namespace PhotoViewer.App.Utils;
 
@@ -22,7 +21,7 @@ public class ViewModelBase : ObservableObject
         __EnableOnPropertyChangedMethods();
     }
 
-    public void OnViewConnected() 
+    public void OnViewConnected()
     {
         Messenger?.RegisterAll(this);
         OnViewConnectedOverride();
@@ -30,7 +29,7 @@ public class ViewModelBase : ObservableObject
 
     protected virtual void OnViewConnectedOverride() { }
 
-    public void OnViewDisconnected() 
+    public void OnViewDisconnected()
     {
         Messenger?.UnregisterAll(this);
         OnViewDisconnectedOverride();

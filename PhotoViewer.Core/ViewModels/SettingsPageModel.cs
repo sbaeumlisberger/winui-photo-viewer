@@ -5,6 +5,7 @@ using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
+using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
@@ -21,13 +22,11 @@ namespace PhotoViewer.Core.ViewModels
 
         private readonly ISettingsService settingsService;
 
-        private readonly SequentialTaskRunner saveSettingsTaskRunner = new SequentialTaskRunner();
-
         public IList<AppTheme> AvailableThemes { get; } = Enum.GetValues<AppTheme>();
 
         public IList<DeleteLinkedFilesOption> AvailableDeleteLinkedFilesOptions { get; } = Enum.GetValues<DeleteLinkedFilesOption>();
 
-        public ApplicationSettings Settings { get; }
+        public ApplicationSettings Settings { get; set; }
 
         public SettingsPageModel(
             IMessenger messenger,
@@ -52,7 +51,8 @@ namespace PhotoViewer.Core.ViewModels
 
         private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            saveSettingsTaskRunner.EnqueueIfEmpty(() => settingsService.SaveSettingsAsync(Settings));
+            settingsService.SaveSettings(Settings);
+            Messenger.Send(new SettingsChangedMessage(e.PropertyName));
         }
 
         [RelayCommand]
@@ -66,15 +66,15 @@ namespace PhotoViewer.Core.ViewModels
         {
             var fileSavePickerModel = new FileSavePickerModel()
             {
-                SuggestedFileName = "settings.json",
-                FileTypeChoices = new Dictionary<string, IList<string>>() { { "JSON", new[] { ".json" } } }
+                SuggestedFileName = "settings.ini",
+                FileTypeChoices = new Dictionary<string, IList<string>>() { { "INI", new[] { ".ini" } } }
             };
 
             await dialogService.ShowDialogAsync(fileSavePickerModel);
 
             if (fileSavePickerModel.File is IStorageFile file)
             {
-                await settingsService.ExportSettingsAsync(file);
+                settingsService.ExportSettings(file);
             }
         }
 
@@ -83,23 +83,31 @@ namespace PhotoViewer.Core.ViewModels
         {
             var fileOpenPickerModel = new FileOpenPickerModel()
             {
-                FileTypeFilter = new[] { ".json" }
+                FileTypeFilter = new[] { ".ini" }
             };
 
             await dialogService.ShowDialogAsync(fileOpenPickerModel);
 
             if (fileOpenPickerModel.File is IStorageFile file)
             {
-                var importedSettings = await settingsService.ImportSettingsAsync(file);
-                ApplicationSettingsProvider.SetSettings(importedSettings);
+                Settings.PropertyChanged -= Settings_PropertyChanged;
+                Settings = settingsService.ImportSettings(file);
+                Settings.PropertyChanged += Settings_PropertyChanged;
+                ApplicationSettingsProvider.SetSettings(Settings);
+                Messenger.Send(new SettingsChangedMessage(null));
             }
         }
 
 
         [RelayCommand]
-        private async Task ResetAsync()
+        private void Reset()
         {
-            await settingsService.SaveSettingsAsync(new ApplicationSettings());
+            Settings.PropertyChanged -= Settings_PropertyChanged;
+            Settings = new ApplicationSettings();
+            Settings.PropertyChanged += Settings_PropertyChanged;
+            settingsService.SaveSettings(Settings);
+            ApplicationSettingsProvider.SetSettings(Settings);
+            Messenger.Send(new SettingsChangedMessage(null));
         }
 
         [RelayCommand]

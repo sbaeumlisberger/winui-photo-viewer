@@ -1,38 +1,41 @@
-﻿using PhotoViewer.Core.Models;
+﻿using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Models;
+using System.Diagnostics;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Xml.Serialization;
 using Windows.Storage;
 
 namespace PhotoViewer.Core.Services;
 
 public interface ISettingsService
 {
-    Task<ApplicationSettings> LoadSettingsAsync();
+    ApplicationSettings LoadSettings();
 
-    Task SaveSettingsAsync(ApplicationSettings settings);
+    void SaveSettings(ApplicationSettings settings);
 
-    Task ExportSettingsAsync(IStorageFile file);
+    void ExportSettings(IStorageFile file);
 
-    Task<ApplicationSettings> ImportSettingsAsync(IStorageFile file);
+    ApplicationSettings ImportSettings(IStorageFile file);
 }
 
 public class SettingsService : ISettingsService
 {
-    private static readonly string SettingsFilePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "settings.json");
+    public const string SettingsFileName = "settings.ini";
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        WriteIndented = true,
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-    };
+    private readonly string settingsFilePath;
 
-    public async Task<ApplicationSettings> LoadSettingsAsync()
+    public SettingsService(string? appDataFolder = null) 
     {
-        if (File.Exists(SettingsFilePath))
+        settingsFilePath = Path.Combine(appDataFolder ?? AppData.LocalFolder, "settings.ini");
+    }
+
+    public ApplicationSettings LoadSettings()
+    {
+        if (File.Exists(settingsFilePath))
         {
-            using var stream = File.OpenRead(SettingsFilePath);
-            var settings = await JsonSerializer.DeserializeAsync<ApplicationSettings>(stream).ConfigureAwait(false);
-            return settings ?? new ApplicationSettings();
+            var fileContent = File.ReadAllText(settingsFilePath);
+            return ApplicationSettings.Deserialize(fileContent);
         }
         else
         {
@@ -40,24 +43,22 @@ public class SettingsService : ISettingsService
         }
     }
 
-    public async Task SaveSettingsAsync(ApplicationSettings settings)
+    public void SaveSettings(ApplicationSettings settings)
     {
-        using var stream = File.Open(SettingsFilePath, FileMode.Create);
-        await JsonSerializer.SerializeAsync(stream, settings, JsonOptions).ConfigureAwait(false);
+        File.WriteAllText(settingsFilePath, settings.Serialize());
     }
 
-    public async Task ExportSettingsAsync(IStorageFile file)
+    public void ExportSettings(IStorageFile file)
     {
-        var settings = await LoadSettingsAsync().ConfigureAwait(false);
-        using var stream = File.Open(file.Path, FileMode.Create);
-        await JsonSerializer.SerializeAsync(stream, settings, JsonOptions).ConfigureAwait(false);
+        var settings = LoadSettings();
+        File.WriteAllText(file.Path, settings.Serialize());
     }
 
-    public async Task<ApplicationSettings> ImportSettingsAsync(IStorageFile file)
+    public ApplicationSettings ImportSettings(IStorageFile file)
     {
-        using var stream = File.OpenRead(file.Path);
-        var settingsToImport = await JsonSerializer.DeserializeAsync<ApplicationSettings>(stream, JsonOptions).ConfigureAwait(false);
-        await SaveSettingsAsync(settingsToImport ?? throw new Exception("Invalid settings")).ConfigureAwait(false); // TODO test
+        var fileContent = File.ReadAllText(file.Path);
+        var settingsToImport = ApplicationSettings.Deserialize(fileContent);
+        SaveSettings(settingsToImport ?? throw new Exception("Invalid settings")); // TODO test
         return settingsToImport;
     }
 

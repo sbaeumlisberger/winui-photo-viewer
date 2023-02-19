@@ -43,13 +43,13 @@ public class MediaFileInfoToThumbnailConverter : IValueConverter
                 }
                 else
                 {
-                    Log.Info("No thumbnail image associated with " + mediaFile.Name);
+                    Log.Info("No thumbnail image associated with " + mediaFile.DisplayName);
                 }
             }
         }
         catch (Exception ex)
         {
-            Log.Error("No thumbnail could be be retrieved for " + mediaFile.Name, ex);
+            Log.Error("No thumbnail could be be retrieved for " + mediaFile.DisplayName, ex);
         }
     }
 

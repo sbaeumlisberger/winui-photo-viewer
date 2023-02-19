@@ -1,6 +1,7 @@
 ﻿using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Models;
 using System.Runtime.CompilerServices;
 using WIC;
 using Windows.Storage;
@@ -82,7 +83,7 @@ internal class MetadataService : IMetadataService
 
     private async Task<MetadataView> ReadMetadataAsync(IBitmapFileInfo file)
     {
-        Log.Info($"Read metadata for file {file.Name}");
+        Log.Info($"Read metadata for file {file.DisplayName}");
 
         using (var fileStream = await file.OpenAsync(FileAccessMode.Read).ConfigureAwait(false))
         {

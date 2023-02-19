@@ -430,6 +430,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading files.
+        /// </summary>
+        internal static string LoadingFilesMessage {
+            get {
+                return ResourceManager.GetString("LoadingFilesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         internal static string MediaFileContextMenu_Delete {

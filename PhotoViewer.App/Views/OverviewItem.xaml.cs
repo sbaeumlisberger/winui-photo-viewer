@@ -10,8 +10,8 @@ using Windows.Foundation;
 using System.Linq;
 using Windows.Storage;
 using Microsoft.UI.Xaml.Media.Imaging;
-using PhotoViewer.App.Models;
 using PhotoViewer.App.Converters;
+using PhotoViewer.Core.Models;
 
 namespace PhotoViewer.App.Views;
 
@@ -36,7 +36,7 @@ public sealed partial class OverviewItem : UserControl, IMVVMControl<OverviewIte
 
     private async void ViewModel_ThumbnailInvalidated(object? sender, EventArgs e)
     {
-        Log.Info($"Reload thumbnail for {ViewModel!.MediaFile.Name}");
+        Log.Info($"Reload thumbnail for {ViewModel!.MediaFile.DisplayName}");
         image.Source = await MediaFileInfoToThumbnailConverter.ConvertAsync(ViewModel.MediaFile);
     }
 

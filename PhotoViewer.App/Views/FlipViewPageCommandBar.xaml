@@ -75,14 +75,28 @@
         <AppBarButton 
             Icon="OpenLocal" 
             Label="{x:Bind res:Strings.FlipViewPageCommandBar_OpenFolderButton}"
-            Command="{x:Bind ViewModel.OpenFolderCommand}"/>
-        <AppBarButton 
-            Icon="Manage" 
-            Label="Tools"
-            Command="{x:Bind ViewModel.NavigateToSettingsPageCommand}">
+            Command="{x:Bind ViewModel.OpenFolderCommand}">
+            <AppBarButton.KeyboardAccelerators>
+                <KeyboardAccelerator
+                    Key="O"
+                    Modifiers="Control"/>
+            </AppBarButton.KeyboardAccelerators>
+        </AppBarButton>
+        <AppBarButton  
+            Icon="Manage"
+            Label="Tools">
             <AppBarButton.Flyout>
-                <MenuFlyout>
-                    <MenuFlyoutItem Text="Move RAW files to subfolder" Command="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand}"/>
+                <MenuFlyout Placement="Left">
+                    <MenuFlyoutItem 
+                        Text="Move RAW files to subfolder" 
+                        Command="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand}">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <!---TODO not working-->
+                            <KeyboardAccelerator
+                                Key="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand.AcceleratorKey}"
+                                Modifiers="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand.AcceleratorModifiers}"/>                            
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
                 </MenuFlyout>
             </AppBarButton.Flyout>
         </AppBarButton>

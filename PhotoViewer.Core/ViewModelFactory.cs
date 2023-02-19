@@ -9,14 +9,15 @@ using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System.Diagnostics;
+using PhotoViewer.App.Utils.Logging;
 
 namespace PhotoViewer.Core;
 
 public class ViewModelFactory
 {
-    public static ViewModelFactory Instance { get; } = new ViewModelFactory();
-
-    private readonly IMessenger messenger = StrongReferenceMessenger.Default;
+    public static ViewModelFactory Instance { get; private set; } = null!; 
+ 
+    private readonly IMessenger messenger;
     private readonly ApplicationSession applicationSession;
     private readonly IMediaFilesLoaderService mediaFilesLoaderService = new MediaFilesLoaderService();
     private readonly IMetadataService metadataService = new MetadataService();
@@ -31,23 +32,25 @@ public class ViewModelFactory
     private readonly IGpxService gpxService = new GpxService();
     private readonly ISuggestionsService peopleSuggestionsService = new SuggestionsService("people");
     private readonly ISuggestionsService keywordsSuggestionsService = new SuggestionsService("keywords");
-    private readonly ApplicationSettings settings = ApplicationSettingsProvider.GetSettings();
-    private IDialogService dialogService = null!;
-
-    public ViewModelFactory()
+    private readonly IDialogService dialogService;
+       
+    private ViewModelFactory(IMessenger messenger, IDialogService dialogService)
     {
+        this.messenger = messenger;
+        this.dialogService = dialogService;
         applicationSession = new ApplicationSession(messenger);
         rotateBitmapService = new RotateBitmapService(metadataService);
     }
 
-    public void Initialize(IDialogService dialogService)
+    public static void Initialize(IMessenger messenger, IDialogService dialogService)
     {
-        this.dialogService = dialogService;
+        Instance = new ViewModelFactory(messenger, dialogService);
     }
 
     public FlipViewPageModel CreateFlipViewPageModel()
     {
         Stopwatch sw = Stopwatch.StartNew();
+        var settings = ApplicationSettingsProvider.GetSettings();
         var deleteFilesCommand = CreateDeleteFilesCommand(settings);
         var flipViewPageModel = new FlipViewPageModel(
             applicationSession,
@@ -82,12 +85,13 @@ public class ViewModelFactory
                 settings,
                 showTagPeopleOnPhotoButton));
         sw.Stop();
-        Debug.WriteLine($"CreateFlipViewPageModel took {sw.ElapsedMilliseconds}ms");
+        Log.Info($"CreateFlipViewPageModel took {sw.ElapsedMilliseconds}ms");
         return flipViewPageModel;
     }
 
     public OverviewPageModel CreateOverviewPageModel()
     {
+        var settings = ApplicationSettingsProvider.GetSettings();
         var deleteFilesCommand = CreateDeleteFilesCommand(settings);
         var mediaFileContextFlyoutModel = new MediaFileContextMenuModel(
             messenger,

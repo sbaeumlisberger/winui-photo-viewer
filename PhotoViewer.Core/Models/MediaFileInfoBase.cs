@@ -1,4 +1,6 @@
-﻿using PhotoViewer.App.Utils.Logging;
+﻿using MetadataAPI.Data;
+using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Utils;
 using System;
 using System.IO;
 using Windows.Foundation;
@@ -10,7 +12,7 @@ namespace PhotoViewer.App.Models;
 
 public abstract class MediaFileInfoBase : IMediaFileInfo
 {
-    public string Name => StorageFile.Name + (LinkedStorageFiles.Any() ? "[" + string.Join("|", LinkedStorageFiles.Select(file => file.FileType)) + "]" : string.Empty);
+    public string DisplayName => StorageFile.Name + (LinkedStorageFiles.Any() ? "[" + string.Join("|", LinkedStorageFiles.Select(file => file.FileType)) + "]" : string.Empty);
 
     public IStorageFile StorageFile { get; }
 
@@ -18,7 +20,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
 
     public string FilePath => StorageFile.Path;
 
-    public string FileExtension => StorageFile.FileType.ToLower();
+    public string FileExtension => StorageFile.FileType;
 
     public string ContentType => StorageFile.ContentType;
 
@@ -133,4 +135,14 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
         return memoryStream;
     }
 
+
+    public override bool Equals(object? obj)
+    {
+        return obj is IMediaFileInfo other && StorageFile.IsEqual(other.StorageFile);
+    }
+
+    public override int GetHashCode()
+    {
+        return FilePath.GetHashCode();
+    }
 }

@@ -135,7 +135,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
     {
         if (args.NewState == MediaSourceState.Failed)
         {
-            Log.Error($"Could not open \"{MediaItem.Name}\"");
+            Log.Error($"Could not open \"{MediaItem.DisplayName}\"");
         }
     }
 
@@ -143,12 +143,12 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
     {
         if (args.Error?.ExtendedError is not null)
         {
-            Log.Error($"Could not open \"{MediaItem.Name}\"", args.Error.ExtendedError);
+            Log.Error($"Could not open \"{MediaItem.DisplayName}\"", args.Error.ExtendedError);
         }
     }
 
     private void MediaPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
     {
-        Log.Error($"An error occured playing \"{MediaItem.Name}\": {args.Error}: {args.ErrorMessage}", args.ExtendedErrorCode);
+        Log.Error($"An error occured playing \"{MediaItem.DisplayName}\": {args.Error}: {args.ErrorMessage}", args.ExtendedErrorCode);
     }
 }

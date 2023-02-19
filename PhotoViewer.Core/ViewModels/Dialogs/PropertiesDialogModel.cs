@@ -8,6 +8,7 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Models;
 using Windows.Storage;
 using Windows.System;
 
@@ -41,8 +42,6 @@ public partial class PropertiesDialogModel : ViewModelBase
 
     private readonly IMediaFileInfo mediaFileInfo;
 
-    private IStorageFolder? folder;
-
     public PropertiesDialogModel(IMetadataService metadataService, IMediaFileInfo mediaFileInfo)
     {
         this.metadataService = metadataService;
@@ -52,7 +51,7 @@ public partial class PropertiesDialogModel : ViewModelBase
 
     private async void InitializeAsync()
     {
-        Log.Info($"Initialize properties dialog for {mediaFileInfo.Name}");
+        Log.Info($"Initialize properties dialog for {mediaFileInfo.DisplayName}");
 
         FileName = mediaFileInfo.FileName;
 
@@ -89,17 +88,7 @@ public partial class PropertiesDialogModel : ViewModelBase
             Dimensions = "";
         }
 
-        if (!string.IsNullOrEmpty(mediaFileInfo.FilePath)
-            && mediaFileInfo.StorageFile is StorageFile storageFile
-            && await storageFile.GetParentAsync() is { } folder)
-        {
-            this.folder = folder;
-            CanShowInFileExlorer = true;
-        }
-        else
-        {
-            CanShowInFileExlorer = false;
-        }
+        CanShowInFileExlorer = Path.GetDirectoryName(mediaFileInfo.FilePath) != null;
     }
 
     private async Task ReadMetadataPropertiesAsync(IBitmapFileInfo mediaFileInfo)
@@ -134,13 +123,15 @@ public partial class PropertiesDialogModel : ViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanShowInFileExlorer))]
-    private void ShowInFileExplorer()
+    private async Task ShowInFileExplorer()
     {
+        var folder = await StorageFolder.GetFolderFromPathAsync(Path.GetDirectoryName(mediaFileInfo.FilePath)!);
+
         var options = new FolderLauncherOptions()
         {
             ItemsToSelect = { mediaFileInfo.StorageFile }
         };
-        Launcher.LaunchFolderAsync(folder, options).AsTask().ContinueWith(task =>
+        await Launcher.LaunchFolderAsync(folder, options).AsTask().ContinueWith(task =>
         {
             if (task.IsFaulted)
             {

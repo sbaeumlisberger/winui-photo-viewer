@@ -14,6 +14,7 @@ using PhotoViewer.Core.Utils;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.FaceAnalysis;
+using PhotoViewer.Core.Models;
 
 namespace PhotoViewer.Core.ViewModels;
 

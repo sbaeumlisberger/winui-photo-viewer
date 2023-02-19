@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
@@ -17,8 +18,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Globalization;
-using Windows.Services.Maps;
-using Windows.Storage;
 using WinUIEx;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
@@ -26,52 +25,80 @@ namespace PhotoViewer.App;
 
 public partial class App : Application
 {
-    private const string MapServiceToken = "vQDj7umE60UMzHG2XfCm~ehfqvBJAFQn6pphOPVbDsQ~ArtM_t2j4AyKdgLIa5iXeftg8bEG4YRYCwhUN-SMXhIK73mnPtCYU4nOF2VtqGiF";
-
     public static new App Current => (App)Application.Current;
 
     public MainWindow Window { get; private set; } = null!;
 
     public App()
     {
-        Debug.WriteLine($"Local app data folder: {ApplicationData.Current.LocalFolder.Path}");
+        var stopwatch = Stopwatch.StartNew();
+
+        Log.Logger = new LoggerImpl();
+
+        stopwatch.Stop();
+        Log.Info($"LoggerImpl took {stopwatch.ElapsedMilliseconds}ms");
+        stopwatch.Start();
 
         UnhandledException += App_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-
-        MapService.ServiceToken = MapServiceToken;
 
         string language = ApplicationLanguages.Languages.First();
         Strings.Culture = new CultureInfo(language);
         PhotoViewer.Core.Resources.Strings.Culture = new CultureInfo(language);
 
         this.InitializeComponent();
+
+        stopwatch.Stop();
+        Log.Info($"App constructor took {stopwatch.ElapsedMilliseconds}ms");
     }
 
-    protected override async void OnLaunched(LaunchActivatedEventArgs args)
-    {
-        Log.Info("Application launched.");
+    protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    { 
+        //Log.Info("Application launched.");
+        var stopwatch = Stopwatch.StartNew();       
 
-        var settingsService = new SettingsService();
-        var settings = await settingsService.LoadSettingsAsync();
-        ApplicationSettingsProvider.SetSettings(settings);
+        var settings = LoadSettings();
 
-        var loadMediaItemsService = new MediaFilesLoaderService();
-        var activatedEventArgs = AppInstance.GetActivatedEventArgs();
-        var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName, settings.IncludeVideos);
-        var loadMediaItemsTask = loadMediaItemsService.LoadMediaFilesAsync(activatedEventArgs, config);
+        var loadMediaFilesTask = LoadMediaFiles(settings);
 
         var messenger = StrongReferenceMessenger.Default;
 
-        Window = new MainWindow(messenger);     
-        Window.Activate();
-
-        await ColorProfileProvider.Instance.InitializeAsync(Window.GetAppWindow().Id);
+        await CreateWindowAsync(messenger);
 
         messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel)));
 
-        var loadMediaItemsResult = await loadMediaItemsTask;
-        messenger.Send(new MediaFilesLoadedMessage(loadMediaItemsResult.MediaItems, loadMediaItemsResult.StartItem));
+        stopwatch.Stop();
+        Log.Info($"OnLaunched took {stopwatch.ElapsedMilliseconds}ms");
+
+        messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask));
+    }
+
+    private ApplicationSettings LoadSettings()
+    {
+        var settingsService = new SettingsService();
+        var settings = settingsService.LoadSettings();
+        ApplicationSettingsProvider.SetSettings(settings);
+        return settings;
+    }
+
+    private LoadMediaFilesTask LoadMediaFiles(ApplicationSettings settings)
+    {
+        var loadMediaItemsService = new MediaFilesLoaderService();
+        var activatedEventArgs = AppInstance.GetActivatedEventArgs();
+        var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName, settings.IncludeVideos);
+        return loadMediaItemsService.LoadMediaFilesFromActivateEventArgs(activatedEventArgs, config);
+    }
+
+    private Task CreateWindowAsync(IMessenger messenger)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        Window = new MainWindow(messenger);
+        Window.Activate();
+        var windowId = Win32Interop.GetWindowIdFromWindow(Window.GetWindowHandle());
+        var task = ColorProfileProvider.Instance.InitializeAsync(windowId);
+        stopwatch.Stop();
+        Log.Info($"CreateWindowAsync took {stopwatch.ElapsedMilliseconds}ms");
+        return task;
     }
 
     private void App_UnhandledException(object sender, UnhandledExceptionEventArgs args)

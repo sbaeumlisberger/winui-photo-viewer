@@ -240,6 +240,9 @@
   <data name="ItemWithCount_All" xml:space="preserve">
     <value>All</value>
   </data>
+  <data name="LoadingFilesMessage" xml:space="preserve">
+    <value>Loading files</value>
+  </data>
   <data name="MediaFileContextMenu_Delete" xml:space="preserve">
     <value>Delete</value>
   </data>

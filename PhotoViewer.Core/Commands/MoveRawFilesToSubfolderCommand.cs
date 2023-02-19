@@ -9,13 +9,19 @@ using PhotoViewer.Core.ViewModels;
 using System.Windows.Input;
 using Tocronx.SimpleAsync;
 using Windows.Storage;
+using Windows.System;
 
 namespace PhotoViewer.Core.Commands;
 
-internal interface IMoveRawFilesToSubfolderCommand : ICommand { }
+internal interface IMoveRawFilesToSubfolderCommand : IAcceleratedCommand { }
 
 internal class MoveRawFilesToSubfolderCommand : AsyncCommandBase, IMoveRawFilesToSubfolderCommand
 {
+    public VirtualKey AcceleratorKey => VirtualKey.U;
+
+    public VirtualKeyModifiers AcceleratorModifiers => VirtualKeyModifiers.Control;
+
+
     private readonly ApplicationSession session;
 
     private readonly ApplicationSettings settings;

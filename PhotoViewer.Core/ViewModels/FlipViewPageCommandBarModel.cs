@@ -32,7 +32,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     public ICommand SelectNextCommand { get; }
 
-    public ICommand MoveRawFilesToSubfolderCommand { get; }
+    public IAcceleratedCommand MoveRawFilesToSubfolderCommand { get; }
 
     public bool CanStartDiashow { get; private set; } = false;
 
@@ -115,8 +115,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         if (folderPickerModel.Folder is StorageFolder folder)
         {
             var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName, settings.IncludeVideos);
-            var result = await loadMediaItemsService.LoadMediaFilesAsync(folder, config);
-            Messenger.Send(new MediaFilesLoadedMessage(result.MediaItems, result.StartItem));
+            var loadMediaFilesTask = loadMediaItemsService.LoadMediaFilesFromFolder(folder, config);
+            Messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask));
         }
     }
 

@@ -74,7 +74,7 @@ public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFil
         if (askDialogModel.IsRemember)
         {
             settings.DeleteLinkedFilesOption = askDialogModel.IsYes ? DeleteLinkedFilesOption.Yes : DeleteLinkedFilesOption.No;
-            await settingsService.SaveSettingsAsync(settings);
+            settingsService.SaveSettings(settings);
         }
 
         return askDialogModel.IsYes;
@@ -84,7 +84,7 @@ public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFil
     {
         string message = Strings.DeleteFilesErrorDialog_Message + "\n";
         message += string.Join("\n", result.Failures
-            .Select(failure => failure.Element.Name + "(" + failure.Exception.Message + ")"));
+            .SelectMany(failure => failure.Element.StorageFiles.Select(file => file.Path + " (" + failure.Exception.Message + ")"))); ;
 
         var failuresDialog = new MessageDialogModel()
         {

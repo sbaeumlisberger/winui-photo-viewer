@@ -1,12 +1,13 @@
-﻿using System.Diagnostics;
+﻿using PhotoViewer.Core;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Windows.Storage;
 
 namespace PhotoViewer.App.Utils.Logging;
 
-internal class LoggerImpl : ILogger
+public class LoggerImpl : ILogger
 {
-    private static readonly string LogFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "logs");
+    private static readonly string LogFolderPath = Path.Combine(AppData.LocalFolder, "logs");
 
     private static readonly string LogFilePath = Path.Combine(LogFolderPath, "log-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt");
 
@@ -17,12 +18,11 @@ internal class LoggerImpl : ILogger
         Directory.CreateDirectory(LogFolderPath);
 
         var stream = new FileStream(LogFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
-        stream.Seek(0, SeekOrigin.End);
         logFileWriter = new StreamWriter(stream) { AutoFlush = true };
 
         System.Diagnostics.Debug.WriteLine($"Logging to: {LogFilePath}");
 
-        Task.Run(CleanupOldLogFiles);
+        Task.Delay(5000).ContinueWith(_ => CleanupOldLogFiles());
     }
 
     public void Debug(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)

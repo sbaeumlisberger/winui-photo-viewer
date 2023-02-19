@@ -6,7 +6,7 @@ namespace PhotoViewer.App.Utils.Logging;
 
 public static class Log
 {
-    public static ILogger Logger { get; set; } = new LoggerImpl();
+    public static ILogger Logger { get; set; }
 
     [Conditional("DEBUG")]
     public static void Debug(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)

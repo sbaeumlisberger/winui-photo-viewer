@@ -22,6 +22,7 @@ using Tocronx.SimpleAsync;
 using Windows.Services.Maps;
 using Windows.ApplicationModel.DataTransfer;
 using System.Security.Cryptography;
+using PhotoViewer.Core;
 
 namespace PhotoViewer.App.Views;
 
@@ -35,7 +36,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
         <html>
             <head>
                 <meta charset="utf-8" />
-                <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key={{{MapService.ServiceToken}}}' async defer></script>         
+                <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key={{{AppData.MapServiceToken}}}' async defer></script>         
                 <script type="text/javascript">
                    function createMap()
                    {

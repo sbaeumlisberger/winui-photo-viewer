@@ -3,6 +3,7 @@ using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
+using PhotoViewer.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
