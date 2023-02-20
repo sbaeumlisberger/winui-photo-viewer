@@ -71,7 +71,8 @@ public class ViewModelFactory
                 flipViewPageModel.SelectNextCommand,
                 settings,
                 deleteFilesCommand,
-                new MoveRawFilesToSubfolderCommand(applicationSession, settings, dialogService)),
+                new MoveRawFilesToSubfolderCommand(applicationSession, settings, dialogService),
+                new ShiftDatenTakenCommand(applicationSession, messenger, dialogService, metadataService)),
             displayRequestService,
             showTagPeopleOnPhotoButton => new MetadataPanelModel(
                 messenger,

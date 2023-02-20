@@ -33,6 +33,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     public ICommand SelectNextCommand { get; }
 
     public IAcceleratedCommand MoveRawFilesToSubfolderCommand { get; }
+    public IAcceleratedCommand ShiftDatenTakenCommand { get; }
 
     public bool CanStartDiashow { get; private set; } = false;
 
@@ -55,7 +56,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         ICommand selectNextCommand,
         ApplicationSettings settings,
         IDeleteFilesCommand deleteFilesCommand,
-        IMoveRawFilesToSubfolderCommand moveRawFilesToSubfolderCommand) : base(messenger)
+        IMoveRawFilesToSubfolderCommand moveRawFilesToSubfolderCommand,
+        IShiftDatenTakenCommand shiftDatenTakenCommand) : base(messenger)
     {
         this.dialogService = dialogService;
         this.loadMediaItemsService = loadMediaItemsService;
@@ -66,6 +68,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         SelectPreviousCommand = selectPreviousCommand;
         SelectNextCommand = selectNextCommand;
         MoveRawFilesToSubfolderCommand = moveRawFilesToSubfolderCommand;
+        ShiftDatenTakenCommand= shiftDatenTakenCommand;
     }
 
     partial void OnSelectedItemModelChanged()

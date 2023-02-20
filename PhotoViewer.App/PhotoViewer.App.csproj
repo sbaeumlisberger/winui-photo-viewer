@@ -16,10 +16,12 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <None Remove="Controls\ProgressControl.xaml" />
     <None Remove="Controls\SelectionRect.xaml" />
     <None Remove="Views\Dialogs\DeleteLinkedFilesDialog.xaml" />
     <None Remove="Views\Dialogs\EditLocationDialog.xaml" />
     <None Remove="Views\Dialogs\ProgressDialog.xaml" />
+    <None Remove="Views\Dialogs\ShiftDatenTakenDialog.xaml" />
     <None Remove="Views\FlipViewPage.xaml" />
     <None Remove="Views\BitmapFlipViewItem.xaml" />
     <None Remove="Views\BitmapViewer.xaml" />
@@ -153,10 +155,16 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Page Update="Controls\ProgressControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <None Update="Resources\Strings.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Strings.cs</LastGenOutput>
     </None>
+    <Page Update="Views\Dialogs\ShiftDatenTakenDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Compile Update="Resources\Strings.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

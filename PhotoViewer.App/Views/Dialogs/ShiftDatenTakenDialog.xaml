@@ -1,0 +1,121 @@
+<ContentDialog
+    x:Class="PhotoViewer.App.Views.Dialogs.ShiftDatenTakenDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewer.App.Views.Dialogs"
+    xmlns:res="using:PhotoViewer.App.Resources"
+    xmlns:controls="using:PhotoViewer.App.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Name="dialog"
+    Title="{x:Bind res:Strings.ShiftDateTakenDialog_Title}">
+
+    <Grid Width="400" MinHeight="220">
+        <Grid Visibility="{x:Bind ViewModel.ShowInput, Mode=OneWay}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid ColumnSpacing="8" RowSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Days" VerticalAlignment="Center"/>
+                <NumberBox Grid.Column="1" Value="{x:Bind ViewModel.Days, Mode=TwoWay}" 
+                           SpinButtonPlacementMode="Inline"/>
+
+                <TextBlock Grid.Row="1" Text="Hours" VerticalAlignment="Center"/>
+                <NumberBox Grid.Row="1" Grid.Column="1" Value="{x:Bind ViewModel.Hours, Mode=TwoWay}" 
+                           SpinButtonPlacementMode="Inline"/>
+
+                <TextBlock Grid.Row="2" Text="Minutes" VerticalAlignment="Center"/>
+                <NumberBox Grid.Row="2" Grid.Column="1" Value="{x:Bind ViewModel.Minutes, Mode=TwoWay}" 
+                           SpinButtonPlacementMode="Inline"/>
+
+                <TextBlock Grid.Row="3" Text="Seconds" VerticalAlignment="Center"/>
+                <NumberBox Grid.Row="3" Grid.Column="1" Value="{x:Bind ViewModel.Seconds, Mode=TwoWay}" 
+                           SpinButtonPlacementMode="Inline"/>
+            </Grid>
+
+            <StackPanel Grid.Row="1" Margin="0,24,0,0" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button
+                    Width="120" 
+                    Style="{StaticResource AccentButtonStyle}"
+                    Content="{x:Bind res:Strings.ShiftDateTakenDialog_Continue}"   
+                    Command="{x:Bind ViewModel.ExecuteCommand}"/>
+                <Button 
+                    Width="120"
+                    Content="{x:Bind res:Strings.Generic_Cancel}"
+                    Click="{x:Bind dialog.Hide}"/>
+            </StackPanel>
+         </Grid>
+
+        <Grid Visibility="{x:Bind ViewModel.ShowProgress, Mode=OneWay}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <controls:ProgressControl Margin="0,8,0,0" Progress="{x:Bind ViewModel.Progress, Mode=OneWay}"/>
+
+            <StackPanel Grid.Row="1" Margin="0,24,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button
+                    Width="120"
+                    Content="{x:Bind res:Strings.Generic_Cancel}" 
+                    Command="{x:Bind ViewModel.CancelCommand}" 
+                    Click="{x:Bind dialog.Hide}"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid Visibility="{x:Bind ViewModel.ShowResult, Mode=OneWay}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ScrollViewer>
+                <Grid>
+                    <TextBlock
+                        Margin="0,8,0,0" 
+                        Visibility="{x:Bind ViewModel.IsCompletedSuccessfully, Mode=OneWay}" 
+                        Text="{x:Bind res:Strings.ShiftDateTakenDialog_SuccessMessage}"/>
+            
+                    <StackPanel 
+                        Margin="0,8,0,0" 
+                        Spacing="8"
+                        Visibility="{x:Bind ViewModel.IsCompletedWithErrors, Mode=OneWay}">
+                        <TextBlock 
+                            Text="{x:Bind res:Strings.ShiftDateTakenDialog_ErrorMessage}" 
+                            TextWrapping="WrapWholeWords"/>
+                        <ItemsControl ItemsSource="{x:Bind ViewModel.Errors, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <TextBlock 
+                                        Padding="4" 
+                                        IsTextSelectionEnabled="True"  
+                                        TextWrapping="WrapWholeWords"
+                                        Text="{x:Bind}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+            <StackPanel Grid.Row="1" Margin="0,24,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button 
+                    Width="120" 
+                    Content="{x:Bind res:Strings.Generic_Close}" 
+                    Click="{x:Bind dialog.Hide}"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</ContentDialog>

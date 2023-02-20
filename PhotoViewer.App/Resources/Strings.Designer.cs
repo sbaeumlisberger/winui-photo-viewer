@@ -421,6 +421,24 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string Generic_Cancel {
+            get {
+                return ResourceManager.GetString("Generic_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        internal static string Generic_Close {
+            get {
+                return ResourceManager.GetString("Generic_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All.
         /// </summary>
         internal static string ItemWithCount_All {
@@ -1146,6 +1164,42 @@ namespace PhotoViewer.App.Resources {
         internal static string SettingsPage_Title {
             get {
                 return ResourceManager.GetString("SettingsPage_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Continue.
+        /// </summary>
+        internal static string ShiftDateTakenDialog_Continue {
+            get {
+                return ResourceManager.GetString("ShiftDateTakenDialog_Continue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The shifting of the dates taken has been completed. The following errors occurred:.
+        /// </summary>
+        internal static string ShiftDateTakenDialog_ErrorMessage {
+            get {
+                return ResourceManager.GetString("ShiftDateTakenDialog_ErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All dates taken have been successfully shifted.
+        /// </summary>
+        internal static string ShiftDateTakenDialog_SuccessMessage {
+            get {
+                return ResourceManager.GetString("ShiftDateTakenDialog_SuccessMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shift dates taken.
+        /// </summary>
+        internal static string ShiftDateTakenDialog_Title {
+            get {
+                return ResourceManager.GetString("ShiftDateTakenDialog_Title", resourceCulture);
             }
         }
         

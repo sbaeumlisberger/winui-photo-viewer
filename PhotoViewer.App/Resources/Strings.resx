@@ -237,6 +237,12 @@
   <data name="FlipViewPageCommandBar_SettingsButton" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="Generic_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Generic_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
   <data name="ItemWithCount_All" xml:space="preserve">
     <value>All</value>
   </data>
@@ -479,6 +485,18 @@
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="ShiftDateTakenDialog_Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="ShiftDateTakenDialog_ErrorMessage" xml:space="preserve">
+    <value>The shifting of the dates taken has been completed. The following errors occurred:</value>
+  </data>
+  <data name="ShiftDateTakenDialog_SuccessMessage" xml:space="preserve">
+    <value>All dates taken have been successfully shifted</value>
+  </data>
+  <data name="ShiftDateTakenDialog_Title" xml:space="preserve">
+    <value>Shift dates taken</value>
   </data>
   <data name="TagPeopleTool_NamePlaceholder" xml:space="preserve">
     <value>Enter name</value>

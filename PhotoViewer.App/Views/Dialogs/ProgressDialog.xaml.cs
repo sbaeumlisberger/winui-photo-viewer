@@ -23,10 +23,4 @@ public sealed partial class ProgressDialog : ContentDialog, IMVVMControl<Progres
 
     private string? CanCancelToSecondaryButtonText(bool canCancel) => canCancel ? Strings.ProgressDialog_CancelButton : null;
 
-    private double ToPercent(double progress) => progress * 100;
-
-    private string FormatTimeSpan(TimeSpan? timeSpan) => timeSpan != null ? TimeSpanFormatter.Format(timeSpan.Value) : "";
-
-    private string FormatAsPercent(double progress) => Math.Round(progress * 100) + "%";
-
 }

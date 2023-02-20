@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PhotoViewer.Core.Utils;
@@ -28,22 +29,33 @@ public partial class Progress : ObservableObject, IProgress<double>
 
     private readonly DateTime startTime = DateTime.Now;
 
-    public Progress(CancellationTokenSource? cts = null)
+    private readonly SynchronizationContext synchronizationContext;
+
+    public Progress(CancellationTokenSource? cts = null, SynchronizationContext? synchronizationContext = null)
     {
         this.cts = cts;
+        this.synchronizationContext = synchronizationContext ?? SynchronizationContext.Current!;
         CanCancel = cts != null;
     }
 
     public void Report(double progress)
     {
-        UpdateProgress(progress);
-        EstimatedTimeRemaining = EstimateTimeRemaining();
+        // TODO buffer
+        synchronizationContext.Post(_ =>
+        {
+            UpdateProgress(progress);
+            EstimatedTimeRemaining = EstimateTimeRemaining();
+        }, null);
     }
 
     public void Report(double progress, TimeSpan estimatedTimeRemaining)
-    {
-        UpdateProgress(progress);
-        EstimatedTimeRemaining = estimatedTimeRemaining;
+    { 
+        // TODO buffer
+        synchronizationContext.Post(_ =>
+        {
+            UpdateProgress(progress);
+            EstimatedTimeRemaining = estimatedTimeRemaining;
+        }, null);
     }
 
     private void UpdateProgress(double progress)
@@ -64,14 +76,18 @@ public partial class Progress : ObservableObject, IProgress<double>
         CanCancel = false;
     }
 
-    [RelayCommand(CanExecute = nameof(CanCancel))]
-    private void Cancel()
+    [RelayCommand(CanExecute = nameof(CanCancel))] // TODO remove command
+    public void Cancel()
     {
-        cts!.Cancel();
+        cts?.Cancel();
     }
 
-    private TimeSpan EstimateTimeRemaining()
+    private TimeSpan? EstimateTimeRemaining()
     {
-        return (DateTime.Now - startTime) / Value * (1 - Value);
+        if (Value > 0)
+        {
+            return (DateTime.Now - startTime) / Value * (1 - Value);
+        }
+        return null;
     }
 }

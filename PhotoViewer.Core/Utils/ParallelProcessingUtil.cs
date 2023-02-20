@@ -38,7 +38,13 @@ namespace PhotoViewer.Core.Utils
     public static class ParallelProcessingUtil
     {
 
-        public static async Task<ProcessingResult<T>> ProcessParallelAsync<T>(IReadOnlyCollection<T> elements, Func<T, Task> processElement, int numberOfThreads = 4, ErrorMode errorHandling = ErrorMode.Log)
+        public static async Task<ProcessingResult<T>> ProcessParallelAsync<T>(
+            IReadOnlyCollection<T> elements, 
+            Func<T, Task> processElement, 
+            IProgress<double>? progress = null, 
+            CancellationToken? cancellationToken = null, 
+            int numberOfThreads = 4, 
+            ErrorMode errorMode = ErrorMode.Log)
         {
             bool aborted = false;
 
@@ -55,21 +61,21 @@ namespace PhotoViewer.Core.Utils
                 {
                     foreach (var element in chunk)
                     {
-                        if (aborted)
+                        if (aborted || cancellationToken?.IsCancellationRequested is true)
                         {
                             return;
                         }
-
                         try
                         {
                             await processElement(element).ConfigureAwait(false);
                             processedElements.Add(element);
+                            progress?.Report((double)processedElements.Count / elements.Count);
                         }
                         catch (Exception exception)
                         {
                             failures.Add(new Failure<T>(element, exception));
 
-                            switch (errorHandling)
+                            switch (errorMode)
                             {
                                 case ErrorMode.Ignore:
                                     break;
@@ -86,6 +92,9 @@ namespace PhotoViewer.Core.Utils
             });
 
             await Task.WhenAll(tasks).ConfigureAwait(false);
+
+            cancellationToken?.ThrowIfCancellationRequested();
+            progress?.Report(1);
 
             return new ProcessingResult<T>(processedElements, failures);
         }

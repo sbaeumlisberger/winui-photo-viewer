@@ -72,7 +72,7 @@ namespace PhotoViewer.Core.ViewModels
             RatingSectionModel = new RatingSectionModel(writeFilesRunner, metadataService);
             AuthorTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Author);
             CopyrightTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Copyright);
-            DateTakenSectionModel = new DateTakenSectionModel(writeFilesRunner);
+            DateTakenSectionModel = new DateTakenSectionModel(writeFilesRunner, messenger, metadataService, dialogService);
 
             IsVisible = applicationSettings.AutoOpenMetadataPanel;
 

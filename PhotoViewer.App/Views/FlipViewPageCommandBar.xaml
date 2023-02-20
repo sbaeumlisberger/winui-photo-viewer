@@ -87,7 +87,7 @@
             Label="Tools">
             <AppBarButton.Flyout>
                 <MenuFlyout Placement="Left">
-                    <MenuFlyoutItem 
+                    <MenuFlyoutItem
                         Text="Move RAW files to subfolder" 
                         Command="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand}">
                         <MenuFlyoutItem.KeyboardAccelerators>
@@ -97,6 +97,28 @@
                                 Modifiers="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand.AcceleratorModifiers}"/>                            
                         </MenuFlyoutItem.KeyboardAccelerators>
                     </MenuFlyoutItem>
+                    <MenuFlyoutItem 
+                        Text="Delete single RAW files" 
+                        Command="{x:Bind ViewModel.DeleteSingleRawFilesCommand}">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <!---TODO not working-->
+                            <KeyboardAccelerator
+                                Key="{x:Bind ViewModel.DeleteSingleRawFilesCommand.AcceleratorKey}"
+                                Modifiers="{x:Bind ViewModel.DeleteSingleRawFilesCommand.AcceleratorModifiers}"/>
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Set autor and copyright of all photos" />
+                    <MenuFlyoutItem 
+                        Text="Shift date taken of all photos" 
+                        Command="{x:Bind ViewModel.ShiftDatenTakenCommand}">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <!---TODO not working-->
+                            <KeyboardAccelerator
+                                Key="{x:Bind ViewModel.ShiftDatenTakenCommand.AcceleratorKey}"
+                                Modifiers="{x:Bind ViewModel.ShiftDatenTakenCommand.AcceleratorModifiers}"/>
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Apply GPX track to all photos" />
                 </MenuFlyout>
             </AppBarButton.Flyout>
         </AppBarButton>
