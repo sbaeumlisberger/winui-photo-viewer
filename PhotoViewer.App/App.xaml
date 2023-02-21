@@ -6,7 +6,21 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />             
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <ResourceDictionary>
+                    <Style x:Key="DialogButtonPanel" TargetType="StackPanel">
+                        <Setter Property="Orientation" Value="Horizontal"/>
+                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                        <Setter Property="Spacing" Value="8"/>
+                        <Setter Property="Margin" Value="0,24,0,0"/>
+                    </Style>                    
+                    <Style x:Key="DialogButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+                        <Setter Property="MinWidth" Value="120"/>
+                    </Style>
+                    <Style x:Key="PrimaryDialogButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
+                        <Setter Property="MinWidth" Value="120"/>
+                    </Style>
+                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">

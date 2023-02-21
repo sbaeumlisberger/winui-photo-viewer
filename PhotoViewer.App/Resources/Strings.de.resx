@@ -144,6 +144,24 @@
   <data name="DeleteLinkedFilesDialog_Yes" xml:space="preserve">
     <value>Ja</value>
   </data>
+  <data name="DeleteSingleRawFilesDialog_ConfirmMessage" xml:space="preserve">
+    <value>Sind Sie sicher, dass Sie alle RAW-Dateien löschen wollen, für die keine andere Datei mit demselben Namen existiert?</value>
+  </data>
+  <data name="DeleteSingleRawFilesDialog_Continue" xml:space="preserve">
+    <value>Fortfahren</value>
+  </data>
+  <data name="DeleteSingleRawFilesDialog_ErrorMessage" xml:space="preserve">
+    <value>Die folgenden RAW-Dateien konnten nicht gelöscht werden:</value>
+  </data>
+  <data name="DeleteSingleRawFilesDialog_InProgressMessage" xml:space="preserve">
+    <value>Einzelne RAW-Dateien werden gelöscht.</value>
+  </data>
+  <data name="DeleteSingleRawFilesDialog_SuccessMessage" xml:space="preserve">
+    <value>Alle einzelne RAW-Dateien wurden erfolgreich gelöscht.</value>
+  </data>
+  <data name="DeleteSingleRawFilesDialog_Title" xml:space="preserve">
+    <value>Einzelne RAW-Dateien löschen</value>
+  </data>
   <data name="DetailsBar_ColorSpaceAdobeRGB" xml:space="preserve">
     <value>Adobe-RGB-Farbraum</value>
   </data>

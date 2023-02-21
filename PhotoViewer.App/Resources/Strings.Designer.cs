@@ -142,6 +142,60 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete all RAW files for which no other file with the same name exists?.
+        /// </summary>
+        internal static string DeleteSingleRawFilesDialog_ConfirmMessage {
+            get {
+                return ResourceManager.GetString("DeleteSingleRawFilesDialog_ConfirmMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Continue.
+        /// </summary>
+        internal static string DeleteSingleRawFilesDialog_Continue {
+            get {
+                return ResourceManager.GetString("DeleteSingleRawFilesDialog_Continue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following RAW files could not be deleted:.
+        /// </summary>
+        internal static string DeleteSingleRawFilesDialog_ErrorMessage {
+            get {
+                return ResourceManager.GetString("DeleteSingleRawFilesDialog_ErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Single RAW files are deleted..
+        /// </summary>
+        internal static string DeleteSingleRawFilesDialog_InProgressMessage {
+            get {
+                return ResourceManager.GetString("DeleteSingleRawFilesDialog_InProgressMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All single RAW files were successfully deleted..
+        /// </summary>
+        internal static string DeleteSingleRawFilesDialog_SuccessMessage {
+            get {
+                return ResourceManager.GetString("DeleteSingleRawFilesDialog_SuccessMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete single RAW files.
+        /// </summary>
+        internal static string DeleteSingleRawFilesDialog_Title {
+            get {
+                return ResourceManager.GetString("DeleteSingleRawFilesDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Adobe RGB color space.
         /// </summary>
         internal static string DetailsBar_ColorSpaceAdobeRGB {

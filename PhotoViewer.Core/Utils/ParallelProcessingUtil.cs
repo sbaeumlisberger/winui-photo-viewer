@@ -44,8 +44,15 @@ namespace PhotoViewer.Core.Utils
             IProgress<double>? progress = null, 
             CancellationToken? cancellationToken = null, 
             int numberOfThreads = 4, 
-            ErrorMode errorMode = ErrorMode.Log)
+            ErrorMode errorMode = ErrorMode.Log,
+            bool throwOnCancellation = false)
         {
+            if (!elements.Any()) 
+            {
+                progress?.Report(1);
+                return new ProcessingResult<T>(new List<T>(), new List<Failure<T>>());
+            }
+
             bool aborted = false;
 
             var processedElements = new ConcurrentBag<T>();
@@ -93,7 +100,11 @@ namespace PhotoViewer.Core.Utils
 
             await Task.WhenAll(tasks).ConfigureAwait(false);
 
-            cancellationToken?.ThrowIfCancellationRequested();
+            if (throwOnCancellation)
+            {
+                cancellationToken?.ThrowIfCancellationRequested();
+            }
+
             progress?.Report(1);
 
             return new ProcessingResult<T>(processedElements, failures);

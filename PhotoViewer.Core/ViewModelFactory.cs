@@ -72,6 +72,7 @@ public class ViewModelFactory
                 settings,
                 deleteFilesCommand,
                 new MoveRawFilesToSubfolderCommand(applicationSession, settings, dialogService),
+                new DeleteSingleRawFilesCommand(applicationSession, dialogService),
                 new ShiftDatenTakenCommand(applicationSession, messenger, dialogService, metadataService)),
             displayRequestService,
             showTagPeopleOnPhotoButton => new MetadataPanelModel(

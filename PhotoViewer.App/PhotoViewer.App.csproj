@@ -19,6 +19,7 @@
     <None Remove="Controls\ProgressControl.xaml" />
     <None Remove="Controls\SelectionRect.xaml" />
     <None Remove="Views\Dialogs\DeleteLinkedFilesDialog.xaml" />
+    <None Remove="Views\Dialogs\DeleteSingleRawFilesDialog.xaml" />
     <None Remove="Views\Dialogs\EditLocationDialog.xaml" />
     <None Remove="Views\Dialogs\ProgressDialog.xaml" />
     <None Remove="Views\Dialogs\ShiftDatenTakenDialog.xaml" />
@@ -80,6 +81,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Dialogs\DeleteLinkedFilesDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\Dialogs\DeleteSingleRawFilesDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Views\OverviewPageCommandBar.xaml">

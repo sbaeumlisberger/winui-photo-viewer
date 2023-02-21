@@ -30,6 +30,9 @@
     <Page Update="Views\Dialogs\ProgressDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\Dialogs\DeleteSingleRawFilesDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\TagPeopleTool.xaml">
       <SubType>Designer</SubType>
     </Page>

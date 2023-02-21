@@ -47,14 +47,13 @@
                            SpinButtonPlacementMode="Inline"/>
             </Grid>
 
-            <StackPanel Grid.Row="1" Margin="0,24,0,0" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <StackPanel Grid.Row="1" Style="{StaticResource DialogButtonPanel}">
                 <Button
-                    Width="120" 
-                    Style="{StaticResource AccentButtonStyle}"
+                    Style="{StaticResource PrimaryDialogButtonStyle}"
                     Content="{x:Bind res:Strings.ShiftDateTakenDialog_Continue}"   
                     Command="{x:Bind ViewModel.ExecuteCommand}"/>
                 <Button 
-                    Width="120"
+                    Style="{StaticResource DialogButtonStyle}"
                     Content="{x:Bind res:Strings.Generic_Cancel}"
                     Click="{x:Bind dialog.Hide}"/>
             </StackPanel>
@@ -68,9 +67,9 @@
 
             <controls:ProgressControl Margin="0,8,0,0" Progress="{x:Bind ViewModel.Progress, Mode=OneWay}"/>
 
-            <StackPanel Grid.Row="1" Margin="0,24,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel Grid.Row="1" Style="{StaticResource DialogButtonPanel}">
                 <Button
-                    Width="120"
+                    Style="{StaticResource DialogButtonStyle}"
                     Content="{x:Bind res:Strings.Generic_Cancel}" 
                     Command="{x:Bind ViewModel.CancelCommand}" 
                     Click="{x:Bind dialog.Hide}"/>
@@ -110,9 +109,9 @@
                     </StackPanel>
                 </Grid>
             </ScrollViewer>
-            <StackPanel Grid.Row="1" Margin="0,24,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel Grid.Row="1" Style="{StaticResource DialogButtonPanel}">
                 <Button 
-                    Width="120" 
+                    Style="{StaticResource DialogButtonStyle}"
                     Content="{x:Bind res:Strings.Generic_Close}" 
                     Click="{x:Bind dialog.Hide}"/>
             </StackPanel>
