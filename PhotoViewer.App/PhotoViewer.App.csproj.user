@@ -27,7 +27,7 @@
     <None Update="Controls\RatingControl.xaml">
       <SubType>Designer</SubType>
     </None>
-    <Page Update="Views\Dialogs\ProgressDialog.xaml">
+    <Page Update="Views\Dialogs\MoveRawFilesToSubfolderDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Dialogs\DeleteSingleRawFilesDialog.xaml">

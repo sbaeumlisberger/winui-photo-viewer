@@ -28,7 +28,7 @@ public class RatingChangedEventArgs
 public sealed partial class RatingControl : UserControl
 {
 
-    public static DependencyProperty RatingProperty { get; } = DependencyPropertyHelper<RatingControl>.Register(nameof(Rating), typeof(int), 0, (o, e) => { o.OnRatingChanged(e); });
+    public static DependencyProperty RatingProperty { get; } = DependencyPropertyHelper<RatingControl>.Register(nameof(Rating), typeof(int), 0, (s, e) => { s.OnRatingChanged(e); });
 
     public int Rating { get => (int)GetValue(RatingProperty); set => SetValue(RatingProperty, value); }
 

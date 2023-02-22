@@ -21,7 +21,7 @@
     <None Remove="Views\Dialogs\DeleteLinkedFilesDialog.xaml" />
     <None Remove="Views\Dialogs\DeleteSingleRawFilesDialog.xaml" />
     <None Remove="Views\Dialogs\EditLocationDialog.xaml" />
-    <None Remove="Views\Dialogs\ProgressDialog.xaml" />
+    <None Remove="Views\Dialogs\MoveRawFilesToSubfolderDialog.xaml" />
     <None Remove="Views\Dialogs\ShiftDatenTakenDialog.xaml" />
     <None Remove="Views\FlipViewPage.xaml" />
     <None Remove="Views\BitmapFlipViewItem.xaml" />
@@ -72,7 +72,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Page Update="Views\Dialogs\ProgressDialog.xaml">
+    <Page Update="Views\Dialogs\MoveRawFilesToSubfolderDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

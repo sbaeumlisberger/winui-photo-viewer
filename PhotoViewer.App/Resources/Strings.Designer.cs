@@ -889,6 +889,60 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you really want to move all RAW files to a subfolder?.
+        /// </summary>
+        internal static string MoveRawFilesToSubfolderDialog_ConfirmationMessage {
+            get {
+                return ResourceManager.GetString("MoveRawFilesToSubfolderDialog_ConfirmationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Continue.
+        /// </summary>
+        internal static string MoveRawFilesToSubfolderDialog_Continue {
+            get {
+                return ResourceManager.GetString("MoveRawFilesToSubfolderDialog_Continue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following files could not be moved:.
+        /// </summary>
+        internal static string MoveRawFilesToSubfolderDialog_ErrorMessage {
+            get {
+                return ResourceManager.GetString("MoveRawFilesToSubfolderDialog_ErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Moving RAW files to subfolder..
+        /// </summary>
+        internal static string MoveRawFilesToSubfolderDialog_InProgressMessage {
+            get {
+                return ResourceManager.GetString("MoveRawFilesToSubfolderDialog_InProgressMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All RAW files were successfully moved to a subfolder..
+        /// </summary>
+        internal static string MoveRawFilesToSubfolderDialog_SuccessMessage {
+            get {
+                return ResourceManager.GetString("MoveRawFilesToSubfolderDialog_SuccessMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move RAW files to subfolder..
+        /// </summary>
+        internal static string MoveRawFilesToSubfolderDialog_Title {
+            get {
+                return ResourceManager.GetString("MoveRawFilesToSubfolderDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Nothing to show.
         /// </summary>
         internal static string NoItemsMessage {

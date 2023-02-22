@@ -393,6 +393,24 @@
   <data name="MetadataPanel_TitlePlaceholder" xml:space="preserve">
     <value>Titel hinzufügen</value>
   </data>
+  <data name="MoveRawFilesToSubfolderDialog_ConfirmationMessage" xml:space="preserve">
+    <value>Möchten Sie wirklich alle RAW-Dateien in einen Unterordner verschieben?</value>
+  </data>
+  <data name="MoveRawFilesToSubfolderDialog_Continue" xml:space="preserve">
+    <value>Fortfahren</value>
+  </data>
+  <data name="MoveRawFilesToSubfolderDialog_ErrorMessage" xml:space="preserve">
+    <value>Die folgenden Dateien konnten nicht verschoben werden:</value>
+  </data>
+  <data name="MoveRawFilesToSubfolderDialog_InProgressMessage" xml:space="preserve">
+    <value>RAW-Dateien werden in Unterordner verschoben.</value>
+  </data>
+  <data name="MoveRawFilesToSubfolderDialog_SuccessMessage" xml:space="preserve">
+    <value>Alle RAW-Dateien wurden erfolgreich in einen Unterordner verschoben.</value>
+  </data>
+  <data name="MoveRawFilesToSubfolderDialog_Title" xml:space="preserve">
+    <value>RAW-Dateien in Unterordner verschieben.</value>
+  </data>
   <data name="NoItemsMessage" xml:space="preserve">
     <value>Keine Fotos zum Anzeigen vorhanden</value>
   </data>
