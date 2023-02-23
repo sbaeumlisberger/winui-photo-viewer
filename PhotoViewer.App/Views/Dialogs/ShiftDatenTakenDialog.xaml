@@ -18,36 +18,26 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Grid ColumnSpacing="8" RowSpacing="8">
+            <controls:WrapGrid ColumnSpacing="8" RowSpacing="8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
 
                 <TextBlock Text="Days" VerticalAlignment="Center"/>
-                <NumberBox Grid.Column="1" Value="{x:Bind ViewModel.Days, Mode=TwoWay}" 
-                           SpinButtonPlacementMode="Inline"/>
+                <NumberBox Value="{x:Bind ViewModel.Days, Mode=TwoWay}" SpinButtonPlacementMode="Inline"/>
 
-                <TextBlock Grid.Row="1" Text="Hours" VerticalAlignment="Center"/>
-                <NumberBox Grid.Row="1" Grid.Column="1" Value="{x:Bind ViewModel.Hours, Mode=TwoWay}" 
-                           SpinButtonPlacementMode="Inline"/>
+                <TextBlock Text="Hours" VerticalAlignment="Center"/>
+                <NumberBox Value="{x:Bind ViewModel.Hours, Mode=TwoWay}" SpinButtonPlacementMode="Inline"/>
 
-                <TextBlock Grid.Row="2" Text="Minutes" VerticalAlignment="Center"/>
-                <NumberBox Grid.Row="2" Grid.Column="1" Value="{x:Bind ViewModel.Minutes, Mode=TwoWay}" 
-                           SpinButtonPlacementMode="Inline"/>
+                <TextBlock Text="Minutes" VerticalAlignment="Center"/>
+                <NumberBox Value="{x:Bind ViewModel.Minutes, Mode=TwoWay}" SpinButtonPlacementMode="Inline"/>
 
-                <TextBlock Grid.Row="3" Text="Seconds" VerticalAlignment="Center"/>
-                <NumberBox Grid.Row="3" Grid.Column="1" Value="{x:Bind ViewModel.Seconds, Mode=TwoWay}" 
-                           SpinButtonPlacementMode="Inline"/>
-            </Grid>
+                <TextBlock Text="Seconds" VerticalAlignment="Center"/>
+                <NumberBox Value="{x:Bind ViewModel.Seconds, Mode=TwoWay}" SpinButtonPlacementMode="Inline"/>
+            </controls:WrapGrid>
 
-            <StackPanel Grid.Row="1" Style="{StaticResource DialogButtonPanel}">
+            <StackPanel Style="{StaticResource DialogButtonPanel}">
                 <Button
                     Style="{StaticResource PrimaryDialogButtonStyle}"
                     Content="{x:Bind res:Strings.ShiftDateTakenDialog_Continue}"   
@@ -55,7 +45,7 @@
                 <Button 
                     Style="{StaticResource DialogButtonStyle}"
                     Content="{x:Bind res:Strings.Generic_Cancel}"
-                    Click="{x:Bind dialog.Hide}"/>
+                    Click="{x:Bind dialog.Close}"/>
             </StackPanel>
          </Grid>
 
@@ -67,12 +57,12 @@
 
             <controls:ProgressControl Margin="0,8,0,0" Progress="{x:Bind ViewModel.Progress, Mode=OneWay}"/>
 
-            <StackPanel Grid.Row="1" Style="{StaticResource DialogButtonPanel}">
+            <StackPanel Style="{StaticResource DialogButtonPanel}">
                 <Button
                     Style="{StaticResource DialogButtonStyle}"
                     Content="{x:Bind res:Strings.Generic_Cancel}" 
                     Command="{x:Bind ViewModel.CancelCommand}" 
-                    Click="{x:Bind dialog.Hide}"/>
+                    Click="{x:Bind dialog.Close}"/>
             </StackPanel>
         </Grid>
 
@@ -110,11 +100,11 @@
                     </StackPanel>
                 </Grid>
             </ScrollViewer>
-            <StackPanel Grid.Row="1" Style="{StaticResource DialogButtonPanel}">
+            <StackPanel Style="{StaticResource DialogButtonPanel}">
                 <Button 
                     Style="{StaticResource DialogButtonStyle}"
                     Content="{x:Bind res:Strings.Generic_Close}" 
-                    Click="{x:Bind dialog.Hide}"/>
+                    Click="{x:Bind dialog.Close}"/>
             </StackPanel>
         </Grid>
     </Grid>
