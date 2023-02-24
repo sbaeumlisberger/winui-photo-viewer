@@ -35,6 +35,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     public IAcceleratedCommand MoveRawFilesToSubfolderCommand { get; }
     public IAcceleratedCommand DeleteSingleRawFilesCommand { get; }
     public IAcceleratedCommand ShiftDatenTakenCommand { get; }
+    public IAcceleratedCommand ImportGpxTrackCommand { get; }
 
     public bool CanStartDiashow { get; private set; } = false;
 
@@ -59,7 +60,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         IDeleteFilesCommand deleteFilesCommand,
         IMoveRawFilesToSubfolderCommand moveRawFilesToSubfolderCommand,
         IDeleteSingleRawFilesCommand deleteSingleRawFilesCommand,
-        IShiftDatenTakenCommand shiftDatenTakenCommand) : base(messenger)
+        IShiftDatenTakenCommand shiftDatenTakenCommand,
+        IImportGpxTrackCommand importGpxTrackCommand) : base(messenger)
     {
         this.dialogService = dialogService;
         this.loadMediaItemsService = loadMediaItemsService;
@@ -72,6 +74,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         MoveRawFilesToSubfolderCommand = moveRawFilesToSubfolderCommand;
         DeleteSingleRawFilesCommand = deleteSingleRawFilesCommand;
         ShiftDatenTakenCommand= shiftDatenTakenCommand;
+        ImportGpxTrackCommand = importGpxTrackCommand;
     }
 
     partial void OnSelectedItemModelChanged()

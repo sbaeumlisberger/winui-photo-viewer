@@ -261,6 +261,27 @@
   <data name="Generic_Close" xml:space="preserve">
     <value>Schließen</value>
   </data>
+  <data name="ImportGpxTrackDialog_BrowseFileButton" xml:space="preserve">
+    <value>GPX-Datei auswählen</value>
+  </data>
+  <data name="ImportGpxTrackDialog_ErrorMessage" xml:space="preserve">
+    <value>Der Import des GPX-Track wurde fehlerhaft abgeschlossen. {0} Fotos wurden aktualisiert. Folgende Fehler sind aufgetreten:</value>
+  </data>
+  <data name="ImportGpxTrackDialog_ImportButton" xml:space="preserve">
+    <value>Importieren</value>
+  </data>
+  <data name="ImportGpxTrackDialog_InProgressMessage" xml:space="preserve">
+    <value>Informationen des GPX-Tracks werden auf Fotos angewendet.</value>
+  </data>
+  <data name="ImportGpxTrackDialog_StartMessage" xml:space="preserve">
+    <value>Wählen Sie eine Datei aus, die den GPX-Track enthält, den Sie importieren möchten.</value>
+  </data>
+  <data name="ImportGpxTrackDialog_SuccessMessage" xml:space="preserve">
+    <value>GPX-Track wurde erfolgreich importiert. {0} Fotos wurden aktualisiert.</value>
+  </data>
+  <data name="ImportGpxTrackDialog_Title" xml:space="preserve">
+    <value>GPX-Track importieren</value>
+  </data>
   <data name="ItemWithCount_All" xml:space="preserve">
     <value>Alle</value>
   </data>
@@ -526,7 +547,7 @@
     <value>Fortfahren</value>
   </data>
   <data name="ShiftDateTakenDialog_ErrorMessage" xml:space="preserve">
-    <value>Das Verschieben der Aufnahmedaten wurde abgeschlossen. Folgende Fehler sind dabei aufgetreten:</value>
+    <value>Das Verschieben der Aufnahmedaten wurde fehlerhaft abgeschlossen. Folgende Fehler sind aufgetreten:</value>
   </data>
   <data name="ShiftDateTakenDialog_SuccessMessage" xml:space="preserve">
     <value>Alle Aufnahmedaten wurden erfolgreich verschoben.</value>

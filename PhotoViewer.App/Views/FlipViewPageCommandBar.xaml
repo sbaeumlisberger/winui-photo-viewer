@@ -107,7 +107,6 @@
                                 Modifiers="{x:Bind ViewModel.DeleteSingleRawFilesCommand.AcceleratorModifiers}"/>
                         </MenuFlyoutItem.KeyboardAccelerators>
                     </MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Set autor and copyright of all photos" />
                     <MenuFlyoutItem 
                         Text="Shift date taken of all photos" 
                         Command="{x:Bind ViewModel.ShiftDatenTakenCommand}">
@@ -118,7 +117,16 @@
                                 Modifiers="{x:Bind ViewModel.ShiftDatenTakenCommand.AcceleratorModifiers}"/>
                         </MenuFlyoutItem.KeyboardAccelerators>
                     </MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Apply GPX track to all photos" />
+                    <MenuFlyoutItem 
+                        Text="Apply GPX track to all photos" 
+                        Command="{x:Bind ViewModel.ImportGpxTrackCommand}">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <!---TODO not working-->
+                            <KeyboardAccelerator
+                                Key="{x:Bind ViewModel.ImportGpxTrackCommand.AcceleratorKey}"
+                                Modifiers="{x:Bind ViewModel.ImportGpxTrackCommand.AcceleratorModifiers}"/>
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
                 </MenuFlyout>
             </AppBarButton.Flyout>
         </AppBarButton>

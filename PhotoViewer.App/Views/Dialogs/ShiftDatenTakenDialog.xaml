@@ -77,7 +77,7 @@
                         Margin="0,8,0,0" 
                         Visibility="{x:Bind ViewModel.IsCompletedSuccessfully, Mode=OneWay}"                         
                         Text="{x:Bind res:Strings.ShiftDateTakenDialog_SuccessMessage}"
-                        TextWrapping="WrapWholeWords"/>
+                        TextWrapping="Wrap"/>
             
                     <StackPanel 
                         Margin="0,8,0,0" 
@@ -85,14 +85,14 @@
                         Visibility="{x:Bind ViewModel.IsCompletedWithErrors, Mode=OneWay}">
                         <TextBlock 
                             Text="{x:Bind res:Strings.ShiftDateTakenDialog_ErrorMessage}" 
-                            TextWrapping="WrapWholeWords"/>
+                            TextWrapping="Wrap"/>
                         <ItemsControl ItemsSource="{x:Bind ViewModel.Errors, Mode=OneWay}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="x:String">
                                     <TextBlock 
                                         Padding="4" 
                                         IsTextSelectionEnabled="True"  
-                                        TextWrapping="WrapWholeWords"
+                                        TextWrapping="Wrap"
                                         Text="{x:Bind}"/>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

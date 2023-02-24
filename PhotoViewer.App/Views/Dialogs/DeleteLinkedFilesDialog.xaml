@@ -15,6 +15,7 @@
 
     <StackPanel Margin="0,8,0,0" Spacing="4">
         <TextBlock
+            TextWrapping="Wrap"
             Text="{x:Bind res:Strings.DeleteLinkedFilesDialog_Message}"/>
         <CheckBox 
             IsChecked="{x:Bind ViewModel.IsRemember, Mode=TwoWay}" 

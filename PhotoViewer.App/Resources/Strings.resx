@@ -261,6 +261,27 @@
   <data name="Generic_Close" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="ImportGpxTrackDialog_BrowseFileButton" xml:space="preserve">
+    <value>Browse GPX file</value>
+  </data>
+  <data name="ImportGpxTrackDialog_ErrorMessage" xml:space="preserve">
+    <value>The import of the GPX track was completed with errors. {0} photos were updated. The following errors occurred:</value>
+  </data>
+  <data name="ImportGpxTrackDialog_ImportButton" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ImportGpxTrackDialog_InProgressMessage" xml:space="preserve">
+    <value>Information from GPX track is applied to photos.</value>
+  </data>
+  <data name="ImportGpxTrackDialog_StartMessage" xml:space="preserve">
+    <value>Select a file that contains the GPX track you want to import.</value>
+  </data>
+  <data name="ImportGpxTrackDialog_SuccessMessage" xml:space="preserve">
+    <value>GPX track was imported successfully. {0} photos were updated.</value>
+  </data>
+  <data name="ImportGpxTrackDialog_Title" xml:space="preserve">
+    <value>Import GPX track</value>
+  </data>
   <data name="ItemWithCount_All" xml:space="preserve">
     <value>All</value>
   </data>

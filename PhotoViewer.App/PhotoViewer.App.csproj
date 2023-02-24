@@ -21,6 +21,7 @@
     <None Remove="Views\Dialogs\DeleteLinkedFilesDialog.xaml" />
     <None Remove="Views\Dialogs\DeleteSingleRawFilesDialog.xaml" />
     <None Remove="Views\Dialogs\EditLocationDialog.xaml" />
+    <None Remove="Views\Dialogs\ImportGpxTrackDialog.xaml" />
     <None Remove="Views\Dialogs\MoveRawFilesToSubfolderDialog.xaml" />
     <None Remove="Views\Dialogs\ShiftDatenTakenDialog.xaml" />
     <None Remove="Views\FlipViewPage.xaml" />
@@ -72,6 +73,10 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Page Update="Views\Dialogs\ImportGpxTrackDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Dialogs\MoveRawFilesToSubfolderDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>

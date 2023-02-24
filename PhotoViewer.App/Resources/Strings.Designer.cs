@@ -493,6 +493,69 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Browse GPX file.
+        /// </summary>
+        internal static string ImportGpxTrackDialog_BrowseFileButton {
+            get {
+                return ResourceManager.GetString("ImportGpxTrackDialog_BrowseFileButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The import of the GPX track was completed with errors. {0} photos were updated. The following errors occurred:.
+        /// </summary>
+        internal static string ImportGpxTrackDialog_ErrorMessage {
+            get {
+                return ResourceManager.GetString("ImportGpxTrackDialog_ErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import.
+        /// </summary>
+        internal static string ImportGpxTrackDialog_ImportButton {
+            get {
+                return ResourceManager.GetString("ImportGpxTrackDialog_ImportButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Information from GPX track is applied to photos..
+        /// </summary>
+        internal static string ImportGpxTrackDialog_InProgressMessage {
+            get {
+                return ResourceManager.GetString("ImportGpxTrackDialog_InProgressMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a file that contains the GPX track you want to import..
+        /// </summary>
+        internal static string ImportGpxTrackDialog_StartMessage {
+            get {
+                return ResourceManager.GetString("ImportGpxTrackDialog_StartMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GPX track was imported successfully. {0} photos were updated..
+        /// </summary>
+        internal static string ImportGpxTrackDialog_SuccessMessage {
+            get {
+                return ResourceManager.GetString("ImportGpxTrackDialog_SuccessMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import GPX track.
+        /// </summary>
+        internal static string ImportGpxTrackDialog_Title {
+            get {
+                return ResourceManager.GetString("ImportGpxTrackDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All.
         /// </summary>
         internal static string ItemWithCount_All {
