@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Tocronx.SimpleAsync;
 
 namespace PhotoViewer.Core.Utils;
 
@@ -31,6 +32,9 @@ public partial class Progress : ObservableObject, IProgress<double>
 
     private readonly SynchronizationContext synchronizationContext;
 
+    private double progressPrivate;
+    private bool updateDispatched = false;
+
     public Progress(CancellationTokenSource? cts = null, SynchronizationContext? synchronizationContext = null)
     {
         this.cts = cts;
@@ -40,22 +44,34 @@ public partial class Progress : ObservableObject, IProgress<double>
 
     public void Report(double progress)
     {
-        // TODO buffer
-        synchronizationContext.Post(_ =>
-        {
-            UpdateProgress(progress);
-            EstimatedTimeRemaining = EstimateTimeRemaining();
-        }, null);
+        Report(progress, null);     
     }
 
-    public void Report(double progress, TimeSpan estimatedTimeRemaining)
-    { 
-        // TODO buffer
-        synchronizationContext.Post(_ =>
+    public void Report(double progress, TimeSpan? estimatedTimeRemaining = null)
+    {
+        if (progress < 0 || progress > 1) 
         {
-            UpdateProgress(progress);
-            EstimatedTimeRemaining = estimatedTimeRemaining;
-        }, null);
+            throw new ArgumentOutOfRangeException(nameof(progress));
+        }
+
+        lock (this)
+        {
+            progressPrivate = progress;
+
+            if (updateDispatched) 
+            {
+                return;
+            }
+
+            updateDispatched = true;
+          
+            synchronizationContext.Post(_ =>
+            {
+                updateDispatched = false;
+                UpdateProgress(progressPrivate);
+                EstimatedTimeRemaining = estimatedTimeRemaining ?? EstimateTimeRemaining();
+            }, null);
+        }
     }
 
     private void UpdateProgress(double progress)
@@ -76,7 +92,6 @@ public partial class Progress : ObservableObject, IProgress<double>
         CanCancel = false;
     }
 
-    [RelayCommand(CanExecute = nameof(CanCancel))] // TODO remove command
     public void Cancel()
     {
         cts?.Cancel();

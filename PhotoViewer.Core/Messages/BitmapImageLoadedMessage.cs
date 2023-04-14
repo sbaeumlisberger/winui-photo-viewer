@@ -8,4 +8,4 @@ using System.Threading.Tasks;
 
 namespace PhotoViewer.Core.Messages;
 
-public record class BitmapImageLoadedMessage(IBitmapFileInfo BitmapFile, IBitmapImage BitmapImage);
+public record class BitmapImageLoadedMessage(IBitmapFileInfo BitmapFile, IBitmapImageModel BitmapImage);

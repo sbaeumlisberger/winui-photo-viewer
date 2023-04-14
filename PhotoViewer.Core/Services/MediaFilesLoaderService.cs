@@ -4,7 +4,6 @@ using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using System.Diagnostics;
-using System.IO;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
@@ -17,55 +16,22 @@ public record class LoadMediaFilesResult(List<IMediaFileInfo> MediaFiles, IMedia
 
 public interface IMediaFilesLoaderService
 {
-    LoadMediaFilesTask LoadMediaFilesFromActivateEventArgs(IActivatedEventArgs activatedEventArgs, LoadMediaConfig config);
-    LoadMediaFilesTask LoadMediaFilesFromFolder(IStorageFolder storageFolder, LoadMediaConfig config);
+    LoadMediaFilesTask LoadFolder(IStorageFolder storageFolder, LoadMediaConfig config);
+    LoadMediaFilesTask LoadFileList(List<IStorageFile> files, LoadMediaConfig config);
+    LoadMediaFilesTask LoadNeighboringFilesQuery(IStorageFile startFile, IStorageQueryResultBase neighboringFilesQuery, LoadMediaConfig config);
+    LoadMediaFilesTask LoadFromArguments(IList<string> arguments, LoadMediaConfig config);
 }
 
 public class MediaFilesLoaderService : IMediaFilesLoaderService
 {
     private readonly IFileSystemService fileSystemService;
 
-    public MediaFilesLoaderService(IFileSystemService? fileSystemService = null) 
+    public MediaFilesLoaderService(IFileSystemService? fileSystemService = null)
     {
         this.fileSystemService = fileSystemService ?? new FileSystemService();
     }
 
-    // TODO move somewhere else
-
-    public LoadMediaFilesTask LoadMediaFilesFromActivateEventArgs(IActivatedEventArgs activatedEventArgs, LoadMediaConfig config)
-    {
-        Log.Info("Enter LoadMediaFiles");
-        var stopwatch = Stopwatch.StartNew();
-
-        if (activatedEventArgs is IFileActivatedEventArgsWithNeighboringFiles fileActivatedEventArgsWithNeighboringFiles)
-        {
-            if (fileActivatedEventArgsWithNeighboringFiles.NeighboringFilesQuery is { } neighboringFilesQuery)
-            {
-                var startFile = (IStorageFile)fileActivatedEventArgsWithNeighboringFiles.Files.First();
-                return LoadMediaFilesFromFilesQueryResult(startFile, neighboringFilesQuery, config);
-            }
-            else
-            {
-                var activatedFiles = fileActivatedEventArgsWithNeighboringFiles.Files.Cast<IStorageFile>().ToList();
-                return LoadMediaFilesFromListOfFiles(activatedFiles, config);
-            }
-        }
-        else if (activatedEventArgs is IFileActivatedEventArgs fileActivatedEventArgs)
-        {
-            var activatedFiles = fileActivatedEventArgs.Files.Cast<IStorageFile>().ToList();
-            return LoadMediaFilesFromListOfFiles(activatedFiles, config);
-        }
-        else
-        {
-#if DEBUG
-            return LoadMediaFilesFromFolder(KnownFolders.PicturesLibrary, config);
-#else
-            return new LoadMediaFilesTask(null, Task.FromResult(new LoadMediaFilesResult(new List<IMediaFileInfo>(), null)));
-#endif
-        }
-    }
-
-    public LoadMediaFilesTask LoadMediaFilesFromFolder(IStorageFolder storageFolder, LoadMediaConfig config)
+    public LoadMediaFilesTask LoadFolder(IStorageFolder storageFolder, LoadMediaConfig config)
     {
         var task = Task.Run(async () =>
         {
@@ -89,31 +55,55 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
         return new LoadMediaFilesTask(null, task);
     }
 
-    public LoadMediaFilesTask LoadMediaFilesFromListOfFiles(List<IStorageFile> files, LoadMediaConfig config)
+    public LoadMediaFilesTask LoadFileList(List<IStorageFile> files, LoadMediaConfig config)
     {
         var mediaFiles = ConvertFilesToMediaFiles(null, files, config);
         return new LoadMediaFilesTask(null, Task.FromResult(new LoadMediaFilesResult(mediaFiles, null)));
     }
 
-    public LoadMediaFilesTask LoadMediaFilesFromFilesQueryResult(IStorageFile startFile, IStorageQueryResultBase neighboringFilesQuery, LoadMediaConfig config)
+    public LoadMediaFilesTask LoadNeighboringFilesQuery(IStorageFile startFile, IStorageQueryResultBase neighboringFilesQuery, LoadMediaConfig config)
     {
         var startMediaFile = GetStartMediaFile(startFile);
-        return new LoadMediaFilesTask(startMediaFile, Task.Run(async () => {
-            var mediaFiles = await LoadMediaFilesFromFilesQueryResultAsync(startMediaFile, neighboringFilesQuery, config).ConfigureAwait(false);
-            if (startMediaFile is null) 
+        return new LoadMediaFilesTask(startMediaFile, Task.Run(async () =>
+        {
+            var mediaFiles = await LoadMediaFilesFromFilesQueryAsync(startMediaFile, neighboringFilesQuery, config).ConfigureAwait(false);
+            if (startMediaFile is null)
             {
                 startMediaFile = FindStartMediaFile(mediaFiles, startFile);
-            }            
+            }
             return new LoadMediaFilesResult(mediaFiles, startMediaFile);
         }));
     }
 
-    private async Task<List<IMediaFileInfo>> LoadMediaFilesFromFilesQueryResultAsync(IMediaFileInfo? startMediaFile, IStorageQueryResultBase neighboringFilesQuery, LoadMediaConfig config)
+    public LoadMediaFilesTask LoadFromArguments(IList<string> arguments, LoadMediaConfig config)
+    {
+        var filePaths = arguments.Where(fileSystemService.Exists);
+
+        if (!filePaths.Any())
+        {
+            return LoadMediaFilesTask.Empty;
+        }
+
+        var startFile = fileSystemService.TryGetFileAsync(filePaths.First()).Result;
+
+        var startMediaFile = startFile != null ? GetStartMediaFile(startFile) : null;
+
+        return new LoadMediaFilesTask(startMediaFile, Task.Run(async () =>
+        {
+            var files = (await Task.WhenAll(filePaths.Select(path => fileSystemService.TryGetFileAsync(path)))).OfType<IStorageFile>().ToList();
+
+            var mediaFiles = ConvertFilesToMediaFiles(startMediaFile, files, config);
+
+            return new LoadMediaFilesResult(mediaFiles, startMediaFile);
+        }));
+    }
+
+    private async Task<List<IMediaFileInfo>> LoadMediaFilesFromFilesQueryAsync(IMediaFileInfo? startMediaFile, IStorageQueryResultBase filesQuery, LoadMediaConfig config)
     {
         var sw = Stopwatch.StartNew();
-        var files = await fileSystemService.ListFilesAsync(neighboringFilesQuery).ConfigureAwait(false);
+        var files = await fileSystemService.ListFilesAsync(filesQuery).ConfigureAwait(false);
         sw.Stop();
-        Log.Info($"neighboringFilesQuery.GetFilesAsync took {sw.ElapsedMilliseconds}ms");
+        Log.Info($"filesQuery.GetFilesAsync took {sw.ElapsedMilliseconds}ms");
 
         if (!string.IsNullOrEmpty(config.RAWsFolderName))
         {
@@ -137,12 +127,12 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
     {
         string fileExtension = startFile.FileType.ToLower();
 
-        if (startFile.Attributes.HasFlag(FileAttributes.Temporary) 
-            && startFile.Attributes.HasFlag(FileAttributes.ReadOnly)) 
+        if (startFile.Attributes.HasFlag(FileAttributes.Temporary)
+            && startFile.Attributes.HasFlag(FileAttributes.ReadOnly))
         {
             return null; // file is probably a copy from a MTP device (the orginal file will be part of the neighboring files query)
         }
-        else if(BitmapFileInfo.CommonFileExtensions.Contains(fileExtension))
+        else if (BitmapFileInfo.CommonFileExtensions.Contains(fileExtension))
         {
             var bitmapFileInfo = new BitmapFileInfo(startFile);
             ImagePreloadService.Instance.Preload(bitmapFileInfo);
@@ -177,13 +167,6 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             : Array.Empty<IStorageFile>();
 
         List<IStorageFile> rawFilesToLink = new List<IStorageFile>();
-
-        var mediaFileByKey = new Dictionary<string, IMediaFileInfo>();
-
-        if (startFile != null)
-        {
-            mediaFileByKey.Add(Path.GetFileNameWithoutExtension(startFile.FileName), startFile);
-        }
 
         foreach (var file in files)
         {
@@ -239,8 +222,6 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
         {
             return mediaFile;
         }
-
-        // TODO use hashes?
 
         // The startFile can be a tempoary copy of one of the loaded files (e.g. when
         // accessing files on a smartphone or camera). Typically the file name of the

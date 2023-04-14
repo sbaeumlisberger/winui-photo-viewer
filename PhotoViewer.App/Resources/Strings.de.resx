@@ -162,6 +162,9 @@
   <data name="DeleteSingleRawFilesDialog_Title" xml:space="preserve">
     <value>Einzelne RAW-Dateien löschen</value>
   </data>
+  <data name="DeleteSingleRawFilesUICommand_Label" xml:space="preserve">
+    <value>Einzelne RAW-Dateien löschen</value>
+  </data>
   <data name="DetailsBar_ColorSpaceAdobeRGB" xml:space="preserve">
     <value>Adobe-RGB-Farbraum</value>
   </data>
@@ -255,6 +258,9 @@
   <data name="FlipViewPageCommandBar_SettingsButton" xml:space="preserve">
     <value>Einstellungen</value>
   </data>
+  <data name="FlipViewPageCommandBar_ToolsButton" xml:space="preserve">
+    <value>Werkzeuge</value>
+  </data>
   <data name="Generic_Cancel" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
@@ -281,6 +287,9 @@
   </data>
   <data name="ImportGpxTrackDialog_Title" xml:space="preserve">
     <value>GPX-Track importieren</value>
+  </data>
+  <data name="ImportGpxTrackUICommand_Label" xml:space="preserve">
+    <value>GPX-Track auf alle Fotos anwenden</value>
   </data>
   <data name="ItemWithCount_All" xml:space="preserve">
     <value>Alle</value>
@@ -384,6 +393,9 @@
   <data name="MetadataPanel_NoDateTakenPresent" xml:space="preserve">
     <value>Keine Aufnahmedatum</value>
   </data>
+  <data name="MetadataPanel_NoFilesSelected" xml:space="preserve">
+    <value>Wählen Sie Dateien zum Anzeigen der Metadata aus</value>
+  </data>
   <data name="MetadataPanel_PeopleHeader" xml:space="preserve">
     <value>Personen</value>
   </data>
@@ -431,6 +443,9 @@
   </data>
   <data name="MoveRawFilesToSubfolderDialog_Title" xml:space="preserve">
     <value>RAW-Dateien in Unterordner verschieben.</value>
+  </data>
+  <data name="MoveRawFilesToSubfolderUICommand_Label" xml:space="preserve">
+    <value>RAW-Dateien in Unterordner verschieben</value>
   </data>
   <data name="NoItemsMessage" xml:space="preserve">
     <value>Keine Fotos zum Anzeigen vorhanden</value>
@@ -542,6 +557,9 @@
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Einstellungen</value>
+  </data>
+  <data name="ShiftDatenTakenUICommand_Label" xml:space="preserve">
+    <value>Aufnahmedaten aller Fotos verschieben</value>
   </data>
   <data name="ShiftDateTakenDialog_Continue" xml:space="preserve">
     <value>Fortfahren</value>

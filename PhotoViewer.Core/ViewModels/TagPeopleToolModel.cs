@@ -15,16 +15,30 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.FaceAnalysis;
 using PhotoViewer.Core.Models;
+using System.Diagnostics;
 
 namespace PhotoViewer.Core.ViewModels;
 
-public partial class TagPeopleToolModel : ViewModelBase
+public interface ITagPeopleToolModel
 {
-    public bool IsEnabeld { get; set; } = false;
+    Task InitializeAsync();
+
+    void Cleanup();
+
+    bool IsEnabled { get; set; }
+
+    IBitmapImageModel? BitmapImage { get; set; }
+
+    float UIScaleFactor { get; set; }
+}
+
+public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
+{
+    public bool IsEnabled { get; set; } = false;
 
     public bool IsActive { get; private set; } = false;
 
-    public IBitmapImage? BitmapImage { get; set; }
+    public IBitmapImageModel? BitmapImage { get; set; }
 
     public float UIScaleFactor { get; set; } = 1;
 
@@ -42,6 +56,8 @@ public partial class TagPeopleToolModel : ViewModelBase
 
     private readonly IDialogService dialogService;
 
+    private readonly IFaceDetectionService faceDetectionService;
+
     private readonly IBitmapFileInfo bitmapFile;
 
     private readonly ObservableList<Rect> suggestedFaces = new ObservableList<Rect>();
@@ -51,22 +67,25 @@ public partial class TagPeopleToolModel : ViewModelBase
         IMessenger messenger,
         ISuggestionsService suggestionsService,
         IMetadataService metadataService,
-        IDialogService dialogService) : base(messenger)
+        IDialogService dialogService,
+        IFaceDetectionService faceDetectionService) : base(messenger, false)
     {
         this.suggestionsService = suggestionsService;
         this.metadataService = metadataService;
         this.dialogService = dialogService;
+        this.faceDetectionService = faceDetectionService;
         this.bitmapFile = bitmapFile;
     }
 
-    protected override async void OnViewConnectedOverride()
+    public async Task InitializeAsync()
     {
-        Messenger.Register<TagPeopleToolActiveChangedMeesage>(this, Receive);
         Messenger.Register<MetadataModifiedMessage>(this, Receive);
+        Messenger.Register<TagPeopleToolActiveChangedMessage>(this, Receive);
+        IsActive = Messenger.Send(new IsTagPeopleToolActiveRequestMessage());
         TaggedPeople = await LoadTaggedPeopleAsync();
     }
 
-    private void Receive(TagPeopleToolActiveChangedMeesage msg)
+    private void Receive(TagPeopleToolActiveChangedMessage msg)
     {
         IsActive = msg.IsActive;
     }
@@ -79,9 +98,9 @@ public partial class TagPeopleToolModel : ViewModelBase
         }
     }
 
-    partial void OnIsEnabeldChanged()
+    partial void OnIsEnabledChanged()
     {
-        if (IsEnabeld)
+        if (IsEnabled)
         {
             TrySelectNextDetectedFace();
         }
@@ -118,7 +137,7 @@ public partial class TagPeopleToolModel : ViewModelBase
 
     public void ExitPeopleTagging()
     {
-        Messenger.Send(new TagPeopleToolActiveChangedMeesage(false));
+        Messenger.Send(new TagPeopleToolActiveChangedMessage(false));
     }
 
     public IReadOnlyList<string> FindSuggestions(string text)
@@ -153,9 +172,11 @@ public partial class TagPeopleToolModel : ViewModelBase
     [RelayCommand]
     private async Task AddPersonAsync()
     {
+        Debug.Assert(IsEnabled);
+
         string personName = AutoSuggestBoxText.Trim();
 
-        if (personName == string.Empty) 
+        if (personName == string.Empty)
         {
             return;
         }
@@ -211,9 +232,11 @@ public partial class TagPeopleToolModel : ViewModelBase
 
         try
         {
-            if (BitmapImage is PVBitmapImage bitmapImage)
+            if (BitmapImage is ICanvasBitmapImageModel bitmapImage)
             {
-                var detectedFaces = await DetectFacesAsync(bitmapImage, CancellationToken.None/*TODO?*/);
+                var detectedFaces = await faceDetectionService.DetectFacesAsync(bitmapImage, CancellationToken.None);
+
+                if (!IsActive) { return; }
 
                 var imageSize = bitmapImage.SizeInDIPs;
 
@@ -228,7 +251,7 @@ public partial class TagPeopleToolModel : ViewModelBase
                         faceBox.Height / imageSize.Height));
                 }
 
-                if (IsEnabeld)
+                if (IsEnabled)
                 {
                     TrySelectNextDetectedFace();
                 }
@@ -244,28 +267,6 @@ public partial class TagPeopleToolModel : ViewModelBase
         }
     }
 
-    private async Task<List<DetectedFace>> DetectFacesAsync(PVBitmapImage bitmapImage, CancellationToken cancellationToken)
-    {
-        if (!FaceDetector.IsSupported)
-        {
-            Log.Info("Could not detect faces: FaceDetector not supported on this device.");
-            return new List<DetectedFace>();
-        }
-
-        var faceDetector = await FaceDetector.CreateAsync().AsTask(cancellationToken);
-        cancellationToken.ThrowIfCancellationRequested();
-
-        using var softwareBitmap = await SoftwareBitmap.CreateCopyFromSurfaceAsync(bitmapImage.CanvasBitmap).AsTask(cancellationToken);
-        cancellationToken.ThrowIfCancellationRequested();
-
-        using var softwareBitmapGray8 = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Gray8);
-
-        var detectedFaces = await faceDetector.DetectFacesAsync(softwareBitmapGray8).AsTask(cancellationToken);
-        cancellationToken.ThrowIfCancellationRequested();
-
-        return detectedFaces.OrderBy(face => face.FaceBox.X).ToList();
-    }
-
     private bool TrySelectNextDetectedFace()
     {
         if (suggestedFaces.Any())
@@ -276,6 +277,11 @@ public partial class TagPeopleToolModel : ViewModelBase
             return true;
         }
         return false;
+    }
+
+    public override string ToString()
+    {
+        return nameof(TagPeopleToolModel) + "(" + bitmapFile.DisplayName + ")";
     }
 
 }

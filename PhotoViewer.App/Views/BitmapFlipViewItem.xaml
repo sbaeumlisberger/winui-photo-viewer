@@ -41,7 +41,7 @@
             HorizontalAlignment="Center" 
             VerticalAlignment="Center" 
             Spacing="8"
-            Visibility="{x:Bind ViewModel.IsLoadingImageFailed, Mode=OneWay}">
+            Visibility="{x:Bind ViewModel.IsLoadingImageFailed, FallbackValue=Collapsed, Mode=OneWay}">
             <TextBlock 
                 HorizontalAlignment="Center" 
                 Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"/>

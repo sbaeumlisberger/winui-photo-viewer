@@ -25,14 +25,18 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
 
     private readonly ISuggestionsService suggestionsService;
 
+    private readonly IDialogService dialogService;
+
     internal KeywordsSectionModel(
         SequentialTaskRunner writeFilesRunner,
         IMessenger messenger,
         IMetadataService metadataService,
-        ISuggestionsService suggestionsService) : base(writeFilesRunner, messenger)
+        ISuggestionsService suggestionsService,
+        IDialogService dialogService) : base(writeFilesRunner, messenger)
     {
         this.metadataService = metadataService;
         this.suggestionsService = suggestionsService;
+        this.dialogService = dialogService;
     }
 
     protected override void OnFilesChanged(IList<MetadataView> metadata)
@@ -99,7 +103,7 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
             }
             else
             {
-                // TODO show error message
+                await ShowWriteMetadataFailedDialog(dialogService, result);
             }
         });
     }
@@ -127,7 +131,7 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
 
             if (result.HasFailures)
             {
-                // TODO show error message
+                await ShowWriteMetadataFailedDialog(dialogService, result);
             }
         });
     }
@@ -155,7 +159,7 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
 
             if (result.HasFailures)
             {
-                // TODO show error message
+                await ShowWriteMetadataFailedDialog(dialogService, result);
             }
         });
     }

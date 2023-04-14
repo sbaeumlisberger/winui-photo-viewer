@@ -15,7 +15,11 @@ public interface IFileSystemService
 
     Task<List<IStorageFile>> ListFilesAsync(IStorageQueryResultBase storageQuery);
 
-    Task<IStorageFolder?> TryGetFolderAsync(string filePath);
+    Task<IStorageFolder?> TryGetFolderAsync(string path);
+
+    Task<IStorageFile?> TryGetFileAsync(string path);
+    
+    bool Exists(string path);
 }
 
 internal class FileSystemService : IFileSystemService
@@ -30,12 +34,26 @@ internal class FileSystemService : IFileSystemService
         return (await ((StorageFileQueryResult)storageQuery).GetFilesAsync().AsTask().ConfigureAwait(false)).Cast<IStorageFile>().ToList();
     }
 
-    public async Task<IStorageFolder?> TryGetFolderAsync(string filePath)
+    public async Task<IStorageFolder?> TryGetFolderAsync(string path)
     {
-        if (File.Exists(filePath))
+        if (File.Exists(path))
         {
-            return await StorageFolder.GetFolderFromPathAsync(filePath).AsTask().ConfigureAwait(false);
+            return await StorageFolder.GetFolderFromPathAsync(path).AsTask().ConfigureAwait(false);
         }
         return null;
+    }
+
+    public async Task<IStorageFile?> TryGetFileAsync(string path)
+    {
+        if (File.Exists(path))
+        {
+            return await StorageFile.GetFileFromPathAsync(path).AsTask().ConfigureAwait(false);
+        }
+        return null;
+    }
+
+    public bool Exists(string path)
+    {
+        return File.Exists(path);
     }
 }

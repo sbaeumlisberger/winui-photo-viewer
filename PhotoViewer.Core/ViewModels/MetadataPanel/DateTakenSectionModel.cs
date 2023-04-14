@@ -3,14 +3,10 @@ using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils;
+using PhotoViewer.Core.Resources;
+using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels.Dialogs;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using Tocronx.SimpleAsync;
 
 namespace PhotoViewer.Core.ViewModels;
@@ -23,15 +19,17 @@ public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
 
     public bool IsRange { get; private set; }
 
-    public DateTimeOffset? Date { get; private set; }
+    public DateTimeOffset? Date { get; set; }
 
-    public TimeSpan? Time { get; private set; }
+    public TimeSpan? Time { get; set; }
 
     public string RangeText { get; private set; } = "";
 
     private readonly IMetadataService metadataService;
-    
-    private readonly IDialogService dialogService;  
+
+    private readonly IDialogService dialogService;
+
+    private bool isUpdating = false;
 
     public DateTakenSectionModel(
         SequentialTaskRunner writeFilesRunner,
@@ -59,16 +57,18 @@ public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
 
     private void Update(IList<MetadataView> metadata)
     {
+        isUpdating = true;
+
         var values = metadata.Select(m => m.Get(MetadataProperties.DateTaken)).ToList();
 
-        IsNotPresent = !values.Any(dateTaken => dateTaken is not null);
+        IsNotPresent = values.All(dateTaken => dateTaken is null);
         IsSingleValue = !IsNotPresent && values.All(dateTaken => dateTaken == values.FirstOrDefault());
         IsRange = !IsNotPresent && !IsSingleValue;
 
         if (IsSingleValue)
         {
             var dateTaken = values.FirstOrDefault();
-            Date = dateTaken;
+            Date = dateTaken?.Date;
             Time = dateTaken?.TimeOfDay;
         }
         else
@@ -86,12 +86,47 @@ public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
         {
             RangeText = "";
         }
+
+        isUpdating = false;
     }
 
-    [RelayCommand]
-    private void AddDateTaken()
+    partial void OnDateChanged()
     {
-        // TODO
+        OnDateOrTimeChanged();
+    }
+
+    partial void OnTimeChanged()
+    {
+        OnDateOrTimeChanged();
+    }
+
+    private async void OnDateOrTimeChanged()
+    {
+        if (isUpdating)
+        {
+            return;
+        }
+
+        Debug.Assert(IsSingleValue);
+        Debug.Assert(Date is not null);
+        Debug.Assert(Time is not null);
+
+        var dateTaken = ToDateTaken(Date.Value.LocalDateTime, Time.Value);
+        await WriteFilesAsync(dateTaken);
+    }
+
+    [RelayCommand(CanExecute = nameof(IsNotPresent))]
+    private async Task AddDateTakenAsync()
+    {
+        isUpdating = true;
+        var dateTaken = DateTime.Now;
+        Date = dateTaken;
+        Time = dateTaken.TimeOfDay;
+        IsNotPresent = false;
+        IsSingleValue = true;
+        isUpdating = false;
+
+        await WriteFilesAsync(dateTaken);
     }
 
     [RelayCommand]
@@ -103,6 +138,30 @@ public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
     private string FormatDate(DateTimeOffset date)
     {
         return date.ToString("g");
+    }
+
+    private DateTime ToDateTaken(DateTime date, TimeSpan time)
+    {
+        return new DateTime(date.Year, date.Month, date.Day, time.Hours, time.Minutes, time.Seconds, time.Milliseconds, time.Microseconds);
+    }
+
+    private async Task WriteFilesAsync(DateTime? dateTaken)
+    {
+        await EnqueueWriteFiles(async (files) =>
+        {
+            var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
+            {
+                if (!Equals(dateTaken, await metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken).ConfigureAwait(false)))
+                {
+                    await metadataService.WriteMetadataAsync(file, MetadataProperties.DateTaken, dateTaken).ConfigureAwait(false);
+                }
+            });
+
+            if (result.HasFailures)
+            {
+                await ShowWriteMetadataFailedDialog(dialogService, result);
+            }
+        });
     }
 
 }

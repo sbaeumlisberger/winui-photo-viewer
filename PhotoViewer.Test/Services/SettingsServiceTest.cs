@@ -9,7 +9,7 @@ using System.Diagnostics;
 using Windows.Storage;
 using Xunit;
 
-namespace PhotoViewer.Test;
+namespace PhotoViewer.Test.Services;
 
 public class SettingsServiceTest : IDisposable
 {
@@ -123,6 +123,16 @@ public class SettingsServiceTest : IDisposable
 
         AssertExampleSettings(settings);
         AssertExampleSettings(settingsService.LoadSettings());
+    }
+
+    [Fact]
+    public async Task ImportSettings_EmptyFile()
+    {
+        string filePath = Path.Combine(tempDirectory, "import-settings.ini");
+        File.WriteAllText(filePath, "");
+        var file = await StorageFile.GetFileFromPathAsync(filePath);
+
+        Assert.ThrowsAny<Exception>(() => settingsService.ImportSettings(file));
     }
 
     private ApplicationSettings CreateExampleSettings()

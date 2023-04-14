@@ -22,11 +22,13 @@ namespace PhotoViewer.Core.ViewModels
         private int rating = 0;
 
         private readonly IMetadataService metadataService;
+        private readonly IDialogService dialogService;
 
-        public RatingSectionModel(SequentialTaskRunner writeFilesRunner, IMetadataService metadataService)
+        public RatingSectionModel(SequentialTaskRunner writeFilesRunner, IMetadataService metadataService, IDialogService dialogService)
             : base(writeFilesRunner, null!)
         {
             this.metadataService = metadataService;
+            this.dialogService = dialogService;
         }
 
         protected override void OnFilesChanged(IList<MetadataView> metadata)
@@ -68,8 +70,8 @@ namespace PhotoViewer.Core.ViewModels
                 });
 
                 if (result.HasFailures) 
-                { 
-                    // TODO show error
+                {
+                    await ShowWriteMetadataFailedDialog(dialogService, result);
                 }
             });
         }

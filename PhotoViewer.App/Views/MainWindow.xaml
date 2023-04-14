@@ -9,6 +9,6 @@
     mc:Ignorable="d"
     PersistenceId="MainWindowPersistanceId">
 
-    <Frame x:Name="frame"/>
+    <Frame x:Name="frame" KeyDown="Frame_KeyDown"/>
  
 </winUIEx:WindowEx>

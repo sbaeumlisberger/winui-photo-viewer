@@ -10,6 +10,11 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
     <PackageReference Include="MetadataAPI" Version="1.4.3" />
+    <PackageReference Include="NSubstitute" Version="5.0.0" />
+    <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.16">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
     <PackageReference Include="Tocronx.SimpleAsync" Version="1.4.0" />
     <PackageReference Include="WIC.DotNet" Version="1.2.0" />    

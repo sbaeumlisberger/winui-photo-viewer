@@ -18,7 +18,7 @@ internal class ImagePreloadService
 
     private IBitmapFileInfo? preloadFile;
 
-    private Task<IBitmapImage>? preloadTask;
+    private Task<IBitmapImageModel>? preloadTask;
 
     public void Preload(IBitmapFileInfo file)
     {
@@ -26,7 +26,7 @@ internal class ImagePreloadService
         preloadTask = imageLoaderService.LoadFromFileAsync(file, CancellationToken.None);
     }
 
-    public async Task<IBitmapImage?> GetPreloadedImageAsync(IBitmapFileInfo file)
+    public async Task<IBitmapImageModel?> GetPreloadedImageAsync(IBitmapFileInfo file)
     {
         if (file.Equals(preloadFile))
         {

@@ -4,7 +4,7 @@ using Windows.Graphics.Imaging;
 
 namespace PhotoViewer.App.Models;
 
-public class PVVirtualBitmapImage : IBitmapImage
+public class CanvasVirtualBitmapImageModel : ICanvasVirtualBitmapImageModel
 {
     public string ID { get; }
 
@@ -14,7 +14,7 @@ public class PVVirtualBitmapImage : IBitmapImage
 
     public ICanvasImage CanvasImage => CanvasVirtualBitmap;
 
-    public IReadOnlyList<IBitmapFrame> Frames { get; }
+    public IReadOnlyList<IBitmapFrameModel> Frames { get; }
 
     public Size SizeInDIPs { get; }
 
@@ -22,12 +22,12 @@ public class PVVirtualBitmapImage : IBitmapImage
 
     public ColorSpaceInfo ColorSpace { get; }
 
-    public PVVirtualBitmapImage(string id, CanvasVirtualBitmap canvasVirtualBitmap, ColorSpaceInfo colorSpace)
+    public CanvasVirtualBitmapImageModel(string id, CanvasVirtualBitmap canvasVirtualBitmap, ColorSpaceInfo colorSpace)
     {
         ID = id;
         Device = canvasVirtualBitmap.Device;
         CanvasVirtualBitmap = canvasVirtualBitmap;
-        Frames = Array.Empty<IBitmapFrame>();
+        Frames = Array.Empty<IBitmapFrameModel>();
         SizeInDIPs = canvasVirtualBitmap.Size;
         SizeInPixels = canvasVirtualBitmap.SizeInPixels;
         ColorSpace = colorSpace;

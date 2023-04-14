@@ -24,12 +24,12 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
 
     private readonly CancelableTaskRunner initRunner = new CancelableTaskRunner();
 
-    public VectorGraphicFlipViewItemModel(IMediaFileInfo mediaFile)
+    public VectorGraphicFlipViewItemModel(IMediaFileInfo mediaFile) : base(null!, false)
     {
         MediaItem = mediaFile;
     }
 
-    public async Task PrepareAsync()
+    public async Task InitializeAsync()
     {
         await initRunner.RunAndCancelPrevious(async cancellationToken =>
         {

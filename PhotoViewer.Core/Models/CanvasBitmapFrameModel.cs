@@ -3,7 +3,7 @@ using Windows.Foundation;
 
 namespace PhotoViewer.App.Models;
 
-public class PVBitmapFrame : IBitmapFrame
+public class CanvasBitmapFrameModel : IBitmapFrameModel
 {
     public CanvasBitmap CanvasBitmap { get; }
 
@@ -15,7 +15,7 @@ public class PVBitmapFrame : IBitmapFrame
 
     public bool RequiresClear { get; }
 
-    public PVBitmapFrame(CanvasBitmap canvasBitmap)
+    public CanvasBitmapFrameModel(CanvasBitmap canvasBitmap)
     {
         CanvasBitmap = canvasBitmap;
         Offset = new Point(0, 0);
@@ -23,7 +23,7 @@ public class PVBitmapFrame : IBitmapFrame
         RequiresClear = false;
     }
 
-    public PVBitmapFrame(CanvasBitmap canvasBitmap, Point offset, double delay, bool requiresClear)
+    public CanvasBitmapFrameModel(CanvasBitmap canvasBitmap, Point offset, double delay, bool requiresClear)
     {
         CanvasBitmap = canvasBitmap;
         Offset = offset;

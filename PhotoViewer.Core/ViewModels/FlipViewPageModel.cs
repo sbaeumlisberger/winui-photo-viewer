@@ -8,6 +8,8 @@ using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System.ComponentModel;
+using PhotoViewer.Core.Messages;
+using PhotoViewer.Core;
 
 namespace PhotoViewer.App.ViewModels;
 
@@ -32,19 +34,16 @@ public partial class FlipViewPageModel : ViewModelBase
     public FlipViewPageModel(
         ApplicationSession session,
         IMessenger messenger,
-        Func<IMediaFlipViewModel> flipViewModelFactory,
-        Func<IDetailsBarModel> detailsBarModelFactory,
-        Func<IMediaFlipViewModel, IFlipViewPageCommandBarModel> flipViewPageCommandBarModelFactory,
-        IDisplayRequestService displayRequestService,
-        MetadataPanelModelFactory metadataPanelModelFactory) : base(messenger)
+        IViewModelFactory viewModelFactory,
+        IDisplayRequestService displayRequestService) : base(messenger)
     {
         this.session = session;
         this.displayRequestService = displayRequestService;
 
-        FlipViewModel = flipViewModelFactory.Invoke();
-        DetailsBarModel = detailsBarModelFactory.Invoke();
-        CommandBarModel = flipViewPageCommandBarModelFactory.Invoke(FlipViewModel);
-        MetadataPanelModel = metadataPanelModelFactory.Invoke(true);
+        FlipViewModel = viewModelFactory.CreateMediaFlipViewModel();
+        DetailsBarModel = viewModelFactory.CreateDetailsBarModel();
+        CommandBarModel = viewModelFactory.CreateFlipViewPageCommandBarModel(FlipViewModel.SelectPreviousCommand, FlipViewModel.SelectNextCommand);
+        MetadataPanelModel = viewModelFactory.CreateMetadataPanelModel(true);
 
         FlipViewModel.PropertyChanged += FlipViewModel_PropertyChanged;
 
@@ -52,18 +51,32 @@ public partial class FlipViewPageModel : ViewModelBase
         Messenger.Register<ExitDiashowMessage>(this, OnExitDiashowMessageReceived);
     }
 
-    public void OnNavigatedTo(object navigationParameter)
-    {
-        if (session.Files.Any())
-        {
-            FlipViewModel.SetItems(session.Files, (IMediaFileInfo?)navigationParameter);
-        }
-    }
-
-    protected override void OnViewDisconnectedOverride()
+    protected override void OnCleanup()
     {
         FlipViewModel.PropertyChanged -= FlipViewModel_PropertyChanged;
         DisposeUtil.DisposeSafely(ref displayRequest);
+    }
+
+    public void OnNavigatedTo(object navigationParameter, bool popNavigationState)
+    {
+        IMediaFileInfo? restoredMediaFile = null;
+
+        if (popNavigationState && Messenger.Send<PopNavigationStateMessage>().Response is Dictionary<string, object> navigationState)
+        {
+            restoredMediaFile = (IMediaFileInfo?)navigationState[nameof(FlipViewModel.SelectedItem)];
+        }
+
+        if (session.Files.Any())
+        {
+            FlipViewModel.SetItems(session.Files, (IMediaFileInfo?)navigationParameter ?? restoredMediaFile);
+        }    
+    }
+
+    public void OnNavigatedFrom()
+    {
+        var navigationState = new Dictionary<string, object?>();
+        navigationState[nameof(FlipViewModel.SelectedItem)] = FlipViewModel.SelectedItem;
+        Messenger.Send(new PushNavigationStateMessage(navigationState));
     }
 
     private void OnStartDiashowMessageReceived(StartDiashowMessage msg)

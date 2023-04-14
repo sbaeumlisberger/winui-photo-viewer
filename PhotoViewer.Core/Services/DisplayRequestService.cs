@@ -36,7 +36,7 @@ internal class DisplayRequestService : IDisplayRequestService
     public IDisposable RequestActive()
     {
         var displayRequest = new DisplayRequest();
-        displayRequest.RequestActive(); // TODO throws always a COMException 0x80040200 (https://github.com/microsoft/CsWinRT/issues/962)
+        displayRequest.RequestActive();
         return new DisposableDisplayRequest(displayRequest);
     }
 }

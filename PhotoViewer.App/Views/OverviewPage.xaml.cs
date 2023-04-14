@@ -28,7 +28,7 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        App.Current.Window.Title = Strings.OverviewPage_Title;
+        App.Current.Window.Title = Strings.OverviewPage_Title + " - WinUI Photo Viewer"; // TODO use message
     }
 
     private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)

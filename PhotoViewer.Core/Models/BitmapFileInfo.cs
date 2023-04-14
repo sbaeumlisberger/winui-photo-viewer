@@ -81,7 +81,7 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
 
     public override async Task<IRandomAccessStream?> GetThumbnailAsync()
     {
-        // loading the image directly is much faster and always up-to-date
+        // loading the full image is much faster and always up-to-date
         return await OpenAsync(FileAccessMode.Read).ConfigureAwait(false);
     }
 

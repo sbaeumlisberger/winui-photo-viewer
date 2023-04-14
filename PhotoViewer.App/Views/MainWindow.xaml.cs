@@ -13,6 +13,11 @@ using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using System.ComponentModel;
 using PhotoViewer.Core.Messages;
+using Windows.System;
+using Microsoft.UI.Xaml.Input;
+using PhotoViewer.App.Utils;
+using Microsoft.UI.Xaml.Controls;
+using PhotoViewer.Core.ViewModels;
 
 namespace PhotoViewer.App;
 
@@ -20,25 +25,41 @@ public sealed partial class MainWindow : WindowEx
 {
     private readonly ViewRegistrations viewRegistrations = ViewRegistrations.Instance;
 
-    public MainWindow(IMessenger messenger)
-    {      
-        this.InitializeComponent();
+    private readonly MainWindowModel viewModel;
+
+    private readonly ApplicationSettings settings;
+
+    public MainWindow(IMessenger messenger, ApplicationSettings settings)
+    {
+        this.settings = settings;
+        viewModel = new MainWindowModel(messenger);
+        this.InitializeComponent();        
         Closed += MainWindow_Closed;
-        ViewModelFactory.Initialize(messenger, new DialogService(this));
-        messenger.Register<ChangeWindowTitleMessage>(this, msg => Title = msg.NewTitle);
+        ViewModelFactory.Initialize(messenger, settings, new DialogService(this));
+        messenger.Register<ChangeWindowTitleMessage>(this, msg => Title = msg.NewTitle + " - WinUI Photo Viewer");
         messenger.Register<EnterFullscreenMessage>(this, _ => EnterFullscreen());
         messenger.Register<ExitFullscreenMessage>(this, _ => ExitFullscreen());
         messenger.Register<NavigateToPageMessage>(this, msg => NavigateToPage(msg.PageType, msg.Parameter));
-        messenger.Register<NavigateBackMessage>(this, _ => frame.GoBack());
+        messenger.Register<NavigateBackMessage>(this, _ => NavigateBack());
         messenger.Register<SettingsChangedMessage>(this, msg => OnSettingsChanged(msg.ChangedSetting));
-        ApplyTheme(ApplicationSettingsProvider.GetSettings().Theme);
+        ApplyTheme(settings.Theme);
+        FocusManager.LosingFocus += FocusManager_LosingFocus;
+    }
+
+    private void FocusManager_LosingFocus(object? sender, LosingFocusEventArgs e)
+    {
+        // prevent losing focus to the RootScrollViewer (ScrollViewer with parent of type DependencyObject)
+        if (e.NewFocusedElement is ScrollViewer sv && sv.Parent.GetType() == typeof(DependencyObject))
+        {
+            e.TryCancel();
+        }
     }
 
     private void OnSettingsChanged(string? changedSetting)
     {
         if (changedSetting is null || changedSetting == nameof(ApplicationSettings.Theme))
         {
-            ApplyTheme(ApplicationSettingsProvider.GetSettings().Theme);
+            ApplyTheme(settings.Theme);
         }
     }
 
@@ -46,7 +67,7 @@ public sealed partial class MainWindow : WindowEx
     {
         var elementTheme = (ElementTheme)theme;
 
-        if (theme == AppTheme.System) 
+        if (theme == AppTheme.System)
         {
             // force update of theme
             bool isDark = App.Current.RequestedTheme == ApplicationTheme.Dark;
@@ -74,5 +95,25 @@ public sealed partial class MainWindow : WindowEx
     private void NavigateToPage(Type pageModelType, object? parameter)
     {
         frame.Navigate(viewRegistrations.GetViewTypeForViewModelType(pageModelType), parameter);
+    }
+
+    private void NavigateBack() 
+    {
+        frame.GoBack();
+    }
+
+    private void Frame_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.F11)
+        {
+            if (AppWindow.Presenter.Kind == AppWindowPresenterKind.FullScreen)
+            {
+                ExitFullscreen();
+            }
+            else
+            {
+                EnterFullscreen();
+            }
+        }
     }
 }

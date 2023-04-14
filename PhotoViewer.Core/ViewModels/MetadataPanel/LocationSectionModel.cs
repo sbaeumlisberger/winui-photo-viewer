@@ -154,7 +154,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
 
                 if (result.HasFailures)
                 {
-                    // TODO show error message
+                    await ShowWriteMetadataFailedDialog(dialogService, result);
                 }
             });
         }
@@ -177,7 +177,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
 
             if (result.HasFailures)
             {
-                // TODO show error message
+                await ShowWriteMetadataFailedDialog(dialogService, result);
             }
         });
     }

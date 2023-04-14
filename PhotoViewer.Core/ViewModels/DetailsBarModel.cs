@@ -12,6 +12,7 @@ using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System.ComponentModel;
 using Tocronx.SimpleAsync;
+using Windows.Foundation;
 
 namespace PhotoViewer.App.ViewModels;
 
@@ -59,7 +60,8 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 
     private void OnReceive(MetadataModifiedMessage msg)
     {
-        if (msg.MetadataProperty == MetadataProperties.DateTaken
+        if (IsVisible
+            && msg.MetadataProperty == MetadataProperties.DateTaken
             && SelectedItemModel?.MediaItem is IBitmapFileInfo selectedFile
             && msg.Files.Contains(selectedFile))
         {
@@ -68,8 +70,9 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
                 var metadata = await metadataService.GetMetadataAsync(selectedFile);
                 var date = metadata.Get(MetadataProperties.DateTaken) ?? (await selectedFile.GetDateModifiedAsync());
                 cancellationToken.ThrowIfCancellationRequested();
-                RunOnUIThread(() =>
+                await RunOnUIThreadAsync(() =>
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     DateFormatted = date.ToString("g");
                 });
             });
@@ -86,11 +89,14 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 
     private async void OnReceive(MediaFilesLoadingMessage msg)
     {
-        await msg.LoadMediaFilesTask.WaitForResultAsync();
-        if (SelectedItemModel != null)
+        if (IsVisible)
         {
-            // linked files may have been changed
-            FileName = SelectedItemModel.MediaItem.DisplayName;
+            await msg.LoadMediaFilesTask.WaitForResultAsync();
+            if (SelectedItemModel != null)
+            {
+                // linked files may have been changed
+                FileName = SelectedItemModel.MediaItem.DisplayName;
+            }
         }
     }
 
@@ -137,93 +143,65 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
     {
         return updateRunner.RunAndCancelPrevious(async (cancellationToken) =>
         {
-            Log.Debug($"Update details bar for {itemModel.MediaItem.DisplayName}");
-
-            FileName = itemModel.MediaItem.DisplayName;
-
-            if (itemModel.MediaItem is IBitmapFileInfo bitmapFile)
+            try
             {
-                await UpdateFromBitmapFileAsync(bitmapFile, cancellationToken);
+                Log.Debug($"Update details bar for {itemModel.MediaItem.DisplayName}");
+
+                FileName = itemModel.MediaItem.DisplayName;
+
+                if (itemModel.MediaItem is IBitmapFileInfo bitmapFile && bitmapFile.IsMetadataSupported)
+                {
+                    await UpdateFromMetadataAsync(bitmapFile, cancellationToken);
+                }
+                else
+                {
+                    var date = await itemModel.MediaItem.GetDateModifiedAsync();
+                    cancellationToken.ThrowIfCancellationRequested();
+                    DateFormatted = date.ToString("g");
+                }
+
+                ulong fileSize = await itemModel.MediaItem.GetFileSizeAsync();
+                cancellationToken.ThrowIfCancellationRequested();
+                FileSize = ByteSizeFormatter.Format(fileSize);
+
+                var sizeInPixels = await itemModel.MediaItem.GetSizeInPixelsAsync();
+                cancellationToken.ThrowIfCancellationRequested();
+                SizeInPixels = sizeInPixels != Size.Empty ? sizeInPixels.Width + "x" + sizeInPixels.Height + "px" : string.Empty;
+
+                if (SelectedItemModel is IBitmapFlipViewItemModel bitmapFlipViewItemModel
+                    && bitmapFlipViewItemModel.BitmapImage is IBitmapImageModel bitmapImage)
+                {
+                    UpdateFromBitmapImage(bitmapImage);
+                }
             }
-            else
+            catch (OperationCanceledException)
             {
-                await UpdateFromMediaFileAsync(itemModel.MediaItem, cancellationToken);
+                Log.Info($"Update details bar for {itemModel.MediaItem.DisplayName} canceled");
             }
-
-            if (SelectedItemModel is BitmapFlipViewItemModel bitmapFlipViewItemModel
-                && bitmapFlipViewItemModel.BitmapImage is IBitmapImage bitmapImage)
+            catch (Exception ex)
             {
-                UpdateFromBitmapImage(bitmapImage);
+                Log.Error($"Error on update details bar for {itemModel.MediaItem.DisplayName}", ex);
             }
         });
     }
 
-    private void UpdateFromBitmapImage(IBitmapImage bitmapImage)
+    private void UpdateFromBitmapImage(IBitmapImageModel bitmapImage)
     {
         Log.Debug($"Update details bar for {SelectedItemModel!.MediaItem.DisplayName} with information from loaded image");
         ShowColorProfileIndicator = bitmapImage.ColorSpace.Profile is not null;
         ColorSpaceType = ShowColorProfileIndicator ? bitmapImage.ColorSpace.Type : ColorSpaceType.NotSpecified;
-        
-        // TODO video
-        SizeInPixels = bitmapImage.SizeInPixels.Width + "x" + bitmapImage.SizeInPixels.Height + "px";
     }
 
-    private async Task UpdateFromBitmapFileAsync(IBitmapFileInfo bitmapFile, CancellationToken cancellationToken)
+    private async Task UpdateFromMetadataAsync(IBitmapFileInfo bitmapFile, CancellationToken cancellationToken)
     {
-        try
-        {
-            if (bitmapFile.IsMetadataSupported)
-            {
-                var metadata = await metadataService.GetMetadataAsync(bitmapFile);
-                cancellationToken.ThrowIfCancellationRequested();
+        var metadata = await metadataService.GetMetadataAsync(bitmapFile);
+        cancellationToken.ThrowIfCancellationRequested();
 
-                var date = metadata.Get(MetadataProperties.DateTaken) ?? (await bitmapFile.GetDateModifiedAsync());
-                cancellationToken.ThrowIfCancellationRequested();
-                DateFormatted = date.ToString("g");
+        var date = metadata.Get(MetadataProperties.DateTaken) ?? (await bitmapFile.GetDateModifiedAsync());
+        cancellationToken.ThrowIfCancellationRequested();
+        DateFormatted = date.ToString("g");
 
-                CameraDetails = GetCameraDetails(metadata); ;
-            }
-            else
-            {
-                var date = await bitmapFile.GetDateModifiedAsync();
-                cancellationToken.ThrowIfCancellationRequested();
-                DateFormatted = date.ToString("g");
-            }
-
-            ulong fileSize = await bitmapFile.GetFileSizeAsync();
-            cancellationToken.ThrowIfCancellationRequested();
-            FileSize = ByteSizeFormatter.Format(fileSize);
-        }
-        catch (OperationCanceledException)
-        {
-            Log.Info($"Update details bar for {bitmapFile.DisplayName} canceled");
-        }
-        catch (Exception ex)
-        {
-            Log.Error($"Error on update details bar for {bitmapFile.DisplayName}", ex);
-        }
-    }
-
-    private async Task UpdateFromMediaFileAsync(IMediaFileInfo mediaFile, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var date = await mediaFile.GetDateModifiedAsync();
-            cancellationToken.ThrowIfCancellationRequested();
-            DateFormatted = date.ToString("g");
-
-            ulong fileSize = await mediaFile.GetFileSizeAsync();
-            cancellationToken.ThrowIfCancellationRequested();
-            FileSize = ByteSizeFormatter.Format(fileSize);
-        }
-        catch (OperationCanceledException)
-        {
-            Log.Info($"Update details bar for {mediaFile.DisplayName} canceled");
-        }
-        catch (Exception ex)
-        {
-            Log.Error($"Error on update details bar for {mediaFile.DisplayName}", ex);
-        }
+        CameraDetails = GetCameraDetails(metadata);
     }
 
     private string GetCameraDetails(MetadataView metadata)

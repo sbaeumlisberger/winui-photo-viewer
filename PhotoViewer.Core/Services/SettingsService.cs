@@ -58,7 +58,7 @@ public class SettingsService : ISettingsService
     {
         var fileContent = File.ReadAllText(file.Path);
         var settingsToImport = ApplicationSettings.Deserialize(fileContent);
-        SaveSettings(settingsToImport ?? throw new Exception("Invalid settings")); // TODO test
+        SaveSettings(settingsToImport);
         return settingsToImport;
     }
 

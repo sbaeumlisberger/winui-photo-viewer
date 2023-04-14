@@ -6,13 +6,13 @@ using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Utils;
 using Tocronx.SimpleAsync;
-using Windows.Foundation.Collections;
+using Timer = PhotoViewer.Core.Utils.Timer;
 
 namespace PhotoViewer.Core.ViewModels;
 
 public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 {
-    private static readonly TimeSpan WaitTime = TimeSpan.FromSeconds(1);
+    public static readonly TimeSpan WaitTime = TimeSpan.FromSeconds(1);
 
     public string Text
     {
@@ -29,32 +29,54 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 
     public bool HasMultipleValues { get; private set; }
 
-    public bool IsWriting { get; private set; }
-
     private readonly IMetadataService metadataService;
+
+    private readonly IDialogService dialogService;
 
     private readonly IMetadataProperty metadataProperty;
 
-    private readonly System.Timers.Timer timer = new System.Timers.Timer(WaitTime.TotalMilliseconds) { AutoReset = false };
+    private readonly ITimer timer;
 
-    public MetadataTextboxModel(
-        SequentialTaskRunner writeFilesRunner, 
-        IMetadataService metadataService, 
-        IMetadataProperty<string> metadataProperty) : base(writeFilesRunner, null!)
+    internal MetadataTextboxModel(
+        SequentialTaskRunner writeFilesRunner,
+        IMetadataService metadataService,
+        IDialogService dialogService,
+        IMetadataProperty<string> metadataProperty,
+        TimerFactory? timerFactory = null) : base(writeFilesRunner, null!)
     {
         this.metadataService = metadataService;
+        this.dialogService = dialogService;
         this.metadataProperty = metadataProperty;
+        timer = (timerFactory ?? Timer.Create).Invoke(interval: WaitTime, autoRestart: false);
         timer.Elapsed += (_, _) => _ = WriteValueAsync();
     }
 
-    public MetadataTextboxModel(
-        SequentialTaskRunner writeFilesRunner, 
-        IMetadataService metadataService, 
-        IMetadataProperty<string[]> metadataProperty) : base(writeFilesRunner, null!)
+    internal MetadataTextboxModel(
+        SequentialTaskRunner writeFilesRunner,
+        IMetadataService metadataService,
+        IDialogService dialogService,
+        IMetadataProperty<string[]> metadataProperty,
+        TimerFactory? timerFactory = null) : base(writeFilesRunner, null!)
     {
         this.metadataService = metadataService;
+        this.dialogService = dialogService;
         this.metadataProperty = metadataProperty;
+        timer = (timerFactory ?? Timer.Create).Invoke(interval: WaitTime, autoRestart: false);
         timer.Elapsed += (_, _) => _ = WriteValueAsync();
+    }
+
+    protected override void OnCleanup()
+    {
+        timer.Dispose();
+    }
+
+    protected async override void BeforeFilesChanged()
+    {
+        if (timer.IsEnabled)
+        {
+            timer.Stop();
+            await WriteFilesAsync(Text);
+        }
     }
 
     protected override void OnFilesChanged(IList<MetadataView> metadata)
@@ -87,8 +109,6 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
             throw new Exception("metadataProperty is invalid");
         }
 
-        _ = EnsureValueWrittenAsync();
-
         if (values.Any())
         {
             HasMultipleValues = values.Any(v => !Equals(v, values.First()));
@@ -96,7 +116,7 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
             OnPropertyChanged(nameof(Text));
         }
         else
-        { 
+        {
             HasMultipleValues = false;
             text = string.Empty;
             OnPropertyChanged(nameof(Text));
@@ -110,7 +130,7 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
     private async void SignalTypingCompleted()
     {
         Log.Debug("SignalTypingCompleted invoked");
-        if (timer.Enabled)
+        if (timer.IsEnabled)
         {
             timer.Stop();
             await WriteValueAsync();
@@ -119,25 +139,13 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 
     private void OnTextChangedExternal()
     {
-        timer.Stop();
-        timer.Start();
+        timer.Restart();
         HasMultipleValues = false;
-    }
-
-    private async Task EnsureValueWrittenAsync()
-    {
-        if (timer.Enabled)
-        {
-            timer.Stop();
-            await WriteFilesAsync(Text);
-        }
     }
 
     private async Task WriteValueAsync()
     {
-        RunOnUIThread(() => IsWriting = true);
         await WriteFilesAsync(Text).ConfigureAwait(false);
-        RunOnUIThread(() => IsWriting = false);
     }
 
     private async Task WriteFilesAsync(string value)
@@ -167,9 +175,9 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
                 }
             });
 
-            if(result.HasFailures)
+            if (result.HasFailures)
             {
-                // TODO show error
+                await ShowWriteMetadataFailedDialog(dialogService, result);
             }
         });
     }

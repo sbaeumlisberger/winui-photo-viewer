@@ -17,7 +17,9 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
 using Windows.Globalization;
+using Windows.Storage;
 using WinUIEx;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
@@ -53,9 +55,9 @@ public partial class App : Application
     }
 
     protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
-    { 
-        //Log.Info("Application launched.");
-        var stopwatch = Stopwatch.StartNew();       
+    {
+        Log.Info("Application launched");
+        var stopwatch = Stopwatch.StartNew();
 
         var settings = LoadSettings();
 
@@ -63,7 +65,7 @@ public partial class App : Application
 
         var messenger = StrongReferenceMessenger.Default;
 
-        await CreateWindowAsync(messenger);
+        await CreateWindowAsync(messenger, settings);
 
         messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel)));
 
@@ -75,24 +77,57 @@ public partial class App : Application
 
     private ApplicationSettings LoadSettings()
     {
-        var settingsService = new SettingsService();
+        ISettingsService settingsService = new SettingsService();
         var settings = settingsService.LoadSettings();
-        ApplicationSettingsProvider.SetSettings(settings);
         return settings;
     }
 
     private LoadMediaFilesTask LoadMediaFiles(ApplicationSettings settings)
     {
-        var loadMediaItemsService = new MediaFilesLoaderService();
         var activatedEventArgs = AppInstance.GetActivatedEventArgs();
+
+        Log.Info($"Enter LoadMediaFiles ({activatedEventArgs})");
+
+        IMediaFilesLoaderService mediaFilesLoaderService = new MediaFilesLoaderService();
         var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName, settings.IncludeVideos);
-        return loadMediaItemsService.LoadMediaFilesFromActivateEventArgs(activatedEventArgs, config);
+
+        if (activatedEventArgs is IFileActivatedEventArgsWithNeighboringFiles fileActivatedEventArgsWithNeighboringFiles)
+        {
+            if (fileActivatedEventArgsWithNeighboringFiles.NeighboringFilesQuery is { } neighboringFilesQuery)
+            {
+                var startFile = (IStorageFile)fileActivatedEventArgsWithNeighboringFiles.Files.First();
+                return mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
+            }
+            else
+            {
+                var activatedFiles = fileActivatedEventArgsWithNeighboringFiles.Files.Cast<IStorageFile>().ToList();
+                return mediaFilesLoaderService.LoadFileList(activatedFiles, config);
+            }
+        }
+        else if (activatedEventArgs is IFileActivatedEventArgs fileActivatedEventArgs)
+        {
+            var activatedFiles = fileActivatedEventArgs.Files.Cast<IStorageFile>().ToList();
+            return mediaFilesLoaderService.LoadFileList(activatedFiles, config);
+        }
+        else if (Environment.GetCommandLineArgs().Length > 1)
+        {
+            var arguments = Environment.GetCommandLineArgs().Skip(1).ToList();
+            return mediaFilesLoaderService.LoadFromArguments(arguments, config);
+        }
+        else
+        {
+#if DEBUG            
+            return mediaFilesLoaderService.LoadFolder(KnownFolders.PicturesLibrary, config);
+#else
+            return LoadMediaFilesTask.Empty;
+#endif
+        }
     }
 
-    private Task CreateWindowAsync(IMessenger messenger)
+    private Task CreateWindowAsync(IMessenger messenger, ApplicationSettings settings)
     {
         var stopwatch = Stopwatch.StartNew();
-        Window = new MainWindow(messenger);
+        Window = new MainWindow(messenger, settings);
         Window.Activate();
         var windowId = Win32Interop.GetWindowIdFromWindow(Window.GetWindowHandle());
         var task = ColorProfileProvider.Instance.InitializeAsync(windowId);
@@ -111,6 +146,7 @@ public partial class App : Application
         {
             Log.Fatal($"An unhandled exception occurred: {args.Message}");
         }
+        Exit(); // TODO show dialog
     }
 
     private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs args)

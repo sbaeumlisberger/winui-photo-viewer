@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.Models;
 using Microsoft.UI.Xaml.Controls;
+using PhotoViewer.Core;
 
 namespace PhotoViewer.App.ViewModels;
 
@@ -23,16 +24,18 @@ public partial class OverviewPageModel : ViewModelBase
 
     public IOverviewPageCommandBarModel OverviewPageCommandBarModel { get; }
 
+    private readonly IViewModelFactory viewModelFactory;
+
     public OverviewPageModel(
         ApplicationSession session,
         IMessenger messenger,
-        IOverviewPageCommandBarModel overviewPageCommandBarModel,
-        IMediaFileContextMenuModel mediaFileContextMenuModel,
-        MetadataPanelModelFactory metadataPanelModelFactory) : base(messenger)
+        IViewModelFactory viewModelFactory) : base(messenger)
     {
-        OverviewPageCommandBarModel = overviewPageCommandBarModel;
-        MetadataPanelModel = metadataPanelModelFactory.Invoke(false);
-        ContextMenuModel = mediaFileContextMenuModel;
+        this.viewModelFactory = viewModelFactory;
+
+        OverviewPageCommandBarModel = viewModelFactory.CreateOverviewPageCommandBarModel();
+        MetadataPanelModel = viewModelFactory.CreateMetadataPanelModel(false);
+        ContextMenuModel = viewModelFactory.CreateMediaFileContextMenuModel();
 
         Messenger.Register<MediaFilesLoadingMessage>(this, OnMediaItemsLoadedMessageReceived);
         Messenger.Register<MediaFilesDeletedMessage>(this, OnMediaItemsDeletedMessageReceived);
@@ -45,9 +48,9 @@ public partial class OverviewPageModel : ViewModelBase
         Messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel), mediaItem));
     }
 
-    public OverviewItemModel GetItemModel(IMediaFileInfo mediaFile) 
+    public IOverviewItemModel GetItemModel(IMediaFileInfo mediaFile) 
     {
-        return new OverviewItemModel(mediaFile, Messenger, new MetadataService()); // TODO
+        return viewModelFactory.CreateOverviewItemModel(mediaFile);
     }
 
     private async void OnMediaItemsLoadedMessageReceived(MediaFilesLoadingMessage msg)

@@ -4,7 +4,7 @@ using Windows.Graphics.Imaging;
 
 namespace PhotoViewer.App.Models;
 
-public interface IBitmapImage : IDisposable
+public interface IBitmapImageModel : IDisposable
 {
     string ID { get; }
 
@@ -12,12 +12,21 @@ public interface IBitmapImage : IDisposable
 
     ICanvasImage CanvasImage { get; }
 
-    IReadOnlyList<IBitmapFrame> Frames { get; }
+    IReadOnlyList<IBitmapFrameModel> Frames { get; }
 
     Size SizeInDIPs { get; }
 
     BitmapSize SizeInPixels { get; }
 
     ColorSpaceInfo ColorSpace { get; }
+}
 
+public interface ICanvasBitmapImageModel : IBitmapImageModel
+{
+    CanvasBitmap CanvasBitmap { get; }
+}
+
+public interface ICanvasVirtualBitmapImageModel : IBitmapImageModel
+{
+    CanvasVirtualBitmap CanvasVirtualBitmap { get; }
 }

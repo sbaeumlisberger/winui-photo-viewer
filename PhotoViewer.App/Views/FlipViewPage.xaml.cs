@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml.Navigation;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core;
-using PhotoViewer.Core.Utils;
 
 namespace PhotoViewer.App.Views;
 
@@ -18,8 +17,13 @@ public sealed partial class FlipViewPage : Page, IMVVMControl<FlipViewPageModel>
         this.InitializeComponentMVVM();
     }
 
+    protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+    {
+        ViewModel.OnNavigatedFrom();
+    }
+
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        ViewModel.OnNavigatedTo(e.Parameter);
+        ViewModel.OnNavigatedTo(e.Parameter, e.NavigationMode != NavigationMode.New);
     }
 }

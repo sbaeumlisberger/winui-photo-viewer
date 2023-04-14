@@ -14,13 +14,13 @@ namespace PhotoViewer.App.Controls;
 
 public sealed partial class BitmapViewer : UserControl
 {
-    public static readonly DependencyProperty BitmapImageProperty = DependencyPropertyHelper<BitmapViewer>.Register(nameof(BitmapImage), typeof(IBitmapImage));
+    public static readonly DependencyProperty BitmapImageProperty = DependencyPropertyHelper<BitmapViewer>.Register(nameof(BitmapImage), typeof(IBitmapImageModel));
 
     public static readonly DependencyProperty IsScaleUpEnabeldProperty = DependencyPropertyHelper<BitmapViewer>.Register(nameof(IsScaleUpEnabeld), typeof(bool), false);
 
     public static new readonly DependencyProperty ContentProperty = DependencyPropertyHelper<BitmapViewer>.Register(nameof(Content), typeof(object));
 
-    public IBitmapImage? BitmapImage { get => (IBitmapImage?)GetValue(BitmapImageProperty); set => SetValue(BitmapImageProperty, value); }
+    public IBitmapImageModel? BitmapImage { get => (IBitmapImageModel?)GetValue(BitmapImageProperty); set => SetValue(BitmapImageProperty, value); }
 
     public bool IsScaleUpEnabeld { get => (bool)GetValue(IsScaleUpEnabeldProperty); set => SetValue(IsScaleUpEnabeldProperty, value); }
     public new object Content { get => GetValue(ContentProperty); set => SetValue(ContentProperty, value); }
@@ -113,7 +113,7 @@ public sealed partial class BitmapViewer : UserControl
         }
     }
 
-    private void UpdateDummy(IBitmapImage image)
+    private void UpdateDummy(IBitmapImageModel image)
     {
         double displayScale = XamlRoot.RasterizationScale;
         var imageSize = new Size(image.SizeInDIPs.Width / displayScale, image.SizeInDIPs.Height / displayScale);
@@ -133,7 +133,7 @@ public sealed partial class BitmapViewer : UserControl
         }
     }
 
-    private void DrawToCanvas(CanvasDrawingSession drawingSession, IBitmapImage image)
+    private void DrawToCanvas(CanvasDrawingSession drawingSession, IBitmapImageModel image)
     {
         double extentWidth = dummy.Width * scrollViewer.ZoomFactor;
         double extentHeight = dummy.Height * scrollViewer.ZoomFactor;
@@ -157,7 +157,7 @@ public sealed partial class BitmapViewer : UserControl
         DrawImageWithColorManagement(drawingSession, image, srcRect, dstRect);
     }
 
-    private void DrawImageWithColorManagement(CanvasDrawingSession drawingSession, IBitmapImage image, Rect srcRect, Rect dstRect)
+    private void DrawImageWithColorManagement(CanvasDrawingSession drawingSession, IBitmapImageModel image, Rect srcRect, Rect dstRect)
     {
         ColorManagementProfile? sourceColorProfile = null;
 

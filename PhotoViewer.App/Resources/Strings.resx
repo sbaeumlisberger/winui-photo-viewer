@@ -162,6 +162,9 @@
   <data name="DeleteSingleRawFilesDialog_Title" xml:space="preserve">
     <value>Delete single RAW files</value>
   </data>
+  <data name="DeleteSingleRawFilesUICommand_Label" xml:space="preserve">
+    <value>Delete single RAW files</value>
+  </data>
   <data name="DetailsBar_ColorSpaceAdobeRGB" xml:space="preserve">
     <value>Adobe RGB color space</value>
   </data>
@@ -255,6 +258,9 @@
   <data name="FlipViewPageCommandBar_SettingsButton" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="FlipViewPageCommandBar_ToolsButton" xml:space="preserve">
+    <value>Tools</value>
+  </data>
   <data name="Generic_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -281,6 +287,9 @@
   </data>
   <data name="ImportGpxTrackDialog_Title" xml:space="preserve">
     <value>Import GPX track</value>
+  </data>
+  <data name="ImportGpxTrackUICommand_Label" xml:space="preserve">
+    <value>Apply GPX track to all photos</value>
   </data>
   <data name="ItemWithCount_All" xml:space="preserve">
     <value>All</value>
@@ -384,6 +393,9 @@
   <data name="MetadataPanel_NoDateTakenPresent" xml:space="preserve">
     <value>No date taken</value>
   </data>
+  <data name="MetadataPanel_NoFilesSelected" xml:space="preserve">
+    <value>Select files to show metadata</value>
+  </data>
   <data name="MetadataPanel_PeopleHeader" xml:space="preserve">
     <value>People</value>
   </data>
@@ -431,6 +443,9 @@
   </data>
   <data name="MoveRawFilesToSubfolderDialog_Title" xml:space="preserve">
     <value>Move RAW files to subfolder.</value>
+  </data>
+  <data name="MoveRawFilesToSubfolderUICommand_Label" xml:space="preserve">
+    <value>Move RAW files to subfolder</value>
   </data>
   <data name="NoItemsMessage" xml:space="preserve">
     <value>Nothing to show</value>
@@ -542,6 +557,9 @@
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="ShiftDatenTakenUICommand_Label" xml:space="preserve">
+    <value>Shift date taken of all photos</value>
   </data>
   <data name="ShiftDateTakenDialog_Continue" xml:space="preserve">
     <value>Continue</value>

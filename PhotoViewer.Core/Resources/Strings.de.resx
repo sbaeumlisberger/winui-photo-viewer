@@ -126,6 +126,12 @@
   <data name="DeleteFilesErrorDialog_Title" xml:space="preserve">
     <value>Fehler beim Löschen</value>
   </data>
+  <data name="ImportSettingsFailedDialog_Message" xml:space="preserve">
+    <value>Der Import der Einstellungen aus der angegebenen Datei ist fehlgeschlagen.</value>
+  </data>
+  <data name="ImportSettingsFailedDialog_Title" xml:space="preserve">
+    <value>Import fehlgeschlagen</value>
+  </data>
   <data name="MetadataPanel_LocationPlaceholder" xml:space="preserve">
     <value>Kein Aufnahmeort sepzifiziert</value>
   </data>
@@ -137,5 +143,14 @@
   </data>
   <data name="PeopleTagAlreadyExistingDialog_Title" xml:space="preserve">
     <value>Person bereits markiert</value>
+  </data>
+  <data name="SetDesktopBackgroundFailedDialog_Ttile" xml:space="preserve">
+    <value>Desktop-Hintergrund konnte nicht festgelegt werden</value>
+  </data>
+  <data name="SetLockscreenBackgroundFailedDialog_Ttile" xml:space="preserve">
+    <value>Hintergrund des Sperrbildschirms konnte nicht festgelegt werden</value>
+  </data>
+  <data name="WriteMetadataFailedDialog_Title" xml:space="preserve">
+    <value>Schreiben der Metadaten fehlgeschlagen</value>
   </data>
 </root>

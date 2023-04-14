@@ -126,6 +126,12 @@
   <data name="DeleteFilesErrorDialog_Title" xml:space="preserve">
     <value>Could not delete files</value>
   </data>
+  <data name="ImportSettingsFailedDialog_Message" xml:space="preserve">
+    <value>Failed to import settings from the specified file.</value>
+  </data>
+  <data name="ImportSettingsFailedDialog_Title" xml:space="preserve">
+    <value>Import failed</value>
+  </data>
   <data name="MetadataPanel_LocationPlaceholder" xml:space="preserve">
     <value>No place taken specified</value>
   </data>
@@ -137,5 +143,14 @@
   </data>
   <data name="PeopleTagAlreadyExistingDialog_Title" xml:space="preserve">
     <value>Person already tagged</value>
+  </data>
+  <data name="SetDesktopBackgroundFailedDialog_Ttile" xml:space="preserve">
+    <value>Failed to set desktop background</value>
+  </data>
+  <data name="SetLockscreenBackgroundFailedDialog_Ttile" xml:space="preserve">
+    <value>Failed to set lockscreen background</value>
+  </data>
+  <data name="WriteMetadataFailedDialog_Title" xml:space="preserve">
+    <value>Writing metadata failed</value>
   </data>
 </root>

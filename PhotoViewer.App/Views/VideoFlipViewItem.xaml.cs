@@ -15,11 +15,11 @@ namespace PhotoViewer.App.Views;
 
 public sealed partial class VideoFlipViewItem : UserControl, IMVVMControl<VideoFlipViewItemModel>
 {
-    private VideoFlipViewItemModel ViewModel => (VideoFlipViewItemModel)DataContext;
+    private VideoFlipViewItemModel ViewModel => DataContext as VideoFlipViewItemModel;
 
     public VideoFlipViewItem()
     {
-        this.InitializeComponentMVVM();
+        this.InitializeComponentMVVM(updateBindingsAlways: true);
     }
 
     partial void ConnectToViewModel(VideoFlipViewItemModel viewModel)

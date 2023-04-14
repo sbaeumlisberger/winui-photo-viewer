@@ -36,35 +36,42 @@
     
     <Grid>
         <FlipView
-                x:Name="flipView"
-                ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" 
-                SelectedItem="{x:Bind ViewModel.SelectedItemModel, Mode=TwoWay}"
-                FocusVisualPrimaryThickness="0"
-                FocusVisualSecondaryThickness="0"
-                CornerRadius="0"
-                UseTouchAnimationsForAllNavigation="False"
-                ContextRequested="FlipView_ContextRequested"
-                Background="{x:Bind ViewModel.IsDiashowActive, Mode=OneWay, Converter={StaticResource FlipViewBackgroundConverter}}"
-                Tapped="FlipView_Tapped">
+            x:Name="flipView"
+            ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" 
+            SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}"
+            SelectionChanged="FlipView_SelectionChanged"
+            FocusVisualPrimaryThickness="0"
+            FocusVisualSecondaryThickness="0"
+            CornerRadius="0"
+            UseTouchAnimationsForAllNavigation="False"
+            ContextRequested="FlipView_ContextRequested"
+            Background="{x:Bind ViewModel.IsDiashowActive, Mode=OneWay, Converter={StaticResource FlipViewBackgroundConverter}}"
+            Tapped="FlipView_Tapped">
             <FlipView.ItemTemplateSelector>
                 <local:MediaFlipViewItemTemplateSelector>
                     <local:MediaFlipViewItemTemplateSelector.BitmapFileInfoTemplate>
                         <DataTemplate>
-                            <local:BitmapFlipViewItem/>
+                            <local:BitmapFlipViewItem Loaded="FlipViewItem_Loaded" DataContextChanged="FlipViewItem_DataContextChanged"/>
                         </DataTemplate>
                     </local:MediaFlipViewItemTemplateSelector.BitmapFileInfoTemplate>
                     <local:MediaFlipViewItemTemplateSelector.VectorGraphicFileInfoTemplate>
                         <DataTemplate>
-                            <local:VectorGraphicFlipViewItem/>
+                            <local:VectorGraphicFlipViewItem Loaded="FlipViewItem_Loaded" DataContextChanged="FlipViewItem_DataContextChanged"/>
                         </DataTemplate>
                     </local:MediaFlipViewItemTemplateSelector.VectorGraphicFileInfoTemplate>
                     <local:MediaFlipViewItemTemplateSelector.VideoFileInfoTemplate>
                         <DataTemplate>
-                            <local:VideoFlipViewItem/>
+                            <local:VideoFlipViewItem Loaded="FlipViewItem_Loaded" DataContextChanged="FlipViewItem_DataContextChanged"/>
                         </DataTemplate>
                     </local:MediaFlipViewItemTemplateSelector.VideoFileInfoTemplate>
                 </local:MediaFlipViewItemTemplateSelector>
             </FlipView.ItemTemplateSelector>
+            <FlipView.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Opacity" Value="0"/>
+                    <Setter Property="IsHitTestVisible" Value="False"/>
+                </Style>
+            </FlipView.Resources>
             <FlyoutBase.AttachedFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem 

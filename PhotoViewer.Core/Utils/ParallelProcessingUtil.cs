@@ -78,6 +78,15 @@ namespace PhotoViewer.Core.Utils
                             processedElements.Add(element);
                             progress?.Report((double)processedElements.Count / elements.Count);
                         }
+                        catch (TaskCanceledException) 
+                        {
+                            aborted = true;
+
+                            if (throwOnCancellation)
+                            {
+                                throw;
+                            }
+                        }
                         catch (Exception exception)
                         {
                             failures.Add(new Failure<T>(element, exception));

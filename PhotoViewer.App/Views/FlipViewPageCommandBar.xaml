@@ -15,28 +15,82 @@
         <Style TargetType="AppBarButton" BasedOn="{StaticResource DefaultAppBarButtonStyle}">
             <Setter Property="LabelPosition" Value="Collapsed"/>
         </Style>
-    </CommandBar.Resources>
 
+        <XamlUICommand
+            x:Key="MoveRawFilesToSubfolderUICommand"
+            Label="{x:Bind res:Strings.MoveRawFilesToSubfolderUICommand_Label}" 
+            Command="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand}">
+            <XamlUICommand.KeyboardAccelerators>
+                <KeyboardAccelerator
+                    Key="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand.AcceleratorKey}"
+                    Modifiers="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand.AcceleratorModifiers}"/>
+            </XamlUICommand.KeyboardAccelerators>
+        </XamlUICommand>
+
+        <XamlUICommand
+            x:Key="DeleteSingleRawFilesUICommand"
+           Label="{x:Bind res:Strings.DeleteSingleRawFilesUICommand_Label}" 
+            Command="{x:Bind ViewModel.DeleteSingleRawFilesCommand}">
+            <XamlUICommand.KeyboardAccelerators>
+                <KeyboardAccelerator
+                    Key="{x:Bind ViewModel.DeleteSingleRawFilesCommand.AcceleratorKey}"
+                    Modifiers="{x:Bind ViewModel.DeleteSingleRawFilesCommand.AcceleratorModifiers}"/>
+            </XamlUICommand.KeyboardAccelerators>
+        </XamlUICommand>
+
+        <XamlUICommand
+            x:Key="ShiftDatenTakenUICommand"
+            Label="{x:Bind res:Strings.ShiftDatenTakenUICommand_Label}" 
+            Command="{x:Bind ViewModel.ShiftDatenTakenCommand}">
+            <XamlUICommand.KeyboardAccelerators>
+                <KeyboardAccelerator
+                    Key="{x:Bind ViewModel.ShiftDatenTakenCommand.AcceleratorKey}"
+                    Modifiers="{x:Bind ViewModel.ShiftDatenTakenCommand.AcceleratorModifiers}"/>
+            </XamlUICommand.KeyboardAccelerators>
+        </XamlUICommand>
+
+        <XamlUICommand
+            x:Key="ImportGpxTrackUICommand"
+       Label="{x:Bind res:Strings.ImportGpxTrackUICommand_Label}" 
+            Command="{x:Bind ViewModel.ImportGpxTrackCommand}">
+            <XamlUICommand.KeyboardAccelerators>
+                <KeyboardAccelerator
+                    Key="{x:Bind ViewModel.ImportGpxTrackCommand.AcceleratorKey}"
+                    Modifiers="{x:Bind ViewModel.ImportGpxTrackCommand.AcceleratorModifiers}"/>
+            </XamlUICommand.KeyboardAccelerators>
+        </XamlUICommand>
+    </CommandBar.Resources>
+    
     <AppBarButton 
         Icon="ViewAll"
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_OverviewButton}"
+        ToolTipService.ToolTip="{x:Bind res:Strings.FlipViewPageCommandBar_OverviewButton}"
         Command="{x:Bind ViewModel.NavigateToOverviewPageCommand}"/>
-    <AppBarButton 
+    <!--<AppBarButton 
         Icon="View" 
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_CompareButton}"
-        IsEnabled="False"/>
+        ToolTipService.ToolTip="{x:Bind res:Strings.FlipViewPageCommandBar_CompareButton}"
+        IsEnabled="False"/>-->
     <AppBarButton 
         Icon="SlideShow" 
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_DiashowButton}"
-        Command="{x:Bind ViewModel.StartDiashowCommand}"/>
+        Command="{x:Bind ViewModel.StartDiashowCommand}">
+        <AppBarButton.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control" Key="D"/>
+        </AppBarButton.KeyboardAccelerators>
+    </AppBarButton>
     <AppBarButton 
         Icon="Tag" 
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_MetadataButton}"
-        Command="{x:Bind ViewModel.ToggleMetadataPanelCommand}"/>
-    <AppBarButton
+        Command="{x:Bind ViewModel.ToggleMetadataPanelCommand}">
+        <AppBarButton.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control" Key="M"/>
+        </AppBarButton.KeyboardAccelerators>
+    </AppBarButton>
+    <!--<AppBarButton
         Icon="Crop" 
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_CropButton}"
-        IsEnabled="False"/>
+        IsEnabled="False"/>-->
     <AppBarButton 
         Icon="Rotate" 
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_RotateButton}"
@@ -47,7 +101,7 @@
     </AppBarButton>
     <AppBarButton 
         Icon="Delete" 
-        Label="{x:Bind res:Strings.FlipViewPageCommandBar_PreviousButton}"
+        Label="{x:Bind res:Strings.FlipViewPageCommandBar_DeleteButton}"
         Command="{x:Bind ViewModel.DeleteCommand}"
         CommandParameter="{x:Bind ListOf(ViewModel.SelectedItemModel.MediaItem), Mode=OneWay}">
         <AppBarButton.KeyboardAccelerators>
@@ -56,7 +110,7 @@
     </AppBarButton>
     <AppBarButton 
         Icon="Back" 
-        Label="{x:Bind res:Strings.FlipViewPageCommandBar_NextButton}"
+        Label="{x:Bind res:Strings.FlipViewPageCommandBar_PreviousButton}"
         Command="{x:Bind ViewModel.SelectPreviousCommand}">
         <AppBarButton.KeyboardAccelerators>
             <KeyboardAccelerator Key="Left"/>
@@ -70,67 +124,35 @@
             <KeyboardAccelerator Key="Right"/>
         </AppBarButton.KeyboardAccelerators>
     </AppBarButton>
-    
+
+    <!-- enable keyboard accelerators for commands in menu flyout of secondary command -->
+    <AppBarButton Width="0" Command="{StaticResource MoveRawFilesToSubfolderUICommand}"/>
+    <AppBarButton Width="0" Command="{StaticResource DeleteSingleRawFilesUICommand}"/>
+    <AppBarButton Width="0" Command="{StaticResource ShiftDatenTakenUICommand}"/>
+    <AppBarButton Width="0" Command="{StaticResource ImportGpxTrackUICommand}"/>
+
     <CommandBar.SecondaryCommands>
         <AppBarButton 
             Icon="OpenLocal" 
             Label="{x:Bind res:Strings.FlipViewPageCommandBar_OpenFolderButton}"
             Command="{x:Bind ViewModel.OpenFolderCommand}">
             <AppBarButton.KeyboardAccelerators>
-                <KeyboardAccelerator
-                    Key="O"
-                    Modifiers="Control"/>
+                <KeyboardAccelerator Key="O" Modifiers="Control"/>
             </AppBarButton.KeyboardAccelerators>
         </AppBarButton>
-        <AppBarButton  
+        <AppBarButton             
             Icon="Manage"
-            Label="Tools">
+            Label="{x:Bind res:Strings.FlipViewPageCommandBar_ToolsButton}">
             <AppBarButton.Flyout>
                 <MenuFlyout Placement="Left">
-                    <MenuFlyoutItem
-                        Text="Move RAW files to subfolder" 
-                        Command="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand}">
-                        <MenuFlyoutItem.KeyboardAccelerators>
-                            <!---TODO not working-->
-                            <KeyboardAccelerator
-                                Key="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand.AcceleratorKey}"
-                                Modifiers="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand.AcceleratorModifiers}"/>                            
-                        </MenuFlyoutItem.KeyboardAccelerators>
-                    </MenuFlyoutItem>
-                    <MenuFlyoutItem 
-                        Text="Delete single RAW files" 
-                        Command="{x:Bind ViewModel.DeleteSingleRawFilesCommand}">
-                        <MenuFlyoutItem.KeyboardAccelerators>
-                            <!---TODO not working-->
-                            <KeyboardAccelerator
-                                Key="{x:Bind ViewModel.DeleteSingleRawFilesCommand.AcceleratorKey}"
-                                Modifiers="{x:Bind ViewModel.DeleteSingleRawFilesCommand.AcceleratorModifiers}"/>
-                        </MenuFlyoutItem.KeyboardAccelerators>
-                    </MenuFlyoutItem>
-                    <MenuFlyoutItem 
-                        Text="Shift date taken of all photos" 
-                        Command="{x:Bind ViewModel.ShiftDatenTakenCommand}">
-                        <MenuFlyoutItem.KeyboardAccelerators>
-                            <!---TODO not working-->
-                            <KeyboardAccelerator
-                                Key="{x:Bind ViewModel.ShiftDatenTakenCommand.AcceleratorKey}"
-                                Modifiers="{x:Bind ViewModel.ShiftDatenTakenCommand.AcceleratorModifiers}"/>
-                        </MenuFlyoutItem.KeyboardAccelerators>
-                    </MenuFlyoutItem>
-                    <MenuFlyoutItem 
-                        Text="Apply GPX track to all photos" 
-                        Command="{x:Bind ViewModel.ImportGpxTrackCommand}">
-                        <MenuFlyoutItem.KeyboardAccelerators>
-                            <!---TODO not working-->
-                            <KeyboardAccelerator
-                                Key="{x:Bind ViewModel.ImportGpxTrackCommand.AcceleratorKey}"
-                                Modifiers="{x:Bind ViewModel.ImportGpxTrackCommand.AcceleratorModifiers}"/>
-                        </MenuFlyoutItem.KeyboardAccelerators>
-                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Command="{StaticResource MoveRawFilesToSubfolderUICommand}"/>
+                    <MenuFlyoutItem Command="{StaticResource DeleteSingleRawFilesUICommand}"/>
+                    <MenuFlyoutItem Command="{StaticResource ShiftDatenTakenUICommand}"/>
+                    <MenuFlyoutItem Command="{StaticResource ImportGpxTrackUICommand}"/>
                 </MenuFlyout>
             </AppBarButton.Flyout>
         </AppBarButton>
-                <AppBarButton 
+        <AppBarButton 
             Icon="Setting" 
             Label="{x:Bind res:Strings.FlipViewPageCommandBar_SettingsButton}"
             Command="{x:Bind ViewModel.NavigateToSettingsPageCommand}"/>    

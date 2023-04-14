@@ -7,6 +7,7 @@ using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using System.ComponentModel;
@@ -26,7 +27,7 @@ namespace PhotoViewer.Core.ViewModels
 
         public IList<DeleteLinkedFilesOption> AvailableDeleteLinkedFilesOptions { get; } = Enum.GetValues<DeleteLinkedFilesOption>();
 
-        public ApplicationSettings Settings { get; set; }
+        public ApplicationSettings Settings { get; }
 
         public SettingsPageModel(
             IMessenger messenger,
@@ -90,11 +91,21 @@ namespace PhotoViewer.Core.ViewModels
 
             if (fileOpenPickerModel.File is IStorageFile file)
             {
-                Settings.PropertyChanged -= Settings_PropertyChanged;
-                Settings = settingsService.ImportSettings(file);
-                Settings.PropertyChanged += Settings_PropertyChanged;
-                ApplicationSettingsProvider.SetSettings(Settings);
-                Messenger.Send(new SettingsChangedMessage(null));
+                try
+                {
+                    var importedSettings = settingsService.ImportSettings(file);
+                    Settings.Apply(importedSettings);
+                    Messenger.Send(new SettingsChangedMessage(null));
+                }
+                catch(Exception ex) 
+                {
+                    Log.Error("Failed to import settings", ex);
+                    await dialogService.ShowDialogAsync(new MessageDialogModel()
+                    {
+                        Title = Strings.ImportSettingsFailedDialog_Title,
+                        Message = Strings.ImportSettingsFailedDialog_Message
+                    });
+                }
             }
         }
 
@@ -102,11 +113,8 @@ namespace PhotoViewer.Core.ViewModels
         [RelayCommand]
         private void Reset()
         {
-            Settings.PropertyChanged -= Settings_PropertyChanged;
-            Settings = new ApplicationSettings();
-            Settings.PropertyChanged += Settings_PropertyChanged;
+            Settings.Apply(new ApplicationSettings());
             settingsService.SaveSettings(Settings);
-            ApplicationSettingsProvider.SetSettings(Settings);
             Messenger.Send(new SettingsChangedMessage(null));
         }
 

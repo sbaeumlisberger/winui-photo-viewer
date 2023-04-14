@@ -10,11 +10,11 @@ namespace PhotoViewer.App.Views;
 
 public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<BitmapFlipViewItemModel>
 {
-    private BitmapFlipViewItemModel ViewModel => (BitmapFlipViewItemModel)DataContext;
+    private BitmapFlipViewItemModel ViewModel => DataContext as BitmapFlipViewItemModel;
 
     public BitmapFlipViewItem()
     {
-        this.InitializeComponentMVVM();
+        this.InitializeComponentMVVM(updateBindingsAlways: true);
         bitmapViewer.ScrollViewer.ViewChanged += ScrollViewer_ViewChanged;
     }
 

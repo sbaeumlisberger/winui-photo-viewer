@@ -82,7 +82,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
         if (folderPickerModel.Folder is StorageFolder folder)
         {
             var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName, settings.IncludeVideos);
-            var loadMediaFilesTask = loadMediaItemsService.LoadMediaFilesFromFolder(folder, config);
+            var loadMediaFilesTask = loadMediaItemsService.LoadFolder(folder, config);
             Messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask));
         }
     }

@@ -2,13 +2,15 @@
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
+using System.Formats.Tar;
 using Windows.Storage;
 using Windows.Storage.Search;
 using Xunit;
 using FileAttributes = Windows.Storage.FileAttributes;
 
-namespace PhotoViewer.Test;
+namespace PhotoViewer.Test.Services;
 
 public class MediaFilesLoaderServiceTest
 {
@@ -39,7 +41,7 @@ public class MediaFilesLoaderServiceTest
         var folder = MockFolder(files);
         var config = new LoadMediaConfig(false, null, false);
 
-        var loadMediaFilesTask = mediaFilesLoaderService.LoadMediaFilesFromFolder(folder, config);
+        var loadMediaFilesTask = mediaFilesLoaderService.LoadFolder(folder, config);
 
         Assert.Null(loadMediaFilesTask.StartMediaFile);
 
@@ -73,7 +75,7 @@ public class MediaFilesLoaderServiceTest
         var startFile = files[2]; // "File 03.jpg"
         var config = new LoadMediaConfig(false, null, false);
 
-        var loadMediaFilesTask = mediaFilesLoaderService.LoadMediaFilesFromFilesQueryResult(startFile, neighboringFilesQuery, config);
+        var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
 
         Assert.NotNull(loadMediaFilesTask.StartMediaFile);
         Assert.Equal("File 03.jpg", loadMediaFilesTask.StartMediaFile.FileName);
@@ -111,7 +113,7 @@ public class MediaFilesLoaderServiceTest
         var startFile = files[3]; // "File 03.jpg"
         var config = new LoadMediaConfig(true, null, false);
 
-        var loadMediaFilesTask = mediaFilesLoaderService.LoadMediaFilesFromFilesQueryResult(startFile, neighboringFilesQuery, config);
+        var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
 
         Assert.NotNull(loadMediaFilesTask.StartMediaFile);
         Assert.Equal("File 03.jpg", loadMediaFilesTask.StartMediaFile.FileName);
@@ -153,7 +155,7 @@ public class MediaFilesLoaderServiceTest
         var config = new LoadMediaConfig(true, "RAWs", false);
         MockRAWsFolder(rawFilesInSubfolder, config.RAWsFolderName!);
 
-        var loadMediaFilesTask = mediaFilesLoaderService.LoadMediaFilesFromFilesQueryResult(startFile, neighboringFilesQuery, config);
+        var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
 
         Assert.NotNull(loadMediaFilesTask.StartMediaFile);
         Assert.Equal("File 02.jpg", loadMediaFilesTask.StartMediaFile.FileName);
@@ -188,7 +190,7 @@ public class MediaFilesLoaderServiceTest
         var startFile = MockFile("File 03[1].jpg", FileAttributes.Temporary | FileAttributes.ReadOnly);
         var config = new LoadMediaConfig(false, null, false);
 
-        var loadMediaFilesTask = mediaFilesLoaderService.LoadMediaFilesFromFilesQueryResult(startFile, neighboringFilesQuery, config);
+        var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
 
         Assert.Null(loadMediaFilesTask.StartMediaFile);
 
@@ -208,13 +210,47 @@ public class MediaFilesLoaderServiceTest
         AssertMediaFiles(expectedMediaFiles, result.MediaFiles);
     }
 
+    [Fact]
+    public async Task CommandLineActivation()
+    {
+        var config = new LoadMediaConfig(false, null, false);
+
+        string nonExistingFilePath = Path.Combine(FolderPath, "File 03.jpg");
+        var arguments = new[]
+        {
+            MockFile("File 01.jpg").Path,
+            MockFile("File 02.txt").Path,
+            nonExistingFilePath,
+            MockFile("File 04.png").Path
+        };
+        fileSystemServiceMock.Setup(m => m.Exists(nonExistingFilePath)).Returns(false);
+        fileSystemServiceMock.Setup(m => m.TryGetFileAsync(nonExistingFilePath)).ReturnsAsync((IStorageFile?)null);
+
+        var loadMediaFilesTask = mediaFilesLoaderService.LoadFromArguments(arguments, config);
+
+        Assert.NotNull(loadMediaFilesTask.StartMediaFile);
+        Assert.Equal("File 01.jpg", loadMediaFilesTask.StartMediaFile.FileName);
+
+        var result = await loadMediaFilesTask.WaitForResultAsync();
+
+        var expectedMediaFiles = new[]
+        {
+            new []{ "File 01.jpg" },
+            new []{ "File 04.png" },
+        };
+        AssertMediaFiles(expectedMediaFiles, result.MediaFiles);
+    }
+
     private IStorageFile MockFile(string fileName, FileAttributes attributes = FileAttributes.Normal)
     {
+        string path = Path.Combine(FolderPath, fileName);
         var mock = new Mock<IStorageFile>();
         mock.SetupGet(x => x.Name).Returns(fileName);
         mock.SetupGet(x => x.FileType).Returns(Path.GetExtension(fileName));
         mock.SetupGet(x => x.Attributes).Returns(attributes);
-        mock.SetupGet(x => x.Path).Returns(Path.Combine(FolderPath, fileName));
+        mock.SetupGet(x => x.Path).Returns(path);
+        fileSystemServiceMock.Setup(m => m.Exists(path)).Returns(true);
+        fileSystemServiceMock.Setup(m => m.TryGetFileAsync(path)).ReturnsAsync(mock.Object);
         return mock.Object;
     }
 

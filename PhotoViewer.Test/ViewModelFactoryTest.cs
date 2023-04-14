@@ -25,7 +25,7 @@ public class ViewModelFactoryTest
 
         var stopwatch = Stopwatch.StartNew();
 
-        ViewModelFactory.Initialize(messenger, Mock.Of<IDialogService>());
+        ViewModelFactory.Initialize(messenger, new ApplicationSettings(), Mock.Of<IDialogService>());
 
         stopwatch.Stop();
 

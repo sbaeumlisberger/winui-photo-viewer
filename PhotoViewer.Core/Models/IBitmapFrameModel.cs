@@ -3,7 +3,7 @@ using Windows.Foundation;
 
 namespace PhotoViewer.App.Models;
 
-public interface IBitmapFrame : IDisposable
+public interface IBitmapFrameModel : IDisposable
 {
     ICanvasImage CanvasImage { get; }
 

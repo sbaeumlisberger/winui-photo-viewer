@@ -8,7 +8,7 @@ namespace PhotoViewer.App.Services;
 
 public interface IGifImageLoaderService
 {
-    Task<PVBitmapImage> LoadAsync(string id, CanvasDevice device, IRandomAccessStream stream, CancellationToken? cancellationToken = null);
+    Task<CanvasBitmapImageModel> LoadAsync(string id, CanvasDevice device, IRandomAccessStream stream, CancellationToken? cancellationToken = null);
 }
 
 internal class GifImageLoaderService : IGifImageLoaderService
@@ -18,14 +18,14 @@ internal class GifImageLoaderService : IGifImageLoaderService
     private const string DelayPropertyKey = "/grctlext/Delay";
     private const string DisposalPropertyKey = "/grctlext/Disposal";
 
-    public async Task<PVBitmapImage> LoadAsync(string id, CanvasDevice device, IRandomAccessStream stream, CancellationToken? cancellationToken = null)
+    public async Task<CanvasBitmapImageModel> LoadAsync(string id, CanvasDevice device, IRandomAccessStream stream, CancellationToken? cancellationToken = null)
     {
         var _cancellationToken = cancellationToken ?? CancellationToken.None;
 
         var decoder = await BitmapDecoder.CreateAsync(BitmapDecoder.GifDecoderId, stream).AsTask(_cancellationToken).ConfigureAwait(false);
         _cancellationToken.ThrowIfCancellationRequested();
 
-        var frames = new List<PVBitmapFrame>();
+        var frames = new List<CanvasBitmapFrameModel>();
         for (uint index = 0; index < decoder.FrameCount; index++)
         {
             var frame = await decoder.GetFrameAsync(index).AsTask(_cancellationToken).ConfigureAwait(false);
@@ -42,10 +42,10 @@ internal class GifImageLoaderService : IGifImageLoaderService
             double delayInMilliseconds = ExtractDelay(bitmapProperties);
             bool requiresClear = ExtractRequiresClear(bitmapProperties);
 
-            frames.Add(new PVBitmapFrame(canvasBitmap, offset, delayInMilliseconds, requiresClear));
+            frames.Add(new CanvasBitmapFrameModel(canvasBitmap, offset, delayInMilliseconds, requiresClear));
         }
 
-        return new PVBitmapImage(id, device, frames, new ColorSpaceInfo(ColorSpaceType.Unknown));
+        return new CanvasBitmapImageModel(id, device, frames, new ColorSpaceInfo(ColorSpaceType.Unknown));
     }
 
     private Point ExtractOffset(BitmapPropertySet bitmapProperties)

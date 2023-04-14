@@ -24,13 +24,16 @@ namespace PhotoViewer.Core.ViewModels
         bool IsVisible { get; set; }
     }
 
+    // TODO gloabl write files indicator!
     public partial class MetadataPanelModel : ViewModelBase, IMetadataPanelModel
     {
         public bool IsVisible { get; set; } = false;
 
-        public bool AreAllFilesSupported { get; private set; } = false;
+        public bool IsNoFilesSelectedMessageVisible { get; private set; } = true;
+
+        public bool IsInputVisible { get; private set; } = false;
         
-        public bool IsAnyFileNotSupported => !AreAllFilesSupported;
+        public bool IsUnsupportedFilesMessageVisibile { get; private set; } = false;
 
         public MetadataTextboxModel TitleTextboxModel { get; }
         public LocationSectionModel LocationSectionModel { get; }
@@ -65,19 +68,31 @@ namespace PhotoViewer.Core.ViewModels
         {
             this.metadataService = metadataService;
 
-            TitleTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Title);
+            TitleTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, dialogService, MetadataProperties.Title);
             LocationSectionModel = new LocationSectionModel(writeFilesRunner, metadataService, locationService, dialogService, clipboardService, gpxService, messenger);
-            PeopleSectionModel = new PeopleSectionModel(writeFilesRunner, messenger, metadataService, peopleSuggestionsService, tagPeopleOnPhotoButtonVisible);
-            KeywordsSectionModel = new KeywordsSectionModel(writeFilesRunner, messenger, metadataService, keywordSuggestionsService);
-            RatingSectionModel = new RatingSectionModel(writeFilesRunner, metadataService);
-            AuthorTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Author);
-            CopyrightTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, MetadataProperties.Copyright);
+            PeopleSectionModel = new PeopleSectionModel(writeFilesRunner, messenger, metadataService, peopleSuggestionsService, dialogService, tagPeopleOnPhotoButtonVisible);
+            KeywordsSectionModel = new KeywordsSectionModel(writeFilesRunner, messenger, metadataService, keywordSuggestionsService, dialogService);
+            RatingSectionModel = new RatingSectionModel(writeFilesRunner, metadataService, dialogService);
+            AuthorTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, dialogService, MetadataProperties.Author);
+            CopyrightTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, dialogService, MetadataProperties.Copyright);
             DateTakenSectionModel = new DateTakenSectionModel(writeFilesRunner, messenger, metadataService, dialogService);
 
             IsVisible = applicationSettings.AutoOpenMetadataPanel;
 
             Messenger.Register<ToggleMetataPanelMessage>(this, OnReceive);
             Messenger.Register<MetadataModifiedMessage>(this, OnReceive);
+        }
+
+        protected override void OnViewDisconnectedOverride()
+        {
+            TitleTextboxModel.Cleanup();
+            LocationSectionModel.Cleanup();
+            PeopleSectionModel.Cleanup();
+            KeywordsSectionModel.Cleanup();
+            RatingSectionModel.Cleanup();
+            AuthorTextboxModel.Cleanup();
+            CopyrightTextboxModel.Cleanup();
+            DateTakenSectionModel.Cleanup();
         }
 
         private void OnReceive(ToggleMetataPanelMessage msg)
@@ -101,7 +116,12 @@ namespace PhotoViewer.Core.ViewModels
         {
             supportedFiles = Files.OfType<IBitmapFileInfo>().Where(file => file.IsMetadataSupported).ToList();
 
-            AreAllFilesSupported = supportedFiles.Count == Files.Count;
+            IsNoFilesSelectedMessageVisible = !Files.Any();
+
+            bool allFilsSupported = supportedFiles.Count == Files.Count;
+
+            IsInputVisible = Files.Any() && allFilsSupported;
+            IsUnsupportedFilesMessageVisibile = Files.Any() && !allFilsSupported;
 
             updateRunner.RunAndCancelPrevious(Update);
         }

@@ -7,6 +7,7 @@ using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using System.ComponentModel;
@@ -77,7 +78,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
     [RelayCommand]
     private void OpenInNewWindow()
     {
-        var filePaths = Files.SelectMany(file => file.StorageFiles).Select(storageFile => storageFile.Path);
+        var filePaths = Files.SelectMany(file => file.StorageFiles).Select(storageFile => storageFile.Path).ToList();
         Process.Start(Environment.ProcessPath!, filePaths);
     }
 
@@ -114,7 +115,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
             Log.Error("Could not set desktop background.", ex);
             await dialogService.ShowDialogAsync(new MessageDialogModel()
             {
-                Title = "", // TODO Strings.Error_SetPhotoAsDesktopBackground,
+                Title = Strings.SetDesktopBackgroundFailedDialog_Ttile,
                 Message = ex.Message
             });
         }
@@ -132,7 +133,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
             Log.Error("Could not set lockscreen background.", ex);
             await dialogService.ShowDialogAsync(new MessageDialogModel()
             {
-                Title = "",  // TODO Strings.Error_SetPhotoAsLockscreenBackground,
+                Title = Strings.SetLockscreenBackgroundFailedDialog_Ttile,
                 Message = ex.Message
             });
         }

@@ -11,10 +11,16 @@ using PhotoViewer.Core.Utils;
 using Tocronx.SimpleAsync;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core;
 
 namespace PhotoViewer.App.ViewModels;
 
-public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItemModel
+public interface IBitmapFlipViewItemModel : IMediaFlipViewItemModel
+{
+    IBitmapImageModel? BitmapImage { get; }
+}
+
+public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewItemModel
 {
     public IMediaFileInfo MediaItem { get; }
 
@@ -22,7 +28,7 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItem
 
     public bool IsDiashowActive { get; set; }
 
-    public IBitmapImage? BitmapImage { get; private set; }
+    public IBitmapImageModel? BitmapImage { get; private set; }
 
     public bool IsLoading { get; private set; } = false;
 
@@ -32,9 +38,9 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItem
 
     public bool IsContextMenuEnabeld => !IsDiashowActive;
 
-    public MediaFileContextMenuModel ContextMenuModel { get; }
+    public IMediaFileContextMenuModel ContextMenuModel { get; }
 
-    public TagPeopleToolModel? PeopleTagToolModel { get; }
+    public ITagPeopleToolModel? PeopleTagToolModel { get; }
 
     public bool CanTagPeople => PeopleTagToolModel != null;
 
@@ -44,10 +50,10 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItem
 
     public BitmapFlipViewItemModel(
         IBitmapFileInfo bitmapFile,
-        MediaFileContextMenuModel mediaFileContextFlyoutModel,
-        Func<IBitmapFileInfo, TagPeopleToolModel> peopleTagToolModelFactory,
+        IMediaFileContextMenuModel mediaFileContextFlyoutModel,
+        IViewModelFactory viewModelFactory,
         IMessenger messenger,
-        IImageLoaderService imageLoadService) : base(messenger)
+        IImageLoaderService imageLoadService) : base(messenger, false)
     {
         this.imageLoadService = imageLoadService;
 
@@ -57,7 +63,7 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItem
 
         if (bitmapFile.IsMetadataSupported)
         {
-            PeopleTagToolModel = peopleTagToolModelFactory.Invoke(bitmapFile);
+            PeopleTagToolModel = viewModelFactory.CreateTagPeopleToolModel(bitmapFile);
         }
     }
 
@@ -65,23 +71,29 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItem
     {
         if (PeopleTagToolModel != null)
         {
-            PeopleTagToolModel.IsEnabeld = IsSelected;
+            PeopleTagToolModel.IsEnabled = IsSelected;
         }
     }
 
-    public async Task PrepareAsync()
+    public async Task InitializeAsync()
     {
         Messenger.Register<BitmapRotatedMesssage>(this, OnBitmapRotatedMesssageReceived);
+
         await LoadImageAsync();
+
+        if (PeopleTagToolModel != null)
+        {
+            await PeopleTagToolModel.InitializeAsync();
+        }
     }
 
-    public void Cleanup()
+    protected override void OnCleanup()
     {
-        Messenger.UnregisterAll(this);
         loadImageRunner.Cancel();
         var bitmapImage = BitmapImage;
         BitmapImage = null;
         bitmapImage?.Dispose();
+        PeopleTagToolModel?.Cleanup();
     }
 
     private async void OnBitmapRotatedMesssageReceived(BitmapRotatedMesssage msg)
@@ -112,8 +124,8 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IMediaFlipViewItem
 
                 var bitmapFile = (IBitmapFileInfo)MediaItem;
 
-                var bitmapImage = await ImagePreloadService.Instance.GetPreloadedImageAsync(bitmapFile) ??
-                    await imageLoadService.LoadFromFileAsync(bitmapFile, cancellationToken);
+                var bitmapImage = await ImagePreloadService.Instance.GetPreloadedImageAsync(bitmapFile)
+                                  ?? await imageLoadService.LoadFromFileAsync(bitmapFile, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
                 BitmapImage = bitmapImage;
                 IsLoading = false;

@@ -196,6 +196,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete single RAW files.
+        /// </summary>
+        internal static string DeleteSingleRawFilesUICommand_Label {
+            get {
+                return ResourceManager.GetString("DeleteSingleRawFilesUICommand_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Adobe RGB color space.
         /// </summary>
         internal static string DetailsBar_ColorSpaceAdobeRGB {
@@ -475,6 +484,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tools.
+        /// </summary>
+        internal static string FlipViewPageCommandBar_ToolsButton {
+            get {
+                return ResourceManager.GetString("FlipViewPageCommandBar_ToolsButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         internal static string Generic_Cancel {
@@ -552,6 +570,15 @@ namespace PhotoViewer.App.Resources {
         internal static string ImportGpxTrackDialog_Title {
             get {
                 return ResourceManager.GetString("ImportGpxTrackDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply GPX track to all photos.
+        /// </summary>
+        internal static string ImportGpxTrackUICommand_Label {
+            get {
+                return ResourceManager.GetString("ImportGpxTrackUICommand_Label", resourceCulture);
             }
         }
         
@@ -862,6 +889,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select files to show metadata.
+        /// </summary>
+        internal static string MetadataPanel_NoFilesSelected {
+            get {
+                return ResourceManager.GetString("MetadataPanel_NoFilesSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to People.
         /// </summary>
         internal static string MetadataPanel_PeopleHeader {
@@ -1002,6 +1038,15 @@ namespace PhotoViewer.App.Resources {
         internal static string MoveRawFilesToSubfolderDialog_Title {
             get {
                 return ResourceManager.GetString("MoveRawFilesToSubfolderDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move RAW files to subfolder.
+        /// </summary>
+        internal static string MoveRawFilesToSubfolderUICommand_Label {
+            get {
+                return ResourceManager.GetString("MoveRawFilesToSubfolderUICommand_Label", resourceCulture);
             }
         }
         
@@ -1335,6 +1380,15 @@ namespace PhotoViewer.App.Resources {
         internal static string SettingsPage_Title {
             get {
                 return ResourceManager.GetString("SettingsPage_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shift date taken of all photos.
+        /// </summary>
+        internal static string ShiftDatenTakenUICommand_Label {
+            get {
+                return ResourceManager.GetString("ShiftDatenTakenUICommand_Label", resourceCulture);
             }
         }
         

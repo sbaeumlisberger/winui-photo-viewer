@@ -135,14 +135,9 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
         return memoryStream;
     }
 
-
-    public override bool Equals(object? obj)
+    public override string ToString()
     {
-        return obj is IMediaFileInfo other && StorageFile.IsEqual(other.StorageFile);
+        return DisplayName;
     }
 
-    public override int GetHashCode()
-    {
-        return FilePath.GetHashCode();
-    }
 }

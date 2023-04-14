@@ -2,21 +2,22 @@
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Utils.Logging;
 using System;
+using System.Threading.Tasks;
 
 namespace PhotoViewer.App.Utils;
 
 internal static class ControlUtil
 {
-    public static void InitializeComponentMVVM<TViewModel>(this IMVVMControl<TViewModel> control) where TViewModel : ViewModelBase
+    public static void InitializeComponentMVVM<TViewModel>(this IMVVMControl<TViewModel> control, bool updateBindingsAlways = false) where TViewModel : ViewModelBase
     {
         TViewModel? viewModel = null;
 
         void connect(TViewModel newViewModel)
         {
-            Log.Debug($"Connect {control} to {newViewModel}");
+            Log.Info($"Connect {control} to {newViewModel}");
             viewModel = newViewModel;
             control.ConnectToViewModel(newViewModel);
-            if(control.IsLoaded)
+            if(control.IsLoaded || updateBindingsAlways) // TODO ?
             {
                 control.UpdateBindings();
             }
@@ -25,7 +26,7 @@ internal static class ControlUtil
 
         void disconnect(TViewModel currentViewModel)
         {
-            Log.Debug($"Disconnect {control} from {currentViewModel}");
+            Log.Info($"Disconnect {control} from {currentViewModel}");
             control.DisconnectFromViewModel(viewModel);
             control.StopBindings();
             currentViewModel.OnViewDisconnected();

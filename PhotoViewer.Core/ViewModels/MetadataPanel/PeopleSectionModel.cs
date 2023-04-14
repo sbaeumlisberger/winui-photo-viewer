@@ -31,20 +31,25 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 
     private readonly ISuggestionsService suggestionsService;
 
+    private readonly IDialogService dialogService;
+
     internal PeopleSectionModel(
         SequentialTaskRunner writeFilesRunner,
         IMessenger messenger,
         IMetadataService metadataService,
         ISuggestionsService suggestionsService,
+        IDialogService dialogService,
         bool tagPeopleOnPhotoButtonVisible) : base(writeFilesRunner, messenger)
     {
         this.metadataService = metadataService;
         this.suggestionsService = suggestionsService;
+        this.dialogService = dialogService;
         IsTagPeopleOnPhotoButtonVisible = tagPeopleOnPhotoButtonVisible;
 
         if (IsTagPeopleOnPhotoButtonVisible)
         {
-            Messenger.Register<TagPeopleToolActiveChangedMeesage>(this, OnTagPeopleToolActiveChangedMessageReceived);
+            Messenger.Register<TagPeopleToolActiveChangedMessage>(this, Receive);
+            Messenger.Register<IsTagPeopleToolActiveRequestMessage>(this, Receive);
         }
     }
 
@@ -59,9 +64,14 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
         people.MatchTo(CreateListItemModels(metadata));
     }
 
-    private void OnTagPeopleToolActiveChangedMessageReceived(TagPeopleToolActiveChangedMeesage msg)
+    private void Receive(TagPeopleToolActiveChangedMessage msg)
     {
         IsTagPeopleOnPhotoButtonChecked = msg.IsActive;
+    }
+
+    private void Receive(IsTagPeopleToolActiveRequestMessage msg)
+    {
+        msg.Reply(IsTagPeopleOnPhotoButtonChecked);
     }
 
     public IReadOnlyList<string> FindSuggestions(string text)
@@ -115,7 +125,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
             }
             else
             {
-                // TODO show error message
+                await ShowWriteMetadataFailedDialog(dialogService, result);
             }
         });
     }
@@ -132,7 +142,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
                 var peopleTags = await metadataService.GetMetadataAsync(file, MetadataProperties.People).ConfigureAwait(false);
 
                 if (peopleTags.RemoveFirst(peopleTag => peopleTag.Name == personName))
-                {      
+                {
                     await metadataService.WriteMetadataAsync(file, MetadataProperties.People, peopleTags).ConfigureAwait(false);
                     modifiedFiles.Add(file);
                 }
@@ -142,15 +152,15 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 
             if (result.HasFailures)
             {
-                // TODO show error message
+                await ShowWriteMetadataFailedDialog(dialogService, result);
             }
         });
     }
 
-        [RelayCommand]
+    [RelayCommand]
     private void ToggleTagPeopleOnPhoto()
     {
-        Messenger.Send(new TagPeopleToolActiveChangedMeesage(!IsTagPeopleOnPhotoButtonChecked));
+        Messenger.Send(new TagPeopleToolActiveChangedMessage(!IsTagPeopleOnPhotoButtonChecked));
     }
 
 }

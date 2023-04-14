@@ -88,6 +88,24 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to import settings from the specified file..
+        /// </summary>
+        public static string ImportSettingsFailedDialog_Message {
+            get {
+                return ResourceManager.GetString("ImportSettingsFailedDialog_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import failed.
+        /// </summary>
+        public static string ImportSettingsFailedDialog_Title {
+            get {
+                return ResourceManager.GetString("ImportSettingsFailedDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No place taken specified.
         /// </summary>
         public static string MetadataPanel_LocationPlaceholder {
@@ -120,6 +138,33 @@ namespace PhotoViewer.Core.Resources {
         public static string PeopleTagAlreadyExistingDialog_Title {
             get {
                 return ResourceManager.GetString("PeopleTagAlreadyExistingDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to set desktop background.
+        /// </summary>
+        public static string SetDesktopBackgroundFailedDialog_Ttile {
+            get {
+                return ResourceManager.GetString("SetDesktopBackgroundFailedDialog_Ttile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to set lockscreen background.
+        /// </summary>
+        public static string SetLockscreenBackgroundFailedDialog_Ttile {
+            get {
+                return ResourceManager.GetString("SetLockscreenBackgroundFailedDialog_Ttile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Writing metadata failed.
+        /// </summary>
+        public static string WriteMetadataFailedDialog_Title {
+            get {
+                return ResourceManager.GetString("WriteMetadataFailedDialog_Title", resourceCulture);
             }
         }
     }

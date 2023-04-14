@@ -1,6 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using PhotoViewer.App.Models;
 using PhotoViewer.App.ViewModels;
+using PhotoViewer.Core.Models;
 using System;
 
 namespace PhotoViewer.App.Views;
@@ -16,9 +18,9 @@ public class MediaFlipViewItemTemplateSelector : DataTemplateSelector
         base.SelectTemplateCore(item);
         return item switch
         {
-            BitmapFlipViewItemModel => BitmapFileInfoTemplate!,
-            VideoFlipViewItemModel => VideoFileInfoTemplate!,
-            VectorGraphicFlipViewItemModel => VectorGraphicFileInfoTemplate!,
+            IBitmapFileInfo => BitmapFileInfoTemplate!,
+            IVideoFileInfo => VideoFileInfoTemplate!,
+            IVectorGraphicFileInfo => VectorGraphicFileInfoTemplate!,
             _ => throw new Exception($"Unsupported item type {item.GetType()}")
         };
     }

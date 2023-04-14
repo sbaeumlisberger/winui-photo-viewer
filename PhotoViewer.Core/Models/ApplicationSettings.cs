@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml;
 using PhotoViewer.Core.Models;
 using System.Text;
+using Windows.Devices.Display.Core;
 
 namespace PhotoViewer.Core.Models;
 
@@ -17,6 +19,19 @@ public partial class ApplicationSettings : ObservableObject
     public DeleteLinkedFilesOption DeleteLinkedFilesOption { get; set; } = DeleteLinkedFilesOption.Ask;
 
     public bool IncludeVideos { get; set; } = true;
+
+    public void Apply(ApplicationSettings settings)
+    {
+        Theme = settings.Theme;
+        ShowDeleteAnimation = settings.ShowDeleteAnimation;
+        AutoOpenMetadataPanel = settings.AutoOpenMetadataPanel;
+        AutoOpenDetailsBar = settings.AutoOpenDetailsBar;
+        DiashowTime = settings.DiashowTime;
+        LinkRawFiles = settings.LinkRawFiles;
+        RawFilesFolderName = settings.RawFilesFolderName;
+        DeleteLinkedFilesOption = settings.DeleteLinkedFilesOption;
+        IncludeVideos = settings.IncludeVideos;
+    }
 
     public static ApplicationSettings Deserialize(string serialized)
     {

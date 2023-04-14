@@ -10,6 +10,8 @@ namespace PhotoViewer.Core.Models;
 
 public class LoadMediaFilesTask
 {
+    public static LoadMediaFilesTask Empty => new LoadMediaFilesTask(null, Task.FromResult(new LoadMediaFilesResult(new List<IMediaFileInfo>(), null)));
+
     public IMediaFileInfo? StartMediaFile { get; }
 
     private Task<LoadMediaFilesResult> resultTask;

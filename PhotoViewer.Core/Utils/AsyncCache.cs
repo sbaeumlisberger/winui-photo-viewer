@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace PhotoViewer.App.Models;
+namespace PhotoViewer.Core.Utils;
 
 internal class AsyncCache<T>
 {

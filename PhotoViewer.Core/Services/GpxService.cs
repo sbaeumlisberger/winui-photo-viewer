@@ -14,18 +14,22 @@ namespace PhotoViewer.Core.Services;
 
 internal interface IGpxService 
 {
-    Task<LinkedList<GpxTrackPoint>> ReadTrackFromGpxFileAsync(IStorageFile file);
-    GpxTrackPoint? FindTrackPointForTimestamp(IEnumerable<GpxTrackPoint> gpxTrack, DateTime timestamp);
+    Task<List<GpxTrackPoint>> ReadTrackFromGpxFileAsync(IStorageFile file);
+    GpxTrackPoint? FindTrackPointForTimestamp(IEnumerable<GpxTrackPoint> gpxTrack, DateTimeOffset timestamp);
 }
 
 internal class GpxService : IGpxService
 {
-
-    public async Task<LinkedList<GpxTrackPoint>> ReadTrackFromGpxFileAsync(IStorageFile file)
+    public async Task<List<GpxTrackPoint>> ReadTrackFromGpxFileAsync(IStorageFile file)
     {
-        var trkpList = new LinkedList<GpxTrackPoint>();
-    
         string gpxData = await FileIO.ReadTextAsync(file);
+        return ParseGpxTrack(gpxData);
+    }
+
+    public List<GpxTrackPoint> ParseGpxTrack(string gpxData)
+    {
+        var trkpList = new List<GpxTrackPoint>();
+        
         XNamespace ns = "http://www.topografix.com/GPX/1/1";
         XDocument gpxDoc = XDocument.Parse(gpxData);
         XElement trkElement = gpxDoc.Root!.Element(ns + "trk")!;
@@ -49,16 +53,16 @@ internal class GpxService : IGpxService
 
                 if (trkptElement.Element(ns + "time") is { } timeElement)
                 {
-                    trkpt.Time = DateTime.ParseExact(timeElement.Value, "yyyy-mm-ddThh:mm:ssZ", CultureInfo.InvariantCulture);
+                    trkpt.Time = DateTimeOffset.Parse(timeElement.Value, CultureInfo.InvariantCulture);
                 }
 
-                trkpList.AddLast(trkpt);
+                trkpList.Add(trkpt);
             }
         }
         return trkpList;
     }
 
-    public GpxTrackPoint? FindTrackPointForTimestamp(IEnumerable<GpxTrackPoint> gpxTrack, DateTime timestamp)
+    public GpxTrackPoint? FindTrackPointForTimestamp(IEnumerable<GpxTrackPoint> gpxTrack, DateTimeOffset timestamp)
     {
         var trackPointsWithTime = gpxTrack.Where(trkpt => trkpt.Time != null).ToList();
 

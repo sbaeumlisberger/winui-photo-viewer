@@ -76,13 +76,16 @@
         <ScrollViewer Grid.Row="1" Grid.Column="0" VerticalScrollBarVisibility="Auto">
 
             <StackPanel VerticalAlignment="Top" Padding="16,0,16,16">
-                
-                <!-- show "select any file" message for overview page if no files selected -->
-                <StackPanel Visibility="{x:Bind ViewModel.IsAnyFileNotSupported, Mode=OneWay}">                 
+
+                <StackPanel Visibility="{x:Bind ViewModel.IsNoFilesSelectedMessageVisible, Mode=OneWay}">
+                    <TextBlock Margin="0,16,0,0" Text="{x:Bind res:Strings.MetadataPanel_NoFilesSelected}"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind ViewModel.IsUnsupportedFilesMessageVisibile, Mode=OneWay}">                 
                     <TextBlock Margin="0,16,0,0" Text="{x:Bind res:Strings.MetadataPanel_AnyFileNotSupported}"/>
                 </StackPanel>
 
-                <StackPanel Visibility="{x:Bind ViewModel.AreAllFilesSupported, Mode=OneWay}">
+                <StackPanel Visibility="{x:Bind ViewModel.IsInputVisible, Mode=OneWay}">
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_TitleHeader}" Style="{StaticResource HeaderStyle}"/>
                     <TextBox 
@@ -212,9 +215,12 @@
                     </Grid>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_RatingHeader}" Style="{StaticResource HeaderStyle}"/>
-                    <controls:RatingControl 
-                        HorizontalAlignment="Left"
-                        Rating="{x:Bind ViewModel.RatingSectionModel.Rating, Mode=TwoWay}"/>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <controls:RatingControl
+                            HorizontalAlignment="Left"
+                            Rating="{x:Bind ViewModel.RatingSectionModel.Rating, Mode=TwoWay}"/>
+                        <ProgressRing Width="24" Height="24" IsActive="{x:Bind ViewModel.RatingSectionModel.IsWriting, Mode=OneWay}"/>
+                    </StackPanel>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_AuthorsHeader}" Style="{StaticResource HeaderStyle}"/>
                     <TextBox
@@ -235,9 +241,12 @@
                         Spacing="4"
                         Visibility="{x:Bind ViewModel.DateTakenSectionModel.IsSingleValue, Mode=OneWay}">
                         <DatePicker
-                            SelectedDate="{x:Bind ViewModel.DateTakenSectionModel.Date, Mode=OneWay}"/>
+                            SelectedDate="{x:Bind ViewModel.DateTakenSectionModel.Date, Mode=TwoWay}"/>
                         <controls:TimePickerControl
-                            Time="{x:Bind ViewModel.DateTakenSectionModel.Time, Mode=OneWay}"/>
+                            Time="{x:Bind ViewModel.DateTakenSectionModel.Time, Mode=TwoWay}"/>
+                        <ProgressBar 
+                            IsIndeterminate="{x:Bind ViewModel.DateTakenSectionModel.IsWriting, Mode=OneWay}"
+                            Background="Transparent"/>
                     </StackPanel>
                     <StackPanel 
                         Spacing="4"

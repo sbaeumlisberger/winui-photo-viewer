@@ -17,3 +17,4 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("28a33fbf-d03f-4abc-bbd6-96487543e9a2")]
 [assembly: InternalsVisibleTo("PhotoViewer.Test")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")] // Moq

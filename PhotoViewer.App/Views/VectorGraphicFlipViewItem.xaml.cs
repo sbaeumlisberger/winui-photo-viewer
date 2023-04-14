@@ -11,11 +11,11 @@ namespace PhotoViewer.App.Views;
 
 public sealed partial class VectorGraphicFlipViewItem : UserControl, IMVVMControl<VectorGraphicFlipViewItemModel>
 {
-    private VectorGraphicFlipViewItemModel ViewModel  => (VectorGraphicFlipViewItemModel) DataContext;
+    private VectorGraphicFlipViewItemModel ViewModel  => DataContext as VectorGraphicFlipViewItemModel;
 
     public VectorGraphicFlipViewItem()
     {
-        this.InitializeComponentMVVM();
+        this.InitializeComponentMVVM(updateBindingsAlways: true);
         ScrollViewerHelper.EnableAdvancedZoomBehaviour(scrollViewer);
     }
 

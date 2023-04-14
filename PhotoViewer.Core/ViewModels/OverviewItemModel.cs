@@ -7,15 +7,12 @@ using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PhotoViewer.Core.ViewModels;
 
-public partial class OverviewItemModel : ViewModelBase
+public interface IOverviewItemModel { }
+
+public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
 {
     public event EventHandler<EventArgs>? ThumbnailInvalidated;
 
@@ -55,7 +52,7 @@ public partial class OverviewItemModel : ViewModelBase
     }
     private void Receive(ChangeThumbnailSizeMessage msg)
     {
-        ThumbnailSize = msg.NewThumbnailSize;        
+        ThumbnailSize = msg.NewThumbnailSize;
     }
 
     private void Receive(BitmapRotatedMesssage msg)
@@ -66,15 +63,15 @@ public partial class OverviewItemModel : ViewModelBase
         }
     }
 
-    private async void Receive(MetadataModifiedMessage msg) 
+    private async void Receive(MetadataModifiedMessage msg)
     {
-        if (msg.Files.Contains(MediaFile)) 
+        if (msg.Files.Contains(MediaFile))
         {
             await LoadMetadataInfoAsync((IBitmapFileInfo)MediaFile);
         }
     }
 
-    private async Task LoadMetadataInfoAsync(IBitmapFileInfo bitmapFile) 
+    private async Task LoadMetadataInfoAsync(IBitmapFileInfo bitmapFile)
     {
         var metadata = await metadataService.GetMetadataAsync(bitmapFile);
         HasKeywords = metadata.Get(MetadataProperties.Keywords).Any();

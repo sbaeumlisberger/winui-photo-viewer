@@ -34,7 +34,7 @@ public class AnimatedBitmapRenderer : IDisposable
 
     private bool isPlaying = false;
 
-    private readonly IReadOnlyList<IBitmapFrame> frames;
+    private readonly IReadOnlyList<IBitmapFrameModel> frames;
 
     private readonly CanvasDrawingSession drawingSession;
 
@@ -42,7 +42,7 @@ public class AnimatedBitmapRenderer : IDisposable
 
     private bool isDisposed;
 
-    public AnimatedBitmapRenderer(IBitmapImage animatedBitmap)
+    public AnimatedBitmapRenderer(IBitmapImageModel animatedBitmap)
     {
         frames = animatedBitmap.Frames;
 
