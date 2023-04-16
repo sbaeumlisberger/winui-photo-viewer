@@ -139,13 +139,9 @@ internal class PhotoPrintJob : IPrintJob
                 displayedOptions.Add(PhotoSizeRowsOption.OptionId);
             }
 
-            if (photoSizeOptionValue != PhotoSizeOption.SizeFullPage && photoSizeOptionValue != PhotoSizeOption.Grid) 
-            {
-                displayedOptions.Add(HorizontalAlignmentOption.OptionId);
-            }
-
             if (photoSizeOptionValue != PhotoSizeOption.SizeFullPage)
             {
+                displayedOptions.Add(HorizontalAlignmentOption.OptionId);
                 displayedOptions.Add(CollapseUnusedSpaceOption.OptionId);
             }
         }
