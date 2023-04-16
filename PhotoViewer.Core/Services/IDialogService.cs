@@ -3,4 +3,6 @@
 public interface IDialogService
 {
     Task ShowDialogAsync(object dialogModel);
+
+    Task ShowPrintUIAsync();
 }

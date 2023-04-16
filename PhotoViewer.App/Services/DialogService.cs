@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using PhotoViewer.App.Resources;
 using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.ViewModels;
 using System;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Graphics.Printing;
 using Windows.Storage.Pickers;
 using Windows.System;
 using WinRT.Interop;
@@ -49,6 +51,18 @@ public class DialogService : IDialogService
                 await ShowShareDialogAsync(shareDialogModel); break;
             default:
                 await ShowCustomDialogAsync(dialogModel); break;
+        }
+    }
+
+    public async Task ShowPrintUIAsync()
+    {
+        try
+        {
+            await PrintManagerInterop.ShowPrintUIForWindowAsync(windowHandle);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to show print UI", ex);
         }
     }
 

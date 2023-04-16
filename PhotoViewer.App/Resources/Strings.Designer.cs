@@ -1150,6 +1150,204 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Collapse unused space.
+        /// </summary>
+        internal static string Printing_CollapseUnusedSpaceTitle {
+            get {
+                return ResourceManager.GetString("Printing_CollapseUnusedSpaceTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid input.
+        /// </summary>
+        internal static string Printing_CopiesInvalidError {
+            get {
+                return ResourceManager.GetString("Printing_CopiesInvalidError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copies per photo.
+        /// </summary>
+        internal static string Printing_CopiesTitle {
+            get {
+                return ResourceManager.GetString("Printing_CopiesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Height (cm).
+        /// </summary>
+        internal static string Printing_CustomHeightTitle {
+            get {
+                return ResourceManager.GetString("Printing_CustomHeightTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid input.
+        /// </summary>
+        internal static string Printing_CustomSizeInvalidError {
+            get {
+                return ResourceManager.GetString("Printing_CustomSizeInvalidError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Width (cm).
+        /// </summary>
+        internal static string Printing_CustomWidthTitle {
+            get {
+                return ResourceManager.GetString("Printing_CustomWidthTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Columns.
+        /// </summary>
+        internal static string Printing_GridColumnsTitle {
+            get {
+                return ResourceManager.GetString("Printing_GridColumnsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rows.
+        /// </summary>
+        internal static string Printing_GridRowsTitle {
+            get {
+                return ResourceManager.GetString("Printing_GridRowsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid input.
+        /// </summary>
+        internal static string Printing_GridSpecificationInvalidError {
+            get {
+                return ResourceManager.GetString("Printing_GridSpecificationInvalidError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Center.
+        /// </summary>
+        internal static string Printing_HorizontalAlignmentCenter {
+            get {
+                return ResourceManager.GetString("Printing_HorizontalAlignmentCenter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left.
+        /// </summary>
+        internal static string Printing_HorizontalAlignmentLeft {
+            get {
+                return ResourceManager.GetString("Printing_HorizontalAlignmentLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right.
+        /// </summary>
+        internal static string Printing_HorizontalAlignmentRight {
+            get {
+                return ResourceManager.GetString("Printing_HorizontalAlignmentRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Horizontal Alignment.
+        /// </summary>
+        internal static string Printing_HorizontalAlignmentTitle {
+            get {
+                return ResourceManager.GetString("Printing_HorizontalAlignmentTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 10 cm x 15 cm.
+        /// </summary>
+        internal static string Printing_Layout100x150 {
+            get {
+                return ResourceManager.GetString("Printing_Layout100x150", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 13 cm x 18 cm.
+        /// </summary>
+        internal static string Printing_Layout130x180 {
+            get {
+                return ResourceManager.GetString("Printing_Layout130x180", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 5,5 cm x 8,8 cm.
+        /// </summary>
+        internal static string Printing_Layout55x85 {
+            get {
+                return ResourceManager.GetString("Printing_Layout55x85", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 9 cm x 13 cm.
+        /// </summary>
+        internal static string Printing_Layout90x130 {
+            get {
+                return ResourceManager.GetString("Printing_Layout90x130", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom.
+        /// </summary>
+        internal static string Printing_LayoutCustom {
+            get {
+                return ResourceManager.GetString("Printing_LayoutCustom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Full Page.
+        /// </summary>
+        internal static string Printing_LayoutFullPage {
+            get {
+                return ResourceManager.GetString("Printing_LayoutFullPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Grid.
+        /// </summary>
+        internal static string Printing_LayoutGrid {
+            get {
+                return ResourceManager.GetString("Printing_LayoutGrid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Layout.
+        /// </summary>
+        internal static string Printing_LayoutTitle {
+            get {
+                return ResourceManager.GetString("Printing_LayoutTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image does not fit page.
+        /// </summary>
+        internal static string Printing_PhotoDoesNotFitError {
+            get {
+                return ResourceManager.GetString("Printing_PhotoDoesNotFitError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         internal static string ProgressDialog_CancelButton {

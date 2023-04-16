@@ -12,6 +12,7 @@ using PhotoViewer.Core;
 using PhotoViewer.Core.Utils;
 using System.Collections.Generic;
 using System.Linq;
+using PhotoViewer.App.Services;
 
 namespace PhotoViewer.App.Views;
 
@@ -19,6 +20,10 @@ namespace PhotoViewer.App.Views;
 public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
 {
     private OverviewPageModel ViewModel => (OverviewPageModel)DataContext;
+
+    private readonly PrintService printService = new PrintService(App.Current.Window);
+
+    private PrintRegistration? printRegistration;
 
     public OverviewPage()
     {
@@ -29,6 +34,16 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         App.Current.Window.Title = Strings.OverviewPage_Title + " - WinUI Photo Viewer"; // TODO use message
+
+        printRegistration = printService.RegisterForPrinting(() => new PhotoPrintJob(ViewModel.SelectedItems.Select(mediaFile => mediaFile.StorageFile).ToList()));
+    }
+
+    protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+    {
+        if (printRegistration != null)
+        {
+            printService.Unregister(printRegistration);
+        }
     }
 
     private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -480,6 +480,72 @@
   <data name="OverviewPage_Title" xml:space="preserve">
     <value>Overview</value>
   </data>
+  <data name="Printing_CollapseUnusedSpaceTitle" xml:space="preserve">
+    <value>Collapse unused space</value>
+  </data>
+  <data name="Printing_CopiesInvalidError" xml:space="preserve">
+    <value>Invalid input</value>
+  </data>
+  <data name="Printing_CopiesTitle" xml:space="preserve">
+    <value>Copies per photo</value>
+  </data>
+  <data name="Printing_CustomHeightTitle" xml:space="preserve">
+    <value>Height (cm)</value>
+  </data>
+  <data name="Printing_CustomSizeInvalidError" xml:space="preserve">
+    <value>Invalid input</value>
+  </data>
+  <data name="Printing_CustomWidthTitle" xml:space="preserve">
+    <value>Width (cm)</value>
+  </data>
+  <data name="Printing_GridColumnsTitle" xml:space="preserve">
+    <value>Columns</value>
+  </data>
+  <data name="Printing_GridRowsTitle" xml:space="preserve">
+    <value>Rows</value>
+  </data>
+  <data name="Printing_GridSpecificationInvalidError" xml:space="preserve">
+    <value>Invalid input</value>
+  </data>
+  <data name="Printing_HorizontalAlignmentCenter" xml:space="preserve">
+    <value>Center</value>
+  </data>
+  <data name="Printing_HorizontalAlignmentLeft" xml:space="preserve">
+    <value>Left</value>
+  </data>
+  <data name="Printing_HorizontalAlignmentRight" xml:space="preserve">
+    <value>Right</value>
+  </data>
+  <data name="Printing_HorizontalAlignmentTitle" xml:space="preserve">
+    <value>Horizontal Alignment</value>
+  </data>
+  <data name="Printing_Layout100x150" xml:space="preserve">
+    <value>10 cm x 15 cm</value>
+  </data>
+  <data name="Printing_Layout130x180" xml:space="preserve">
+    <value>13 cm x 18 cm</value>
+  </data>
+  <data name="Printing_Layout55x85" xml:space="preserve">
+    <value>5,5 cm x 8,8 cm</value>
+  </data>
+  <data name="Printing_Layout90x130" xml:space="preserve">
+    <value>9 cm x 13 cm</value>
+  </data>
+  <data name="Printing_LayoutCustom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="Printing_LayoutFullPage" xml:space="preserve">
+    <value>Full Page</value>
+  </data>
+  <data name="Printing_LayoutGrid" xml:space="preserve">
+    <value>Grid</value>
+  </data>
+  <data name="Printing_LayoutTitle" xml:space="preserve">
+    <value>Layout</value>
+  </data>
+  <data name="Printing_PhotoDoesNotFitError" xml:space="preserve">
+    <value>Image does not fit page</value>
+  </data>
   <data name="ProgressDialog_CancelButton" xml:space="preserve">
     <value>Cancel</value>
   </data>

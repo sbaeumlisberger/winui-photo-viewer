@@ -26,7 +26,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
 
     public bool IsOpenWithItemVisible => Files.Count == 1;
 
-    public bool IsPrinItemVisible => false; // TODO PrintService.IsAvailable && Files.All(media => PhotoPrintJob.CanPrint(media.File));
+    public bool IsPrinItemVisible => Files.All(file => file is IBitmapFileInfo);
 
     public bool IsSetAsItemVisible => Files.Count == 1 && personalizationService.IsFileExtensionSupported(Files.First().FileExtension);
 
@@ -97,10 +97,9 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
     }
 
     [RelayCommand]
-    private Task PrintAsync()
+    private async Task PrintAsync()
     {
-        // TODO
-        return Task.CompletedTask;
+        await dialogService.ShowPrintUIAsync();
     }
 
     [RelayCommand]

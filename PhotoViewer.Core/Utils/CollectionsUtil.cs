@@ -1,17 +1,14 @@
-﻿namespace PhotoViewer.App.Utils;
+﻿using PhotoViewer.Core.Utils;
+
+namespace PhotoViewer.App.Utils;
 
 public static class CollectionsUtil
 {
-
-    /// <summary>Removes all the elements that match the conditions defined by the specified predicate.</summary>
-    public static void RemoveAll<T>(this IList<T> list, Predicate<T> predicate)
+    public static void RemoveRange<TValue>(this ICollection<TValue> collection, IEnumerable<TValue> source)
     {
-        for (int i = list.Count - 1; i >= 0; i--)
+        foreach (TValue item in source)
         {
-            if (predicate(list[i]))
-            {
-                list.RemoveAt(i);
-            }
+            collection.Remove(item);
         }
     }
 
@@ -50,5 +47,28 @@ public static class CollectionsUtil
     public static List<T> ListOf<T>(T? element)
     {
         return element != null ? new List<T>(1) { element } : new List<T>(0);
+    }
+
+    // TODO add test
+    public static void MatchTo<T>(this IList<T> list, IReadOnlyList<T> other)
+    {
+        list.RemoveRange(list.Except(other).ToList());
+
+        for (int i = 0; i < other.Count; i++)
+        {
+            if (i > list.Count - 1)
+            {
+                list.Add(other[i]);
+            }
+            else if (!Equals(other[i], list[i]))
+            {
+                int oldIndex = list.IndexOf(other[i]);
+                if (oldIndex != -1)
+                {
+                    list.RemoveAt(oldIndex);               
+                }
+                list.Insert(i, other[i]);                
+            }
+        }
     }
 }
