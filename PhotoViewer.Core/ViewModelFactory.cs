@@ -171,7 +171,7 @@ public class ViewModelFactory : IViewModelFactory
         {
             IBitmapFileInfo bitmapFile => CreateBitmapFlipViewItemModel(bitmapFile, mediaFileContextFlyoutModel),
             IVideoFileInfo => new VideoFlipViewItemModel(mediaFile, mediaFileContextFlyoutModel, messenger),
-            IVectorGraphicFileInfo => new VectorGraphicFlipViewItemModel(mediaFile),
+            IVectorGraphicFileInfo => new VectorGraphicFlipViewItemModel(mediaFile, mediaFileContextFlyoutModel),
             _ => throw new Exception($"Unexcpected type of media file: {mediaFile.GetType()}")
         };
     }

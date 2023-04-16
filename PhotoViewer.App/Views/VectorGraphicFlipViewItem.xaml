@@ -7,6 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <local:MediaFileContextMenuHolder 
+            x:Name="mediaFileContextMenuHolder" 
+            DataContext="{x:Bind ViewModel.ContextMenuModel}"/>
+    </UserControl.Resources>
+
     <Grid>
         <WebView2
             x:Name="webView"
@@ -17,7 +23,9 @@
                 x:Name="dummy"
                 Background="Transparent"
                 Width="{x:Bind scrollViewer.ViewportWidth, Mode=OneWay}"
-                Height="{x:Bind scrollViewer.ViewportHeight, Mode=OneWay}">
+                Height="{x:Bind scrollViewer.ViewportHeight, Mode=OneWay}"
+                ContextRequested="ScrollDummy_ContextRequested"
+                FlyoutBase.AttachedFlyout="{x:Bind mediaFileContextMenuHolder.MediaFileContextMenu}">
              </Grid>
         </ScrollViewer>
     </Grid>

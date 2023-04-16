@@ -22,11 +22,17 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
 
     public bool IsLoadingFailed { get; private set; } = false;
 
+    public bool IsContextMenuEnabeld => !IsDiashowActive;
+
+    public IMediaFileContextMenuModel ContextMenuModel { get; }
+
     private readonly CancelableTaskRunner initRunner = new CancelableTaskRunner();
 
-    public VectorGraphicFlipViewItemModel(IMediaFileInfo mediaFile) : base(null!, false)
+    public VectorGraphicFlipViewItemModel(IMediaFileInfo mediaFile, IMediaFileContextMenuModel contextMenuModel) : base(null!, false)
     {
         MediaItem = mediaFile;
+        ContextMenuModel = contextMenuModel;
+        ContextMenuModel.Files = new[] { mediaFile };
     }
 
     public async Task InitializeAsync()

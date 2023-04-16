@@ -1,5 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using PhotoVieweApp.Utils;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
 using System;
@@ -57,5 +59,13 @@ public sealed partial class VectorGraphicFlipViewItem : UserControl, IMVVMContro
         string translateX = (-(scrollViewer.HorizontalOffset - (scrollViewer.ExtentWidth - scrollViewer.ViewportWidth) / 2)).ToString(CultureInfo.InvariantCulture);
         string translateY = (-(scrollViewer.VerticalOffset - (scrollViewer.ExtentHeight - scrollViewer.ViewportHeight) / 2)).ToString(CultureInfo.InvariantCulture);
         await webView.ExecuteScriptAsync($"document.getElementsByTagName(\"svg\")[0].style.transform = \"scale({zoom}) translate({translateX}px, {translateY}px)\"");
+    }
+
+    private void ScrollDummy_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+    {
+        if (ViewModel.IsContextMenuEnabeld)
+        {
+            dummy.ShowAttachedFlyout(args);
+        }
     }
 }
