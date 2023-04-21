@@ -1,4 +1,5 @@
 ﻿using PhotoViewer.Core.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PhotoViewer.App.Utils;
 
@@ -70,5 +71,21 @@ public static class CollectionsUtil
                 list.Insert(i, other[i]);                
             }
         }
+    }
+
+    /// <summary>Returns the successor of the given element or the deafault value if there is no successor.</summary>
+    [return: MaybeNull]
+    public static T GetSuccessor<T>(this IList<T> list, T element)
+    {
+        var index = list.IndexOf(element);
+        if (index == -1)
+        {
+            throw new ArgumentException(nameof(element));
+        }
+        if (index + 1 < list.Count)
+        {
+            return list[index + 1];
+        }
+        return default;
     }
 }

@@ -32,7 +32,7 @@ internal class ShiftDatenTakenCommand : AsyncCommandBase, IShiftDatenTakenComman
         this.metadataService = metadataService;
     }
 
-    protected override async Task ExecuteAsync()
+    protected override async Task OnExecuteAsync()
     {
         await dialogService.ShowDialogAsync(new ShiftDatenTakenDialogModel(messenger, metadataService, session.Files));
     }

@@ -1,0 +1,43 @@
+<Page
+    x:Class="PhotoViewer.App.Views.ComparePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewer.App.Views"
+    xmlns:res="using:PhotoViewer.App.Resources"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource PageBackgroundBrush}">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <local:CompareView Grid.Column="0" DataContext="{x:Bind ViewModel.Left}"/>
+        <local:CompareView Grid.Column="1" DataContext="{x:Bind ViewModel.Right}"/>
+    </Grid>
+
+    <Page.BottomAppBar>
+        <CommandBar 
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            DefaultLabelPosition="Collapsed">
+            <AppBarToggleButton
+                Icon="Link"               
+                ToolTipService.ToolTip="{x:Bind res:Strings.ComparePage_LinkViewButton}"
+                IsChecked="{x:Bind ViewModel.IsLinkView, Mode=OneWay}"
+                Command="{x:Bind ViewModel.ToggleLinkViewCommand}"/>
+
+            <CommandBar.Content>
+                <CommandBar DefaultLabelPosition="Right">
+                    <AppBarButton 
+                        Icon="Back" 
+                        Label="{x:Bind res:Strings.ComparePage_BackButton}"
+                        Command="{x:Bind ViewModel.NavigateBackCommand}"/>
+                </CommandBar>
+            </CommandBar.Content>
+        </CommandBar>
+    </Page.BottomAppBar>
+    
+</Page>

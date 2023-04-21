@@ -129,6 +129,15 @@
   <data name="BitmapFlipViewItem_ReloadButton" xml:space="preserve">
     <value>Reload</value>
   </data>
+  <data name="ComparePage_BackButton" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="ComparePage_DeleteButton" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ComparePage_LinkViewButton" xml:space="preserve">
+    <value>Link zooming and scrolling</value>
+  </data>
   <data name="DeleteLinkedFilesDialog_Message" xml:space="preserve">
     <value>Do you want to delete the files linked to this file?</value>
   </data>

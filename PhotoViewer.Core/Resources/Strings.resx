@@ -120,6 +120,9 @@
   <data name="AddPeopleTagErrorDialog_Title" xml:space="preserve">
     <value>Failed to add people tag</value>
   </data>
+  <data name="ComparePage_Title" xml:space="preserve">
+    <value>Compare</value>
+  </data>
   <data name="DeleteFilesErrorDialog_Message" xml:space="preserve">
     <value>The following files could not be deleted:</value>
   </data>

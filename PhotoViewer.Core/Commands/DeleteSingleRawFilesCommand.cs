@@ -25,7 +25,7 @@ internal class DeleteSingleRawFilesCommand : AsyncCommandBase, IDeleteSingleRawF
         this.dialogService = dialogService;
     }
 
-    protected override async Task ExecuteAsync()
+    protected override async Task OnExecuteAsync()
     {
         await dialogService.ShowDialogAsync(new DeleteSingleRawFilesDialogModel(session.Files));
     }

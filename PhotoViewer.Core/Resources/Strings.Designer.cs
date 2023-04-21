@@ -70,6 +70,15 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Compare.
+        /// </summary>
+        public static string ComparePage_Title {
+            get {
+                return ResourceManager.GetString("ComparePage_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The following files could not be deleted:.
         /// </summary>
         public static string DeleteFilesErrorDialog_Message {

@@ -36,7 +36,7 @@ internal class ImportGpxTrackCommand : AsyncCommandBase, IImportGpxTrackCommand
         this.gpxService = gpxService;
     }
 
-    protected override async Task ExecuteAsync()
+    protected override async Task OnExecuteAsync()
     {
         await dialogService.ShowDialogAsync(new ImportGpxTrackDialogModel(messenger, metadataService, dialogService, gpxService, session.Files));
     }

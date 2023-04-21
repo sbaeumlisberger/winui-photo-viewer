@@ -79,12 +79,14 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
     {
         Messenger.Register<BitmapRotatedMesssage>(this, OnBitmapRotatedMesssageReceived);
 
-        await LoadImageAsync();
+        var loadImageTask = LoadImageAsync();
 
         if (PeopleTagToolModel != null)
         {
             await PeopleTagToolModel.InitializeAsync();
         }
+
+        await loadImageTask;
     }
 
     protected override void OnCleanup()
@@ -126,7 +128,13 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
 
                 var bitmapImage = await ImagePreloadService.Instance.GetPreloadedImageAsync(bitmapFile)
                                   ?? await imageLoadService.LoadFromFileAsync(bitmapFile, cancellationToken);
-                cancellationToken.ThrowIfCancellationRequested();
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    bitmapImage.Dispose();
+                }
+                cancellationToken.ThrowIfCancellationRequested();               
+                
                 BitmapImage = bitmapImage;
                 IsLoading = false;
 

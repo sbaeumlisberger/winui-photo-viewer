@@ -3,9 +3,16 @@ using System.Windows.Input;
 
 namespace PhotoViewer.Core.Utils;
 
-public abstract class AsyncCommandBase : ICommand
+public interface IAsyncCommand
+{
+    Task ExecuteAsync();
+}
+
+public abstract class AsyncCommandBase : IAsyncCommand, ICommand
 {
     public event EventHandler? CanExecuteChanged;
+
+    protected virtual bool CanExecute() => true;
 
     private bool isExecuting = false;
 
@@ -16,11 +23,16 @@ public abstract class AsyncCommandBase : ICommand
 
     public async void Execute(object? parameter)
     {
+        await ExecuteAsync();        
+    }
+
+    public async Task ExecuteAsync()
+    {
         isExecuting = true;
         RaiseCanExecuteChanged();
-        await ExecuteAsync();
+        await OnExecuteAsync();
         isExecuting = false;
-        if (CanExecute(parameter))
+        if (CanExecute(null))
         {
             RaiseCanExecuteChanged();
         }
@@ -31,14 +43,20 @@ public abstract class AsyncCommandBase : ICommand
         CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    protected virtual bool CanExecute() => true;
-
-    protected abstract Task ExecuteAsync();
+    protected abstract Task OnExecuteAsync();
 }
 
-public abstract class AsyncCommandBase<T> : ICommand
+public interface IAsyncCommand<T>
+{
+    Task ExecuteAsync(T parameter);
+}
+
+public abstract class AsyncCommandBase<T> : IAsyncCommand<T>, ICommand
 {
     public event EventHandler? CanExecuteChanged;
+
+    protected virtual bool CanExecute(T parameter) => true;
+
 
     private bool isExecuting  = false;
 
@@ -49,11 +67,16 @@ public abstract class AsyncCommandBase<T> : ICommand
 
     public async void Execute(object? parameter)
     {
+        await ExecuteAsync((T)parameter!);
+    }
+
+    public async Task ExecuteAsync(T parameter)
+    {
         isExecuting = true;
         RaiseCanExecuteChanged();
-        await ExecuteAsync((T)parameter!);
+        await OnExecuteAsync(parameter);
         isExecuting = false;
-        if (CanExecute(parameter)) 
+        if (CanExecute(parameter))
         {
             RaiseCanExecuteChanged();
         }
@@ -64,7 +87,5 @@ public abstract class AsyncCommandBase<T> : ICommand
         CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    protected virtual bool CanExecute(T parameter) => true;
-
-    protected abstract Task ExecuteAsync(T parameter);
+    protected abstract Task OnExecuteAsync(T parameter);
 }

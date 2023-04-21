@@ -197,4 +197,10 @@ public class ViewModelFactory : IViewModelFactory
             messenger,
             imageLoaderService);
     }
+
+    public ComparePageModel CreateComparePageModel()
+    {
+        var deleteFilesCommand = CreateDeleteFilesCommand();
+        return new ComparePageModel(applicationSession, messenger, imageLoaderService, deleteFilesCommand);
+    }
 }

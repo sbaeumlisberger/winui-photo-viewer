@@ -97,6 +97,33 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        internal static string ComparePage_BackButton {
+            get {
+                return ResourceManager.GetString("ComparePage_BackButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string ComparePage_DeleteButton {
+            get {
+                return ResourceManager.GetString("ComparePage_DeleteButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Link zooming and scrolling.
+        /// </summary>
+        internal static string ComparePage_LinkViewButton {
+            get {
+                return ResourceManager.GetString("ComparePage_LinkViewButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to delete the files linked to this file?.
         /// </summary>
         internal static string DeleteLinkedFilesDialog_Message {

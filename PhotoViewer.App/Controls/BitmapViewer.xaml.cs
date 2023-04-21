@@ -14,6 +14,8 @@ namespace PhotoViewer.App.Controls;
 
 public sealed partial class BitmapViewer : UserControl
 {
+    public event TypedEventHandler<BitmapViewer, ScrollViewerViewChangedEventArgs>? ViewChanged;
+
     public static readonly DependencyProperty BitmapImageProperty = DependencyPropertyHelper<BitmapViewer>.Register(nameof(BitmapImage), typeof(IBitmapImageModel));
 
     public static readonly DependencyProperty IsScaleUpEnabeldProperty = DependencyPropertyHelper<BitmapViewer>.Register(nameof(IsScaleUpEnabeld), typeof(bool), false);
@@ -98,6 +100,7 @@ public sealed partial class BitmapViewer : UserControl
     private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
     {
         canvasControl.Invalidate();
+        ViewChanged?.Invoke(this, e);
     }
 
     private void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)

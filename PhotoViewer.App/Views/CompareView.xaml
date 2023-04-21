@@ -1,0 +1,89 @@
+<UserControl
+    x:Class="PhotoViewer.App.Views.CompareView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewer.App.Views"
+    xmlns:controls="using:PhotoViewer.App.Controls"
+    xmlns:res="using:PhotoViewer.App.Resources"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Storyboard x:Name="DeleteStoryboard">
+            <DoubleAnimation 
+                From="1" To="0" Duration="0:0:0.2"
+                Storyboard.TargetProperty="(FrameworkElement.Opacity)"
+                Storyboard.TargetName="bitmapViewer" />
+        </Storyboard>
+    </UserControl.Resources>
+
+    <Grid>
+        <controls:BitmapViewer 
+            x:Name="bitmapViewer"
+            BitmapImage="{x:Bind ViewModel.BitmapImage, Mode=OneWay}"
+            ViewChanged="BitmapViewer_ViewChanged"/>
+
+        <StackPanel
+            Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            Margin="0,32,0,0"
+            Padding="4,0,4,0"
+            CornerRadius="4"
+            Background="{ThemeResource SystemControlBackgroundAltMediumBrush}"
+            BorderBrush="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
+            BorderThickness="2">
+
+            <AppBarButton
+                Icon="Back"            
+                Width="44"
+                LabelPosition="Collapsed"
+                IsCompact="True"
+                CornerRadius="4"
+                Command="{x:Bind ViewModel.SelectPreviousCommand, Mode=OneTime}"/>
+
+            <ComboBox   
+                Margin="6"
+                Padding="0"
+                Width="200"     
+                Background="Transparent"
+                VerticalAlignment="Stretch"             
+                BorderThickness="0"
+                CornerRadius="4"
+                HorizontalContentAlignment="Center"
+                SelectedItem="{x:Bind ViewModel.SelectedBitmapFile, Mode=OneWay}"
+                ItemsSource="{x:Bind ViewModel.BitmapFiles, Mode=OneWay}"
+                SelectionChanged="ComboBox_SelectionChanged"
+                Loaded="HideDropDownGlyph"/>
+
+            <AppBarButton
+                Icon="Forward"
+                Width="44"
+                LabelPosition="Collapsed"
+                IsCompact="True"
+                CornerRadius="4"
+                Command="{x:Bind ViewModel.SelectNextCommand, Mode=OneTime}"/>
+        </StackPanel>
+
+        <StackPanel
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"  
+            CornerRadius="4"
+            Background="{ThemeResource SystemControlBackgroundAltMediumBrush}"
+            BorderBrush="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
+            BorderThickness="2"
+            Padding="4,0,4,0"
+            Margin="16">
+            <AppBarButton
+                Padding="8"
+                Width="44"
+                LabelPosition="Collapsed"
+                Icon="Delete"
+                ToolTipService.ToolTip="{x:Bind res:Strings.ComparePage_DeleteButton}"
+                IsEnabled="{x:Bind ViewModel.CanDelete, Mode=OneWay}"
+                Click="DeleteButton_Click"/>
+        </StackPanel>
+    </Grid>
+
+</UserControl>

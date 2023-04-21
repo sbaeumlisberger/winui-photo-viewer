@@ -18,6 +18,12 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Views\CompareView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\ComparePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Dialogs\ImportGpxTrackDialog.xaml">
       <SubType>Designer</SubType>
     </Page>

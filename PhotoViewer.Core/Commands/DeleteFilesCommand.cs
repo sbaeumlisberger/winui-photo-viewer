@@ -12,7 +12,7 @@ using Windows.System;
 
 namespace PhotoViewer.Core.Commands;
 
-public interface IDeleteFilesCommand : IAcceleratedCommand, ICommand { }
+public interface IDeleteFilesCommand : IAsyncCommand<IReadOnlyCollection<IMediaFileInfo>>, IAcceleratedCommand, ICommand { }
 
 public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFileInfo>>, IDeleteFilesCommand
 {
@@ -38,7 +38,7 @@ public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFil
         return parameter.Any();
     }
 
-    protected override async Task ExecuteAsync(IReadOnlyCollection<IMediaFileInfo> files)
+    protected override async Task OnExecuteAsync(IReadOnlyCollection<IMediaFileInfo> files)
     {
         bool deleteLinkedFiles = false;
 

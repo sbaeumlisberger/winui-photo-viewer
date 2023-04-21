@@ -9,13 +9,7 @@
     mc:Ignorable="d"  
     Style="{StaticResource DefaultCommandBarStyle}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    DefaultLabelPosition="Right">
-
-    <CommandBar.Resources>
-        <Style TargetType="AppBarButton" BasedOn="{StaticResource DefaultAppBarButtonStyle}">
-            <Setter Property="LabelPosition" Value="Collapsed"/>
-        </Style>
-    </CommandBar.Resources>
+    DefaultLabelPosition="Collapsed">
 
     <AppBarButton 
         Icon="Tag" 

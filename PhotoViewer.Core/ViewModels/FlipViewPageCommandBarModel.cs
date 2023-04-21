@@ -41,6 +41,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     public bool CanRotate { get; private set; } = false;
 
+    private bool CanNavigateToComparePage => SelectedItemModel != null && SelectedItemModel.MediaItem is IBitmapFileInfo;
+
     private readonly IDialogService dialogService;
 
     private readonly IMediaFilesLoaderService loadMediaItemsService;
@@ -87,6 +89,12 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     private void NavigateToOverviewPage()
     {
         Messenger.Send(new NavigateToPageMessage(typeof(OverviewPageModel)));
+    }
+
+    [RelayCommand(CanExecute = nameof(CanNavigateToComparePage))]
+    private void NavigateToComparePage()
+    {
+        Messenger.Send(new NavigateToPageMessage(typeof(ComparePageModel), SelectedItemModel!.MediaItem));
     }
 
     [RelayCommand(CanExecute = nameof(CanStartDiashow))]

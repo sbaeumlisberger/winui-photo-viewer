@@ -36,7 +36,7 @@ internal class MoveRawFilesToSubfolderCommand : AsyncCommandBase, IMoveRawFilesT
         this.dialogService = dialogService;
     }
 
-    protected override async Task ExecuteAsync()
+    protected override async Task OnExecuteAsync()
     {
         await dialogService.ShowDialogAsync(new MoveRawFilesToSubfolderDialogModel(session.Files, settings));
     }

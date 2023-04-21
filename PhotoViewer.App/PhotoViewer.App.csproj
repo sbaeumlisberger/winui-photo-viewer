@@ -26,6 +26,8 @@
   <ItemGroup>
     <None Remove="Controls\ProgressControl.xaml" />
     <None Remove="Controls\SelectionRect.xaml" />
+    <None Remove="Views\ComparePage.xaml" />
+    <None Remove="Views\CompareView.xaml" />
     <None Remove="Views\Dialogs\DeleteLinkedFilesDialog.xaml" />
     <None Remove="Views\Dialogs\DeleteSingleRawFilesDialog.xaml" />
     <None Remove="Views\Dialogs\EditLocationDialog.xaml" />
@@ -179,6 +181,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Strings.cs</LastGenOutput>
     </None>
+    <Page Update="Views\CompareView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\Dialogs\ShiftDatenTakenDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -196,6 +201,14 @@
   
   <ItemGroup>
     <PRIResource Remove="Assets\SampleFiles\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <CustomAdditionalCompileInputs Remove="Views\ComparePage.xaml" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Resource Remove="Views\ComparePage.xaml" />
   </ItemGroup>
   
 </Project>
