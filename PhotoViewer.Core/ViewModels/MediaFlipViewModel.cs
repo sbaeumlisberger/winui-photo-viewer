@@ -29,6 +29,8 @@ public interface IMediaFlipViewModel : INotifyPropertyChanged
 
 public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 {
+    public event EventHandler<AsyncEventArgs> DeleteAnimationRequested;
+
     private static readonly int CacheSize = 2;
 
     public ObservableCollection<IMediaFileInfo> Items { get; private set; } = new ObservableCollection<IMediaFileInfo>();
@@ -116,10 +118,16 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
             IsLoadingMoreFiles = false;
         });
 
-        Messenger.Register<MediaFilesDeletedMessage>(this, msg =>
+        Messenger.Register<MediaFilesDeletedMessage>(this, async msg =>
         {
+            if (settings.ShowDeleteAnimation && msg.Files.Contains(SelectedItem)) 
+            {
+                var asyncEventArgs = new AsyncEventArgs();
+                DeleteAnimationRequested?.Invoke(this, asyncEventArgs);
+                await asyncEventArgs.CompletionTask;
+            }
             var selectedIndex = Items.IndexOf(SelectedItem!);
-            msg.Files.ForEach(file => Items.Remove(file));
+            msg.Files.ForEach(file => Items.Remove(file));            
             SelectedItem = Items.ElementAtOrDefault(Math.Min(selectedIndex, Items.Count - 1));
             UpdateFlipViewItemModels();
         });

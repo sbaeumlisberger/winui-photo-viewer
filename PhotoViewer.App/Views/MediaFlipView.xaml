@@ -32,6 +32,14 @@
         <converters:BoolToObjectConverter x:Name="DiashowLoopMenuItemTextConverter"
              TrueValue="{x:Bind res:Strings.MediaFlipView_DisableDiashowLoop}"
              FalseValue="{x:Bind res:Strings.MediaFlipView_EnableDiashowLoop}"/>
+        
+        <Storyboard x:Name="DeleteStoryboard">
+            <DoubleAnimation 
+                From="1" To="0" Duration="0:0:0.2"
+                Storyboard.TargetProperty="(FrameworkElement.Opacity)"
+                Storyboard.TargetName="flipView" />
+        </Storyboard>
+    
     </UserControl.Resources>
     
     <Grid>

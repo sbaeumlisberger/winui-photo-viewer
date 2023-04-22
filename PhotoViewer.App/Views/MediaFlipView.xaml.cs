@@ -21,6 +21,21 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         this.InitializeComponentMVVM();
     }
 
+    partial void ConnectToViewModel(MediaFlipViewModel viewModel)
+    {
+        viewModel.DeleteAnimationRequested += this.ViewModel_DeleteAnimationRequested;
+    }
+
+    partial void DisconnectFromViewModel(MediaFlipViewModel viewModel)
+    {
+        viewModel.DeleteAnimationRequested -= this.ViewModel_DeleteAnimationRequested;
+    }
+
+    private void ViewModel_DeleteAnimationRequested(object? sender, AsyncEventArgs e)
+    {
+        e.AddTask(DeleteStoryboard.RunAsync());
+    }
+
     private void FlipViewItem_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
     {
         if (sender.DataContext is IMediaFileInfo mediaFile
@@ -66,7 +81,9 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         {
             // update view model when selection was changed by the user
             ViewModel.Select((IMediaFileInfo?)flipView.SelectedItem);
-        }     
+        }
+
+        flipView.Opacity = 1; // reset delete animation 
     }
 
     private void FlipViewItem_Loaded(object sender, RoutedEventArgs e)
