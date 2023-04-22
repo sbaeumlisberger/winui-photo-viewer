@@ -34,7 +34,7 @@ public class CompareViewModelTest
         bitmapFiles.Add(TestUtils.MockBitmapFile("File 04.jpg"));
         bitmapFiles.Add(TestUtils.MockBitmapFile("File 05.jpg"));
 
-        compareViewModel = new CompareViewModel(bitmapFiles, imageLoaderService, deleteFilesCommand);
+        compareViewModel = new CompareViewModel(bitmapFiles, new ApplicationSettings(), imageLoaderService, deleteFilesCommand);
     }
 
 

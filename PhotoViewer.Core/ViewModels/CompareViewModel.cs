@@ -40,6 +40,8 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
 
     public bool CanDelete => SelectedBitmapFile != null;
 
+    public bool ShowDeleteAnimation { get; }
+
     private readonly IImageLoaderService imageLoaderService;
 
     private readonly IDeleteFilesCommand deleteFilesCommand;
@@ -48,9 +50,10 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
 
     private int selectedIndex = -1;
 
-    public CompareViewModel(IObservableReadOnlyList<IBitmapFileInfo> bitmapFiles, IImageLoaderService imageLoaderService, IDeleteFilesCommand deleteFilesCommand)
+    public CompareViewModel(IObservableReadOnlyList<IBitmapFileInfo> bitmapFiles, ApplicationSettings settings, IImageLoaderService imageLoaderService, IDeleteFilesCommand deleteFilesCommand)
     {
         BitmapFiles = bitmapFiles;
+        ShowDeleteAnimation = settings.ShowDeleteAnimation;
         this.deleteFilesCommand = deleteFilesCommand;
         this.imageLoaderService = imageLoaderService;
 

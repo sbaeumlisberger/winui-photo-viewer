@@ -71,7 +71,10 @@ public sealed partial class CompareView : UserControl, IMVVMControl<CompareViewM
 
     private async void DeleteButton_Click(object sender, RoutedEventArgs e)
     {
-        await DeleteStoryboard.RunAsync();
+        if (ViewModel.ShowDeleteAnimation)
+        {
+            await DeleteStoryboard.RunAsync();
+        }
         await ViewModel.DeleteCommand.ExecuteAsync(null);
         bitmapViewer.Opacity = 1;
     }

@@ -207,6 +207,6 @@ public class ViewModelFactory : IViewModelFactory
     public ICompareViewModel CreateCompareViewModel(IObservableList<IBitmapFileInfo> bitmapFiles)
     {
         var deleteFilesCommand = CreateDeleteFilesCommand();
-        return new CompareViewModel(bitmapFiles, imageLoaderService, deleteFilesCommand);
+        return new CompareViewModel(bitmapFiles, settings, imageLoaderService, deleteFilesCommand);
     }
 }
