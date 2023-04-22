@@ -24,6 +24,7 @@ public interface IViewModelFactory
     IOverviewItemModel CreateOverviewItemModel(IMediaFileInfo mediaFile);
     IOverviewPageCommandBarModel CreateOverviewPageCommandBarModel();
     IMediaFileContextMenuModel CreateMediaFileContextMenuModel();
+    ICompareViewModel CreateCompareViewModel(IObservableList<IBitmapFileInfo> bitmapFiles);
 }
 
 public class ViewModelFactory : IViewModelFactory
@@ -199,8 +200,13 @@ public class ViewModelFactory : IViewModelFactory
     }
 
     public ComparePageModel CreateComparePageModel()
+    { 
+        return new ComparePageModel(applicationSession, messenger, this);
+    }
+
+    public ICompareViewModel CreateCompareViewModel(IObservableList<IBitmapFileInfo> bitmapFiles)
     {
         var deleteFilesCommand = CreateDeleteFilesCommand();
-        return new ComparePageModel(applicationSession, messenger, imageLoaderService, deleteFilesCommand);
+        return new CompareViewModel(bitmapFiles, imageLoaderService, deleteFilesCommand);
     }
 }

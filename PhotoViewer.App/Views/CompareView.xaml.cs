@@ -42,7 +42,7 @@ public sealed partial class CompareView : UserControl, IMVVMControl<CompareViewM
         viewModel.ViewChangeRequested -= ViewModel_ViewChangeRequested;
     }
 
-    private void ViewModel_ViewChangeRequested(object? sender, CompareViewModel.ViewState e)
+    private void ViewModel_ViewChangeRequested(object? sender, ViewState e)
     {
         viewCangedProgrammatic = true;
         bitmapViewer.ScrollViewer.ChangeView(e.HorizontalOffset, e.VerticalOffset, e.ZoomFactor, true);

@@ -1,38 +1,29 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewer.App.Messages;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
-using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Utils;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PhotoViewer.Core.ViewModels;
 
 public partial class ComparePageModel : ViewModelBase
 {
-    public CompareViewModel Left { get; }
-    public CompareViewModel Right { get; }
+    public ICompareViewModel Left { get; }
+    public ICompareViewModel Right { get; }
 
     public bool IsLinkView { get; private set; } = true;
 
     private readonly IObservableList<IBitmapFileInfo> bitmapFiles = new ObservableList<IBitmapFileInfo>();
 
-    public ComparePageModel(ApplicationSession session, IMessenger messenger, IImageLoaderService imageLoaderService, IDeleteFilesCommand deleteFilesCommand) : base(messenger)
+    public ComparePageModel(IApplicationSession session, IMessenger messenger, IViewModelFactory viewModelFactory) : base(messenger)
     {
         bitmapFiles = new ObservableList<IBitmapFileInfo>(session.Files.OfType<IBitmapFileInfo>());
 
-        Left = new CompareViewModel(bitmapFiles, imageLoaderService, deleteFilesCommand);
-        Right = new CompareViewModel(bitmapFiles, imageLoaderService, deleteFilesCommand);
+        Left = viewModelFactory.CreateCompareViewModel(bitmapFiles);
+        Right = viewModelFactory.CreateCompareViewModel(bitmapFiles);
 
         Left.ViewChangedByUser += Left_ViewChanged;
         Right.ViewChangedByUser += Right_ViewChanged;
@@ -49,11 +40,11 @@ public partial class ComparePageModel : ViewModelBase
     public void OnNavigatedTo(object navigationParameter)
     {
         Messenger.Send(new ChangeWindowTitleMessage(Strings.ComparePage_Title));
-        Left.SelectedBitmapFile = (IBitmapFileInfo?)navigationParameter ?? bitmapFiles.First();
+        Left.SelectedBitmapFile = (IBitmapFileInfo)navigationParameter;
         Right.SelectedBitmapFile = bitmapFiles.GetSuccessor(Left.SelectedBitmapFile);
     }
 
-    private void Left_ViewChanged(object? sender, CompareViewModel.ViewState e)
+    private void Left_ViewChanged(object? sender, ViewState e)
     {
         if (IsLinkView)
         {
@@ -61,7 +52,7 @@ public partial class ComparePageModel : ViewModelBase
         }
     }
 
-    private void Right_ViewChanged(object? sender, CompareViewModel.ViewState e)
+    private void Right_ViewChanged(object? sender, ViewState e)
     {
         if (IsLinkView)
         {

@@ -6,7 +6,12 @@ using PhotoViewer.App.Models;
 
 namespace PhotoViewer.Core.Models;
 
-public class ApplicationSession
+public interface IApplicationSession 
+{
+    IReadOnlyList<IMediaFileInfo> Files { get; }
+}
+
+public class ApplicationSession : IApplicationSession
 {
     public IReadOnlyList<IMediaFileInfo> Files => files;
 

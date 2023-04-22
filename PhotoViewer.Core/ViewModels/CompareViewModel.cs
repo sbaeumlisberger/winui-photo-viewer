@@ -6,22 +6,24 @@ using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Tocronx.SimpleAsync;
 
 namespace PhotoViewer.Core.ViewModels;
 
-public partial class CompareViewModel : ViewModelBase
-{
-    public record struct ViewState(float ZoomFactor, double HorizontalOffset, double VerticalOffset);
+public record struct ViewState(float ZoomFactor, double HorizontalOffset, double VerticalOffset);
 
+public interface ICompareViewModel : IViewModel
+{
+    event EventHandler<ViewState>? ViewChangedByUser;
+
+    IBitmapFileInfo? SelectedBitmapFile { get; set; }
+
+    void ChangeView(float zoomFactor, double horizontalOffset, double verticalOffset);
+}
+
+public partial class CompareViewModel : ViewModelBase, ICompareViewModel
+{
     public event EventHandler<ViewState>? ViewChangedByUser;
 
     public event EventHandler<ViewState>? ViewChangeRequested;
@@ -66,7 +68,14 @@ public partial class CompareViewModel : ViewModelBase
     {
         if(SelectedBitmapFile != null && !BitmapFiles.Contains(SelectedBitmapFile)) 
         {
-            SelectedBitmapFile = selectedIndex < BitmapFiles.Count ? BitmapFiles[selectedIndex] : BitmapFiles.FirstOrDefault();
+            if (selectedIndex < BitmapFiles.Count)
+            {
+                SelectedBitmapFile = BitmapFiles[selectedIndex];
+            }
+            else 
+            {
+                SelectedBitmapFile = BitmapFiles.LastOrDefault();
+            }
         }
     }
 
@@ -127,7 +136,7 @@ public partial class CompareViewModel : ViewModelBase
         ViewChangedByUser?.Invoke(this, new ViewState(zoomFactor, horizontalOffset, verticalOffset));
     }
 
-    internal void ChangeView(float zoomFactor, double horizontalOffset, double verticalOffset)
+    public void ChangeView(float zoomFactor, double horizontalOffset, double verticalOffset)
     {
         ViewChangeRequested?.Invoke(this, new ViewState(zoomFactor, horizontalOffset, verticalOffset));
     }

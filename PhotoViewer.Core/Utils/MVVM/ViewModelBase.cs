@@ -3,7 +3,12 @@ using CommunityToolkit.Mvvm.Messaging;
 
 namespace PhotoViewer.App.Utils;
 
-public class ViewModelBase : ObservableObject
+public interface IViewModel 
+{
+    void Cleanup();
+}
+
+public class ViewModelBase : ObservableObject, IViewModel
 {
     public Task LastDispatchTask { get; private set; } = Task.CompletedTask;
 
