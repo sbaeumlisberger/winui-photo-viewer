@@ -15,6 +15,7 @@ using System.Diagnostics;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Core;
+using System.Xml.Linq;
 
 namespace PhotoViewer.App.Views;
 public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleToolModel>
@@ -60,40 +61,12 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
             }
         }
     }
-
-    private void PeopleTagUI_Loaded(object sender, RoutedEventArgs e)
-    {
-        SetUpPeopleTagUI((ContentPresenter)VisualTreeHelper.GetParent((StackPanel)sender));
-    }
-
-    private void PeopleTagsCanvas_SizeChanged(object sender, SizeChangedEventArgs args)
-    {
-        foreach (ContentPresenter container in ((Canvas)sender).Children)
-        {
-            SetUpPeopleTagUI(container);
-        }
-    }
-
-    private void SetUpPeopleTagUI(ContentPresenter container)
-    {
-        var peopleTag = (PeopleTagViewModel)container.DataContext;
-
-        var stackPanel = (StackPanel)VisualTreeHelper.GetChild(container, 0);
-        var faceBox = (FrameworkElement)stackPanel.Children[0];
-
-        faceBox.Width = ActualWidth * peopleTag.Rectangle.Width;
-        faceBox.Height = ActualHeight * peopleTag.Rectangle.Height;
-
-        double leftOffset = Math.Max(0, container.ActualWidth - faceBox.Width) / 2;
-        Canvas.SetLeft(container, ActualWidth * peopleTag.Rectangle.X - leftOffset);
-        Canvas.SetTop(container, ActualHeight * peopleTag.Rectangle.Y);
-    }
-
+         
     private void PeopleTag_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
         if (!ViewModel.IsActive)
         {
-            ((FrameworkElement)sender).Opacity = 1;
+            ((PeopleTagViewModel)((FrameworkElement)sender).DataContext).IsVisible = true;
         }
     }
 
@@ -101,31 +74,8 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
     {
         if (!ViewModel.IsActive)
         {
-            ((FrameworkElement)sender).Opacity = 0;
+            ((PeopleTagViewModel)((FrameworkElement)sender).DataContext).IsVisible = false;
         }
-    }
-
-    private void SuggestedFaceUI_Loaded(object sender, RoutedEventArgs e)
-    {
-        SetUpSuggestedFaceUI((ContentPresenter)VisualTreeHelper.GetParent((FrameworkElement)sender));
-    }
-
-    private void SuggestedFacesCanvas_SizeChanged(object sender, SizeChangedEventArgs args)
-    {
-        foreach (ContentPresenter container in ((Canvas)sender).Children)
-        {
-            SetUpSuggestedFaceUI(container);
-        }
-    }
-
-    private void SetUpSuggestedFaceUI(ContentPresenter container)
-    {
-        var faceRect = (Rect)container.DataContext;
-        var faceBox = (Rectangle)VisualTreeHelper.GetChild(container, 0);
-        faceBox.Width = ActualWidth * faceRect.Width;
-        faceBox.Height = ActualHeight * faceRect.Height;
-        Canvas.SetLeft(container, ActualWidth * faceRect.X);
-        Canvas.SetTop(container, ActualHeight * faceRect.Y);
     }
 
     private void SelectionCanvas_Loaded(object sender, RoutedEventArgs e)
@@ -248,9 +198,10 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        if(args.ChosenSuggestion is null) // user pressed enter or clicked query button
+        if (args.ChosenSuggestion is null) // user pressed enter or clicked query button
         {
             ViewModel.AddPersonCommand.Execute(null);
         }
     }
+
 }

@@ -1,6 +1,7 @@
 ﻿using MetadataAPI;
 using MetadataAPI.Data;
 using PhotoViewer.Core.Models;
+using System.Reflection.Metadata;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -55,9 +56,9 @@ internal class RotateBitmapService : IRotateBitmapService
         }
     }
 
-    private async Task RotateByMetadataAsync(IBitmapFileInfo photo)
+    private async Task RotateByMetadataAsync(IBitmapFileInfo bitmapFile)
     {
-        PhotoOrientation orientation = await metadataService.GetMetadataAsync(photo, MetadataProperties.Orientation).ConfigureAwait(false);
+        PhotoOrientation orientation = await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.Orientation).ConfigureAwait(false);
 
         switch (orientation)
         {
@@ -78,7 +79,25 @@ internal class RotateBitmapService : IRotateBitmapService
                 throw new NotSupportedException("Invalid image orientation.");
         }
 
-        await metadataService.WriteMetadataAsync(photo, MetadataProperties.Orientation, orientation).ConfigureAwait(false);
+        await metadataService.WriteMetadataAsync(bitmapFile, MetadataProperties.Orientation, orientation).ConfigureAwait(false);
+
+        var people = await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People).ConfigureAwait(false);
+
+        if (people.Any()) 
+        {
+            foreach (var peopleTag in people)
+            {
+                peopleTag.Rectangle = new FaceRect(
+                    1 - (peopleTag.Rectangle.Y + peopleTag.Rectangle.Height),
+                    peopleTag.Rectangle.X,
+                    peopleTag.Rectangle.Height,
+                    peopleTag.Rectangle.Width);
+            }
+
+            await metadataService.WriteMetadataAsync(bitmapFile, MetadataProperties.People, people).ConfigureAwait(false);
+        }
+
+        bitmapFile.InvalidateCache();
     }
 
     private static async Task RotateByPixelAsync(IBitmapFileInfo file)

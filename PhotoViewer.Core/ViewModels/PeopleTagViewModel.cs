@@ -16,6 +16,10 @@ public class PeopleTagViewModel : ObservableObject
 
     public FaceRect Rectangle { get; }
 
+    public double CenterX => Rectangle.X + Rectangle.Width / 2;
+
+    public double Bottom => Rectangle.Y + Rectangle.Height;
+
     public bool IsVisible { get; set; }
 
     public PeopleTagViewModel(bool isVisible, string name, FaceRect rectangle)

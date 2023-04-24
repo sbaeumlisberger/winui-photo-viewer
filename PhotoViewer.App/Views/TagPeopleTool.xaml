@@ -19,42 +19,49 @@
             x:Key="UIScaleTransform" 
             ScaleX="{x:Bind ViewModel.UIScaleFactor, Mode=OneWay}"
             ScaleY="{x:Bind ViewModel.UIScaleFactor, Mode=OneWay}"/>
-        
-        <converters:BoolToObjectConverter x:Name="BoolToOpacityConverter">
-            <converters:BoolToObjectConverter.TrueValue>
-                <x:Double>1</x:Double>
-            </converters:BoolToObjectConverter.TrueValue>
-            <converters:BoolToObjectConverter.FalseValue>
-                <x:Double>0</x:Double>
-            </converters:BoolToObjectConverter.FalseValue>
-        </converters:BoolToObjectConverter>
     </UserControl.Resources>
 
     <Grid>
         <ItemsControl ItemsSource="{x:Bind ViewModel.TaggedPeople, Mode=OneWay}" IsTabStop="False">
             <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:PeopleTagViewModel">
-                    <StackPanel
-                        Opacity="{x:Bind IsVisible, Converter={StaticResource BoolToOpacityConverter}, Mode=OneWay}"
-                        PointerEntered="PeopleTag_PointerEntered"
-                        PointerExited="PeopleTag_PointerExited"
-                        Loaded="PeopleTagUI_Loaded"
-                        Background="Transparent">
-                        <Rectangle Stroke="White" StrokeThickness="1"/>
-                        <Grid 
-                            Background="{ThemeResource PageBackgroundBrush}" 
-                            Padding="4"
-                            HorizontalAlignment="Center"
-                            RenderTransformOrigin="0.5,0"  
+                    <Canvas>
+                        <controls:PercentagePlacement
+                            PercentageX="{x:Bind Rectangle.X}"
+                            PercentageY="{x:Bind Rectangle.Y}"
+                            PercentageWidth="{x:Bind Rectangle.Width}"
+                            PercentageHeight="{x:Bind Rectangle.Height}"                            
+                            Background="Transparent"
+                            PointerEntered="PeopleTag_PointerEntered"
+                            PointerExited="PeopleTag_PointerExited">
+                            <Rectangle  
+                                Visibility="{x:Bind IsVisible, Mode=OneWay}"
+                                Stroke="White"
+                                StrokeThickness="1"/>
+                        </controls:PercentagePlacement>
+
+                        <controls:PercentagePlacement
+                            CenterX="True"
+                            FitParent="True"
+                            PercentageX="{x:Bind CenterX}"
+                            PercentageY="{x:Bind Bottom}"
+                            Visibility="{x:Bind IsVisible, Mode=OneWay}"
+                            RenderTransformOrigin="0.5,0"
                             RenderTransform="{StaticResource UIScaleTransform}">
-                            <TextBlock Text="{x:Bind Name}"/>
-                        </Grid>
-                    </StackPanel>
+                            <Border                                 
+                                Background="{ThemeResource PageBackgroundBrush}"
+                                Margin="0,4,0,0"
+                                Padding="8,2,8,4"
+                                CornerRadius="4">
+                                <TextBlock Text="{x:Bind Name}"/>
+                            </Border>
+                        </controls:PercentagePlacement>
+                    </Canvas>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas SizeChanged="PeopleTagsCanvas_SizeChanged"/>
+                    <Grid/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
@@ -62,15 +69,22 @@
         <ItemsControl ItemsSource="{x:Bind ViewModel.SuggestedFaces, Mode=OneWay}" IsTabStop="False">
             <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="foundation:Rect">
-                    <Rectangle
-                        Loaded="SuggestedFaceUI_Loaded"
-                        Stroke="Black" 
-                        StrokeThickness="1"/>
+                    <Canvas>
+                        <controls:PercentagePlacement
+                            PercentageX="{x:Bind X}"
+                            PercentageY="{x:Bind Y}"
+                            PercentageWidth="{x:Bind Width}"
+                            PercentageHeight="{x:Bind Height}">
+                            <Rectangle 
+                                Stroke="Black" 
+                                StrokeThickness="1"/>
+                        </controls:PercentagePlacement>
+                    </Canvas>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas SizeChanged="SuggestedFacesCanvas_SizeChanged"/>
+                    <Grid/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>

@@ -16,6 +16,7 @@ using Windows.Graphics.Imaging;
 using Windows.Media.FaceAnalysis;
 using PhotoViewer.Core.Models;
 using System.Diagnostics;
+using PhotoViewer.App.Messages;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -81,6 +82,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     {
         Messenger.Register<MetadataModifiedMessage>(this, Receive);
         Messenger.Register<TagPeopleToolActiveChangedMessage>(this, Receive);
+        Messenger.Register<BitmapRotatedMesssage>(this, Receive);
         IsActive = Messenger.Send(new IsTagPeopleToolActiveRequestMessage());
         TaggedPeople = await LoadTaggedPeopleAsync();
     }
@@ -93,6 +95,14 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     private async void Receive(MetadataModifiedMessage msg)
     {
         if (msg.Files.Contains(bitmapFile) && msg.MetadataProperty == MetadataProperties.People)
+        {
+            TaggedPeople = await LoadTaggedPeopleAsync();
+        }
+    }
+
+    private async void Receive(BitmapRotatedMesssage msg)
+    {
+        if (msg.Bitmap.Equals(bitmapFile))
         {
             TaggedPeople = await LoadTaggedPeopleAsync();
         }

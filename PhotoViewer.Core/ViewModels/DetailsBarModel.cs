@@ -53,6 +53,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
     {
         this.metadataService = metadataService;
         IsVisible = settings.AutoOpenDetailsBar;
+        // TODO update on rotate/content modified
         Messenger.Register<MetadataModifiedMessage>(this, OnReceive);
         Messenger.Register<BitmapImageLoadedMessage>(this, OnReceive);
         Messenger.Register<MediaFilesLoadingMessage>(this, OnReceive);

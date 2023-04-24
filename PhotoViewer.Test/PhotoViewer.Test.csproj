@@ -9,6 +9,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Remove="Resources\CropImageServiceTest.jpg" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
 		<PackageReference Include="coverlet.collector" Version="3.2.0">
 			<PrivateAssets>all</PrivateAssets>
@@ -24,6 +28,12 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\PhotoViewer.Core\PhotoViewer.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Resources\CropImageServiceTest.jpg">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>
