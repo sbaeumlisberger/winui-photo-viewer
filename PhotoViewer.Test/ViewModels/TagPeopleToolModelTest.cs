@@ -83,12 +83,12 @@ public class TagPeopleToolModelTest
         var peopleTagVM1 = tagPeopleToolModel.TaggedPeople[0];
         Assert.Equal(examplePeopleTag1.Name, peopleTagVM1.Name);
         Assert.Equal(isActive, peopleTagVM1.IsVisible);
-        Assert.Equal(examplePeopleTag1.Rectangle, peopleTagVM1.Rectangle);
+        Assert.Equal(examplePeopleTag1.Rectangle, peopleTagVM1.FaceBox);
 
         var peopleTagVM2 = tagPeopleToolModel.TaggedPeople[1];
         Assert.Equal(examplePeopleTag3.Name, peopleTagVM2.Name);
         Assert.Equal(isActive, peopleTagVM2.IsVisible);
-        Assert.Equal(examplePeopleTag3.Rectangle, peopleTagVM2.Rectangle);
+        Assert.Equal(examplePeopleTag3.Rectangle, peopleTagVM2.FaceBox);
     }
 
     [Fact]

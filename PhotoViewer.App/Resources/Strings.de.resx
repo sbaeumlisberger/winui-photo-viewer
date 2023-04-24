@@ -651,4 +651,7 @@
   <data name="TagPeopleTool_NamePlaceholder" xml:space="preserve">
     <value>Namen eingeben</value>
   </data>
+  <data name="TagPeopleTool_RemovePeopleTagMenuItem" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
 </root>

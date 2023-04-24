@@ -228,11 +228,32 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         }
     }
 
+    [RelayCommand]
+    private async Task RemovePeopleTag(string personName)
+    {
+        try
+        {
+            var people = await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People);
+            people = people.Where(peopleTag => peopleTag.Name != personName).ToList();
+            await metadataService.WriteMetadataAsync(bitmapFile, MetadataProperties.People, people);
+            Messenger.Send(new MetadataModifiedMessage(new[] { bitmapFile }, MetadataProperties.People));
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"Failed to remove people tag from \"{bitmapFile.FilePath}\":", ex);
+            await dialogService.ShowDialogAsync(new MessageDialogModel()
+            {
+                Title = Strings.RemovePeopleTagErrorDialog_Title,
+                Message = ex.Message,
+            });
+        }
+    }
+
     private async Task<List<PeopleTagViewModel>> LoadTaggedPeopleAsync()
     {
         return (await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People))
              .Where(peopleTag => !peopleTag.Rectangle.IsEmpty)
-             .Select(peopleTag => new PeopleTagViewModel(IsActive, peopleTag.Name, peopleTag.Rectangle))
+             .Select(peopleTag => new PeopleTagViewModel(IsActive, peopleTag.Name, peopleTag.Rectangle.ToRect()))
              .ToList();
     }
 

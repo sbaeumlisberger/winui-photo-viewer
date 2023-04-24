@@ -16,6 +16,8 @@ using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Core;
 using System.Xml.Linq;
+using System.Linq;
+using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace PhotoViewer.App.Views;
 public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleToolModel>
@@ -23,6 +25,8 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
     private const double DefaultFaceBoxSize = 100;
 
     private TagPeopleToolModel ViewModel => (TagPeopleToolModel)DataContext;
+
+    private string? contextRequestedName;
 
     public TagPeopleTool()
     {
@@ -61,7 +65,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
             }
         }
     }
-         
+
     private void PeopleTag_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
         if (!ViewModel.IsActive)
@@ -204,4 +208,25 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         }
     }
 
+    private void SelectionCanvas_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+    {
+        if (args.TryGetPosition(selectionCanvas, out var position))
+        {
+            var percentagePosition = new Point(
+                position.X / selectionCanvas.ActualWidth, 
+                position.Y / selectionCanvas.ActualHeight);
+
+            if (ViewModel.TaggedPeople.FirstOrDefault(vm => vm.FaceBox.Contains(percentagePosition)) is { } peopleTagVM)
+            {
+                args.Handled = true;
+                selectionCanvas.ShowAttachedFlyout(args);               
+                contextRequestedName = peopleTagVM.Name;
+            }
+        }
+    }
+
+    private void RemovePeopleTagMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        ViewModel.RemovePeopleTagCommand.Execute(contextRequestedName);
+    }
 }

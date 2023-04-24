@@ -1661,5 +1661,14 @@ namespace PhotoViewer.App.Resources {
                 return ResourceManager.GetString("TagPeopleTool_NamePlaceholder", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove.
+        /// </summary>
+        internal static string TagPeopleTool_RemovePeopleTagMenuItem {
+            get {
+                return ResourceManager.GetString("TagPeopleTool_RemovePeopleTagMenuItem", resourceCulture);
+            }
+        }
     }
 }

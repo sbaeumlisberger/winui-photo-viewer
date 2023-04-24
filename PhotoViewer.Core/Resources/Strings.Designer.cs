@@ -151,6 +151,15 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not remove people tag.
+        /// </summary>
+        public static string RemovePeopleTagErrorDialog_Title {
+            get {
+                return ResourceManager.GetString("RemovePeopleTagErrorDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to set desktop background.
         /// </summary>
         public static string SetDesktopBackgroundFailedDialog_Ttile {

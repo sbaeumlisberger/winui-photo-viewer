@@ -27,10 +27,10 @@
                 <DataTemplate x:DataType="viewModels:PeopleTagViewModel">
                     <Canvas>
                         <controls:PercentagePlacement
-                            PercentageX="{x:Bind Rectangle.X}"
-                            PercentageY="{x:Bind Rectangle.Y}"
-                            PercentageWidth="{x:Bind Rectangle.Width}"
-                            PercentageHeight="{x:Bind Rectangle.Height}"                            
+                            PercentageX="{x:Bind FaceBox.X}"
+                            PercentageY="{x:Bind FaceBox.Y}"
+                            PercentageWidth="{x:Bind FaceBox.Width}"
+                            PercentageHeight="{x:Bind FaceBox.Height}"                            
                             Background="Transparent"
                             PointerEntered="PeopleTag_PointerEntered"
                             PointerExited="PeopleTag_PointerExited">
@@ -43,8 +43,8 @@
                         <controls:PercentagePlacement
                             CenterX="True"
                             FitParent="True"
-                            PercentageX="{x:Bind CenterX}"
-                            PercentageY="{x:Bind Bottom}"
+                            PercentageX="{x:Bind FaceBoxCenterX}"
+                            PercentageY="{x:Bind FaceBox.Bottom}"
                             Visibility="{x:Bind IsVisible, Mode=OneWay}"
                             RenderTransformOrigin="0.5,0"
                             RenderTransform="{StaticResource UIScaleTransform}">
@@ -95,7 +95,17 @@
             Background="Transparent" 
             Loaded="SelectionCanvas_Loaded"
             PointerPressed="SelectionCanvas_PointerPressed" 
-            PointerReleased="SelectionCanvas_PointerReleased">
+            PointerReleased="SelectionCanvas_PointerReleased"
+            ContextRequested="SelectionCanvas_ContextRequested">
+
+            <FlyoutBase.AttachedFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem 
+                        Icon="Delete"
+                        Text="{x:Bind res:Strings.TagPeopleTool_RemovePeopleTagMenuItem}"
+                        Click="RemovePeopleTagMenuItem_Click"/>
+                </MenuFlyout>
+            </FlyoutBase.AttachedFlyout>
 
             <controls:SelectionRect 
                 x:Name="selectionRect"
