@@ -34,6 +34,7 @@
     <None Remove="Views\Dialogs\EditLocationDialog.xaml" />
     <None Remove="Views\Dialogs\ImportGpxTrackDialog.xaml" />
     <None Remove="Views\Dialogs\ManageKeywordsDialog.xaml" />
+    <None Remove="Views\Dialogs\ManagePeopleDialog.xaml" />
     <None Remove="Views\Dialogs\MoveRawFilesToSubfolderDialog.xaml" />
     <None Remove="Views\Dialogs\ShiftDatenTakenDialog.xaml" />
     <None Remove="Views\FlipViewPage.xaml" />
@@ -183,6 +184,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Strings.cs</LastGenOutput>
     </None>
+    <Page Update="Views\Dialogs\ManagePeopleDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\Dialogs\ManageKeywordsDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

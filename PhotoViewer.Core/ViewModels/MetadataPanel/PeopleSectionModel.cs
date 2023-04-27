@@ -164,7 +164,8 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
     }
 
     [RelayCommand]
-    private async Task ManagePeopleSuggestionsAsync() 
+    private async Task ManagePeopleSuggestionsAsync()
     {
+        await dialogService.ShowDialogAsync(new ManagePeopleDialogModel(suggestionsService, dialogService));
     }
 }

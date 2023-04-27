@@ -763,6 +763,60 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        internal static string ManagePeopleDialog_CloseButton {
+            get {
+                return ResourceManager.GetString("ManagePeopleDialog_CloseButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export.
+        /// </summary>
+        internal static string ManagePeopleDialog_ExportButton {
+            get {
+                return ResourceManager.GetString("ManagePeopleDialog_ExportButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import.
+        /// </summary>
+        internal static string ManagePeopleDialog_ImportButton {
+            get {
+                return ResourceManager.GetString("ManagePeopleDialog_ImportButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove.
+        /// </summary>
+        internal static string ManagePeopleDialog_RemoveButton {
+            get {
+                return ResourceManager.GetString("ManagePeopleDialog_RemoveButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        internal static string ManagePeopleDialog_ResetButton {
+            get {
+                return ResourceManager.GetString("ManagePeopleDialog_ResetButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manage People.
+        /// </summary>
+        internal static string ManagePeopleDialog_Title {
+            get {
+                return ResourceManager.GetString("ManagePeopleDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         internal static string MediaFileContextMenu_Delete {

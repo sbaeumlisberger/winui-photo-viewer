@@ -351,6 +351,24 @@
   <data name="ManageKeywordsDialog_Title" xml:space="preserve">
     <value>Schlagwörter verwalten</value>
   </data>
+  <data name="ManagePeopleDialog_CloseButton" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="ManagePeopleDialog_ExportButton" xml:space="preserve">
+    <value>Exportieren</value>
+  </data>
+  <data name="ManagePeopleDialog_ImportButton" xml:space="preserve">
+    <value>Importieren</value>
+  </data>
+  <data name="ManagePeopleDialog_RemoveButton" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="ManagePeopleDialog_ResetButton" xml:space="preserve">
+    <value>Zurücksetzen</value>
+  </data>
+  <data name="ManagePeopleDialog_Title" xml:space="preserve">
+    <value>Personenvorschläge verwalten</value>
+  </data>
   <data name="MediaFileContextMenu_Delete" xml:space="preserve">
     <value>Löschen</value>
   </data>

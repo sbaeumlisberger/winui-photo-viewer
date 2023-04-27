@@ -50,6 +50,10 @@ public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPa
             autoSuggestBox.ItemsSource = ViewModel.PeopleSectionModel.GetRecentSuggestions();
             autoSuggestBox.IsSuggestionListOpen = true;
         }
+        else 
+        {
+            autoSuggestBox.ItemsSource = ViewModel.PeopleSectionModel.FindSuggestions(autoSuggestBox.Text);
+        }
     }
 
     private void KeywordAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -67,6 +71,10 @@ public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPa
         {
             autoSuggestBox.ItemsSource = ViewModel.KeywordsSectionModel.GetRecentSuggestions();
             autoSuggestBox.IsSuggestionListOpen = true;
+        }
+        else
+        {
+            autoSuggestBox.ItemsSource = ViewModel.KeywordsSectionModel.FindSuggestions(autoSuggestBox.Text);
         }
     }
 

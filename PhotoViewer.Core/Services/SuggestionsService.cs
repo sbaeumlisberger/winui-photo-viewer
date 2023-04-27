@@ -56,7 +56,7 @@ namespace PhotoViewer.Core.Services
         }
         public IReadOnlyList<string> GetAll()
         {
-            return suggestions.OrderByDescending(suggestion => suggestion).ToList();
+            return suggestions.OrderBy(suggestion => suggestion).ToList();
         }
 
         public IReadOnlyList<string> GetRecentSuggestions()
