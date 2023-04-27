@@ -1,31 +1,90 @@
-﻿using PhotoViewer.Core.Models;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using NSubstitute;
+using PhotoViewer.App.Services;
+using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace PhotoViewer.Test.Services;
 
 public class CropImageServiceTest
 {
-    // TODO
+    private readonly CropImageService cropImageService = new CropImageService(new StrongReferenceMessenger(), Substitute.For<IMetadataService>());
 
-    private readonly CropImageService cropImageService = new CropImageService();
+    private readonly string TestFolder = TestUtils.CreateTestFolder();
+
+    public CropImageServiceTest(ITestOutputHelper output) 
+    {
+        output.WriteLine("TestFolder: " + TestFolder);
+    }
 
     [Fact]
-    public async Task DoesWorkAtAll() 
+    public async Task CropInPlaceWorks()
     {
-        var storageFile = await StorageFile.GetFileFromPathAsync(Path.Combine(Environment.CurrentDirectory, "Resources", "CropImageServiceTest.jpg"));
+        var storageFile = await GetTestFileAsync();
         var imageFile = new BitmapFileInfo(storageFile);
+        ulong orginalFileSize = await GetFileSize(storageFile);
 
-        var newBounds = new Rect(200, 200, 400, 400);
+        var newBounds = new Rect(200, 200, 600, 400);
         await cropImageService.CropImageAsync(imageFile, newBounds);
 
+        ulong newFileSize = await GetFileSize(storageFile);
+        Assert.True(newFileSize < orginalFileSize);
+        var imageProperties = await storageFile.Properties.GetImagePropertiesAsync();
+        Assert.Equal(newBounds.Width, imageProperties.Width);
+        Assert.Equal(newBounds.Height, imageProperties.Height);
+    }
+
+    [Fact]
+    public async Task CropToCopyWorks()
+    {
+        var storageFile = await GetTestFileAsync();
+        var imageFile = new BitmapFileInfo(storageFile);
+        ulong orginalFileSize = await GetFileSize(storageFile);
+        var copyFilePath = Path.Combine(TestFolder, "Copy.jpg");
+        using var copyStream = File.Create(copyFilePath);
+
+        var newBounds = new Rect(200, 200, 600, 400);
+        await cropImageService.CropImageAsync(imageFile, newBounds, copyStream);
+        copyStream.Close();
+
+        var copy = await StorageFile.GetFileFromPathAsync(copyFilePath);
+        ulong newFileSize = await GetFileSize(copy);
+        Assert.True(newFileSize < orginalFileSize);
+        var imageProperties = await copy.Properties.GetImagePropertiesAsync();
+        Assert.Equal(newBounds.Width, imageProperties.Width);
+        Assert.Equal(newBounds.Height, imageProperties.Height);
+    }
+
+    [Fact]
+    public async Task ThrowsForInvalidBounds()
+    {
+        var storageFile = await GetTestFileAsync();
+        var imageFile = new BitmapFileInfo(storageFile);
+
+        Rect invalidBounds = Rect.Empty;
+        await Assert.ThrowsAnyAsync<ArgumentException>(() => cropImageService.CropImageAsync(imageFile, invalidBounds));
+    }
+
+    // TODO assert if offset is correct
+
+    // TODO test update of people tags 
+
+    private async Task<StorageFile> GetTestFileAsync() 
+    {
+        string srcPath = Path.Combine(Environment.CurrentDirectory, "Resources", "CropImageServiceTest/TestFile.jpg");
+        string filePath = Path.Combine(TestFolder, "TestFile.jpg");
+        File.Copy(srcPath, filePath, true);
+        return await StorageFile.GetFileFromPathAsync(filePath);
+    }
+
+    private async Task<ulong> GetFileSize(IStorageFile storageFile)
+    {
+        using var fileStream = await storageFile.OpenAsync(FileAccessMode.Read);
+        return fileStream.Size;
     }
 
 }

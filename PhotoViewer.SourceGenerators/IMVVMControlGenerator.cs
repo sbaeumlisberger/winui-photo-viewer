@@ -64,10 +64,6 @@ public class IMVVMControlGenerator : IIncrementalGenerator
 
                 partial class {{classSymbol.Name}} 
                 {
-                    //public static DependencyProperty ViewModel2Property { get; } = DependencyProperty.Register(nameof(ViewModel), typeof({{classSymbol.Name}}), typeof({{viewModelType}}), new PropertyMetadata(null));
-            
-                    //public {{viewModelType}} ViewModel2 { get => ({{viewModelType}})GetValue(ViewModel2Property); set => SetValue(ViewModel2Property, value); }
-
                     void IMVVMControl<{{viewModelType}}>.InitializeComponent() => InitializeComponent();
                     void IMVVMControl<{{viewModelType}}>.UpdateBindings() => Bindings.Update();
                     void IMVVMControl<{{viewModelType}}>.StopBindings() => Bindings.StopTracking();

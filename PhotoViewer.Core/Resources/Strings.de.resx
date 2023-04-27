@@ -123,6 +123,9 @@
   <data name="ComparePage_Title" xml:space="preserve">
     <value>Vergleichen</value>
   </data>
+  <data name="CropImageErrorDialogTitle" xml:space="preserve">
+    <value>Zuschneiden fehgeschlagen</value>
+  </data>
   <data name="DeleteFilesErrorDialog_Message" xml:space="preserve">
     <value>Die folgenden Dateien konnten nicht gelöscht werden:</value>
   </data>

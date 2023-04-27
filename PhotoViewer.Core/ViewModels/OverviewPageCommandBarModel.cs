@@ -65,7 +65,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
         {
             await rotateBitmapService.RotateClockwise90DegreesAsync(bitmapFile).ConfigureAwait(false);
         });
-        result.ProcessedElements.ForEach(bitmapFile => Messenger.Send(new BitmapRotatedMesssage(bitmapFile)));
+        result.ProcessedElements.ForEach(bitmapFile => Messenger.Send(new BitmapModifiedMesssage(bitmapFile)));
     }
 
     [RelayCommand]

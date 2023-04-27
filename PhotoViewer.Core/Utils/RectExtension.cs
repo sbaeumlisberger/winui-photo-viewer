@@ -9,9 +9,4 @@ public static class RectExtension
     {
         return !(otherRect.Left > rect.Right || otherRect.Right < rect.Left || otherRect.Top > rect.Bottom || otherRect.Bottom < rect.Top);
     }
-
-    public static Rect Intersection(this Rect rect, Rect otherRect)
-    {
-        return RectHelper.Intersect(rect, otherRect);
-    }
 }

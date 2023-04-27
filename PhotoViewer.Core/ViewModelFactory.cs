@@ -25,6 +25,7 @@ public interface IViewModelFactory
     IOverviewPageCommandBarModel CreateOverviewPageCommandBarModel();
     IMediaFileContextMenuModel CreateMediaFileContextMenuModel();
     ICompareViewModel CreateCompareViewModel(IObservableList<IBitmapFileInfo> bitmapFiles);
+    ICropImageToolModel CreateCropImageToolModel(IBitmapFileInfo bitmapFile);
 }
 
 public class ViewModelFactory : IViewModelFactory
@@ -49,6 +50,7 @@ public class ViewModelFactory : IViewModelFactory
     private readonly ISuggestionsService keywordsSuggestionsService = new SuggestionsService("keywords");
     private readonly IDialogService dialogService;
     private readonly IFaceDetectionService faceDetectionService = new FaceDetectionService();
+    private readonly ICropImageService cropImageService;
 
     private ViewModelFactory(IMessenger messenger, ApplicationSettings settings, IDialogService dialogService)
     {
@@ -57,6 +59,7 @@ public class ViewModelFactory : IViewModelFactory
         this.dialogService = dialogService;
         applicationSession = new ApplicationSession(messenger);
         rotateBitmapService = new RotateBitmapService(metadataService);
+        cropImageService = new CropImageService(messenger, metadataService);
     }
 
     public static void Initialize(IMessenger messenger, ApplicationSettings settings, IDialogService dialogService)
@@ -208,5 +211,10 @@ public class ViewModelFactory : IViewModelFactory
     {
         var deleteFilesCommand = CreateDeleteFilesCommand();
         return new CompareViewModel(bitmapFiles, settings, imageLoaderService, deleteFilesCommand);
+    }
+
+    public ICropImageToolModel CreateCropImageToolModel(IBitmapFileInfo bitmapFile)
+    {
+        return new CropImageToolModel(bitmapFile, messenger, cropImageService, dialogService);
     }
 }

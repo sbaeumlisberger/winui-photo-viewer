@@ -1,9 +1,4 @@
-﻿using MetadataAPI.Data;
-using PhotoViewer.App.Utils.Logging;
-using PhotoViewer.Core.Utils;
-using System;
-using System.IO;
-using Windows.Foundation;
+﻿using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
@@ -97,7 +92,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
         if (fileAccessMode != FileAccessMode.Read)
         {
             // Files access via MTP are readonly
-            throw new Exception("Can not write file!");
+            throw new Exception("Can not write file via MTP!");
         }
 
         if (buffer == null)

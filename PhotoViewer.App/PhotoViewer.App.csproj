@@ -28,6 +28,7 @@
     <None Remove="Controls\SelectionRect.xaml" />
     <None Remove="Views\ComparePage.xaml" />
     <None Remove="Views\CompareView.xaml" />
+    <None Remove="Views\CropImageTool.xaml" />
     <None Remove="Views\Dialogs\DeleteLinkedFilesDialog.xaml" />
     <None Remove="Views\Dialogs\DeleteSingleRawFilesDialog.xaml" />
     <None Remove="Views\Dialogs\EditLocationDialog.xaml" />
@@ -181,6 +182,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Strings.cs</LastGenOutput>
     </None>
+    <Page Update="Views\CropImageTool.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\CompareView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

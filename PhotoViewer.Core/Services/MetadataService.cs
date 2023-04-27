@@ -1,6 +1,8 @@
-﻿using MetadataAPI;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using System.Runtime.CompilerServices;
@@ -18,6 +20,8 @@ public interface IMetadataService
     Task WriteMetadataAsync(IBitmapFileInfo bitmap, MetadataPropertySet propertySet);
 
     Task WriteMetadataAsync<T>(IBitmapFileInfo bitmap, IMetadataProperty<T> property, T value);
+
+    void UpdateCache<T>(IBitmapFileInfo bitmap, IMetadataProperty<T> property, T value);
 }
 
 internal class MetadataService : IMetadataService
@@ -80,6 +84,14 @@ internal class MetadataService : IMetadataService
         var metadataPropertySet = new MetadataPropertySet();
         metadataPropertySet.Add(property, value);
         await WriteMetadataAsync(bitmap, metadataPropertySet);
+    }
+
+    public void UpdateCache<T>(IBitmapFileInfo bitmap, IMetadataProperty<T> property, T value)
+    {
+        if (cacheTable.TryGetValue(bitmap, out var cache) && cache.TryGetValue(out var metadataView))
+        {
+            metadataView.Source[property.Identifier] = value;
+        }
     }
 
     private async Task<MetadataView> ReadMetadataAsync(IBitmapFileInfo file)

@@ -57,6 +57,11 @@ public class ViewModelBase : ObservableObject, IViewModel
 
     protected virtual void OnViewDisconnectedOverride() { }
 
+    protected void Register<TMessage>(Action<TMessage> messageHandler) where TMessage : class
+    {
+        Messenger.Register<TMessage>(this, (_, msg) => RunOnUIThreadAsync(() => messageHandler(msg)));
+    }
+
     protected Task RunOnUIThreadAsync(Action action)
     {
         if (synchronizationContext is null)

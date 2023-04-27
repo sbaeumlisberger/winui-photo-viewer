@@ -6,11 +6,11 @@ using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Commands;
+using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows.Input;
 using Windows.Storage;
 
@@ -37,17 +37,19 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     public IAcceleratedCommand ShiftDatenTakenCommand { get; }
     public IAcceleratedCommand ImportGpxTrackCommand { get; }
 
-    public bool CanStartDiashow { get; private set; } = false;
+    public bool CanStartDiashow => SelectedItemModel != null;
 
-    public bool CanRotate { get; private set; } = false;
+    public bool CanCropImage => SelectedItemModel?.MediaItem is IBitmapFileInfo;
 
-    private bool CanNavigateToComparePage => SelectedItemModel != null && SelectedItemModel.MediaItem is IBitmapFileInfo;
+    public bool CanRotate => SelectedItemModel?.MediaItem is IBitmapFileInfo bitmap && rotateBitmapService.CanRotate(bitmap);
+
+    private bool CanNavigateToComparePage => SelectedItemModel?.MediaItem is IBitmapFileInfo;
 
     private readonly IDialogService dialogService;
 
     private readonly IMediaFilesLoaderService loadMediaItemsService;
 
-    private readonly IRotateBitmapService rotatePhotoService;
+    private readonly IRotateBitmapService rotateBitmapService;
 
     private readonly ApplicationSettings settings;
 
@@ -67,7 +69,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     {
         this.dialogService = dialogService;
         this.loadMediaItemsService = loadMediaItemsService;
-        this.rotatePhotoService = rotatePhotoService;
+        this.rotateBitmapService = rotatePhotoService;
         this.settings = settings;
 
         DeleteCommand = deleteFilesCommand;
@@ -77,12 +79,6 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         DeleteSingleRawFilesCommand = deleteSingleRawFilesCommand;
         ShiftDatenTakenCommand= shiftDatenTakenCommand;
         ImportGpxTrackCommand = importGpxTrackCommand;
-    }
-
-    partial void OnSelectedItemModelChanged()
-    {
-        CanStartDiashow = SelectedItemModel != null;
-        CanRotate = SelectedItemModel?.MediaItem is IBitmapFileInfo bitmap && rotatePhotoService.CanRotate(bitmap);
     }
 
     [RelayCommand]
@@ -109,14 +105,20 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         Messenger.Send(new ToggleMetataPanelMessage());
     }
 
+    [RelayCommand(CanExecute = nameof(CanCropImage))]
+    private void CropImage()
+    {
+        Messenger.Send(new ToggleCropImageToolMessage());
+    }    
+
     [RelayCommand(CanExecute = nameof(CanRotate))]
     private async Task RotateAsync()
     {
         var bitmap = (IBitmapFileInfo)SelectedItemModel!.MediaItem;
         try
         {
-            await rotatePhotoService.RotateClockwise90DegreesAsync(bitmap);
-            Messenger.Send(new BitmapRotatedMesssage(bitmap));
+            await rotateBitmapService.RotateClockwise90DegreesAsync(bitmap);
+            Messenger.Send(new BitmapModifiedMesssage(bitmap));
         }
         catch (Exception ex) 
         {

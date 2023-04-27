@@ -32,7 +32,7 @@ namespace PhotoViewer.Core.ViewModels
         public bool IsNoFilesSelectedMessageVisible { get; private set; } = true;
 
         public bool IsInputVisible { get; private set; } = false;
-        
+
         public bool IsUnsupportedFilesMessageVisibile { get; private set; } = false;
 
         public MetadataTextboxModel TitleTextboxModel { get; }
@@ -79,8 +79,8 @@ namespace PhotoViewer.Core.ViewModels
 
             IsVisible = applicationSettings.AutoOpenMetadataPanel;
 
-            Messenger.Register<ToggleMetataPanelMessage>(this, OnReceive);
-            Messenger.Register<MetadataModifiedMessage>(this, OnReceive);
+            Register<ToggleMetataPanelMessage>(OnReceive);
+            Register<MetadataModifiedMessage>(OnReceive);
         }
 
         protected override void OnViewDisconnectedOverride()

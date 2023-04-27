@@ -144,7 +144,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
         foreach (var bitmap in Files.OfType<IBitmapFileInfo>())
         {
             await rotateBitmapService.RotateClockwise90DegreesAsync(bitmap);
-            Messenger.Send(new BitmapRotatedMesssage(bitmap));
+            Messenger.Send(new BitmapModifiedMesssage(bitmap));
         }
     }
 

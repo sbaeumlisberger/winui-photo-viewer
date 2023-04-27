@@ -1,23 +1,16 @@
-using MetadataAPI.Data;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Shapes;
 using PhotoVieweApp.Utils;
 using PhotoViewer.Core.ViewModels;
 using PhotoViewer.App.Controls;
 using PhotoViewer.App.Utils;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using Windows.Foundation;
 using Windows.System;
-using Windows.UI.Core;
-using System.Xml.Linq;
 using System.Linq;
-using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace PhotoViewer.App.Views;
 public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleToolModel>

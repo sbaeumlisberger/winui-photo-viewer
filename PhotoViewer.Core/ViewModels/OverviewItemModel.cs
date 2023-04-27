@@ -42,7 +42,7 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
     protected async override void OnViewConnectedOverride()
     {
         Messenger.Register<ChangeThumbnailSizeMessage>(this, Receive);
-        Messenger.Register<BitmapRotatedMesssage>(this, Receive);
+        Messenger.Register<BitmapModifiedMesssage>(this, Receive);
 
         if (MediaFile is IBitmapFileInfo bitmapFile && bitmapFile.IsMetadataSupported)
         {
@@ -55,9 +55,9 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
         ThumbnailSize = msg.NewThumbnailSize;
     }
 
-    private void Receive(BitmapRotatedMesssage msg)
+    private void Receive(BitmapModifiedMesssage msg)
     {
-        if (msg.Bitmap == MediaFile)
+        if (msg.BitmapFile == MediaFile)
         {
             ThumbnailInvalidated?.Invoke(this, EventArgs.Empty);
         }

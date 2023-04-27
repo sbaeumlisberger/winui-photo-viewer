@@ -126,6 +126,15 @@
   <data name="AppTheme_System" xml:space="preserve">
     <value>System</value>
   </data>
+  <data name="AspectRadioMode_Fixed" xml:space="preserve">
+    <value>Festes Seitenverhältnis</value>
+  </data>
+  <data name="AspectRadioMode_Free" xml:space="preserve">
+    <value>Freies Seitenverhältnis</value>
+  </data>
+  <data name="AspectRadioMode_Orginal" xml:space="preserve">
+    <value>Orginal Seitenverhältnis</value>
+  </data>
   <data name="BitmapFlipViewItem_ReloadButton" xml:space="preserve">
     <value>Wiederholen</value>
   </data>
@@ -137,6 +146,24 @@
   </data>
   <data name="ComparePage_LinkViewButton" xml:space="preserve">
     <value>Zoomen und Scrollen koppeln</value>
+  </data>
+  <data name="CropImageTool_AspectRadioHeightLabel" xml:space="preserve">
+    <value>Höhe:</value>
+  </data>
+  <data name="CropImageTool_AspectRadioWidthLabel" xml:space="preserve">
+    <value>Breite:</value>
+  </data>
+  <data name="CropImageTool_CancelButtonTooltip" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="CropImageTool_OptionsButtonTooltip" xml:space="preserve">
+    <value>Optionen</value>
+  </data>
+  <data name="CropImageTool_SaveButtonTooltip" xml:space="preserve">
+    <value>Speicheren</value>
+  </data>
+  <data name="CropImageTool_SaveCopyMenuItem" xml:space="preserve">
+    <value>Kopie speicheren</value>
   </data>
   <data name="DeleteLinkedFilesDialog_Message" xml:space="preserve">
     <value>Möchten Sie die mit dieser Datei verknüpften Dateien löschen?</value>

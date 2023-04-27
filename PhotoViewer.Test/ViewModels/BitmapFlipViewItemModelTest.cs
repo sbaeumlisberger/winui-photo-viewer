@@ -116,7 +116,7 @@ public class BitmapFlipViewItemModelTest
             .Setup(m => m.LoadFromFileAsync(bitmapFileMock.Object, It.IsAny<CancellationToken>()))
             .Returns(loadFromFileAsyncTSC.Task);
 
-        messenger.Send(new BitmapRotatedMesssage(bitmapFileMock.Object));
+        messenger.Send(new BitmapModifiedMesssage(bitmapFileMock.Object));
 
         Assert.True(bitmapFlipViewItemModel.IsLoading);
 
@@ -140,14 +140,14 @@ public class BitmapFlipViewItemModelTest
             .Setup(m => m.LoadFromFileAsync(bitmapFileMock.Object, It.IsAny<CancellationToken>()))
             .Returns(loadFromFileAsyncTSC1.Task);
 
-        messenger.Send(new BitmapRotatedMesssage(bitmapFileMock.Object));
+        messenger.Send(new BitmapModifiedMesssage(bitmapFileMock.Object));
 
         var loadFromFileAsyncTSC2 = new TaskCompletionSource<IBitmapImageModel>();
         imageLoadServiceMock
             .Setup(m => m.LoadFromFileAsync(bitmapFileMock.Object, It.IsAny<CancellationToken>()))
             .Returns(loadFromFileAsyncTSC2.Task);
 
-        messenger.Send(new BitmapRotatedMesssage(bitmapFileMock.Object));
+        messenger.Send(new BitmapModifiedMesssage(bitmapFileMock.Object));
 
         Assert.True(bitmapFlipViewItemModel.IsLoading);
 
@@ -164,7 +164,7 @@ public class BitmapFlipViewItemModelTest
     [Fact]
     public void Receive_BitmapRotatedMesssage_OtherFile()
     {
-        messenger.Send(new BitmapRotatedMesssage(Mock.Of<IBitmapFileInfo>()));
+        messenger.Send(new BitmapModifiedMesssage(Mock.Of<IBitmapFileInfo>()));
 
         Assert.False(bitmapFlipViewItemModel.IsLoading);
     }

@@ -83,10 +83,10 @@
             <KeyboardAccelerator Modifiers="Control" Key="M"/>
         </AppBarButton.KeyboardAccelerators>
     </AppBarButton>
-    <!--<AppBarButton
+    <AppBarButton
         Icon="Crop" 
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_CropButton}"
-        IsEnabled="False"/>-->
+        Command="{x:Bind ViewModel.CropImageCommand}"/>
     <AppBarButton 
         Icon="Rotate" 
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_RotateButton}"

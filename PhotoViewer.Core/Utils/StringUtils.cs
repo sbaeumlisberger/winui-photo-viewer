@@ -15,6 +15,10 @@ public static class StringUtils
     {
         return d.ToString(CultureInfo.InvariantCulture);
     }
+    public static string StripStart(this string s, string stripString)
+    {
+        return s.StartsWith(stripString) ? s.Substring(stripString.Length) : s;
+    }
 
     public static string StripEnd(this string s, string stripString)
     {

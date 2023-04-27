@@ -123,6 +123,9 @@
   <data name="ComparePage_Title" xml:space="preserve">
     <value>Compare</value>
   </data>
+  <data name="CropImageErrorDialogTitle" xml:space="preserve">
+    <value>Crop image failed</value>
+  </data>
   <data name="DeleteFilesErrorDialog_Message" xml:space="preserve">
     <value>The following files could not be deleted:</value>
   </data>

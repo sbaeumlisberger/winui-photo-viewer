@@ -88,6 +88,33 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fixed aspect radio.
+        /// </summary>
+        internal static string AspectRadioMode_Fixed {
+            get {
+                return ResourceManager.GetString("AspectRadioMode_Fixed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Free aspect radio.
+        /// </summary>
+        internal static string AspectRadioMode_Free {
+            get {
+                return ResourceManager.GetString("AspectRadioMode_Free", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Orginal aspect radio.
+        /// </summary>
+        internal static string AspectRadioMode_Orginal {
+            get {
+                return ResourceManager.GetString("AspectRadioMode_Orginal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reload.
         /// </summary>
         internal static string BitmapFlipViewItem_ReloadButton {
@@ -120,6 +147,60 @@ namespace PhotoViewer.App.Resources {
         internal static string ComparePage_LinkViewButton {
             get {
                 return ResourceManager.GetString("ComparePage_LinkViewButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Height:.
+        /// </summary>
+        internal static string CropImageTool_AspectRadioHeightLabel {
+            get {
+                return ResourceManager.GetString("CropImageTool_AspectRadioHeightLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Width:.
+        /// </summary>
+        internal static string CropImageTool_AspectRadioWidthLabel {
+            get {
+                return ResourceManager.GetString("CropImageTool_AspectRadioWidthLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string CropImageTool_CancelButtonTooltip {
+            get {
+                return ResourceManager.GetString("CropImageTool_CancelButtonTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string CropImageTool_OptionsButtonTooltip {
+            get {
+                return ResourceManager.GetString("CropImageTool_OptionsButtonTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        internal static string CropImageTool_SaveButtonTooltip {
+            get {
+                return ResourceManager.GetString("CropImageTool_SaveButtonTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save copy.
+        /// </summary>
+        internal static string CropImageTool_SaveCopyMenuItem {
+            get {
+                return ResourceManager.GetString("CropImageTool_SaveCopyMenuItem", resourceCulture);
             }
         }
         

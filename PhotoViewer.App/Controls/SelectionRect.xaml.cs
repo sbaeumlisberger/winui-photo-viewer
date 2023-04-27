@@ -29,7 +29,7 @@ public sealed partial class SelectionRect : UserControl
     private double CornerSize => 8;
     private double StrokeThickness => 1;
 
-    private Canvas Canvas => (Canvas)Parent;
+    private Canvas? Canvas => (Canvas?)Parent;
 
     private FrameworkElement? activeElement;
     private Point startPointerPosition;
@@ -58,12 +58,19 @@ public sealed partial class SelectionRect : UserControl
         borderRight.SetCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeWestEast));
         borderBottom.SetCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeNorthSouth));
         rect.SetCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeAll));
+
+        OnAspectRadioChanged(); 
+        OnUIScaleFactorChanged();
     }
 
     private void OnAspectRadioChanged()
     {
-        double? aspectRadio = TryGetAspectRadioAsDouble();
-        if (aspectRadio != null)
+        if (Canvas is null) 
+        {
+            return;
+        }
+
+        if (TryGetAspectRadioAsDouble() is double aspectRadio)
         {
             if (Canvas.ActualHeight < Canvas.ActualWidth)
             {
@@ -79,6 +86,11 @@ public sealed partial class SelectionRect : UserControl
 
     private void OnUIScaleFactorChanged()
     {
+        if (Canvas is null)
+        {
+            return;
+        }
+
         double cornerOffset = CornerSize / 2 - StrokeThickness / 2;
         var cornerLeftTopTranslateTransform = new TranslateTransform() { X = -cornerOffset, Y = -cornerOffset };
         var cornerRightTopTranslateTransform = new TranslateTransform() { X = cornerOffset, Y = -cornerOffset };
@@ -126,7 +138,7 @@ public sealed partial class SelectionRect : UserControl
         activeElement = (FrameworkElement)sender;
         startPointerPosition = args.GetCurrentPoint(Canvas).Position;
         startBounds = GetBounds();
-        Canvas.PointerMoved += OnPointerMoved;
+        Canvas!.PointerMoved += OnPointerMoved;
         XamlRoot.Content.PointerReleased += OnPointerReleased;
         InteractionStarted?.Invoke(this, EventArgs.Empty);
     }
@@ -136,7 +148,7 @@ public sealed partial class SelectionRect : UserControl
         activeElement = null;
         startPointerPosition = default;
         startBounds = default;
-        Canvas.PointerMoved -= OnPointerMoved;
+        Canvas!.PointerMoved -= OnPointerMoved;
         XamlRoot.Content.PointerReleased -= OnPointerReleased;
         InteractionEnded?.Invoke(this, EventArgs.Empty);
     }
@@ -153,7 +165,7 @@ public sealed partial class SelectionRect : UserControl
 
         Point currentPointerPosition = args.GetCurrentPoint(Canvas).Position;
         currentPointerPosition.X = Math.Max(0, currentPointerPosition.X);
-        currentPointerPosition.X = Math.Min(Canvas.ActualWidth, currentPointerPosition.X);
+        currentPointerPosition.X = Math.Min(Canvas!.ActualWidth, currentPointerPosition.X);
         currentPointerPosition.Y = Math.Max(0, currentPointerPosition.Y);
         currentPointerPosition.Y = Math.Min(Canvas.ActualHeight, currentPointerPosition.Y);
 

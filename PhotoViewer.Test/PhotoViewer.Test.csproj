@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Remove="Resources\CropImageServiceTest.jpg" />
+	  <Content Remove="Resources\TestFile.jpg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -31,7 +31,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="Resources\CropImageServiceTest.jpg">
+	  <Content Update="Resources\CropImageServiceTest\TestFile.jpg">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Resources\CropImageServiceTest\TestFile.jpg">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>

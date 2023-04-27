@@ -1,0 +1,114 @@
+<UserControl
+    x:Class="PhotoViewer.App.Views.CropImageTool"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewer.App.Views"
+    xmlns:converters="using:PhotoViewer.App.Converters"
+    xmlns:res="using:PhotoViewer.App.Resources"
+    xmlns:vm="using:PhotoViewer.Core.ViewModels"
+    xmlns:controls="using:PhotoViewer.App.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:AspectRadioModeToDisplayNameConverter x:Key="AspectRadioModeToDisplayNameConverter"/>
+    </UserControl.Resources>
+
+    <Canvas
+        x:Name="selectionCanvas"
+        Visibility="{x:Bind ViewModel.IsActive, Mode=OneWay}"
+        Background="Transparent"
+        SizeChanged="SelectionCanvas_SizeChanged">
+
+        <controls:SelectionRect 
+            x:Name="selectionRect"
+            InteractionStarted="SelectionRect_InteractionStarted"
+            InteractionEnded="SelectionRect_InteractionEnded"
+            AspectRadio="{x:Bind ViewModel.AspectRadio, Mode=OneWay}"/>
+
+        <StackPanel 
+            x:Name="toolbar" 
+            Opacity="0"
+            IsHitTestVisible="False"
+            Orientation="Horizontal"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            CornerRadius="4"
+            Padding="4"
+            Spacing="4">
+
+            <Button 
+                Padding="8"
+                Style="{ThemeResource DefaultButtonStyle}"
+                ToolTipService.ToolTip="{x:Bind res:Strings.CropImageTool_OptionsButtonTooltip}">
+                <SymbolIcon Symbol="Setting"/>
+                <Button.Flyout>
+                    <Flyout>
+                        <StackPanel Width="200">
+                            <ComboBox
+                                Grid.ColumnSpan="2" 
+                                HorizontalAlignment="Stretch" 
+                                ItemsSource="{x:Bind ViewModel.AvailableAspectRadioModes}"
+                                SelectedItem="{x:Bind ViewModel.AspectRadioMode, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:AspectRadioMode">
+                                        <TextBlock
+                                            Text="{x:Bind Converter={StaticResource AspectRadioModeToDisplayNameConverter}}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <controls:WrapGrid 
+                                Margin="0,4,0,0"
+                                RowSpacing="4" 
+                                Visibility="{x:Bind ViewModel.IsFixedAspectRadio, Mode=OneWay}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock 
+                                    Margin="4,0,4,0" 
+                                    VerticalAlignment="Center" 
+                                    Text="{x:Bind res:Strings.CropImageTool_AspectRadioWidthLabel}"/>
+                                <NumberBox 
+                                    Minimum="1"
+                                    Value="{x:Bind ViewModel.AspectRadioWidth, Mode=TwoWay}" 
+                                    SpinButtonPlacementMode="Inline"/>
+                                <TextBlock 
+                                    Margin="4,0,4,0"
+                                    VerticalAlignment="Center" 
+                                    Text="{x:Bind res:Strings.CropImageTool_AspectRadioHeightLabel}"/>
+                                <NumberBox 
+                                    Minimum="1"
+                                    Value="{x:Bind ViewModel.AspectRadioHeight, Mode=TwoWay}" 
+                                    SpinButtonPlacementMode="Inline"/>
+                            </controls:WrapGrid>
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+
+            <SplitButton 
+                Height="38" 
+                Padding="8" 
+                ToolTipService.ToolTip="{x:Bind res:Strings.CropImageTool_SaveButtonTooltip}"
+                Command="{x:Bind ViewModel.SaveCommand}">
+                <SymbolIcon Symbol="Save"></SymbolIcon>
+                <SplitButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            Text="{x:Bind res:Strings.CropImageTool_SaveCopyMenuItem}"
+                            Command="{x:Bind ViewModel.SaveCopyCommand}"/>
+                    </MenuFlyout>
+                </SplitButton.Flyout>
+            </SplitButton>
+
+            <Button
+                Padding="8" 
+                Style="{ThemeResource DefaultButtonStyle}"
+                ToolTipService.ToolTip="{x:Bind res:Strings.CropImageTool_CancelButtonTooltip}"
+                Command="{x:Bind ViewModel.CancelCommand}">
+                <SymbolIcon Symbol="Cancel"/>
+            </Button>
+        </StackPanel>
+    </Canvas>
+</UserControl>

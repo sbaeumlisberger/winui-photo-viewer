@@ -79,6 +79,15 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Crop image failed.
+        /// </summary>
+        public static string CropImageErrorDialogTitle {
+            get {
+                return ResourceManager.GetString("CropImageErrorDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The following files could not be deleted:.
         /// </summary>
         public static string DeleteFilesErrorDialog_Message {

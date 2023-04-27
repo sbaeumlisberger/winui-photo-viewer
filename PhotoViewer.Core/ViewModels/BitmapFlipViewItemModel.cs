@@ -42,6 +42,8 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
 
     public ITagPeopleToolModel? PeopleTagToolModel { get; }
 
+    public ICropImageToolModel CropImageToolModel { get; }
+
     public bool CanTagPeople => PeopleTagToolModel != null;
 
     private readonly IImageLoaderService imageLoadService;
@@ -65,6 +67,8 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
         {
             PeopleTagToolModel = viewModelFactory.CreateTagPeopleToolModel(bitmapFile);
         }
+
+        CropImageToolModel = viewModelFactory.CreateCropImageToolModel(bitmapFile);
     }
 
     partial void OnIsSelectedChanged()
@@ -73,11 +77,12 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
         {
             PeopleTagToolModel.IsEnabled = IsSelected;
         }
+        CropImageToolModel.IsEnabled = IsSelected;        
     }
 
     public async Task InitializeAsync()
     {
-        Messenger.Register<BitmapRotatedMesssage>(this, OnBitmapRotatedMesssageReceived);
+        Register<BitmapModifiedMesssage>(OnReceive);
 
         var loadImageTask = LoadImageAsync();
 
@@ -96,11 +101,12 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
         BitmapImage = null;
         bitmapImage?.Dispose();
         PeopleTagToolModel?.Cleanup();
+        CropImageToolModel.Cleanup();
     }
 
-    private async void OnBitmapRotatedMesssageReceived(BitmapRotatedMesssage msg)
+    private async void OnReceive(BitmapModifiedMesssage msg)
     {
-        if (msg.Bitmap == MediaItem)
+        if (msg.BitmapFile.Equals(MediaItem))
         {
             await LoadImageAsync();
         }

@@ -68,7 +68,7 @@ namespace PhotoViewer.Core.ViewModels
             var fileSavePickerModel = new FileSavePickerModel()
             {
                 SuggestedFileName = "settings.ini",
-                FileTypeChoices = new Dictionary<string, IList<string>>() { { "INI", new[] { ".ini" } } }
+                FileTypeChoices = new() { { "INI", new[] { ".ini" } } }
             };
 
             await dialogService.ShowDialogAsync(fileSavePickerModel);

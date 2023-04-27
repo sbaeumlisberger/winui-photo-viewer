@@ -53,10 +53,10 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
     {
         this.metadataService = metadataService;
         IsVisible = settings.AutoOpenDetailsBar;
-        // TODO update on rotate/content modified
-        Messenger.Register<MetadataModifiedMessage>(this, OnReceive);
-        Messenger.Register<BitmapImageLoadedMessage>(this, OnReceive);
-        Messenger.Register<MediaFilesLoadingMessage>(this, OnReceive);
+        Register<MetadataModifiedMessage>(OnReceive);
+        Register<BitmapModifiedMesssage>(OnReceive);
+        Register<BitmapImageLoadedMessage>(OnReceive);
+        Register<MediaFilesLoadingMessage>(OnReceive);
     }
 
     private void OnReceive(MetadataModifiedMessage msg)
@@ -76,6 +76,19 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
                     cancellationToken.ThrowIfCancellationRequested();
                     DateFormatted = date.ToString("g");
                 });
+            });
+        }
+    }
+
+    private void OnReceive(BitmapModifiedMesssage msg)
+    {
+        if (IsVisible
+            && SelectedItemModel?.MediaItem is IBitmapFileInfo selectedFile
+            && msg.BitmapFile.Equals(selectedFile))
+        {
+            updateRunner.RunAndCancelPrevious(async (cancellationToken) =>
+            {
+                await UpdateAsync(SelectedItemModel);
             });
         }
     }

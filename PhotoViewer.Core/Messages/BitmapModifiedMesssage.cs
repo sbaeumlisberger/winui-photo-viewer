@@ -2,4 +2,4 @@
 
 namespace PhotoViewer.App.Messages;
 
-public record class BitmapRotatedMesssage(IBitmapFileInfo Bitmap);
+public record class BitmapModifiedMesssage(IBitmapFileInfo BitmapFile);

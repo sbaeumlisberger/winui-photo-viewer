@@ -80,11 +80,11 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     public async Task InitializeAsync()
     {
-        Messenger.Register<MetadataModifiedMessage>(this, Receive);
-        Messenger.Register<TagPeopleToolActiveChangedMessage>(this, Receive);
-        Messenger.Register<BitmapRotatedMesssage>(this, Receive);
+        Register<MetadataModifiedMessage>(Receive);
+        Register<TagPeopleToolActiveChangedMessage>(Receive);
+        Register<BitmapModifiedMesssage>(Receive);
         IsActive = Messenger.Send(new IsTagPeopleToolActiveRequestMessage());
-        TaggedPeople = await LoadTaggedPeopleAsync();
+        await LoadTaggedPeopleAsync();
     }
 
     private void Receive(TagPeopleToolActiveChangedMessage msg)
@@ -96,15 +96,15 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     {
         if (msg.Files.Contains(bitmapFile) && msg.MetadataProperty == MetadataProperties.People)
         {
-            TaggedPeople = await LoadTaggedPeopleAsync();
+            await LoadTaggedPeopleAsync();
         }
     }
 
-    private async void Receive(BitmapRotatedMesssage msg)
+    private async void Receive(BitmapModifiedMesssage msg)
     {
-        if (msg.Bitmap.Equals(bitmapFile))
+        if (msg.BitmapFile.Equals(bitmapFile))
         {
-            TaggedPeople = await LoadTaggedPeopleAsync();
+            await LoadTaggedPeopleAsync();
         }
     }
 
@@ -249,9 +249,9 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         }
     }
 
-    private async Task<List<PeopleTagViewModel>> LoadTaggedPeopleAsync()
+    private async Task LoadTaggedPeopleAsync()
     {
-        return (await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People))
+        TaggedPeople = (await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People))
              .Where(peopleTag => !peopleTag.Rectangle.IsEmpty)
              .Select(peopleTag => new PeopleTagViewModel(IsActive, peopleTag.Name, peopleTag.Rectangle.ToRect()))
              .ToList();
