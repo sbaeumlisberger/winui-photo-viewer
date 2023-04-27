@@ -193,6 +193,14 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         }
     }
 
+    private void AutoSuggestBox_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Left || e.Key == VirtualKey.Right)
+        {
+            e.Handled = true; // prevent bubble to flip view
+        }
+    }
+
     private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
         if (args.ChosenSuggestion is null) // user pressed enter or clicked query button
@@ -206,13 +214,13 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         if (args.TryGetPosition(selectionCanvas, out var position))
         {
             var percentagePosition = new Point(
-                position.X / selectionCanvas.ActualWidth, 
+                position.X / selectionCanvas.ActualWidth,
                 position.Y / selectionCanvas.ActualHeight);
 
             if (ViewModel.TaggedPeople.FirstOrDefault(vm => vm.FaceBox.Contains(percentagePosition)) is { } peopleTagVM)
             {
                 args.Handled = true;
-                selectionCanvas.ShowAttachedFlyout(args);               
+                selectionCanvas.ShowAttachedFlyout(args);
                 contextRequestedName = peopleTagVM.Name;
             }
         }

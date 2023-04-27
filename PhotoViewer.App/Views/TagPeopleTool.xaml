@@ -126,7 +126,7 @@
                     CornerRadius="4">
                     <AutoSuggestBox
                         x:Name="autoSuggestBox"                                         
-                        MinWidth="160"                        
+                        MinWidth="200"                        
                         CornerRadius="4,0,0,4"
                         Text="{x:Bind ViewModel.AutoSuggestBoxText, Mode=TwoWay}"                          
                         TextChanged="AutoSuggestBox_TextChanged"
@@ -136,7 +136,8 @@
                         QuerySubmitted="AutoSuggestBox_QuerySubmitted"
                         utils:AutoSuggestBoxExtension.IsSuggestionListOverflowEnabled="True"
                         utils:AutoSuggestBoxExtension.SuggestionListDirection="Down"                       
-                        PreviewKeyDown="AutoSuggestBox_PreviewKeyDown"                        
+                        PreviewKeyDown="AutoSuggestBox_PreviewKeyDown" 
+                        KeyDown="AutoSuggestBox_KeyDown"
                         QueryIcon="Accept"/>
                 </StackPanel>
             </Grid>

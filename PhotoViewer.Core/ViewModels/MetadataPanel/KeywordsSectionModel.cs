@@ -164,4 +164,9 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
         });
     }
 
+    [RelayCommand]
+    private async Task ManageKeywordsSuggestionsAsync()
+    {
+        await dialogService.ShowDialogAsync(new ManageKeywordsDialogModel(suggestionsService, dialogService));
+    }
 }

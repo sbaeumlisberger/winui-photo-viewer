@@ -333,6 +333,24 @@
   <data name="LoadingFilesMessage" xml:space="preserve">
     <value>Dateien werden geladen</value>
   </data>
+  <data name="ManageKeywordsDialog_CloseButton" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="ManageKeywordsDialog_ExportButton" xml:space="preserve">
+    <value>Exportieren</value>
+  </data>
+  <data name="ManageKeywordsDialog_ImportButton" xml:space="preserve">
+    <value>Importieren</value>
+  </data>
+  <data name="ManageKeywordsDialog_RemoveButton" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="ManageKeywordsDialog_ResetButton" xml:space="preserve">
+    <value>Zurücksetzen</value>
+  </data>
+  <data name="ManageKeywordsDialog_Title" xml:space="preserve">
+    <value>Schlagwörter verwalten</value>
+  </data>
   <data name="MediaFileContextMenu_Delete" xml:space="preserve">
     <value>Löschen</value>
   </data>
@@ -425,6 +443,12 @@
   </data>
   <data name="MetadataPanel_LocationHeader" xml:space="preserve">
     <value>Aufnahmeort</value>
+  </data>
+  <data name="MetadataPanel_ManageKeywordSuggestionsButtonTooltip" xml:space="preserve">
+    <value>Vorschläge verwalten</value>
+  </data>
+  <data name="MetadataPanel_ManagePeopleSuggestionsButtonTooltip" xml:space="preserve">
+    <value>Vorschläge verwalten</value>
   </data>
   <data name="MetadataPanel_NoDateTakenPresent" xml:space="preserve">
     <value>Keine Aufnahmedatum</value>

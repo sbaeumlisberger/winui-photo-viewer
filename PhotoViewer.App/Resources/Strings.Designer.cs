@@ -709,6 +709,60 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        internal static string ManageKeywordsDialog_CloseButton {
+            get {
+                return ResourceManager.GetString("ManageKeywordsDialog_CloseButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export.
+        /// </summary>
+        internal static string ManageKeywordsDialog_ExportButton {
+            get {
+                return ResourceManager.GetString("ManageKeywordsDialog_ExportButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import.
+        /// </summary>
+        internal static string ManageKeywordsDialog_ImportButton {
+            get {
+                return ResourceManager.GetString("ManageKeywordsDialog_ImportButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove.
+        /// </summary>
+        internal static string ManageKeywordsDialog_RemoveButton {
+            get {
+                return ResourceManager.GetString("ManageKeywordsDialog_RemoveButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        internal static string ManageKeywordsDialog_ResetButton {
+            get {
+                return ResourceManager.GetString("ManageKeywordsDialog_ResetButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manage Keywords.
+        /// </summary>
+        internal static string ManageKeywordsDialog_Title {
+            get {
+                return ResourceManager.GetString("ManageKeywordsDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         internal static string MediaFileContextMenu_Delete {
@@ -984,6 +1038,24 @@ namespace PhotoViewer.App.Resources {
         internal static string MetadataPanel_LocationHeader {
             get {
                 return ResourceManager.GetString("MetadataPanel_LocationHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manage suggestions.
+        /// </summary>
+        internal static string MetadataPanel_ManageKeywordSuggestionsButtonTooltip {
+            get {
+                return ResourceManager.GetString("MetadataPanel_ManageKeywordSuggestionsButtonTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manage suggestions.
+        /// </summary>
+        internal static string MetadataPanel_ManagePeopleSuggestionsButtonTooltip {
+            get {
+                return ResourceManager.GetString("MetadataPanel_ManagePeopleSuggestionsButtonTooltip", resourceCulture);
             }
         }
         

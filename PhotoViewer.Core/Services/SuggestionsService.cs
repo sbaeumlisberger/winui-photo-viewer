@@ -9,8 +9,10 @@ using Windows.Storage;
 
 namespace PhotoViewer.Core.Services
 {
-    internal interface ISuggestionsService
+    public interface ISuggestionsService
     {
+        IReadOnlyList<string> GetAll();
+
         IReadOnlyList<string> GetRecentSuggestions();
 
         IReadOnlyList<string> FindMatches(string query, int count = 10);
@@ -20,6 +22,10 @@ namespace PhotoViewer.Core.Services
         Task ImportFromFileAsync(IStorageFile file);
 
         Task ExportToFileAsync(IStorageFile file);
+
+        Task ResetAsync();
+
+        Task RemoveSuggestionAsync(string suggestion);
     }
 
     internal class SuggestionsService : ISuggestionsService
@@ -28,7 +34,7 @@ namespace PhotoViewer.Core.Services
 
         private const int MaxRecentCount = 10;
 
-        private static readonly JsonSerializerOptions JsonOptions = new () 
+        private static readonly JsonSerializerOptions JsonOptions = new()
         {
             WriteIndented = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
@@ -47,6 +53,10 @@ namespace PhotoViewer.Core.Services
             filePathSuggestions = Path.Combine(AppData.LocalFolder, id + ".json");
             filePathRecent = Path.Combine(AppData.LocalFolder, id + "-recent.json");
             Task.Run(LoadSuggestionsAsync);
+        }
+        public IReadOnlyList<string> GetAll()
+        {
+            return suggestions.OrderByDescending(suggestion => suggestion).ToList();
         }
 
         public IReadOnlyList<string> GetRecentSuggestions()
@@ -126,6 +136,26 @@ namespace PhotoViewer.Core.Services
             var recentJsonObject = new JsonObject(recent.ToList());
             using var stream = File.Open(filePathRecent, FileMode.Create);
             await JsonSerializer.SerializeAsync(stream, recentJsonObject, JsonOptions);
+        }
+
+        public async Task ResetAsync()
+        {
+            suggestions = new HashSet<string>();
+            await PersistSuggestionsAsync();
+            recent = new List<string>();
+            await PersistRecentAsync();
+        }
+
+        public async Task RemoveSuggestionAsync(string suggestion)
+        {
+            if (suggestions.Remove(suggestion))
+            {
+                await PersistSuggestionsAsync();
+            }
+            if (recent.Remove(suggestion))
+            {
+                await PersistRecentAsync();
+            }
         }
     }
 }

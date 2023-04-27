@@ -88,7 +88,7 @@
                 <StackPanel Visibility="{x:Bind ViewModel.IsInputVisible, Mode=OneWay}">
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_TitleHeader}" Style="{StaticResource HeaderStyle}"/>
-                    <TextBox 
+                    <TextBox
                         Text="{x:Bind ViewModel.TitleTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.TitleTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_TitlePlaceholder), Mode=OneWay}"
                         utils:EnterKeyExtension.Command="{x:Bind ViewModel.TitleTextboxModel.SignalTypingCompletedCommand}"/>
@@ -148,7 +148,16 @@
                             PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddPersonPlaceholder}"
                             utils:AutoSuggestBoxExtension.IsSuggestionListOverflowEnabled="True"
                             utils:EnterKeyExtension.Command="{x:Bind ViewModel.PeopleSectionModel.AddPersonCommand}">
+                            <AutoSuggestBox.QueryIcon>
+                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#x0020;" />
+                            </AutoSuggestBox.QueryIcon>
                         </AutoSuggestBox>
+                        <HyperlinkButton
+                            HorizontalAlignment="Right"
+                            Command="{x:Bind ViewModel.PeopleSectionModel.ManagePeopleSuggestionsCommand}"
+                            ToolTipService.ToolTip="{x:Bind res:Strings.MetadataPanel_ManagePeopleSuggestionsButtonTooltip}">
+                            <FontIcon FontSize="14" FontFamily="Segoe Fluent Icons" Glyph="&#xE115;" />
+                        </HyperlinkButton>
                         <Button
                             Grid.Column="1" Margin="4,0,0,0" Width="32" Height="32" Padding="0"
                             Command="{x:Bind ViewModel.PeopleSectionModel.AddPersonCommand}">
@@ -197,13 +206,22 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <AutoSuggestBox
-                            Text="{x:Bind ViewModel.KeywordsSectionModel.AutoSuggestBoxText, Mode=TwoWay}"                            
+                            Text="{x:Bind ViewModel.KeywordsSectionModel.AutoSuggestBoxText, Mode=TwoWay}"
                             TextChanged="KeywordAutoSuggestBox_TextChanged"
                             GotFocus="KeywordAutoSuggestBox_GotFocus"
                             PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddKeywordPlaceholder}"   
                             utils:AutoSuggestBoxExtension.IsSuggestionListOverflowEnabled="True"
                             utils:EnterKeyExtension.Command="{x:Bind ViewModel.KeywordsSectionModel.AddKeywordCommand}">
+                            <AutoSuggestBox.QueryIcon>
+                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#x0020;" />
+                            </AutoSuggestBox.QueryIcon>                            
                         </AutoSuggestBox>
+                        <HyperlinkButton                           
+                            HorizontalAlignment="Right"
+                            Command="{x:Bind ViewModel.KeywordsSectionModel.ManageKeywordsSuggestionsCommand}"
+                            ToolTipService.ToolTip="{x:Bind res:Strings.MetadataPanel_ManageKeywordSuggestionsButtonTooltip}">
+                            <FontIcon FontSize="14" FontFamily="Segoe Fluent Icons" Glyph="&#xE115;" />
+                        </HyperlinkButton>
                         <Button
                             Grid.Column="1" Margin="4,0,0,0" Width="32" Height="32" Padding="0"
                             Command="{x:Bind ViewModel.KeywordsSectionModel.AddKeywordCommand}">

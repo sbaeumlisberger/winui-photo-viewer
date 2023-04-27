@@ -163,4 +163,8 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
         Messenger.Send(new TagPeopleToolActiveChangedMessage(!IsTagPeopleOnPhotoButtonChecked));
     }
 
+    [RelayCommand]
+    private async Task ManagePeopleSuggestionsAsync() 
+    {
+    }
 }

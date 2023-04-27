@@ -10,8 +10,11 @@ public class ItemCountToStringConverter : IValueConverter
 
     public object? Convert(object value, Type targetType, object parameter, string language)
     {
-        var model = (ItemWithCountModel)value;
-        return "(" + (model.Count == model.Total ? Strings.ItemWithCount_All : model.Count) + ")";
+        if (value is ItemWithCountModel model)
+        {
+            return "(" + (model.Count == model.Total ? Strings.ItemWithCount_All : model.Count) + ")";
+        }
+        return "";
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

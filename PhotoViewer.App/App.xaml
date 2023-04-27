@@ -8,7 +8,13 @@
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary>
-                     <Style x:Key="DialogButtonPanel" TargetType="StackPanel">
+                    <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                        <Setter Property="Padding" Value="12,6,12,6"/>
+                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="MinHeight" Value="0"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                    <Style x:Key="DialogButtonPanel" TargetType="StackPanel">
                         <Setter Property="Orientation" Value="Horizontal"/>
                         <Setter Property="HorizontalAlignment" Value="Right"/>
                         <Setter Property="Spacing" Value="8"/>

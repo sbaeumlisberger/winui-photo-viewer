@@ -11,7 +11,7 @@ public class LoggerImpl : ILogger
 
     private static readonly string LogFilePath = Path.Combine(LogFolderPath, "log-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt");
 
-    private readonly StreamWriter logFileWriter;
+    private StreamWriter? logFileWriter;
 
     public LoggerImpl()
     {
@@ -57,7 +57,9 @@ public class LoggerImpl : ILogger
 
     public void ArchiveLogFile()
     {
-        logFileWriter.Close();
+        logFileWriter?.Close();
+        logFileWriter?.Dispose();
+        logFileWriter = null;
         File.Move(LogFilePath, LogFilePath + ".bak");
     }
 
@@ -94,7 +96,7 @@ public class LoggerImpl : ILogger
     {
         try
         {
-            logFileWriter.Write(logMessage);
+            logFileWriter?.Write(logMessage);
         }
         catch (Exception ex)
         {
