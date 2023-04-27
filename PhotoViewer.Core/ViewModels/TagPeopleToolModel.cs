@@ -69,7 +69,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         ISuggestionsService suggestionsService,
         IMetadataService metadataService,
         IDialogService dialogService,
-        IFaceDetectionService faceDetectionService) : base(messenger, false)
+        IFaceDetectionService faceDetectionService) : base(messenger)
     {
         this.suggestionsService = suggestionsService;
         this.metadataService = metadataService;

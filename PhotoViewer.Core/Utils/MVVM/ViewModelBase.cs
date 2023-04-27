@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using System.ComponentModel;
 
 namespace PhotoViewer.App.Utils;
 
-public interface IViewModel 
+public interface IViewModel : INotifyPropertyChanged 
 {
+    void Initialize();
     void Cleanup();
 }
 
@@ -16,53 +18,39 @@ public class ViewModelBase : ObservableObject, IViewModel
 
     private readonly SynchronizationContext? synchronizationContext;
 
-    private readonly bool lifecyleMangedByView; // TODO remove
-
-    public ViewModelBase(IMessenger messenger = null!, bool lifecyleMangedByView = true)
+    public ViewModelBase(IMessenger messenger = null!)
     {
         Messenger = messenger;
         synchronizationContext = SynchronizationContext.Current;
-        this.lifecyleMangedByView = lifecyleMangedByView;
         __EnableAutoNotifyCanExecuteChanged();
         __EnableOnPropertyChangedMethods();
     }
 
-    public void Cleanup() 
+    public void Initialize()
+    {
+        Messenger?.RegisterAll(this);
+        OnInitialize();
+    }
+
+    public void Cleanup()
     {
         Messenger?.UnregisterAll(this);
         OnCleanup();
     }
 
-    public void OnViewConnected()
-    {
-        if (lifecyleMangedByView)
-        {
-            Messenger?.RegisterAll(this);
-            OnViewConnectedOverride();
-        }
-    }
-
-    public void OnViewDisconnected()
-    {
-        if (lifecyleMangedByView)
-        {
-            Cleanup();
-            OnViewDisconnectedOverride();
-        }
-    }
+    protected virtual void OnInitialize() { }
 
     protected virtual void OnCleanup() { }
 
-    protected virtual void OnViewConnectedOverride() { }
-
-    protected virtual void OnViewDisconnectedOverride() { }
-
     protected void Register<TMessage>(Action<TMessage> messageHandler) where TMessage : class
     {
-        Messenger.Register<TMessage>(this, (_, msg) => RunOnUIThreadAsync(() => messageHandler(msg)));
+        Messenger.Register<TMessage>(this, (_, msg) => RunInContextAsync(() => messageHandler(msg)));
     }
 
-    protected Task RunOnUIThreadAsync(Action action)
+    /// <summary>
+    /// Runs code in the view models synchronization context.
+    /// </summary>
+    protected Task RunInContextAsync(Action action)
     {
         if (synchronizationContext is null)
         {

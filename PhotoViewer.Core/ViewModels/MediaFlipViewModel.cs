@@ -29,7 +29,7 @@ public interface IMediaFlipViewModel : INotifyPropertyChanged
 
 public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 {
-    public event EventHandler<AsyncEventArgs> DeleteAnimationRequested;
+    public event EventHandler<AsyncEventArgs>? DeleteAnimationRequested;
 
     private static readonly int CacheSize = 2;
 

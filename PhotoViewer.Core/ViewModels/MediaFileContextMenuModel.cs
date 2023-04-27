@@ -15,7 +15,7 @@ using System.Diagnostics;
 
 namespace PhotoViewer.Core.ViewModels;
 
-public interface IMediaFileContextMenuModel : INotifyPropertyChanged
+public interface IMediaFileContextMenuModel : IViewModel
 {
     IReadOnlyList<IMediaFileInfo> Files { get; set; }
 }

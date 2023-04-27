@@ -34,7 +34,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     private TaskCompletionSource? playbackCompletionSource;
 
-    public VideoFlipViewItemModel(IMediaFileInfo mediaFile, IMediaFileContextMenuModel contextMenuModel, IMessenger messenger) : base(messenger, false)
+    public VideoFlipViewItemModel(IMediaFileInfo mediaFile, IMediaFileContextMenuModel contextMenuModel, IMessenger messenger) : base(messenger)
     {
         MediaItem = mediaFile;
         ContextMenuModel = contextMenuModel;
@@ -68,7 +68,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
         });
     }
 
-    public void Cleanup()
+    protected override void OnCleanup()
     {
         initRunner.Cancel();
 
@@ -87,6 +87,8 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
             mediaPlayer.MediaFailed -= MediaPlayer_MediaFailed;
             mediaPlayer.Dispose();
         }
+
+        ContextMenuModel.Cleanup();
     }
 
     partial void OnIsSelectedChanged()

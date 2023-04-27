@@ -83,7 +83,7 @@ namespace PhotoViewer.Core.ViewModels
             Register<MetadataModifiedMessage>(OnReceive);
         }
 
-        protected override void OnViewDisconnectedOverride()
+        protected override void OnCleanup()
         {
             TitleTextboxModel.Cleanup();
             LocationSectionModel.Cleanup();

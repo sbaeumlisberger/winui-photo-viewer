@@ -71,11 +71,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
                 var metadata = await metadataService.GetMetadataAsync(selectedFile);
                 var date = metadata.Get(MetadataProperties.DateTaken) ?? (await selectedFile.GetDateModifiedAsync());
                 cancellationToken.ThrowIfCancellationRequested();
-                await RunOnUIThreadAsync(() =>
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    DateFormatted = date.ToString("g");
-                });
+                DateFormatted = date.ToString("g");               
             });
         }
     }

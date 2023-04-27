@@ -55,7 +55,7 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
         IMediaFileContextMenuModel mediaFileContextFlyoutModel,
         IViewModelFactory viewModelFactory,
         IMessenger messenger,
-        IImageLoaderService imageLoadService) : base(messenger, false)
+        IImageLoaderService imageLoadService) : base(messenger)
     {
         this.imageLoadService = imageLoadService;
 
@@ -102,6 +102,7 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
         bitmapImage?.Dispose();
         PeopleTagToolModel?.Cleanup();
         CropImageToolModel.Cleanup();
+        ContextMenuModel.Cleanup();
     }
 
     private async void OnReceive(BitmapModifiedMesssage msg)

@@ -1,9 +1,10 @@
 ﻿using PhotoViewer.App.Models;
+using PhotoViewer.App.Utils;
 using System.ComponentModel;
 
 namespace PhotoViewer.Core.ViewModels;
 
-public interface IMediaFlipViewItemModel : INotifyPropertyChanged
+public interface IMediaFlipViewItemModel : IViewModel
 {
     IMediaFileInfo MediaItem { get; }
 
@@ -14,6 +15,4 @@ public interface IMediaFlipViewItemModel : INotifyPropertyChanged
     Task? PlaybackCompletedTask => null;
 
     Task InitializeAsync();
-
-    void Cleanup();
 }

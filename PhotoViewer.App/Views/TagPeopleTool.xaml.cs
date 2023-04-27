@@ -23,7 +23,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     public TagPeopleTool()
     {
-        this.InitializeComponentMVVM(updateBindingsAlways: true);
+        this.InitializeComponentMVVM(updateBindingsAlways: true, handleViewModelLifecycle: false);
     }
 
     partial void ConnectToViewModel(TagPeopleToolModel viewModel)

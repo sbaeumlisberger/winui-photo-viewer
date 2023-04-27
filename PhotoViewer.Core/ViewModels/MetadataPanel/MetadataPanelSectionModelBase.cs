@@ -57,13 +57,13 @@ namespace PhotoViewer.Core.ViewModels
 
             return writeFilesRunner.Enqueue(async () =>
             {
-                await RunOnUIThreadAsync(() => IsWriting = true).ConfigureAwait(false);
+                await RunInContextAsync(() => IsWriting = true).ConfigureAwait(false);
 
                 await writeFiles(files).ConfigureAwait(false);
 
                 if (writeFilesRunner.IsEmpty)
                 {
-                    await RunOnUIThreadAsync(() => IsWriting = false).ConfigureAwait(false);
+                    await RunInContextAsync(() => IsWriting = false).ConfigureAwait(false);
                 }
             });
         }

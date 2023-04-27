@@ -28,7 +28,7 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
 
     private readonly CancelableTaskRunner initRunner = new CancelableTaskRunner();
 
-    public VectorGraphicFlipViewItemModel(IMediaFileInfo mediaFile, IMediaFileContextMenuModel contextMenuModel) : base(null!, false)
+    public VectorGraphicFlipViewItemModel(IMediaFileInfo mediaFile, IMediaFileContextMenuModel contextMenuModel) : base(null!)
     {
         MediaItem = mediaFile;
         ContextMenuModel = contextMenuModel;
@@ -80,11 +80,12 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
         });
     }
 
-    public void Cleanup()
+    protected override void OnCleanup()
     {
         initRunner.Cancel();
         Content = null;
         IsLoadingFailed = false;
+        ContextMenuModel.Cleanup();
     }
 
 }

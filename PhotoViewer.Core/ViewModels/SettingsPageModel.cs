@@ -40,12 +40,12 @@ namespace PhotoViewer.Core.ViewModels
             Settings = settings;
         }
 
-        protected override void OnViewConnectedOverride()
+        protected override void OnInitialize()
         {
             Settings.PropertyChanged += Settings_PropertyChanged;
         }
 
-        protected override void OnViewDisconnectedOverride()
+        protected override void OnCleanup()
         {
             Settings.PropertyChanged -= Settings_PropertyChanged;
         }

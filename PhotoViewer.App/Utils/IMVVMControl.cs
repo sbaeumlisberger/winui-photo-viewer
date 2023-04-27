@@ -8,7 +8,7 @@ using Windows.Foundation;
 
 namespace PhotoViewer.App.Utils;
 
-public interface IMVVMControl<T> where T : ViewModelBase
+public interface IMVVMControl<T> where T : class, IViewModel
 {
     event RoutedEventHandler Loaded;
 

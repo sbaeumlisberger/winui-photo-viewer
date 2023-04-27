@@ -39,7 +39,7 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
         this.metadataService = metadataService;
     }
 
-    protected async override void OnViewConnectedOverride()
+    protected override async void OnInitialize()
     {
         Messenger.Register<ChangeThumbnailSizeMessage>(this, Receive);
         Messenger.Register<BitmapModifiedMesssage>(this, Receive);

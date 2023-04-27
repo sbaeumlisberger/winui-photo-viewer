@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
+using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels.Dialogs;
@@ -156,6 +157,8 @@ public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
                     await metadataService.WriteMetadataAsync(file, MetadataProperties.DateTaken, dateTaken).ConfigureAwait(false);
                 }
             });
+
+            Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.DateTaken));
 
             if (result.HasFailures)
             {

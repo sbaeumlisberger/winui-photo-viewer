@@ -43,6 +43,11 @@ public partial class OverviewPageModel : ViewModelBase
         Items = new ObservableCollection<IMediaFileInfo>(session.Files);
     }
 
+    protected override void OnCleanup()
+    {
+        ContextMenuModel.Cleanup();
+    }
+
     public void ShowItem(IMediaFileInfo mediaItem)
     {
         Messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel), mediaItem));
