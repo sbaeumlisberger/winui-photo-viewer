@@ -15,7 +15,7 @@ using Windows.Storage;
 
 namespace PhotoViewer.App.ViewModels;
 
-public interface IOverviewPageCommandBarModel : INotifyPropertyChanged
+public interface IOverviewPageCommandBarModel : IViewModel
 {
     public IReadOnlyList<IMediaFileInfo> SelectedItems { get; set; }
 }

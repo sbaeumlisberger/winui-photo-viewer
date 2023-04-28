@@ -16,7 +16,7 @@ using Windows.Storage;
 
 namespace PhotoViewer.App.ViewModels;
 
-public interface IFlipViewPageCommandBarModel : INotifyPropertyChanged
+public interface IFlipViewPageCommandBarModel : IViewModel
 {
     IMediaFlipViewItemModel? SelectedItemModel { get; set; }
 }

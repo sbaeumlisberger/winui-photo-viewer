@@ -87,6 +87,10 @@ internal class RotateBitmapService : IRotateBitmapService
         {
             foreach (var peopleTag in people)
             {
+                if (peopleTag.Rectangle == default || peopleTag.Rectangle.IsEmpty) 
+                {
+                    continue;
+                }
                 peopleTag.Rectangle = new FaceRect(
                     1 - (peopleTag.Rectangle.Y + peopleTag.Rectangle.Height),
                     peopleTag.Rectangle.X,

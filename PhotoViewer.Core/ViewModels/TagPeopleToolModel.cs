@@ -20,11 +20,9 @@ using PhotoViewer.App.Messages;
 
 namespace PhotoViewer.Core.ViewModels;
 
-public interface ITagPeopleToolModel
+public interface ITagPeopleToolModel : IViewModel
 {
     Task InitializeAsync();
-
-    void Cleanup();
 
     bool IsEnabled { get; set; }
 

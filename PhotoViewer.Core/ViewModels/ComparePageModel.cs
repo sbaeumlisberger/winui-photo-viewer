@@ -31,6 +31,12 @@ public partial class ComparePageModel : ViewModelBase
         Messenger.Register<MediaFilesDeletedMessage>(this, OnReceive);
     }
 
+    protected override void OnCleanup()
+    {
+        Left.Cleanup();
+        Right.Cleanup();
+    }
+
     public void OnNavigatedTo(object navigationParameter)
     {
         Messenger.Send(new ChangeWindowTitleMessage(Strings.ComparePage_Title));

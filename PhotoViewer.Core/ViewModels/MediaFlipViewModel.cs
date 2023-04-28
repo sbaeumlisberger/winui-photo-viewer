@@ -18,7 +18,7 @@ using Tocronx.SimpleAsync;
 
 namespace PhotoViewer.App.ViewModels;
 
-public interface IMediaFlipViewModel : INotifyPropertyChanged
+public interface IMediaFlipViewModel : IViewModel
 {
     IMediaFileInfo? SelectedItem { get; }
     IMediaFlipViewItemModel? SelectedItemModel { get; }

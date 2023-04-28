@@ -15,7 +15,7 @@ public sealed partial class CropImageTool : UserControl, IMVVMControl<CropImageT
 
     public CropImageTool()
     {
-        this.InitializeComponentMVVM(handleViewModelLifecycle: false);
+        this.InitializeComponentMVVM();
     }
 
     partial void ConnectToViewModel(CropImageToolModel viewModel)

@@ -26,12 +26,13 @@ public sealed partial class FlipViewPage : Page, IMVVMControl<FlipViewPageModel>
 
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
-        ViewModel.OnNavigatedFrom();
-
         if (printRegistration != null)
         {
             printService.Unregister(printRegistration);
         }
+
+        ViewModel.OnNavigatedFrom();
+        ViewModel.Cleanup();
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

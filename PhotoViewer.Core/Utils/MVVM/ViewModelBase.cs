@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using PhotoViewer.App.Utils.Logging;
 using System.ComponentModel;
 
 namespace PhotoViewer.App.Utils;
 
 public interface IViewModel : INotifyPropertyChanged 
 {
-    void Initialize();
     void Cleanup();
 }
 
@@ -26,19 +26,12 @@ public class ViewModelBase : ObservableObject, IViewModel
         __EnableOnPropertyChangedMethods();
     }
 
-    public void Initialize()
-    {
-        Messenger?.RegisterAll(this);
-        OnInitialize();
-    }
-
     public void Cleanup()
     {
+        Log.Debug($"Cleanup {this}");
         Messenger?.UnregisterAll(this);
         OnCleanup();
     }
-
-    protected virtual void OnInitialize() { }
 
     protected virtual void OnCleanup() { }
 

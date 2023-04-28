@@ -44,6 +44,8 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
         {
             printService.Unregister(printRegistration);
         }
+
+        ViewModel.Cleanup();
     }
 
     private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)

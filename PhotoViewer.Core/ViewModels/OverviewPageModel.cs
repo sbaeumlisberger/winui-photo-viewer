@@ -45,6 +45,8 @@ public partial class OverviewPageModel : ViewModelBase
 
     protected override void OnCleanup()
     {
+        OverviewPageCommandBarModel.Cleanup();
+        MetadataPanelModel.Cleanup();
         ContextMenuModel.Cleanup();
     }
 

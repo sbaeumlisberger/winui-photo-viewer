@@ -16,7 +16,7 @@ using Windows.Foundation;
 
 namespace PhotoViewer.App.ViewModels;
 
-public interface IDetailsBarModel : INotifyPropertyChanged
+public interface IDetailsBarModel : IViewModel
 {
     IMediaFlipViewItemModel? SelectedItemModel { get; set; }
 

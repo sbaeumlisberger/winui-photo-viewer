@@ -55,6 +55,11 @@ public partial class FlipViewPageModel : ViewModelBase
     {
         FlipViewModel.PropertyChanged -= FlipViewModel_PropertyChanged;
         DisposeUtil.DisposeSafely(ref displayRequest);
+
+        FlipViewModel.Cleanup();
+        DetailsBarModel.Cleanup();
+        CommandBarModel.Cleanup();
+        MetadataPanelModel.Cleanup();
     }
 
     public void OnNavigatedTo(object navigationParameter, bool popNavigationState)

@@ -7,6 +7,7 @@ using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
+using Tocronx.SimpleAsync;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -37,9 +38,10 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
         MediaFile = mediaFile;
         DisplayName = mediaFile.DisplayName;
         this.metadataService = metadataService;
+        InitializeAsync().FireAndForget();
     }
 
-    protected override async void OnInitialize()
+    private async Task InitializeAsync()
     {
         Messenger.Register<ChangeThumbnailSizeMessage>(this, Receive);
         Messenger.Register<BitmapModifiedMesssage>(this, Receive);

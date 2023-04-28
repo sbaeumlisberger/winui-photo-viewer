@@ -36,4 +36,9 @@ public sealed partial class ComparePage : Page, IMVVMControl<ComparePageModel>
     {
         ViewModel.OnNavigatedTo(e.Parameter);
     }
+
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
+        ViewModel.Cleanup();
+    }
 }

@@ -52,6 +52,11 @@ public class DialogService : IDialogService
             default:
                 await ShowCustomDialogAsync(dialogModel); break;
         }
+
+        if (dialogModel is IViewModel viewModel)
+        {
+            viewModel.Cleanup();
+        }
     }
 
     public async Task ShowPrintUIAsync()

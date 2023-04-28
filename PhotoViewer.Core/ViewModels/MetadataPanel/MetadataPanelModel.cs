@@ -17,7 +17,7 @@ namespace PhotoViewer.Core.ViewModels
 {
     public delegate IMetadataPanelModel MetadataPanelModelFactory(bool tagPeopleOnPhotoButtonVisible);
 
-    public interface IMetadataPanelModel : INotifyPropertyChanged
+    public interface IMetadataPanelModel : IViewModel
     {
         IReadOnlyList<IMediaFileInfo> Files { get; set; }
 

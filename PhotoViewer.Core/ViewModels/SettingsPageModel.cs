@@ -38,10 +38,6 @@ namespace PhotoViewer.Core.ViewModels
             this.settingsService = settingsService;
             this.dialogService = dialogService;
             Settings = settings;
-        }
-
-        protected override void OnInitialize()
-        {
             Settings.PropertyChanged += Settings_PropertyChanged;
         }
 
