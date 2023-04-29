@@ -32,13 +32,13 @@ public sealed partial class ComparePage : Page, IMVVMControl<ComparePageModel>
         this.InitializeComponentMVVM();
     }
 
+    partial void DisconnectFromViewModel(ComparePageModel viewModel)
+    {
+        viewModel.Cleanup();
+    }
+
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         ViewModel.OnNavigatedTo(e.Parameter);
-    }
-
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-    {
-        ViewModel.Cleanup();
     }
 }

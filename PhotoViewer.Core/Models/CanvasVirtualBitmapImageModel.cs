@@ -37,4 +37,9 @@ public class CanvasVirtualBitmapImageModel : ICanvasVirtualBitmapImageModel
     {
         CanvasVirtualBitmap.Dispose();
     }
+
+    public override string ToString()
+    {
+        return nameof(CanvasVirtualBitmapImageModel) + ":" + ID;
+    }
 }

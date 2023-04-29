@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using NSubstitute;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Resources;
@@ -15,6 +17,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -30,6 +33,8 @@ public partial class App : Application
     public static new App Current => (App)Application.Current;
 
     public MainWindow Window { get; private set; } = null!;
+
+    private bool isUnhandeldExceptionDialogShown = false;
 
     public App()
     {
@@ -140,18 +145,50 @@ public partial class App : Application
     {
         if (args.Exception is Exception exception)
         {
-            Log.Fatal("An unhandled exception occurred", exception);
+            Log.Fatal($"An unhandled exception occurred: {args.Message}", exception);
         }
         else
         {
             Log.Fatal($"An unhandled exception occurred: {args.Message}");
         }
-        Exit(); // TODO show dialog
+        args.Handled = true;
+        ShowUnhandledExceptionDialog(args);
     }
 
     private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs args)
     {
         Log.Error("An unobserved task exception occurred", args.Exception);
+    }
+
+    private async void ShowUnhandledExceptionDialog(UnhandledExceptionEventArgs args)
+    {
+        if (isUnhandeldExceptionDialogShown)
+        {
+            return;
+        }
+
+        isUnhandeldExceptionDialogShown = true;
+
+        var dialog = new ContentDialog
+        {
+            XamlRoot = Window.Content.XamlRoot,
+            RequestedTheme = ((FrameworkElement)Window.Content).RequestedTheme,
+            Title = "Unhandled Exception",
+            Content = $"An unhandled exception occurred: {args.Message}",
+            PrimaryButtonText = "Exit Application",
+            CloseButtonText = "Ignore"
+        };
+
+        if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+        {
+            Log.Info("Exit application after unhandled exception");
+            Exit();
+        }
+        else
+        {
+            Log.Info("Ignore unhandled exception");
+            isUnhandeldExceptionDialogShown = false;
+        }
     }
 
 }

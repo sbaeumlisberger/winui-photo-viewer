@@ -31,6 +31,11 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
         this.InitializeComponentMVVM();
     }
 
+    partial void DisconnectFromViewModel(OverviewPageModel viewModel)
+    {
+        viewModel.Cleanup();
+    }
+
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         App.Current.Window.Title = Strings.OverviewPage_Title + " - WinUI Photo Viewer"; // TODO use message
@@ -44,8 +49,6 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
         {
             printService.Unregister(printRegistration);
         }
-
-        ViewModel.Cleanup();
     }
 
     private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)

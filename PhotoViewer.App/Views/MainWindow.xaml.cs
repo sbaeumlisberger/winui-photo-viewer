@@ -18,6 +18,7 @@ using Microsoft.UI.Xaml.Input;
 using PhotoViewer.App.Utils;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.Core.ViewModels;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace PhotoViewer.App;
 
@@ -115,5 +116,11 @@ public sealed partial class MainWindow : WindowEx
                 EnterFullscreen();
             }
         }
+    }
+
+    private void Frame_NavigationFailed(object sender, NavigationFailedEventArgs e)
+    {
+        Log.Error("Navigation failed", e.Exception);
+        e.Handled = true;
     }
 }

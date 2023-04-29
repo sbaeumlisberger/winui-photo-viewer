@@ -48,4 +48,9 @@ public class CanvasBitmapImageModel : ICanvasBitmapImageModel
     {
         CanvasBitmap.Dispose();
     }
+
+    public override string ToString()
+    {
+        return nameof(CanvasBitmapImageModel) + ":" + ID;
+    }
 }

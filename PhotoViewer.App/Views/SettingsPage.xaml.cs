@@ -24,14 +24,14 @@ public sealed partial class SettingsPage : Page, IMVVMControl<SettingsPageModel>
         this.InitializeComponentMVVM();
     }
 
+    partial void DisconnectFromViewModel(SettingsPageModel viewModel)
+    {
+        viewModel.Cleanup();
+    }
+
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         App.Current.Window.Title = Strings.SettingsPage_Title + " - WinUI Photo Viewer"; // TODO use message
-    }
-
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-    {
-        ViewModel.Cleanup();
     }
 
     private void Theme_SelectionChanged(object sender, SelectionChangedEventArgs e)

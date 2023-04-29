@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.Views;
 using System;
 using Windows.Foundation;
@@ -61,7 +62,7 @@ public sealed partial class BitmapViewer : UserControl
 
     private void ColorProfileProvider_ColorProfileChanged(object? sender, EventArgs e)
     {
-        canvasControl.Invalidate();
+        InvalidateCanvas();
     }
 
     private void OnBitmapImageChanged(DependencyObject sender, DependencyProperty dp)
@@ -76,12 +77,12 @@ public sealed partial class BitmapViewer : UserControl
             animatedBitmapRenderer.FrameRendered += AnimatedBitmapRenderer_FrameRendered;
             animatedBitmapRenderer.IsPlaying = IsEnabled;
         }
-        canvasControl.Invalidate();
+        InvalidateCanvas();
     }
 
     private void OnIsScaleUpEnabeldChanged(DependencyObject sender, DependencyProperty dp)
     {
-        canvasControl.Invalidate();
+        InvalidateCanvas();
     }
 
     private void OnIsEnabledChanged(DependencyObject sender, DependencyProperty dp)
@@ -94,25 +95,44 @@ public sealed partial class BitmapViewer : UserControl
 
     private void AnimatedBitmapRenderer_FrameRendered(AnimatedBitmapRenderer sender, EventArgs args)
     {
-        canvasControl.Invalidate();
+        InvalidateCanvas();
     }
 
     private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
     {
-        canvasControl.Invalidate();
+        InvalidateCanvas();
         ViewChanged?.Invoke(this, e);
+    }
+
+    private void InvalidateCanvas() 
+    {
+        try
+        {
+            canvasControl.Invalidate();
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to invalidate canvas", ex);
+        }
     }
 
     private void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
     {
-        if (BitmapImage is null)
+        try
         {
-            args.DrawingSession.Clear(Colors.Transparent);
+            if (BitmapImage is null)
+            {
+                args.DrawingSession.Clear(Colors.Transparent);
+            }
+            else
+            {
+                UpdateDummy(BitmapImage);
+                DrawToCanvas(args.DrawingSession, BitmapImage);
+            }
         }
-        else
+        catch(Exception ex) 
         {
-            UpdateDummy(BitmapImage);
-            DrawToCanvas(args.DrawingSession, BitmapImage);
+            Log.Error("Failed to handle draw event", ex);
         }
     }
 

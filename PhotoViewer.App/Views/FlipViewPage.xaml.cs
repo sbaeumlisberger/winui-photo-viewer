@@ -24,6 +24,11 @@ public sealed partial class FlipViewPage : Page, IMVVMControl<FlipViewPageModel>
         this.InitializeComponentMVVM();
     }
 
+    partial void DisconnectFromViewModel(FlipViewPageModel viewModel)
+    {
+        viewModel.Cleanup();
+    }
+
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         if (printRegistration != null)
@@ -32,7 +37,6 @@ public sealed partial class FlipViewPage : Page, IMVVMControl<FlipViewPageModel>
         }
 
         ViewModel.OnNavigatedFrom();
-        ViewModel.Cleanup();
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
