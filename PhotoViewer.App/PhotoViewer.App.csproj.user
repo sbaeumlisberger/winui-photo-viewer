@@ -24,15 +24,6 @@
     <Page Update="Views\Dialogs\ManageKeywordsDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\CropImageTool.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\CompareView.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\ComparePage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Views\Dialogs\ImportGpxTrackDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -51,9 +42,6 @@
     <Page Update="Views\Dialogs\DeleteSingleRawFilesDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\TagPeopleTool.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Controls\SelectionRect.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -69,46 +57,7 @@
     <Page Update="Views\Dialogs\DeleteLinkedFilesDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\MediaFileContextMenu.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\OverviewPageCommandBar.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\ItemWithCount.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\MetadataPanel.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Controls\BitmapViewer.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\SettingsPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\VideoFlipViewItem.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\VectorGraphicFlipViewItem.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\MediaFlipView.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\BitmapFlipViewItem.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\OverviewPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\FlipViewPageCommandBar.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\DetailsBar.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\FlipViewPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <None Update="Views\MainWindow.xaml">

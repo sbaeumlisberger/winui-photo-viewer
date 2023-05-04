@@ -36,16 +36,6 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         e.AddTask(DeleteStoryboard.RunAsync());
     }
 
-    private void FlipViewItem_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-    {
-        if (sender.DataContext is IMediaFileInfo mediaFile
-            && ViewModel?.TryGetItemModel(mediaFile) is { } itemModel)
-        {
-            Log.Debug($"apply item model {itemModel.MediaItem.DisplayName} to flipview item");
-            sender.DataContext = itemModel;
-        }
-    }
-
     private void FlipView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
         if (ViewModel.IsDiashowActive)
@@ -82,6 +72,10 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
             // update view model when selection was changed by the user
             ViewModel.Select((IMediaFileInfo?)flipView.SelectedItem);
         }
+        else if (ViewModel.SelectedItem != null && flipView.SelectedItem != ViewModel.SelectedItem)
+        {
+            DispatcherQueue.TryEnqueue(() => flipView.SelectedItem = ViewModel.SelectedItem);
+        }
 
         flipView.Opacity = 1; // reset delete animation 
     }
@@ -89,6 +83,14 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
     private void FlipViewItem_Loaded(object sender, RoutedEventArgs e)
     {
         FocusSelectedItem();
+    }
+
+    private void FlipViewItem_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+    {
+        if (sender.DataContext is IMediaFileInfo)
+        {
+            ApplyItemsModels();
+        }
     }
 
     private void FocusSelectedItem()
@@ -100,7 +102,7 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         }
     }
 
-    private void ApplyItemsModels() 
+    private void ApplyItemsModels()
     {
         Log.Debug($"apply item models");
         foreach (var itemModel in ViewModel.ItemModels)

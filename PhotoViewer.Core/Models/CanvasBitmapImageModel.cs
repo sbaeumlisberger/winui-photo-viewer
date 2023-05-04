@@ -1,10 +1,11 @@
 ﻿using Microsoft.Graphics.Canvas;
+using PhotoViewer.Core.Utils;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 
 namespace PhotoViewer.App.Models;
 
-public class CanvasBitmapImageModel : ICanvasBitmapImageModel
+public class CanvasBitmapImageModel : SharedDisposableBase, ICanvasBitmapImageModel
 {
     public string ID { get; }
 
@@ -44,7 +45,7 @@ public class CanvasBitmapImageModel : ICanvasBitmapImageModel
         ColorSpace = colorSpace;
     }
 
-    public void Dispose()
+    protected override void OnDispose()
     {
         CanvasBitmap.Dispose();
     }

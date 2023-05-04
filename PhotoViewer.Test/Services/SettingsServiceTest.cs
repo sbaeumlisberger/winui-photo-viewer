@@ -23,6 +23,7 @@ public class SettingsServiceTest : IDisposable
         RawFilesFolderName=RAWs
         DeleteLinkedFilesOption=Yes
         IncludeVideos=True
+        IsDebugLogEnabled=True
 
         """;
 
@@ -144,6 +145,7 @@ public class SettingsServiceTest : IDisposable
         settings.AutoOpenDetailsBar = true;
         settings.DiashowTime = TimeSpan.FromSeconds(5);
         settings.DeleteLinkedFilesOption = DeleteLinkedFilesOption.Yes;
+        settings.IsDebugLogEnabled = true;
         return settings;
     }
 
@@ -159,6 +161,7 @@ public class SettingsServiceTest : IDisposable
         Assert.Equal("RAWs", settings.RawFilesFolderName);
         Assert.Equal(DeleteLinkedFilesOption.Yes, settings.DeleteLinkedFilesOption);
         Assert.True(settings.IncludeVideos);
+        Assert.True(settings.IsDebugLogEnabled);
     }
 
 }

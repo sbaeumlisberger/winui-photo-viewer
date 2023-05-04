@@ -187,7 +187,7 @@ public class MediaFilesLoaderServiceTest
             MockFile("File 05.jpg")
         };
         var neighboringFilesQuery = MockNeighboringFilesQuery(files);
-        var startFile = MockFile("File 03[1].jpg", FileAttributes.Temporary | FileAttributes.ReadOnly);
+        var startFile = MockFile("File 03[1].jpg", FileAttributes.Temporary | FileAttributes.ReadOnly, Path.GetTempPath());
         var config = new LoadMediaConfig(false, null, false);
 
         var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
@@ -241,9 +241,9 @@ public class MediaFilesLoaderServiceTest
         AssertMediaFiles(expectedMediaFiles, result.MediaFiles);
     }
 
-    private IStorageFile MockFile(string fileName, FileAttributes attributes = FileAttributes.Normal)
+    private IStorageFile MockFile(string fileName, FileAttributes attributes = FileAttributes.Normal, string? folderPath = null)
     {
-        string path = Path.Combine(FolderPath, fileName);
+        string path = Path.Combine(folderPath ?? FolderPath, fileName);
         var mock = new Mock<IStorageFile>();
         mock.SetupGet(x => x.Name).Returns(fileName);
         mock.SetupGet(x => x.FileType).Returns(Path.GetExtension(fileName));

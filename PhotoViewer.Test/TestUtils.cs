@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using NSubstitute;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.ViewModels;
+using System.ComponentModel;
 using Windows.Storage;
 
 namespace PhotoViewer.Test;
@@ -39,6 +41,11 @@ internal static class TestUtils
         storageFileMock.Name.Returns(fileName);
         var bitmapFileInfo = new BitmapFileInfo(storageFileMock);
         return bitmapFileInfo;
+    }
+
+    internal static void RaisePropertyChanged(this INotifyPropertyChanged obj, string propertyName)
+    {
+        obj.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(obj, new PropertyChangedEventArgs(propertyName));
     }
 
 }

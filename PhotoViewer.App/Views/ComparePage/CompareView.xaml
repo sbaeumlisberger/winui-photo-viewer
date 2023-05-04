@@ -21,8 +21,14 @@
     <Grid>
         <controls:BitmapViewer 
             x:Name="bitmapViewer"
-            BitmapImage="{x:Bind ViewModel.BitmapImage, Mode=OneWay}"
+            BitmapImage="{x:Bind ViewModel.ImageViewModel.Image, Mode=OneWay}"
             ViewChanged="BitmapViewer_ViewChanged"/>
+
+        <ProgressRing
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Visibility="{x:Bind ViewModel.ImageViewModel.IsLoading, Mode=OneWay}"
+            IsActive="{x:Bind ViewModel.ImageViewModel.IsLoading, Mode=OneWay}"/>
 
         <StackPanel
             Orientation="Horizontal"

@@ -26,6 +26,7 @@ public interface IViewModelFactory
     IMediaFileContextMenuModel CreateMediaFileContextMenuModel();
     ICompareViewModel CreateCompareViewModel(IObservableList<IBitmapFileInfo> bitmapFiles);
     ICropImageToolModel CreateCropImageToolModel(IBitmapFileInfo bitmapFile);
+    IImageViewModel CreateImageViewModel(IBitmapFileInfo bitmapFile);
 }
 
 public class ViewModelFactory : IViewModelFactory
@@ -39,7 +40,7 @@ public class ViewModelFactory : IViewModelFactory
     private readonly IMetadataService metadataService = new MetadataService();
     private readonly IDeleteMediaService deleteMediaService = new DeleteMediaService();
     private readonly IRotateBitmapService rotateBitmapService;
-    private readonly IImageLoaderService imageLoaderService = new ImageLoaderService(new GifImageLoaderService());
+    private readonly ICachedImageLoaderService imageLoaderService = CachedImageLoaderService.Instance;
     private readonly IDisplayRequestService displayRequestService = new DisplayRequestService();
     private readonly ILocationService locationService = new LocationService();
     private readonly ISettingsService settingService = new SettingsService();
@@ -194,27 +195,27 @@ public class ViewModelFactory : IViewModelFactory
 
     private BitmapFlipViewItemModel CreateBitmapFlipViewItemModel(IBitmapFileInfo bitmapFile, IMediaFileContextMenuModel mediaFileContextFlyoutModel)
     {
-        return new BitmapFlipViewItemModel(
-            bitmapFile,
-            mediaFileContextFlyoutModel,
-            this,
-            messenger,
-            imageLoaderService);
+        return new BitmapFlipViewItemModel(bitmapFile, this, messenger);
     }
 
     public ComparePageModel CreateComparePageModel()
-    { 
+    {
         return new ComparePageModel(applicationSession, messenger, this);
     }
 
     public ICompareViewModel CreateCompareViewModel(IObservableList<IBitmapFileInfo> bitmapFiles)
     {
         var deleteFilesCommand = CreateDeleteFilesCommand();
-        return new CompareViewModel(bitmapFiles, settings, imageLoaderService, deleteFilesCommand);
+        return new CompareViewModel(bitmapFiles, settings, deleteFilesCommand, this);
     }
 
     public ICropImageToolModel CreateCropImageToolModel(IBitmapFileInfo bitmapFile)
     {
         return new CropImageToolModel(bitmapFile, messenger, cropImageService, dialogService);
+    }
+
+    public IImageViewModel CreateImageViewModel(IBitmapFileInfo bitmapFile)
+    {
+        return new ImageViewModel(bitmapFile, imageLoaderService, messenger);
     }
 }

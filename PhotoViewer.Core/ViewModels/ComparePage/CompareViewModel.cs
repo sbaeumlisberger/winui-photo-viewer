@@ -1,12 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using NSubstitute;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using System.Collections.Specialized;
+using System.Linq;
+using System.Threading;
 using Tocronx.SimpleAsync;
 
 namespace PhotoViewer.Core.ViewModels;
@@ -24,6 +29,8 @@ public interface ICompareViewModel : IViewModel
 
 public partial class CompareViewModel : ViewModelBase, ICompareViewModel
 {
+    private const int CacheSize = 1;
+
     public event EventHandler<ViewState>? ViewChangedByUser;
 
     public event EventHandler<ViewState>? ViewChangeRequested;
@@ -32,7 +39,7 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
 
     public IBitmapFileInfo? SelectedBitmapFile { get; set; }
 
-    public IBitmapImageModel? BitmapImage { get; private set; } // TODO add caching
+    public IImageViewModel? ImageViewModel { get; private set; }
 
     public bool CanSelectPrevious => SelectedBitmapFile != null && SelectedBitmapFile != BitmapFiles.First();
 
@@ -42,20 +49,26 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
 
     public bool ShowDeleteAnimation { get; }
 
-    private readonly IImageLoaderService imageLoaderService;
-
     private readonly IDeleteFilesCommand deleteFilesCommand;
 
-    private readonly CancelableTaskRunner loadImageTaskRunner = new CancelableTaskRunner();
+    private readonly IViewModelFactory viewModelFactory;
 
     private int selectedIndex = -1;
 
-    public CompareViewModel(IObservableReadOnlyList<IBitmapFileInfo> bitmapFiles, ApplicationSettings settings, IImageLoaderService imageLoaderService, IDeleteFilesCommand deleteFilesCommand)
+    private readonly VirualizedCollection<IBitmapFileInfo, IImageViewModel> imageViewModels;
+
+    public CompareViewModel(
+        IObservableReadOnlyList<IBitmapFileInfo> bitmapFiles, 
+        ApplicationSettings settings, 
+        IDeleteFilesCommand deleteFilesCommand, 
+        IViewModelFactory viewModelFactory)
     {
         BitmapFiles = bitmapFiles;
         ShowDeleteAnimation = settings.ShowDeleteAnimation;
         this.deleteFilesCommand = deleteFilesCommand;
-        this.imageLoaderService = imageLoaderService;
+        this.viewModelFactory = viewModelFactory;
+
+        imageViewModels = new(bitmapFiles, CacheSize, CreateImageViewModel, viewModel => viewModel.Cleanup());
 
         BitmapFiles.CollectionChanged += BitmapFiles_CollectionChanged;
     }
@@ -63,19 +76,25 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
     protected override void OnCleanup()
     {
         BitmapFiles.CollectionChanged -= BitmapFiles_CollectionChanged;
-        loadImageTaskRunner.Cancel();
-        BitmapImage?.DisposeSafely(() => BitmapImage = null);
+        imageViewModels.Clear();
+    }
+
+    private IImageViewModel CreateImageViewModel(IBitmapFileInfo bitmapFile) 
+    {
+        var imageViewModel = viewModelFactory.CreateImageViewModel(bitmapFile);
+        _ = imageViewModel.InitializeAsync();
+        return imageViewModel;
     }
 
     private void BitmapFiles_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if(SelectedBitmapFile != null && !BitmapFiles.Contains(SelectedBitmapFile)) 
+        if (SelectedBitmapFile != null && !BitmapFiles.Contains(SelectedBitmapFile))
         {
             if (selectedIndex < BitmapFiles.Count)
             {
                 SelectedBitmapFile = BitmapFiles[selectedIndex];
             }
-            else 
+            else
             {
                 SelectedBitmapFile = BitmapFiles.LastOrDefault();
             }
@@ -84,36 +103,8 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
 
     partial void OnSelectedBitmapFileChanged()
     {
-        loadImageTaskRunner.RunAndCancelPrevious(async cancellationToken =>
-        {
-            selectedIndex = SelectedBitmapFile != null ? BitmapFiles.IndexOf(SelectedBitmapFile) : -1;
-
-            BitmapImage?.DisposeSafely(() => BitmapImage = null);
-
-            if (SelectedBitmapFile is { } bitmapFile)
-            {
-                try
-                {
-                    var bitmapImage = await imageLoaderService.LoadFromFileAsync(bitmapFile, cancellationToken);
-
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        bitmapImage.Dispose();
-                    }
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    BitmapImage = bitmapImage;
-                }
-                catch(Exception ex) when (ex is not OperationCanceledException)
-                {
-                    Log.Error($"Failed to load image {bitmapFile.FileName}", ex);
-                }
-            }
-            else
-            {
-                BitmapImage = null;
-            }
-        });   
+        selectedIndex = SelectedBitmapFile != null ? BitmapFiles.IndexOf(SelectedBitmapFile) : -1;
+        ImageViewModel = imageViewModels.SetSelectedItem(SelectedBitmapFile); ;
     }
 
     [RelayCommand(CanExecute = nameof(CanSelectPrevious))]

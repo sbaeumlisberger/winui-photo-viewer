@@ -15,6 +15,9 @@ using PhotoViewer.Core.Utils;
 using Microsoft.Graphics.Canvas.Text;
 using PhotoViewer.Core.Messages;
 using Tocronx.SimpleAsync;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Controls;
+using NSubstitute;
 
 namespace PhotoViewer.App.ViewModels;
 
@@ -24,7 +27,7 @@ public interface IMediaFlipViewModel : IViewModel
     IMediaFlipViewItemModel? SelectedItemModel { get; }
     IRelayCommand SelectPreviousCommand { get; }
     IRelayCommand SelectNextCommand { get; }
-    void SetItems(IEnumerable<IMediaFileInfo> mediaItems, IMediaFileInfo? startItem = null);
+    void SetItems(IReadOnlyList<IMediaFileInfo> mediaItems, IMediaFileInfo? startItem = null);
 }
 
 public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
@@ -33,9 +36,9 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     private static readonly int CacheSize = 2;
 
-    public ObservableCollection<IMediaFileInfo> Items { get; private set; } = new ObservableCollection<IMediaFileInfo>();
+    public ObservableList<IMediaFileInfo> Items { get; private set; } = new ObservableList<IMediaFileInfo>();
 
-    public IReadOnlyCollection<IMediaFlipViewItemModel> ItemModels => loadedItemModels;
+    public IReadOnlyCollection<IMediaFlipViewItemModel> ItemModels => itemModels.RealizedValues;
 
     public IMediaFileInfo? SelectedItem { get; private set; }
 
@@ -69,13 +72,13 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     private readonly ApplicationSettings settings;
 
-    private readonly HashSet<IMediaFlipViewItemModel> loadedItemModels = new HashSet<IMediaFlipViewItemModel>();
-
     private bool isSelectionChangedByDiashowLoop = false;
 
     private CancellationTokenSource? diashowLoopCancellationTokenSource;
 
-    private bool ignoreSelectionChanges = false;
+    //private bool ignoreSelectionChanges = false;
+
+    private VirualizedCollection<IMediaFileInfo, IMediaFlipViewItemModel> itemModels;
 
     public MediaFlipViewModel(
         IMessenger messenger,
@@ -89,48 +92,11 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         this.mediaFlipViewItemModelFactory = mediaFlipViewItemModelFactory;
         this.settings = settings;
 
-        Messenger.Register<MediaFilesLoadingMessage>(this, async msg =>
-        {
-            ShowLoadingUI = true;
-            bool preview = false;
+        itemModels = new(Array.Empty<IMediaFileInfo>(), CacheSize, CreateItemModel, CleanupItemModel);
 
-            if (msg.LoadMediaFilesTask.StartMediaFile is { } startFile)
-            {
-                preview = true;
-                SetItems(new[] { startFile }, startFile);
-                ShowLoadingUI = false;
-                IsLoadingMoreFiles = true;
-            }
+        Messenger.Register<MediaFilesLoadingMessage>(this, OnReceive);
 
-            var result = await msg.LoadMediaFilesTask.WaitForResultAsync(); // TODO error handling
-
-            SetItems(result.MediaFiles, result.StartMediaFile);
-
-            if (preview)
-            {
-                // linked files may have changed -> update window title
-                Messenger.Send(new ChangeWindowTitleMessage(SelectedItem?.DisplayName ?? ""));
-
-                UpdateFlipViewItemModels();
-            }
-
-            ShowLoadingUI = false;
-            IsLoadingMoreFiles = false;
-        });
-
-        Messenger.Register<MediaFilesDeletedMessage>(this, async msg =>
-        {
-            if (settings.ShowDeleteAnimation && msg.Files.Contains(SelectedItem)) 
-            {
-                var asyncEventArgs = new AsyncEventArgs();
-                DeleteAnimationRequested?.Invoke(this, asyncEventArgs);
-                await asyncEventArgs.CompletionTask;
-            }
-            var selectedIndex = Items.IndexOf(SelectedItem!);
-            msg.Files.ForEach(file => Items.Remove(file));            
-            SelectedItem = Items.ElementAtOrDefault(Math.Min(selectedIndex, Items.Count - 1));
-            UpdateFlipViewItemModels();
-        });
+        Messenger.Register<MediaFilesDeletedMessage>(this, OnReceive);
 
         Messenger.Register<StartDiashowMessage>(this, msg =>
         {
@@ -149,35 +115,79 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     protected override void OnCleanup()
     {
-        loadedItemModels.ForEach(itemModel => itemModel.Cleanup());
+        itemModels.Clear();
         diashowLoopCancellationTokenSource?.Cancel();
     }
 
-    public void SetItems(IEnumerable<IMediaFileInfo> files, IMediaFileInfo? startFile = null)
+    private async void OnReceive(MediaFilesLoadingMessage msg)
+    {
+        ShowLoadingUI = true;
+        bool preview = false;
+
+        if (msg.LoadMediaFilesTask.StartMediaFile is { } startFile)
+        {
+            preview = true;
+            SetItems(new[] { startFile }, startFile);
+            ShowLoadingUI = false;
+            IsLoadingMoreFiles = true;
+        }
+
+        var result = await msg.LoadMediaFilesTask.WaitForResultAsync(); // TODO error handling
+
+        SetItems(result.MediaFiles, result.StartMediaFile);
+
+        if (preview)
+        {
+            // linked files may have changed -> update window title
+            Messenger.Send(new ChangeWindowTitleMessage(SelectedItem?.DisplayName ?? ""));
+
+            UpdateFlipViewItemModels();
+        }
+
+        ShowLoadingUI = false;
+        IsLoadingMoreFiles = false;
+    }
+
+    private async void OnReceive(MediaFilesDeletedMessage msg)
+    {
+        if (settings.ShowDeleteAnimation && msg.Files.Contains(SelectedItem))
+        {
+            var asyncEventArgs = new AsyncEventArgs();
+            DeleteAnimationRequested?.Invoke(this, asyncEventArgs);
+            await asyncEventArgs.CompletionTask;
+        }
+        var selectedIndex = Items.IndexOf(SelectedItem!);
+        msg.Files.ForEach(file => Items.Remove(file));
+        SelectedItem = Items.ElementAtOrDefault(Math.Min(selectedIndex, Items.Count - 1));
+        UpdateFlipViewItemModels();
+    }
+
+    public void SetItems(IReadOnlyList<IMediaFileInfo> files, IMediaFileInfo? startFile = null)
     {
         Log.Debug("SetItems called");
-        ignoreSelectionChanges = true;
+        //ignoreSelectionChanges = true;
         Stopwatch sw = Stopwatch.StartNew();
-        Items = new ObservableCollection<IMediaFileInfo>(files);
+        Items = new ObservableList<IMediaFileInfo>(files);
+        itemModels.SetKeys(Items);
         sw.Stop();
-        Log.Info($"Set {Items.Count} Items took {sw.ElapsedMilliseconds} ms");  
-        ignoreSelectionChanges = false;
+        Log.Info($"Set {Items.Count} Items took {sw.ElapsedMilliseconds} ms");
+        //ignoreSelectionChanges = false;
         var fileToSelect = startFile ?? Items.FirstOrDefault();
         Log.Debug("Set SelectedItem " + fileToSelect);
-        SelectedItem = fileToSelect;        
+        SelectedItem = fileToSelect;
     }
 
     public IMediaFlipViewItemModel? TryGetItemModel(IMediaFileInfo mediaFile)
     {
-        return loadedItemModels.FirstOrDefault(itemModel => itemModel.MediaItem == mediaFile);
+        return ItemModels.FirstOrDefault(itemModel => itemModel.MediaItem == mediaFile);
     }
 
     public void Select(IMediaFileInfo? mediaFileInfo)
     {
-        if (ignoreSelectionChanges) 
-        {
-            throw new InvalidOperationException();
-        }
+        //if (ignoreSelectionChanges)
+        //{
+        //    throw new InvalidOperationException();
+        //}
         if (mediaFileInfo is null && Items.Any())
         {
             throw new InvalidOperationException();
@@ -244,46 +254,25 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     private void UpdateFlipViewItemModels()
     {
         Stopwatch sw = Stopwatch.StartNew();
-
-        ICollection<IMediaFileInfo> itemsToBeLoaded;
-
-        if (SelectedItem is not null)
-        {
-            int selectedIndex = Items.IndexOf(SelectedItem);
-
-            int startIndex = Math.Max(selectedIndex - CacheSize, 0);
-            int endIndex = Math.Min(selectedIndex + CacheSize, Items.Count - 1);
-            itemsToBeLoaded = Items.Skip(startIndex).Take(endIndex - startIndex + 1).ToList();
-        }
-        else
-        {
-            itemsToBeLoaded = Array.Empty<IMediaFileInfo>();
-        }
-
-        var itemsToLoad = itemsToBeLoaded.Except(loadedItemModels.Select(itemModel => itemModel.MediaItem)).ToList();
-        var itemModlesToCleanup = loadedItemModels.Where(itemModel => !itemsToBeLoaded.Contains(itemModel.MediaItem)).ToList();
-
-        foreach (var mediaFile in itemsToLoad)
-        {
-            Log.Info($"Initialize ViewModel for {mediaFile.DisplayName}");
-            var itemModel = mediaFlipViewItemModelFactory.Invoke(mediaFile);
-            loadedItemModels.Add(itemModel);
-            itemModel.IsDiashowActive = IsDiashowActive;
-            itemModel.InitializeAsync().FireAndForget();
-        }
-
-        foreach (var itemModel in itemModlesToCleanup)
-        {
-            Log.Info($"Cleanup ViewModel for {itemModel.MediaItem.DisplayName}");
-            itemModel.Cleanup();
-            loadedItemModels.Remove(itemModel);
-        }
-
-        SelectedItemModel = SelectedItem != null ? TryGetItemModel(SelectedItem) : null;
+        SelectedItemModel = itemModels.SetSelectedItem(SelectedItem);
         ItemModels.ForEach(itemModel => itemModel.IsSelected = itemModel == SelectedItemModel);
-
         sw.Stop();
         Log.Info($"UpdateFlipViewItemModels took {sw.ElapsedMilliseconds} ms"); ;
+    }
+
+    private IMediaFlipViewItemModel CreateItemModel(IMediaFileInfo mediaFile)
+    {
+        Log.Info($"Initialize ViewModel for {mediaFile.DisplayName}");
+        var itemModel = mediaFlipViewItemModelFactory.Invoke(mediaFile);
+        itemModel.IsDiashowActive = IsDiashowActive;
+        _ = itemModel.InitializeAsync();
+        return itemModel;
+    }
+
+    private void CleanupItemModel(IMediaFlipViewItemModel itemModel)
+    {
+        Log.Info($"Cleanup ViewModel for {itemModel.MediaItem.DisplayName}");
+        itemModel.Cleanup();
     }
 
     [RelayCommand(CanExecute = nameof(CanSelectPrevious))]
@@ -293,7 +282,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         {
             SelectedItem = Items[Items.IndexOf(SelectedItem!) - 1];
         }
-        else if(IsDiashowActive && Items.Any()) 
+        else if (IsDiashowActive && Items.Any())
         {
             SelectedItem = Items.Last();
         }

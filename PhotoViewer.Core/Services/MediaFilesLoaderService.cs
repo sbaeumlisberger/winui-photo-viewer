@@ -26,9 +26,12 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 {
     private readonly IFileSystemService fileSystemService;
 
-    public MediaFilesLoaderService(IFileSystemService? fileSystemService = null)
+    private readonly ICachedImageLoaderService cachedImageLoaderService;
+
+    public MediaFilesLoaderService(IFileSystemService? fileSystemService = null, ICachedImageLoaderService? cachedImageLoaderService = null)
     {
         this.fileSystemService = fileSystemService ?? new FileSystemService();
+        this.cachedImageLoaderService = cachedImageLoaderService ?? CachedImageLoaderService.Instance;
     }
 
     public LoadMediaFilesTask LoadFolder(IStorageFolder storageFolder, LoadMediaConfig config)
@@ -128,19 +131,26 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
         string fileExtension = startFile.FileType.ToLower();
 
         if (startFile.Attributes.HasFlag(FileAttributes.Temporary)
-            && startFile.Attributes.HasFlag(FileAttributes.ReadOnly))
+            && startFile.Attributes.HasFlag(FileAttributes.ReadOnly)
+            && startFile.Path.StartsWith(Path.GetTempPath()))
         {
-            return null; // file is probably a copy from a MTP device (the orginal file will be part of the neighboring files query)
+            // file is probably a copy from a file accessed via MTP
+            // the orginal file will be part of the neighboring files query
+            return null;
         }
         else if (BitmapFileInfo.CommonFileExtensions.Contains(fileExtension))
         {
             var bitmapFileInfo = new BitmapFileInfo(startFile);
-            ImagePreloadService.Instance.Preload(bitmapFileInfo);
+
+            // preload image
+            cachedImageLoaderService.LoadFromFileAsync(bitmapFileInfo, CancellationToken.None);
+
             return bitmapFileInfo;
         }
         else if (BitmapFileInfo.RawFileExtensions.Contains(fileExtension))
         {
-            return null; // file might be linked to a common file    
+            // file might be linked to a common file    
+            return null;
         }
         else if (VideoFileInfo.SupportedFileExtensions.Contains(fileExtension))
         {

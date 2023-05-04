@@ -1,10 +1,11 @@
 ﻿using Microsoft.Graphics.Canvas;
+using PhotoViewer.Core.Utils;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 
 namespace PhotoViewer.App.Models;
 
-public interface IBitmapImageModel : IDisposable
+public interface IBitmapImageModel : ISharedDisposable
 {
     string ID { get; }
 

@@ -85,7 +85,7 @@
     </AppBarButton>
     <AppBarButton
         Icon="Crop" 
-        Label="{x:Bind res:Strings.FlipViewPageCommandBar_CropButton}"
+        ToolTipService.ToolTip="{x:Bind res:Strings.FlipViewPageCommandBar_CropButton}"
         Command="{x:Bind ViewModel.CropImageCommand}"/>
     <AppBarButton 
         Icon="Rotate" 

@@ -149,7 +149,8 @@ internal class PhotoPrintJob : IPrintJob
         displayedOptions.Add(StandardPrintTaskOptions.MediaType);
         displayedOptions.Add(StandardPrintTaskOptions.PrintQuality);
 
-        optionDetails.DisplayedOptions.MatchTo(displayedOptions);
+        optionDetails.DisplayedOptions.Clear();
+        optionDetails.DisplayedOptions.AddRange(displayedOptions);
     }
 
     public List<UIElement> CreatePages(PrintTaskOptions options, bool isPreview, Action invalidatePreviewCallback)

@@ -57,7 +57,7 @@ public class DetailsBarModelTest
         metadataService.GetMetadataAsync(bitmapFile).Returns(metadata);
         bitmapItemModel = Substitute.For<IBitmapFlipViewItemModel>();
         bitmapItemModel.MediaItem.Returns(bitmapFile);
-        bitmapItemModel.BitmapImage.Returns((IBitmapImageModel?)null);
+        bitmapItemModel.ImageViewModel.Image.Returns((IBitmapImageModel?)null);
 
         var vectorGraphicFile = Substitute.For<IVectorGraphicFileInfo>();
         vectorGraphicFile.DisplayName.Returns("Test File.svg");
@@ -132,7 +132,7 @@ public class DetailsBarModelTest
         var bitmapImage = Substitute.For<IBitmapImageModel>();
         bitmapImage.ColorSpace.Returns(new ColorSpaceInfo(ColorSpaceType.AdobeRGB, new byte[0]));
         bitmapImage.SizeInPixels.Returns(new BitmapSize(4912, 3264));
-        bitmapItemModel.BitmapImage.Returns(bitmapImage);
+        bitmapItemModel.ImageViewModel.Image.Returns(bitmapImage);
         detailsBarModel.IsVisible = true;
 
         detailsBarModel.SelectedItemModel = bitmapItemModel;
@@ -223,7 +223,7 @@ public class DetailsBarModelTest
     }
 
     [Fact]
-    public void UpdatesColorSpaceInfo_WhenBitmapImageLoaded()
+    public async Task UpdatesColorSpaceInfo_WhenBitmapImageLoaded()
     {
         detailsBarModel.IsVisible = true;
         detailsBarModel.SelectedItemModel = bitmapItemModel;
@@ -231,6 +231,7 @@ public class DetailsBarModelTest
         bitmapImage.ColorSpace.Returns(new ColorSpaceInfo(ColorSpaceType.AdobeRGB, new byte[0]));
 
         messenger.Send(new BitmapImageLoadedMessage(bitmapFile, bitmapImage));
+        await detailsBarModel.LastDispatchTask;
 
         Assert.Equal(ColorSpaceType.AdobeRGB, detailsBarModel.ColorSpaceType);
         Assert.True(detailsBarModel.ShowColorProfileIndicator);
@@ -252,13 +253,14 @@ public class DetailsBarModelTest
     }
 
     [Fact]
-    public void UpdatesFileName_WhenMediaFilesLoaded()
+    public async Task UpdatesFileName_WhenMediaFilesLoaded()
     {
         detailsBarModel.IsVisible = true;
         detailsBarModel.SelectedItemModel = bitmapItemModel;
         bitmapFile.DisplayName.Returns("Test File.jpg[.arw]");
 
         messenger.Send(new MediaFilesLoadingMessage(LoadMediaFilesTask.Empty));
+        await detailsBarModel.LastDispatchTask;
 
         Assert.Equal("Test File.jpg[.arw]", detailsBarModel.FileName);
     }

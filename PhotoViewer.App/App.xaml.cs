@@ -16,8 +16,10 @@ using PhotoViewer.Core.Utils;
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -34,13 +36,17 @@ public partial class App : Application
 
     public MainWindow Window { get; private set; } = null!;
 
+    private readonly ApplicationSettings applicationSettings;
+
     private bool isUnhandeldExceptionDialogShown = false;
 
     public App()
     {
         var stopwatch = Stopwatch.StartNew();
 
-        Log.Logger = new LoggerImpl();
+        applicationSettings = LoadSettings();
+
+        Log.Logger = new LoggerImpl(applicationSettings.IsDebugLogEnabled);
 
         stopwatch.Stop();
         Log.Info($"LoggerImpl took {stopwatch.ElapsedMilliseconds}ms");
@@ -64,13 +70,11 @@ public partial class App : Application
         Log.Info("Application launched");
         var stopwatch = Stopwatch.StartNew();
 
-        var settings = LoadSettings();
-
-        var loadMediaFilesTask = LoadMediaFiles(settings);
+        var loadMediaFilesTask = LoadMediaFiles(applicationSettings);
 
         var messenger = StrongReferenceMessenger.Default;
 
-        await CreateWindowAsync(messenger, settings);
+        await CreateWindowAsync(messenger, applicationSettings);
 
         messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel)));
 
@@ -121,7 +125,7 @@ public partial class App : Application
         }
         else
         {
-#if DEBUG            
+#if DEBUG
             return mediaFilesLoaderService.LoadFolder(KnownFolders.PicturesLibrary, config);
 #else
             return LoadMediaFilesTask.Empty;
@@ -169,17 +173,36 @@ public partial class App : Application
 
         isUnhandeldExceptionDialogShown = true;
 
+        var sendCrashReportCheckBox = new CheckBox() { Content = "Send crash report with log" };
+
         var dialog = new ContentDialog
         {
             XamlRoot = Window.Content.XamlRoot,
             RequestedTheme = ((FrameworkElement)Window.Content).RequestedTheme,
             Title = "Unhandled Exception",
-            Content = $"An unhandled exception occurred: {args.Message}",
+            Content = new StackPanel()
+            {
+                Spacing = 8,
+                Children = {
+                    new TextBlock() {
+                        TextWrapping = TextWrapping.Wrap,
+                        Text = $"An unhandled exception occurred: {args.Message}"
+                    },
+                    sendCrashReportCheckBox
+                }
+            },
             PrimaryButtonText = "Exit Application",
             CloseButtonText = "Ignore"
         };
 
-        if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+        var dialogResult = await dialog.ShowAsync();
+
+        if (sendCrashReportCheckBox.IsChecked is true)
+        {
+            await CrashReportService.TrySendCrashReportAsync();
+        }
+
+        if (dialogResult == ContentDialogResult.Primary)
         {
             Log.Info("Exit application after unhandled exception");
             Exit();

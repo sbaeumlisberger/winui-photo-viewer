@@ -223,4 +223,11 @@
     <Resource Remove="Views\ComparePage.xaml" />
   </ItemGroup>
   
+  <ItemGroup>
+    <Folder Include="Views\ComparePage\" />
+    <Folder Include="Views\SettingsPage\" />
+    <Folder Include="Views\Shared\" />
+    <Folder Include="Views\OverviewPage\" />
+  </ItemGroup>
+  
 </Project>

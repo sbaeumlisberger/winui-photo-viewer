@@ -283,7 +283,7 @@
     <value>Open folder</value>
   </data>
   <data name="FlipViewPageCommandBar_OverviewButton" xml:space="preserve">
-    <value>Zur Übersicht wechseln</value>
+    <value>Go to overview</value>
   </data>
   <data name="FlipViewPageCommandBar_PreviousButton" xml:space="preserve">
     <value>Previous</value>
@@ -669,6 +669,9 @@
   <data name="PropertiesDialog_Title" xml:space="preserve">
     <value>Properties</value>
   </data>
+  <data name="SettingsPage_AboutSectionTittle" xml:space="preserve">
+    <value>About</value>
+  </data>
   <data name="SettingsPage_AppearanceSectionTittle" xml:space="preserve">
     <value>Appearance</value>
   </data>
@@ -690,17 +693,62 @@
   <data name="SettingsPage_DeleteLinkedFilesOption_Yes" xml:space="preserve">
     <value>Always</value>
   </data>
+  <data name="SettingsPage_DeleteLinkedRawFilesHeader" xml:space="preserve">
+    <value>Delete linked raw files</value>
+  </data>
   <data name="SettingsPage_DiashowTimeLabel" xml:space="preserve">
     <value>Time span in seconds how long photos are displayed in the diashow</value>
   </data>
+  <data name="SettingsPage_ExportSettingsButton" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="SettingsPage_ImportSettingsButton" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="SettingsPage_IsDebugLogEnabledToggleHeader" xml:space="preserve">
+    <value>Enable debug log (requires restart)</value>
+  </data>
+  <data name="SettingsPage_LinkRawFilesDescripiton" xml:space="preserve">
+    <value>Normal and raw image files are shown as one file</value>
+  </data>
+  <data name="SettingsPage_LinkRawFilesHeader" xml:space="preserve">
+    <value>Link raw files</value>
+  </data>
+  <data name="SettingsPage_LoggingSectionTittle" xml:space="preserve">
+    <value>Logging</value>
+  </data>
+  <data name="SettingsPage_ManageSettingsSectionTittle" xml:space="preserve">
+    <value>Manage settings</value>
+  </data>
+  <data name="SettingsPage_OpenLogFileButton" xml:space="preserve">
+    <value>Open log file</value>
+  </data>
+  <data name="SettingsPage_RawFilesFolderNameDescription" xml:space="preserve">
+    <value>Specifies the name of a subfolder to search for raw files</value>
+  </data>
+  <data name="SettingsPage_RawFilesFolderNameHeader" xml:space="preserve">
+    <value>Folder name for raw files</value>
+  </data>
+  <data name="SettingsPage_RawFilesSectionTittle" xml:space="preserve">
+    <value>Raw files</value>
+  </data>
+  <data name="SettingsPage_ResetSettingsButton" xml:space="preserve">
+    <value>Reset all settings</value>
+  </data>
   <data name="SettingsPage_ShowDeleteAnimationToggle" xml:space="preserve">
     <value>Show delete animation</value>
+  </data>
+  <data name="SettingsPage_ShowVideoFilesHeader" xml:space="preserve">
+    <value>Show video files</value>
   </data>
   <data name="SettingsPage_ThemeHeader" xml:space="preserve">
     <value>Theme</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="SettingsPage_VideoFilesSectionTittle" xml:space="preserve">
+    <value>Videos</value>
   </data>
   <data name="ShiftDatenTakenUICommand_Label" xml:space="preserve">
     <value>Shift date taken of all photos</value>

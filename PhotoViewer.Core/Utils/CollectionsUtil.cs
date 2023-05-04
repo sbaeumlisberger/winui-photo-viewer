@@ -1,4 +1,6 @@
-﻿using PhotoViewer.Core.Utils;
+﻿using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Utils;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PhotoViewer.App.Utils;
@@ -50,32 +52,9 @@ public static class CollectionsUtil
         return element != null ? new List<T>(1) { element } : new List<T>(0);
     }
 
-    // TODO add test
-    public static void MatchTo<T>(this IList<T> list, IReadOnlyList<T> other)
-    {
-        list.RemoveRange(list.Except(other).ToList());
-
-        for (int i = 0; i < other.Count; i++)
-        {
-            if (i > list.Count - 1)
-            {
-                list.Add(other[i]);
-            }
-            else if (!Equals(other[i], list[i]))
-            {
-                int oldIndex = list.IndexOf(other[i]);
-                if (oldIndex != -1)
-                {
-                    list.RemoveAt(oldIndex);               
-                }
-                list.Insert(i, other[i]);                
-            }
-        }
-    }
-
     /// <summary>Returns the successor of the given element or the deafault value if there is no successor.</summary>
     [return: MaybeNull]
-    public static T GetSuccessor<T>(this IList<T> list, T element)
+    public static T GetSuccessor<T>(this IReadOnlyList<T> list, T element)
     {
         var index = list.IndexOf(element);
         if (index == -1)
@@ -87,5 +66,47 @@ public static class CollectionsUtil
             return list[index + 1];
         }
         return default;
+    }
+
+    /// <summary>Returns the predecessor of the given element or the deafault value if there is no predecessor.</summary>
+    [return: MaybeNull]
+    public static T GetPredecessor<T>(this IReadOnlyList<T> list, T element)
+    {
+        var index = list.IndexOf(element);
+        if (index == -1)
+        {
+            throw new ArgumentException(nameof(element));
+        }
+        if (index - 1 > 0)
+        {
+            return list[index + 1];
+        }
+        return default;
+    }
+
+    public static int IndexOf<T>(this IReadOnlyList<T> list, T element)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (Equals(list[i], element))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static List<T> GetNeighbours<T>(this IReadOnlyList<T> list, T element, int maxAmountPerSide = 1)
+    {
+        var index = list.IndexOf(element);
+        if (index == -1)
+        {
+            throw new ArgumentException(nameof(element));
+        }
+        int leftNeighboursCount = Math.Min(maxAmountPerSide, index);
+        var leftNeighbours = list.Skip(index - leftNeighboursCount).Take(leftNeighboursCount);
+        int rightNeighboursCount = Math.Min(maxAmountPerSide, list.Count - (index + 1));
+        var rightNeighbours = list.Skip(index + 1).Take(rightNeighboursCount);
+        return leftNeighbours.Concat(rightNeighbours).ToList();
     }
 }

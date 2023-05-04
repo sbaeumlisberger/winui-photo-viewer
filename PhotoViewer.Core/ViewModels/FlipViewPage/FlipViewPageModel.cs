@@ -69,6 +69,11 @@ public partial class FlipViewPageModel : ViewModelBase
         if (popNavigationState && Messenger.Send<PopNavigationStateMessage>().Response is Dictionary<string, object> navigationState)
         {
             restoredMediaFile = (IMediaFileInfo?)navigationState[nameof(FlipViewModel.SelectedItem)];
+
+            if (!session.Files.Contains(restoredMediaFile)) 
+            {
+                restoredMediaFile = null;
+            }
         }
 
         if (session.Files.Any())

@@ -179,7 +179,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
                 SizeInPixels = sizeInPixels != Size.Empty ? sizeInPixels.Width + "x" + sizeInPixels.Height + "px" : string.Empty;
 
                 if (SelectedItemModel is IBitmapFlipViewItemModel bitmapFlipViewItemModel
-                    && bitmapFlipViewItemModel.BitmapImage is IBitmapImageModel bitmapImage)
+                    && bitmapFlipViewItemModel.ImageViewModel.Image is IBitmapImageModel bitmapImage)
                 {
                     UpdateFromBitmapImage(bitmapImage);
                 }

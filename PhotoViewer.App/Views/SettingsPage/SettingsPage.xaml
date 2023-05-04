@@ -77,29 +77,29 @@
                 <TextBlock 
                     Margin="0,32,0,8" 
                     Style="{ThemeResource SubtitleTextBlockStyle}" 
-                    Text="RAW-Dateien"/>
+                    Text="{x:Bind res:Strings.SettingsPage_RawFilesSectionTittle}"/>
                 <ToggleSwitch IsOn="{x:Bind ViewModel.Settings.LinkRawFiles, Mode=TwoWay}">
                     <ToggleSwitch.Header>
                         <StackPanel>
-                            <TextBlock Text="RAW-Dateien verlinken"/>
+                            <TextBlock Text="{x:Bind res:Strings.SettingsPage_LinkRawFilesHeader}"/>
                             <TextBlock 
                                 Foreground="{ThemeResource SystemColorDisabledTextBrush}"
-                                Text="Normale Dateien und RAW-Dateien werden als eine Datei angezeigt"/>
+                                Text="{x:Bind res:Strings.SettingsPage_LinkRawFilesDescripiton}"/>
                         </StackPanel>
                     </ToggleSwitch.Header>
                 </ToggleSwitch>
                 <TextBlock 
                     Margin="0,8,0,0"
-                    Text="Ordnername für RAW-Dateien"/>
+                    Text="{x:Bind res:Strings.SettingsPage_RawFilesFolderNameHeader}"/>
                 <TextBlock 
                     Foreground="{ThemeResource SystemColorDisabledTextBrush}" 
-                    Text="Spezifziert den Namen für einen Unterordner der nach RAW-Dateien durchsucht wird"/>
+                    Text="{x:Bind res:Strings.SettingsPage_RawFilesFolderNameDescription}"/>
                 <TextBox 
                     Margin="0,4,0,0" HorizontalAlignment="Left" MinWidth="200"
                     Text="{x:Bind ViewModel.Settings.RawFilesFolderName, Mode=TwoWay}"/>
                 <TextBlock
                     Margin="0,16,0,0" 
-                    Text="Verlinkte Dateien löschen"/>
+                    Text="{x:Bind res:Strings.SettingsPage_DeleteLinkedRawFilesHeader}"/>
                 <RadioButtons 
                     MaxColumns="3" 
                     ItemsSource="{x:Bind ViewModel.AvailableDeleteLinkedFilesOptions}" 
@@ -115,42 +115,54 @@
                 <TextBlock 
                     Margin="0,32,0,8" 
                     Style="{ThemeResource SubtitleTextBlockStyle}" 
-                    Text="Videos"/>
+                    Text="{x:Bind res:Strings.SettingsPage_VideoFilesSectionTittle}"/>
                 <ToggleSwitch 
-                    Header="Video-Dateien anzeigen"
+                    Header="{x:Bind res:Strings.SettingsPage_ShowVideoFilesHeader}"
                     IsOn="{x:Bind ViewModel.Settings.IncludeVideos, Mode=TwoWay}"/>
 
                 <TextBlock
                     Margin="0,32,0,8" Style="{ThemeResource SubtitleTextBlockStyle}" 
-                    Text="Einstellungen verwalten"/>
+                    Text="{x:Bind res:Strings.SettingsPage_ManageSettingsSectionTittle}"/>
                 <StackPanel Orientation="Horizontal" Spacing="4">
-                    <Button Content="Exportieren..." Command="{x:Bind ViewModel.ExportCommand}"/>
-                    <Button Content="Wiederherstellen..." Command="{x:Bind ViewModel.ImportCommand}"/>
+                    <Button 
+                        Content="{x:Bind res:Strings.SettingsPage_ExportSettingsButton}"
+                        Command="{x:Bind ViewModel.ExportCommand}"/>
+                    <Button 
+                        Content="{x:Bind res:Strings.SettingsPage_ImportSettingsButton}" 
+                        Command="{x:Bind ViewModel.ImportCommand}"/>
                 </StackPanel>
-                <Button Margin="0,12,0,0" Content="Alle Einstellungen zurücksetzen" Command="{x:Bind ViewModel.ResetCommand}"/>
+                <Button 
+                    Margin="0,8,0,0" 
+                    Content="{x:Bind res:Strings.SettingsPage_ResetSettingsButton}"
+                    Command="{x:Bind ViewModel.ResetCommand}"/>
             </StackPanel>
         </ScrollViewer>
 
         <ScrollViewer Grid.Column="1" Grid.Row="1" Margin="16,0,0,0">
             <StackPanel Padding="0,0,0,32">
                 <TextBlock
+                    Margin="0,8,0,8"
                     Style="{ThemeResource SubtitleTextBlockStyle}"
-                    Text="About"/>
+                    Text="{x:Bind res:Strings.SettingsPage_AboutSectionTittle}"/>
                 <TextBlock Text="WinUI Photo Viewer"/>
-                <TextBlock Text="Version 0.0.0"/>
+                <TextBlock Text="Version 1.0.0"/>
                 <TextBlock Text="© Sebastian Bäumlisberger"/>
                 <HyperlinkButton 
                     Padding="0"
                     Content="GitHub"
-                    NavigateUri="https://github.com/sbaeumlisberger/winui-photo-viewer"/>              
+                    NavigateUri="https://github.com/sbaeumlisberger/winui-photo-viewer"/>
 
                 <TextBlock 
                     Margin="0,32,0,8" 
                     Style="{ThemeResource SubtitleTextBlockStyle}" 
-                    Text="Logging"/>
-                    <Button 
-                        Content="Logdatei öffnen"
-                        Command="{x:Bind ViewModel.ShowLogCommand}"/>
+                    Text="{x:Bind res:Strings.SettingsPage_LoggingSectionTittle}"/>
+                <Button 
+                    Content="{x:Bind res:Strings.SettingsPage_OpenLogFileButton}"
+                    Command="{x:Bind ViewModel.ShowLogCommand}"/>
+                <ToggleSwitch
+                    Margin="0,12,0,0"
+                    IsOn="{x:Bind ViewModel.Settings.IsDebugLogEnabled, Mode=TwoWay}"
+                    Header="{x:Bind res:Strings.SettingsPage_IsDebugLogEnabledToggleHeader}"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

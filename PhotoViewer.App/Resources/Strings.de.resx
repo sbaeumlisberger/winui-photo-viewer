@@ -669,6 +669,9 @@
   <data name="PropertiesDialog_Title" xml:space="preserve">
     <value>Eigenschaften</value>
   </data>
+  <data name="SettingsPage_AboutSectionTittle" xml:space="preserve">
+    <value>Über diese App</value>
+  </data>
   <data name="SettingsPage_AppearanceSectionTittle" xml:space="preserve">
     <value>Anzeige</value>
   </data>
@@ -690,17 +693,62 @@
   <data name="SettingsPage_DeleteLinkedFilesOption_Yes" xml:space="preserve">
     <value>Immer</value>
   </data>
+  <data name="SettingsPage_DeleteLinkedRawFilesHeader" xml:space="preserve">
+    <value>Verlinkte Raw-Dateien löschen</value>
+  </data>
   <data name="SettingsPage_DiashowTimeLabel" xml:space="preserve">
     <value>Zeitspanne in Sekunden, wie lange Fotos in der Diashow angezeigt werden</value>
   </data>
+  <data name="SettingsPage_ExportSettingsButton" xml:space="preserve">
+    <value>Exportieren</value>
+  </data>
+  <data name="SettingsPage_ImportSettingsButton" xml:space="preserve">
+    <value>Wiederherstellen</value>
+  </data>
+  <data name="SettingsPage_IsDebugLogEnabledToggleHeader" xml:space="preserve">
+    <value>Debug Log aktivieren (erfodert Neustart)</value>
+  </data>
+  <data name="SettingsPage_LinkRawFilesDescripiton" xml:space="preserve">
+    <value>Normale Dateien und Raw-Dateien werden als eine Datei angezeigt</value>
+  </data>
+  <data name="SettingsPage_LinkRawFilesHeader" xml:space="preserve">
+    <value>Raw-Dateien verlinken</value>
+  </data>
+  <data name="SettingsPage_LoggingSectionTittle" xml:space="preserve">
+    <value>Logging</value>
+  </data>
+  <data name="SettingsPage_ManageSettingsSectionTittle" xml:space="preserve">
+    <value>Einstellungen verwalten</value>
+  </data>
+  <data name="SettingsPage_OpenLogFileButton" xml:space="preserve">
+    <value>Logdatei öffnen</value>
+  </data>
+  <data name="SettingsPage_RawFilesFolderNameDescription" xml:space="preserve">
+    <value>Spezifziert den Namen für einen Unterordner der nach Raw-Dateien durchsucht wird</value>
+  </data>
+  <data name="SettingsPage_RawFilesFolderNameHeader" xml:space="preserve">
+    <value>Ordnername für Raw-Dateien</value>
+  </data>
+  <data name="SettingsPage_RawFilesSectionTittle" xml:space="preserve">
+    <value>Raw-Dateien</value>
+  </data>
+  <data name="SettingsPage_ResetSettingsButton" xml:space="preserve">
+    <value>Alle Einstellungen zurücksetzen</value>
+  </data>
   <data name="SettingsPage_ShowDeleteAnimationToggle" xml:space="preserve">
     <value>Animation beim Löschen von Dateien anzeigen</value>
+  </data>
+  <data name="SettingsPage_ShowVideoFilesHeader" xml:space="preserve">
+    <value>Video-Dateien anzeigen</value>
   </data>
   <data name="SettingsPage_ThemeHeader" xml:space="preserve">
     <value>Theme</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Einstellungen</value>
+  </data>
+  <data name="SettingsPage_VideoFilesSectionTittle" xml:space="preserve">
+    <value>Videos</value>
   </data>
   <data name="ShiftDatenTakenUICommand_Label" xml:space="preserve">
     <value>Aufnahmedaten aller Fotos verschieben</value>

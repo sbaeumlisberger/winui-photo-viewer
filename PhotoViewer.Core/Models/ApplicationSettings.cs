@@ -20,6 +20,16 @@ public partial class ApplicationSettings : ObservableObject
 
     public bool IncludeVideos { get; set; } = true;
 
+    public bool IsDebugLogEnabled { get; set; } = true;
+
+    public ApplicationSettings()
+    {
+#if DEBUG
+        // enable debug log by default
+        IsDebugLogEnabled = true;
+#endif
+    }
+
     public void Apply(ApplicationSettings settings)
     {
         Theme = settings.Theme;
@@ -31,6 +41,7 @@ public partial class ApplicationSettings : ObservableObject
         RawFilesFolderName = settings.RawFilesFolderName;
         DeleteLinkedFilesOption = settings.DeleteLinkedFilesOption;
         IncludeVideos = settings.IncludeVideos;
+        IsDebugLogEnabled = settings.IsDebugLogEnabled;
     }
 
     public static ApplicationSettings Deserialize(string serialized)
@@ -58,6 +69,7 @@ public partial class ApplicationSettings : ObservableObject
         settings.RawFilesFolderName = keyValueMap[nameof(RawFilesFolderName)];
         settings.DeleteLinkedFilesOption = (DeleteLinkedFilesOption)Enum.Parse(typeof(DeleteLinkedFilesOption), keyValueMap[nameof(DeleteLinkedFilesOption)]);
         settings.IncludeVideos = bool.Parse(keyValueMap[nameof(IncludeVideos)]);
+        settings.IsDebugLogEnabled = bool.Parse(keyValueMap[nameof(IsDebugLogEnabled)]);
         return settings;
     }
 
@@ -73,6 +85,7 @@ public partial class ApplicationSettings : ObservableObject
         stringBuilder.AppendLine(nameof(RawFilesFolderName) + "=" + RawFilesFolderName);
         stringBuilder.AppendLine(nameof(DeleteLinkedFilesOption) + "=" + DeleteLinkedFilesOption);
         stringBuilder.AppendLine(nameof(IncludeVideos) + "=" + IncludeVideos);
+        stringBuilder.AppendLine(nameof(IsDebugLogEnabled) + "=" + IsDebugLogEnabled);
         return stringBuilder.ToString();
     }
 }

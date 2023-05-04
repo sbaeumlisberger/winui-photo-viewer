@@ -18,7 +18,7 @@
     <Grid>
         <controls:BitmapViewer 
             x:Name="bitmapViewer"
-            BitmapImage="{x:Bind ViewModel.BitmapImage, Mode=OneWay}" 
+            BitmapImage="{x:Bind ViewModel.ImageViewModel.Image, Mode=OneWay}" 
             IsEnabled="{x:Bind ViewModel.IsSelected, Mode=OneWay}">
             <Grid 
                 Visibility="{x:Bind ViewModel.IsContextMenuEnabeld, Mode=OneWay}"
@@ -36,21 +36,21 @@
         <ProgressRing 
             HorizontalAlignment="Center"
             VerticalAlignment="Center" 
-            Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-            IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
+            Visibility="{x:Bind ViewModel.ImageViewModel.IsLoading, Mode=OneWay}"
+            IsActive="{x:Bind ViewModel.ImageViewModel.IsLoading, Mode=OneWay}"/>
         
         <StackPanel 
             HorizontalAlignment="Center" 
             VerticalAlignment="Center" 
             Spacing="8"
-            Visibility="{x:Bind ViewModel.IsLoadingImageFailed, FallbackValue=Collapsed, Mode=OneWay}">
+            Visibility="{x:Bind ViewModel.ImageViewModel.IsLoadingImageFailed, FallbackValue=Collapsed, Mode=OneWay}">
             <TextBlock 
                 HorizontalAlignment="Center" 
-                Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"/>
+                Text="{x:Bind ViewModel.ImageViewModel.ErrorMessage, Mode=OneWay}"/>
             <Button 
                 HorizontalAlignment="Center"
                 Content="{x:Bind res:Strings.BitmapFlipViewItem_ReloadButton}"
-                Command="{x:Bind ViewModel.ReloadCommand}"/>
+                Command="{x:Bind ViewModel.ImageViewModel.ReloadCommand}"/>
         </StackPanel>
     </Grid>
 

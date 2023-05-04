@@ -111,6 +111,7 @@ public class TagPeopleToolModelTest
         tagPeopleToolModel.IsEnabled = isEnabled;
 
         messenger.Send(new TagPeopleToolActiveChangedMessage(true));
+        await tagPeopleToolModel.LastDispatchTask;
 
         if (isEnabled)
         {

@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Moq;
+using NSubstitute;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
@@ -17,25 +18,27 @@ public class MediaFlipViewModelTest
 {
     private readonly Func<IMediaFileInfo, IMediaFlipViewItemModel> itemModelFactory;
 
+    private readonly IMessenger messenger = new StrongReferenceMessenger();
+
+    private readonly MediaFlipViewModel mediaFlipViewModel;
+
     public MediaFlipViewModelTest()
     {
         Log.Logger = Mock.Of<ILogger>();
 
         itemModelFactory = (mediaFile) =>
         {
-            var mock = new Mock<IMediaFlipViewItemModel>();
-            mock.SetupGet(m => m.MediaItem).Returns(mediaFile);
-            return mock.Object;
+            var mock = Substitute.For<IMediaFlipViewItemModel>();
+            mock.MediaItem.Returns(mediaFile);
+            return mock;
         };
+
+        mediaFlipViewModel = new MediaFlipViewModel(messenger, null!, null!, itemModelFactory, new ApplicationSettings());
     }
 
     [Fact]
     public void Receive_MediaFilesLoadedMessage()
     {
-        var messenger = new StrongReferenceMessenger();
-
-        var flipViewPageModel = new MediaFlipViewModel(messenger, null!, null!, itemModelFactory, new ApplicationSettings());
-
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[17];
 
@@ -43,29 +46,44 @@ public class MediaFlipViewModelTest
 
         messenger.Send(new MediaFilesLoadingMessage(new LoadMediaFilesTask(startFile, tsc.Task)));
 
-        Assert.NotNull(flipViewPageModel.SelectedItemModel);
-        Assert.Equal(startFile, flipViewPageModel.SelectedItemModel.MediaItem);
-        Assert.Single(flipViewPageModel.Items);
-        Assert.Single(flipViewPageModel.ItemModels);
-        Assert.True(flipViewPageModel.IsLoadingMoreFiles);
+        Assert.NotNull(mediaFlipViewModel.SelectedItemModel);
+        Assert.Equal(startFile, mediaFlipViewModel.SelectedItemModel.MediaItem);
+        Assert.Single(mediaFlipViewModel.Items);
+        Assert.Single(mediaFlipViewModel.ItemModels);
+        Assert.True(mediaFlipViewModel.IsLoadingMoreFiles);
 
         tsc.SetResult(new LoadMediaFilesResult(files, startFile));
 
-        Assert.NotNull(flipViewPageModel.SelectedItemModel);
-        Assert.Equal(startFile, flipViewPageModel.SelectedItemModel.MediaItem);
-        Assert.Equal(files.Count, flipViewPageModel.Items.Count);
-        Assert.Equal(5, flipViewPageModel.ItemModels.Count);
-        Assert.NotNull(flipViewPageModel.TryGetItemModel(startFile));
-        Assert.False(flipViewPageModel.IsLoadingMoreFiles);
+        Assert.NotNull(mediaFlipViewModel.SelectedItemModel);
+        Assert.Equal(startFile, mediaFlipViewModel.SelectedItemModel.MediaItem);
+        Assert.Equal(files.Count, mediaFlipViewModel.Items.Count);
+        Assert.Equal(5, mediaFlipViewModel.ItemModels.Count);
+        Assert.NotNull(mediaFlipViewModel.TryGetItemModel(startFile));
+        Assert.False(mediaFlipViewModel.IsLoadingMoreFiles);
+    }
+
+    [Fact]
+    public void PreloadedItemModelIsResused_WhenLoadingMediaFilesCompleted()
+    {
+        var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
+        IMediaFileInfo startFile = files[17];
+
+        var tsc = new TaskCompletionSource<LoadMediaFilesResult>();
+
+        messenger.Send(new MediaFilesLoadingMessage(new LoadMediaFilesTask(startFile, tsc.Task)));
+
+        Assert.NotNull(mediaFlipViewModel.SelectedItemModel);
+        var preloadItemModel = mediaFlipViewModel.SelectedItemModel;
+
+        tsc.SetResult(new LoadMediaFilesResult(files, startFile));
+
+        Assert.Equal(preloadItemModel, mediaFlipViewModel.SelectedItemModel);
+        preloadItemModel.DidNotReceive().Cleanup();
     }
 
     [Fact]
     public void Receive_MediaFilesLoadedMessage_DeleteStartFileWhileLoadingMoreFiles()
     {
-        var messenger = new StrongReferenceMessenger();
-
-        var flipViewPageModel = new MediaFlipViewModel(messenger, null!, null!, itemModelFactory, new ApplicationSettings());
-
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[17];
 
@@ -73,86 +91,76 @@ public class MediaFlipViewModelTest
 
         messenger.Send(new MediaFilesLoadingMessage(new LoadMediaFilesTask(startFile, tsc.Task)));
 
-        Assert.NotNull(flipViewPageModel.SelectedItemModel);
-        Assert.Equal(startFile, flipViewPageModel.SelectedItemModel.MediaItem);
-        Assert.Single(flipViewPageModel.Items);
-        Assert.Single(flipViewPageModel.ItemModels);
-        Assert.True(flipViewPageModel.IsLoadingMoreFiles);
+        Assert.NotNull(mediaFlipViewModel.SelectedItemModel);
+        Assert.Equal(startFile, mediaFlipViewModel.SelectedItemModel.MediaItem);
+        Assert.Single(mediaFlipViewModel.Items);
+        Assert.Single(mediaFlipViewModel.ItemModels);
+        Assert.True(mediaFlipViewModel.IsLoadingMoreFiles);
 
         messenger.Send(new MediaFilesDeletedMessage(new[] { startFile }));
 
-        Assert.Null(flipViewPageModel.SelectedItem);
-        Assert.Null(flipViewPageModel.SelectedItemModel);
+        Assert.Null(mediaFlipViewModel.SelectedItem);
+        Assert.Null(mediaFlipViewModel.SelectedItemModel);
 
         tsc.SetResult(new LoadMediaFilesResult(files, startFile));
 
-        Assert.NotNull(flipViewPageModel.SelectedItemModel);
-        Assert.Equal(startFile, flipViewPageModel.SelectedItemModel.MediaItem);
-        Assert.Equal(files.Count, flipViewPageModel.Items.Count);
-        Assert.Equal(5, flipViewPageModel.ItemModels.Count);
-        Assert.NotNull(flipViewPageModel.TryGetItemModel(startFile));
-        Assert.False(flipViewPageModel.IsLoadingMoreFiles);
+        Assert.NotNull(mediaFlipViewModel.SelectedItemModel);
+        Assert.Equal(startFile, mediaFlipViewModel.SelectedItemModel.MediaItem);
+        Assert.Equal(files.Count, mediaFlipViewModel.Items.Count);
+        Assert.Equal(5, mediaFlipViewModel.ItemModels.Count);
+        Assert.NotNull(mediaFlipViewModel.TryGetItemModel(startFile));
+        Assert.False(mediaFlipViewModel.IsLoadingMoreFiles);
     }
 
     [Fact]
     public void Receive_MediaFilesDeletedMessage()
     {
-        var messenger = new StrongReferenceMessenger();
-
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[17];
-
-        var flipViewPageModel = new MediaFlipViewModel(messenger, null!, null!, itemModelFactory, new ApplicationSettings());
-        flipViewPageModel.SetItems(files, startFile);
+        mediaFlipViewModel.SetItems(files, startFile);
 
         messenger.Send(new MediaFilesDeletedMessage(new[] { startFile }));
 
         var expectedSelectedFile = files[18];
-        Assert.Equal(files.Count - 1, flipViewPageModel.Items.Count);
-        Assert.Equal(expectedSelectedFile, flipViewPageModel.SelectedItem);
-        Assert.NotNull(flipViewPageModel.SelectedItemModel);
-        Assert.Equal(5, flipViewPageModel.ItemModels.Count);
-        Assert.NotNull(flipViewPageModel.TryGetItemModel(expectedSelectedFile));
+        Assert.Equal(files.Count - 1, mediaFlipViewModel.Items.Count);
+        Assert.Equal(expectedSelectedFile, mediaFlipViewModel.SelectedItem);
+        Assert.NotNull(mediaFlipViewModel.SelectedItemModel);
+        Assert.Equal(5, mediaFlipViewModel.ItemModels.Count);
+        Assert.NotNull(mediaFlipViewModel.TryGetItemModel(expectedSelectedFile));
     }
 
     [Fact]
     public void Receive_MediaFilesDeletedMessage_LastItem()
     {
-        var messenger = new StrongReferenceMessenger();
-
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[199];
 
-        var flipViewPageModel = new MediaFlipViewModel(messenger, null!, null!, itemModelFactory, new ApplicationSettings());
-        flipViewPageModel.SetItems(files, startFile);
+        mediaFlipViewModel.SetItems(files, startFile);
 
         messenger.Send(new MediaFilesDeletedMessage(new[] { startFile }));
 
         var expectedSelectedFile = files[198];
-        Assert.Equal(files.Count - 1, flipViewPageModel.Items.Count);
-        Assert.Equal(expectedSelectedFile, flipViewPageModel.SelectedItem);
-        Assert.NotNull(flipViewPageModel.SelectedItemModel);
-        Assert.Equal(3, flipViewPageModel.ItemModels.Count);
-        Assert.NotNull(flipViewPageModel.TryGetItemModel(expectedSelectedFile));
+        Assert.Equal(files.Count - 1, mediaFlipViewModel.Items.Count);
+        Assert.Equal(expectedSelectedFile, mediaFlipViewModel.SelectedItem);
+        Assert.NotNull(mediaFlipViewModel.SelectedItemModel);
+        Assert.Equal(3, mediaFlipViewModel.ItemModels.Count);
+        Assert.NotNull(mediaFlipViewModel.TryGetItemModel(expectedSelectedFile));
     }
 
     [Fact]
     public void Receive_MediaFilesDeletedMessage_Empty()
     {
-        var messenger = new StrongReferenceMessenger();
-
         var files = Enumerable.Range(0, 1).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[0];
 
-        var flipViewPageModel = new MediaFlipViewModel(messenger, null!, null!, itemModelFactory, new ApplicationSettings());
-        flipViewPageModel.SetItems(files, startFile);
+        mediaFlipViewModel.SetItems(files, startFile);
 
         messenger.Send(new MediaFilesDeletedMessage(new[] { startFile }));
 
-        Assert.Empty(flipViewPageModel.Items);
-        Assert.Null(flipViewPageModel.SelectedItem);
-        Assert.Null(flipViewPageModel.SelectedItemModel);
-        Assert.Empty(flipViewPageModel.ItemModels);
+        Assert.Empty(mediaFlipViewModel.Items);
+        Assert.Null(mediaFlipViewModel.SelectedItem);
+        Assert.Null(mediaFlipViewModel.SelectedItemModel);
+        Assert.Empty(mediaFlipViewModel.ItemModels);
     }
 
     private IMediaFileInfo MockMediaFileInfo(string fileName)

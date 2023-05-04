@@ -10,11 +10,15 @@ public class LoggerImpl : ILogger
     private static readonly string LogFolderPath = Path.Combine(AppData.LocalFolder, "logs");
 
     private static readonly string LogFilePath = Path.Combine(LogFolderPath, "log-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt");
+    
+    private readonly bool isDebugLogEnabled = false;
 
     private StreamWriter? logFileWriter;
 
-    public LoggerImpl()
+    public LoggerImpl(bool isDebugLogEnabled)
     {
+        this.isDebugLogEnabled = isDebugLogEnabled;
+
         Directory.CreateDirectory(LogFolderPath);
 
         var stream = new FileStream(LogFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
@@ -27,7 +31,10 @@ public class LoggerImpl : ILogger
 
     public void Debug(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Log("DEBUG", message, null, file, lineNumber);
+        if (isDebugLogEnabled)
+        {
+            Log("DEBUG", message, null, file, lineNumber);
+        }
     }
 
     public void Info(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)

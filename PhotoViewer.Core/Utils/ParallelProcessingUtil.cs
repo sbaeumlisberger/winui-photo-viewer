@@ -78,7 +78,7 @@ namespace PhotoViewer.Core.Utils
                             processedElements.Add(element);
                             progress?.Report((double)processedElements.Count / elements.Count);
                         }
-                        catch (TaskCanceledException) 
+                        catch (TaskCanceledException) // TODO how/when can this be thrown?
                         {
                             aborted = true;
 

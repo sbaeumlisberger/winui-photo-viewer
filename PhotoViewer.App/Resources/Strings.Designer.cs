@@ -556,7 +556,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Zur Übersicht wechseln.
+        ///   Looks up a localized string similar to Go to overview.
         /// </summary>
         internal static string FlipViewPageCommandBar_OverviewButton {
             get {
@@ -1717,6 +1717,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        internal static string SettingsPage_AboutSectionTittle {
+            get {
+                return ResourceManager.GetString("SettingsPage_AboutSectionTittle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Appearance.
         /// </summary>
         internal static string SettingsPage_AppearanceSectionTittle {
@@ -1780,6 +1789,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete linked raw files.
+        /// </summary>
+        internal static string SettingsPage_DeleteLinkedRawFilesHeader {
+            get {
+                return ResourceManager.GetString("SettingsPage_DeleteLinkedRawFilesHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Time span in seconds how long photos are displayed in the diashow.
         /// </summary>
         internal static string SettingsPage_DiashowTimeLabel {
@@ -1789,11 +1807,128 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export.
+        /// </summary>
+        internal static string SettingsPage_ExportSettingsButton {
+            get {
+                return ResourceManager.GetString("SettingsPage_ExportSettingsButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import.
+        /// </summary>
+        internal static string SettingsPage_ImportSettingsButton {
+            get {
+                return ResourceManager.GetString("SettingsPage_ImportSettingsButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable debug log (requires restart).
+        /// </summary>
+        internal static string SettingsPage_IsDebugLogEnabledToggleHeader {
+            get {
+                return ResourceManager.GetString("SettingsPage_IsDebugLogEnabledToggleHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Normal and raw image files are shown as one file.
+        /// </summary>
+        internal static string SettingsPage_LinkRawFilesDescripiton {
+            get {
+                return ResourceManager.GetString("SettingsPage_LinkRawFilesDescripiton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Link raw files.
+        /// </summary>
+        internal static string SettingsPage_LinkRawFilesHeader {
+            get {
+                return ResourceManager.GetString("SettingsPage_LinkRawFilesHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logging.
+        /// </summary>
+        internal static string SettingsPage_LoggingSectionTittle {
+            get {
+                return ResourceManager.GetString("SettingsPage_LoggingSectionTittle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manage settings.
+        /// </summary>
+        internal static string SettingsPage_ManageSettingsSectionTittle {
+            get {
+                return ResourceManager.GetString("SettingsPage_ManageSettingsSectionTittle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open log file.
+        /// </summary>
+        internal static string SettingsPage_OpenLogFileButton {
+            get {
+                return ResourceManager.GetString("SettingsPage_OpenLogFileButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specifies the name of a subfolder to search for raw files.
+        /// </summary>
+        internal static string SettingsPage_RawFilesFolderNameDescription {
+            get {
+                return ResourceManager.GetString("SettingsPage_RawFilesFolderNameDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folder name for raw files.
+        /// </summary>
+        internal static string SettingsPage_RawFilesFolderNameHeader {
+            get {
+                return ResourceManager.GetString("SettingsPage_RawFilesFolderNameHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raw files.
+        /// </summary>
+        internal static string SettingsPage_RawFilesSectionTittle {
+            get {
+                return ResourceManager.GetString("SettingsPage_RawFilesSectionTittle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset all settings.
+        /// </summary>
+        internal static string SettingsPage_ResetSettingsButton {
+            get {
+                return ResourceManager.GetString("SettingsPage_ResetSettingsButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show delete animation.
         /// </summary>
         internal static string SettingsPage_ShowDeleteAnimationToggle {
             get {
                 return ResourceManager.GetString("SettingsPage_ShowDeleteAnimationToggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show video files.
+        /// </summary>
+        internal static string SettingsPage_ShowVideoFilesHeader {
+            get {
+                return ResourceManager.GetString("SettingsPage_ShowVideoFilesHeader", resourceCulture);
             }
         }
         
@@ -1812,6 +1947,15 @@ namespace PhotoViewer.App.Resources {
         internal static string SettingsPage_Title {
             get {
                 return ResourceManager.GetString("SettingsPage_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Videos.
+        /// </summary>
+        internal static string SettingsPage_VideoFilesSectionTittle {
+            get {
+                return ResourceManager.GetString("SettingsPage_VideoFilesSectionTittle", resourceCulture);
             }
         }
         

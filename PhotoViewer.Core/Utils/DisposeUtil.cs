@@ -10,9 +10,10 @@ public static class DisposeUtil
         tmp?.Dispose();
     }
 
-    public static void DisposeSafely(this IDisposable? disposable, Action beforeDispose)
+    public static void DisposeSafely<T>(this T? disposable, Action setNull) where T : IDisposable
     {
-        beforeDispose();
-        disposable?.Dispose();
+        var tmp = disposable;
+        setNull();
+        tmp?.Dispose();
     }
 }
