@@ -18,7 +18,7 @@ using System.Timers;
 using Tocronx.SimpleAsync;
 using Xunit;
 
-namespace PhotoViewer.Test.ViewModels;
+namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
 
 public class MetadataTextboxModelTest
 {
@@ -55,7 +55,7 @@ public class MetadataTextboxModelTest
             .Setup(m => m.GetMetadataAsync(fileMock.Object, metadataPropertyMock.Object))
             .ReturnsAsync("value from file");
         var tsc = new TaskCompletionSource();
-        metadataServiceMock            
+        metadataServiceMock
             .Setup(m => m.WriteMetadataAsync(fileMock.Object, metadataPropertyMock.Object, "some value"))
             .Callback(() => Assert.True(metadataTextboxModel.IsWriting))
             .Returns(tsc.Task);
@@ -104,7 +104,7 @@ public class MetadataTextboxModelTest
         metadataTextboxModel.Text = "some value 03";
         timerMock.Verify(m => m.Restart());
 
-        timerMock.Raise(m => m.Elapsed += null, EventArgs.Empty);        
+        timerMock.Raise(m => m.Elapsed += null, EventArgs.Empty);
         await metadataTextboxModel.WriteTask;
 
         metadataServiceMock.Verify(

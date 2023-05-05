@@ -15,7 +15,7 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Xunit;
 
-namespace PhotoViewer.Test.ViewModels;
+namespace PhotoViewer.Test.ViewModels.FlipViewPage;
 
 public class DetailsBarModelTest
 {
@@ -178,8 +178,8 @@ public class DetailsBarModelTest
         detailsBarModel.IsVisible = true;
         detailsBarModel.SelectedItemModel = bitmapItemModel;
         var metadata = new MetadataView(new Dictionary<string, object?>()
-        { 
-            { MetadataProperties.DateTaken.Identifier, new DateTime(2021, 06, 13, 20, 32, 17) } 
+        {
+            { MetadataProperties.DateTaken.Identifier, new DateTime(2021, 06, 13, 20, 32, 17) }
         });
         metadataService.GetMetadataAsync(bitmapFile).Returns(metadata);
 

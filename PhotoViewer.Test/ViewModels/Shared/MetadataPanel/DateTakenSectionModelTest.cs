@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using Tocronx.SimpleAsync;
 using Xunit;
 
-namespace PhotoViewer.Test.ViewModels;
+namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
 
 public class DateTakenSectionModelTest
 {
@@ -59,7 +59,7 @@ public class DateTakenSectionModelTest
     [InlineData(false)]
     public void UpdateFilesChanged_SingleFile_NotPresent(bool intial)
     {
-        if(!intial) { IntialUpdate(); }
+        if (!intial) { IntialUpdate(); }
         var mediaFile = Mock.Of<IBitmapFileInfo>();
         var metadata = new[] { CreateMetadataView(null) };
 
@@ -112,7 +112,7 @@ public class DateTakenSectionModelTest
         if (!intial) { IntialUpdate(); }
 
         var files = Mock.Of<IReadOnlyList<IBitmapFileInfo>>();
-        
+
         var earliestDateTaken = new DateTime(2022, 04, 07, 06, 17, 57);
         var betweenDateTaken = new DateTime(2022, 12, 27, 12, 13, 38);
         var lastDateTaken = new DateTime(2023, 03, 02, 19, 10, 03);
@@ -144,7 +144,7 @@ public class DateTakenSectionModelTest
     [InlineData(false)]
     public void UpdateFilesChanged_MultipleFiles_NotPresent(bool intial)
     {
-        if(!intial) { IntialUpdate(); }
+        if (!intial) { IntialUpdate(); }
         var files = Mock.Of<IReadOnlyList<IBitmapFileInfo>>();
         var metadata = new[]
         {

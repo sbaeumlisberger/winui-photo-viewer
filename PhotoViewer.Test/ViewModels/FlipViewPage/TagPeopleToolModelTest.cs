@@ -13,7 +13,7 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Xunit;
 
-namespace PhotoViewer.Test.ViewModels;
+namespace PhotoViewer.Test.ViewModels.FlipViewPage;
 
 public class TagPeopleToolModelTest
 {
@@ -201,7 +201,7 @@ public class TagPeopleToolModelTest
     }
 
     [Fact]
-    public async Task ShowsErrorDialog_WhenAlreadyTaggedPersonAdded() 
+    public async Task ShowsErrorDialog_WhenAlreadyTaggedPersonAdded()
     {
         await InitializeTagPeopleToolModel(active: true);
         var peopleTags = new List<PeopleTag>() { new PeopleTag("Already Tagged") };
@@ -237,7 +237,7 @@ public class TagPeopleToolModelTest
         tagPeopleToolModel.AutoSuggestBoxText = "New Person";
         await tagPeopleToolModel.AddPersonCommand.ExecuteAsync(null);
 
-        await metadataService.Received().WriteMetadataAsync(bitmapFile, MetadataProperties.People, 
+        await metadataService.Received().WriteMetadataAsync(bitmapFile, MetadataProperties.People,
             Arg.Is<IList<PeopleTag>>(peopleTags => peopleTags[1].Name == "New Person"));
         Assert.NotNull(metadataModifiedMessageCapture.Message);
         Assert.Single(metadataModifiedMessageCapture.Message.Files);

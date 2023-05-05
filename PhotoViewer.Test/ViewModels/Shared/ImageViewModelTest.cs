@@ -19,7 +19,7 @@ using Xunit;
 using PhotoViewer.Core.Services;
 using Xunit.Abstractions;
 
-namespace PhotoViewer.Test.ViewModels;
+namespace PhotoViewer.Test.ViewModels.Shared;
 
 public class ImageViewModelTest
 {
@@ -33,7 +33,7 @@ public class ImageViewModelTest
 
     public ImageViewModelTest(ITestOutputHelper testOutputHelper)
     {
-        Log.Logger = new LoggerMock(testOutputHelper); 
+        Log.Logger = new LoggerMock(testOutputHelper);
 
         bitmapFileMock.IsMetadataSupported.Returns(true);
 

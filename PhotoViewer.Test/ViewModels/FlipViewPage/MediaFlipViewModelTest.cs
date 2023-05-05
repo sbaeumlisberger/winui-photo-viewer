@@ -12,7 +12,7 @@ using System.Diagnostics;
 using Windows.Storage;
 using Xunit;
 
-namespace PhotoViewer.Test.ViewModels;
+namespace PhotoViewer.Test.ViewModels.FlipViewPage;
 
 public class MediaFlipViewModelTest
 {

@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Sdk;
 
-namespace PhotoViewer.Test.ViewModels;
+namespace PhotoViewer.Test.ViewModels.FlipViewPage;
 
 public class BitmapFlipViewItemModelTest
 {
@@ -58,7 +58,7 @@ public class BitmapFlipViewItemModelTest
     [Fact]
     public void ImageIsPassedToTagPeopleTool()
     {
-        var image = Substitute.For<IBitmapImageModel>();    
+        var image = Substitute.For<IBitmapImageModel>();
         imageViewModel.Image.Returns(image);
         imageViewModel.RaisePropertyChanged(nameof(IImageViewModel.Image));
 
