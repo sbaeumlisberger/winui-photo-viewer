@@ -39,7 +39,7 @@ public class KeywordSectionModelTest
     }
 
     [Fact]
-    public void UpdatesKeywordItems_WhenFilesChanged()
+    public void UpdatesKeywordsList_WhenFilesChanged()
     {
         var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
         var metadata = new[]
@@ -73,7 +73,7 @@ public class KeywordSectionModelTest
     }
 
     [Fact]
-    public void UpdatesKeywordItems_WhenMetadataModified()
+    public void UpdatesKeywordsList_WhenMetadataModified()
     {
         var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
         var metadataFile1 = CreateMetadataView("Category 1/Keyword 1");

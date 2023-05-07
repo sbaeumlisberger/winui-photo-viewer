@@ -27,6 +27,7 @@ public interface IViewModelFactory
     ICompareViewModel CreateCompareViewModel(IObservableList<IBitmapFileInfo> bitmapFiles);
     ICropImageToolModel CreateCropImageToolModel(IBitmapFileInfo bitmapFile);
     IImageViewModel CreateImageViewModel(IBitmapFileInfo bitmapFile);
+    EditLocationDialogModel CreateEditLocationDialogModel(Location? orginalLocation, Func<Location?, Task> saveLocation);
 }
 
 public class ViewModelFactory : IViewModelFactory
@@ -46,7 +47,7 @@ public class ViewModelFactory : IViewModelFactory
     private readonly ISettingsService settingService = new SettingsService();
     private readonly IPersonalizationService personalizationService = new PersonalizationService();
     private readonly IClipboardService clipboardService = new ClipboardService();
-    private readonly IGpxService gpxService = new GpxService();
+    private readonly IGpxService gpxService;
     private readonly ISuggestionsService peopleSuggestionsService = new SuggestionsService("people");
     private readonly ISuggestionsService keywordsSuggestionsService = new SuggestionsService("keywords");
     private readonly IDialogService dialogService;
@@ -58,6 +59,7 @@ public class ViewModelFactory : IViewModelFactory
         this.messenger = messenger;
         this.settings = settings;
         this.dialogService = dialogService;
+        gpxService = new GpxService(metadataService);
         applicationSession = new ApplicationSession(messenger);
         rotateBitmapService = new RotateBitmapService(metadataService);
         cropImageService = new CropImageService(messenger, metadataService);
@@ -139,7 +141,7 @@ public class ViewModelFactory : IViewModelFactory
                metadataService,
                locationService,
                dialogService,
-               clipboardService,
+               this,
                peopleSuggestionsService,
                keywordsSuggestionsService,
                gpxService,
@@ -217,5 +219,10 @@ public class ViewModelFactory : IViewModelFactory
     public IImageViewModel CreateImageViewModel(IBitmapFileInfo bitmapFile)
     {
         return new ImageViewModel(bitmapFile, imageLoaderService, messenger);
+    }
+
+    public EditLocationDialogModel CreateEditLocationDialogModel(Location? orginalLocation, Func<Location?, Task> saveLocation)
+    {
+        return new EditLocationDialogModel(orginalLocation, saveLocation, locationService, clipboardService);
     }
 }

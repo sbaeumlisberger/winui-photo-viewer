@@ -6,6 +6,7 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
+using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
@@ -20,10 +21,6 @@ namespace MetadataEditModule.ViewModel;
 
 public partial class LocationSectionModel : MetadataPanelSectionModelBase
 {
-    public AddressTag? AddressTag { get; private set; }
-
-    public GeoTag? GeoTag { get; private set; }
-
     public string DisplayText { get; private set; } = "";
 
     public string PlaceholderText { get; private set; } = Strings.MetadataPanel_LocationPlaceholder;
@@ -36,7 +33,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
     private readonly IMetadataService metadataService;
     private readonly ILocationService locationService;
     private readonly IDialogService dialogService;
-    private readonly IClipboardService clipboardService;
+    private readonly IViewModelFactory viewModelFactory;
     private readonly IGpxService gpxService;
 
     private readonly CancelableTaskRunner updateRunner = new CancelableTaskRunner();
@@ -46,14 +43,14 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         IMetadataService metadataService,
         ILocationService locationService,
         IDialogService dialogService,
-        IClipboardService clipboardService,
+        IViewModelFactory viewModelFactory,
         IGpxService gpxService,
         IMessenger messenger) : base(writeFilesRunner, messenger)
     {
         this.metadataService = metadataService;
         this.locationService = locationService;
         this.dialogService = dialogService;
-        this.clipboardService = clipboardService;
+        this.viewModelFactory = viewModelFactory;
         this.gpxService = gpxService;
     }
 
@@ -79,13 +76,13 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         bool allGeoTagsEqual = geoPoints.All(x => Equals(x, geoPoints.First()));
         bool allLocationEqual = allAddressesEqual && allGeoTagsEqual;
 
-        AddressTag = allLocationEqual ? addresses.FirstOrDefault() : null;
-        GeoTag = allLocationEqual ? geoPoints.FirstOrDefault() : null;
+        var addressTag = allLocationEqual ? addresses.FirstOrDefault() : null;
+        var geoTag = allLocationEqual ? geoPoints.FirstOrDefault() : null;
         PlaceholderText = allLocationEqual
             ? Strings.MetadataPanel_LocationPlaceholder
             : Strings.MetadataPanel_LocationPlaceholderMultipleValues;
 
-        orginalLocation = new Location(AddressTag?.ToAddress(), GeoTag?.ToGeopoint());
+        orginalLocation = new Location(addressTag?.ToAddress(), geoTag?.ToGeopoint());
         UpdateForLocation(orginalLocation);
 
         this.completedLocation = orginalLocation;
@@ -115,7 +112,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
     [RelayCommand]
     private async Task EditLocationAsync()
     {
-        var dialogModel = new EditLocationDialogModel(orginalLocation, SaveLocation, locationService, clipboardService);
+        var dialogModel = viewModelFactory.CreateEditLocationDialogModel(orginalLocation, SaveLocation);
         await dialogService.ShowDialogAsync(dialogModel);
     }
 
@@ -131,26 +128,35 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
 
         if (fileOpenPickerModel.File is { } gpxFile)
         {
-            var gpxTrack = await gpxService.ReadTrackFromGpxFileAsync(gpxFile);
+            GpxTrack gpxTrack;
+            try
+            {
+                gpxTrack = await gpxService.ReadTrackFromGpxFileAsync(gpxFile);
+            }
+            catch (Exception ex)
+            {
+                await dialogService.ShowDialogAsync(new MessageDialogModel()
+                {
+                    Title = Strings.GpxFileParseErrorDialog_Title,
+                    Message = string.Format(Strings.GpxFileParseErrorDialog_Message, ex.Message)
+                });
+                return;
+            }
 
             await EnqueueWriteFiles(async (files) =>
             {
+                var modifiedFiles = new List<IBitmapFileInfo>();
+
                 // TODO show progress dialog
                 var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
                 {
-                    if (await metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken) is { } dateTaken
-                        && gpxService.FindTrackPointForTimestamp(gpxTrack, dateTaken) is { } gpxTrackPoint)
+                    if (await gpxService.TryApplyGpxTrackToFile(gpxTrack, file))
                     {
-                        var geoTag = new GeoTag()
-                        {
-                            Latitude = gpxTrackPoint.Latitude,
-                            Longitude = gpxTrackPoint.Longitude,
-                            Altitude = gpxTrackPoint.Ele,
-                            AltitudeReference = AltitudeReference.Unspecified, // TODO
-                        };
-                        await metadataService.WriteMetadataAsync(file, MetadataProperties.GeoTag, geoTag);
+                        modifiedFiles.Add(file);
                     }
                 });
+
+                Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.GeoTag));
 
                 if (result.HasFailures)
                 {
@@ -194,7 +200,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         {
             try
             {
-                var geopoint = await locationService.FindGeopointAsync(location.Address.ToString());
+                var geopoint = await locationService.FindGeopointAsync(location.Address);
                 cancellationToken.ThrowIfCancellationRequested();
                 return new Location(location.Address, geopoint);
             }

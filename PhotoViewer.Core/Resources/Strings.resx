@@ -132,6 +132,12 @@
   <data name="DeleteFilesErrorDialog_Title" xml:space="preserve">
     <value>Could not delete files</value>
   </data>
+  <data name="GpxFileParseErrorDialog_Message" xml:space="preserve">
+    <value>An error occurred while reading the selected GPX file: {0}</value>
+  </data>
+  <data name="GpxFileParseErrorDialog_Title" xml:space="preserve">
+    <value>GPX file could not be read</value>
+  </data>
   <data name="ImportSettingsFailedDialog_Message" xml:space="preserve">
     <value>Failed to import settings from the specified file.</value>
   </data>

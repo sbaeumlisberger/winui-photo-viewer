@@ -96,7 +96,7 @@ public class TagPeopleToolModelTest
     {
         await InitializeTagPeopleToolModel(peopleTags: examplePeopleTags);
 
-        messenger.Send(new TagPeopleToolActiveChangedMessage(true));
+        messenger.Send(new SetTagPeopleToolActiveMessage(true));
 
         Assert.All(tagPeopleToolModel.TaggedPeople, peopleTagVM => Assert.True(peopleTagVM.IsVisible));
         Assert.Empty(tagPeopleToolModel.SuggestedFaces);
@@ -110,7 +110,7 @@ public class TagPeopleToolModelTest
         await InitializeTagPeopleToolModel();
         tagPeopleToolModel.IsEnabled = isEnabled;
 
-        messenger.Send(new TagPeopleToolActiveChangedMessage(true));
+        messenger.Send(new SetTagPeopleToolActiveMessage(true));
         await tagPeopleToolModel.LastDispatchTask;
 
         if (isEnabled)
@@ -129,7 +129,7 @@ public class TagPeopleToolModelTest
     {
         await InitializeTagPeopleToolModel(peopleTags: examplePeopleTags);
 
-        messenger.Send(new TagPeopleToolActiveChangedMessage(true));
+        messenger.Send(new SetTagPeopleToolActiveMessage(true));
 
         Assert.Empty(tagPeopleToolModel.SuggestedFaces);
     }
@@ -164,7 +164,7 @@ public class TagPeopleToolModelTest
     [Fact]
     public void SendsTagPeopleToolActiveChangedMessage_WhenExitPeopleTaggingCalled()
     {
-        var messageCapture = TestUtils.CaptureMessage<TagPeopleToolActiveChangedMessage>(messenger);
+        var messageCapture = TestUtils.CaptureMessage<SetTagPeopleToolActiveMessage>(messenger);
 
         tagPeopleToolModel.ExitPeopleTagging();
 

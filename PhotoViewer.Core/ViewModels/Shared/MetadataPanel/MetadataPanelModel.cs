@@ -59,7 +59,7 @@ namespace PhotoViewer.Core.ViewModels
             IMetadataService metadataService,
             ILocationService locationService,
             IDialogService dialogService,
-            IClipboardService clipboardService,
+            IViewModelFactory viewModelFactory,
             ISuggestionsService peopleSuggestionsService,
             ISuggestionsService keywordSuggestionsService,
             IGpxService gpxService,
@@ -69,7 +69,7 @@ namespace PhotoViewer.Core.ViewModels
             this.metadataService = metadataService;
 
             TitleTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, dialogService, MetadataProperties.Title);
-            LocationSectionModel = new LocationSectionModel(writeFilesRunner, metadataService, locationService, dialogService, clipboardService, gpxService, messenger);
+            LocationSectionModel = new LocationSectionModel(writeFilesRunner, metadataService, locationService, dialogService, viewModelFactory, gpxService, messenger);
             PeopleSectionModel = new PeopleSectionModel(writeFilesRunner, messenger, metadataService, peopleSuggestionsService, dialogService, tagPeopleOnPhotoButtonVisible);
             KeywordsSectionModel = new KeywordsSectionModel(writeFilesRunner, messenger, metadataService, keywordSuggestionsService, dialogService);
             RatingSectionModel = new RatingSectionModel(writeFilesRunner, metadataService, dialogService);

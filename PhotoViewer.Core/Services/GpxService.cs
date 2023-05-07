@@ -12,24 +12,32 @@ using Windows.Devices.Geolocation;
 
 namespace PhotoViewer.Core.Services;
 
-internal interface IGpxService 
+internal interface IGpxService
 {
-    Task<List<GpxTrackPoint>> ReadTrackFromGpxFileAsync(IStorageFile file);
-    GpxTrackPoint? FindTrackPointForTimestamp(IEnumerable<GpxTrackPoint> gpxTrack, DateTimeOffset timestamp);
+    Task<GpxTrack> ReadTrackFromGpxFileAsync(IStorageFile file);
+
+    Task<bool> TryApplyGpxTrackToFile(GpxTrack gpxTrack, IBitmapFileInfo file);
 }
 
 internal class GpxService : IGpxService
 {
-    public async Task<List<GpxTrackPoint>> ReadTrackFromGpxFileAsync(IStorageFile file)
+    private readonly IMetadataService metadataService;
+
+    public GpxService(IMetadataService metadataService)
+    {
+        this.metadataService = metadataService;
+    }
+
+    public async Task<GpxTrack> ReadTrackFromGpxFileAsync(IStorageFile file)
     {
         string gpxData = await FileIO.ReadTextAsync(file);
         return ParseGpxTrack(gpxData);
     }
 
-    public List<GpxTrackPoint> ParseGpxTrack(string gpxData)
+    public GpxTrack ParseGpxTrack(string gpxData)
     {
         var trkpList = new List<GpxTrackPoint>();
-        
+
         XNamespace ns = "http://www.topografix.com/GPX/1/1";
         XDocument gpxDoc = XDocument.Parse(gpxData);
         XElement trkElement = gpxDoc.Root!.Element(ns + "trk")!;
@@ -59,19 +67,28 @@ internal class GpxService : IGpxService
                 trkpList.Add(trkpt);
             }
         }
-        return trkpList;
+        return new GpxTrack(trkpList);
     }
 
-    public GpxTrackPoint? FindTrackPointForTimestamp(IEnumerable<GpxTrackPoint> gpxTrack, DateTimeOffset timestamp)
+    public async Task<bool> TryApplyGpxTrackToFile(GpxTrack gpxTrack, IBitmapFileInfo file)
     {
-        var trackPointsWithTime = gpxTrack.Where(trkpt => trkpt.Time != null).ToList();
-
-        if (timestamp < trackPointsWithTime.First().Time || timestamp > trackPointsWithTime.Last().Time)
+        if (await metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken) is { } dateTaken
+            && gpxTrack.FindTrackPointForTimestamp(dateTaken) is { } gpxTrackPoint)
         {
-            return null;
+            var geoTagFromGpx = new GeoTag()
+            {
+                Latitude = gpxTrackPoint.Latitude,
+                Longitude = gpxTrackPoint.Longitude,
+                Altitude = gpxTrackPoint.Ele,
+                AltitudeReference = AltitudeReference.Unspecified, // TODO
+            };
+            var geoTagFromFile = await metadataService.GetMetadataAsync(file, MetadataProperties.GeoTag);
+            if (geoTagFromGpx != geoTagFromFile)
+            {
+                await metadataService.WriteMetadataAsync(file, MetadataProperties.GeoTag, geoTagFromGpx);
+                return true;
+            }
         }
-
-        return trackPointsWithTime.MinBy(trkpt => (timestamp - trkpt.Time!.Value).Duration());
+        return false;
     }
-
 }

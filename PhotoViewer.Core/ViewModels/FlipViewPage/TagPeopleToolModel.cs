@@ -79,13 +79,13 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     public async Task InitializeAsync()
     {
         Register<MetadataModifiedMessage>(Receive);
-        Register<TagPeopleToolActiveChangedMessage>(Receive);
+        Register<SetTagPeopleToolActiveMessage>(Receive);
         Register<BitmapModifiedMesssage>(Receive);
         IsActive = Messenger.Send(new IsTagPeopleToolActiveRequestMessage());
         await LoadTaggedPeopleAsync();
     }
 
-    private void Receive(TagPeopleToolActiveChangedMessage msg)
+    private void Receive(SetTagPeopleToolActiveMessage msg)
     {
         IsActive = msg.IsActive;
     }
@@ -145,7 +145,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     public void ExitPeopleTagging()
     {
-        Messenger.Send(new TagPeopleToolActiveChangedMessage(false));
+        Messenger.Send(new SetTagPeopleToolActiveMessage(false));
     }
 
     public IReadOnlyList<string> FindSuggestions(string text)

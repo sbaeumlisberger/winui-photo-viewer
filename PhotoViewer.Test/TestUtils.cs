@@ -48,4 +48,10 @@ internal static class TestUtils
         obj.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(obj, new PropertyChangedEventArgs(propertyName));
     }
 
+    internal static List<string?> CapturePropertyChangedEvents(INotifyPropertyChanged obj) 
+    {
+        var events = new List<string?>();
+        obj.PropertyChanged += (_, e) => events.Add(e.PropertyName);
+        return events;
+    }
 }

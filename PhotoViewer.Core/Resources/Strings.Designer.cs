@@ -106,6 +106,24 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred while reading the selected GPX file: {0}.
+        /// </summary>
+        public static string GpxFileParseErrorDialog_Message {
+            get {
+                return ResourceManager.GetString("GpxFileParseErrorDialog_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GPX file could not be read.
+        /// </summary>
+        public static string GpxFileParseErrorDialog_Title {
+            get {
+                return ResourceManager.GetString("GpxFileParseErrorDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to import settings from the specified file..
         /// </summary>
         public static string ImportSettingsFailedDialog_Message {

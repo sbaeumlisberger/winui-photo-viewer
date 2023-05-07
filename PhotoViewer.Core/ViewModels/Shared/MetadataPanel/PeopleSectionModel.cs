@@ -25,6 +25,8 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 
     public bool IsTagPeopleOnPhotoButtonChecked { get; private set; }
 
+    private bool CanAddPerson => !string.IsNullOrWhiteSpace(AutoSuggestBoxText);
+
     private ObservableList<ItemWithCountModel> people = new();
 
     private readonly IMetadataService metadataService;
@@ -48,7 +50,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 
         if (IsTagPeopleOnPhotoButtonVisible)
         {
-            Messenger.Register<TagPeopleToolActiveChangedMessage>(this, Receive);
+            Messenger.Register<SetTagPeopleToolActiveMessage>(this, Receive);
             Messenger.Register<IsTagPeopleToolActiveRequestMessage>(this, Receive);
         }
     }
@@ -56,15 +58,15 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
     protected override void OnFilesChanged(IList<MetadataView> metadata)
     {
         people.Clear();
-        people.AddRange(CreateListItemModels(metadata));
+        people.AddRange(CreateItemModels(metadata));
     }
 
     protected override void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty)
     {
-        people.MatchTo(CreateListItemModels(metadata));
+        people.MatchTo(CreateItemModels(metadata));
     }
 
-    private void Receive(TagPeopleToolActiveChangedMessage msg)
+    private void Receive(SetTagPeopleToolActiveMessage msg)
     {
         IsTagPeopleOnPhotoButtonChecked = msg.IsActive;
     }
@@ -84,7 +86,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
         return suggestionsService.GetRecentSuggestions();
     }
 
-    private List<ItemWithCountModel> CreateListItemModels(IList<MetadataView> metadata)
+    private List<ItemWithCountModel> CreateItemModels(IList<MetadataView> metadata)
     {
         return metadata
             .Select(m => m.Get(MetadataProperties.People))
@@ -95,7 +97,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
     }
 
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanAddPerson))]
     private async Task AddPersonAsync()
     {
         string personName = AutoSuggestBoxText.Trim();
@@ -160,7 +162,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
     [RelayCommand]
     private void ToggleTagPeopleOnPhoto()
     {
-        Messenger.Send(new TagPeopleToolActiveChangedMessage(!IsTagPeopleOnPhotoButtonChecked));
+        Messenger.Send(new SetTagPeopleToolActiveMessage(!IsTagPeopleOnPhotoButtonChecked));
     }
 
     [RelayCommand]

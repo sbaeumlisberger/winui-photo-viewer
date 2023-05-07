@@ -1,4 +1,7 @@
-﻿using NSubstitute;
+﻿using MetadataAPI.Data;
+using MetadataAPI;
+using NSubstitute;
+using PhotoViewer.App.Services;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using System;
@@ -9,23 +12,12 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Xunit;
+using NSubstitute.Core;
 
 namespace PhotoViewer.Test.Services;
 
 public class GpxServiceTest
 {
-
-    private readonly GpxService gpxService = new GpxService();
-
-    private readonly List<GpxTrackPoint> gpxTrack = new()
-    {
-        new GpxTrackPoint() { Time = new DateTimeOffset(2020, 6, 10, 14, 53, 17, TimeSpan.Zero) },
-        new GpxTrackPoint() { Time = new DateTimeOffset(2020, 6, 10, 14, 53, 19, TimeSpan.Zero) },
-        new GpxTrackPoint() { Time = new DateTimeOffset(2020, 6, 10, 14, 53, 23, TimeSpan.Zero) },
-        new GpxTrackPoint() { Time = new DateTimeOffset(2020, 6, 10, 14, 53, 24, TimeSpan.Zero) },
-        new GpxTrackPoint() { Time = new DateTimeOffset(2020, 6, 10, 14, 53, 29, TimeSpan.Zero) },
-    };
-
     private const string GpxExample = """
         <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
         <gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Wikipedia"
@@ -101,56 +93,13 @@ public class GpxServiceTest
         </gpx>
         """;
 
-    [Fact]
-    public void FindTrackPointForTimestamp_ExactMatch()
+    private readonly IMetadataService metadataService = Substitute.For<IMetadataService>();
+
+    private readonly GpxService gpxService;
+
+    public GpxServiceTest()
     {
-        var timestamp = new DateTimeOffset(2020, 6, 10, 14, 53, 19, TimeSpan.Zero);
-
-        var trackPoint = gpxService.FindTrackPointForTimestamp(gpxTrack, timestamp);
-
-        Assert.Equal(gpxTrack[1], trackPoint);
-    }
-
-    [Fact]
-    public void FindTrackPointForTimestamp_NearestToEarlierPoint()
-    {
-        var timestamp = new DateTimeOffset(2020, 6, 10, 14, 53, 20, TimeSpan.Zero);
-
-        var trackPoint = gpxService.FindTrackPointForTimestamp(gpxTrack, timestamp);
-
-        Assert.Equal(gpxTrack[1], trackPoint);
-    }
-
-    [Fact]
-    public void FindTrackPointForTimestamp_NearestToLaterPoint()
-    {
-        var timestamp = new DateTimeOffset(2020, 6, 10, 14, 53, 22, TimeSpan.Zero);
-
-        var trackPoint = gpxService.FindTrackPointForTimestamp(gpxTrack, timestamp);
-
-        Assert.Equal(gpxTrack[2], trackPoint);
-    }
-
-
-    [Fact]
-    public void FindTrackPointForTimestamp_BeforeTrackStart()
-    {
-        var timestamp = new DateTimeOffset(2020, 6, 10, 14, 53, 0, TimeSpan.Zero);
-
-        var trackPoint = gpxService.FindTrackPointForTimestamp(gpxTrack, timestamp);
-
-        Assert.Null(trackPoint);
-    }
-
-
-    [Fact]
-    public void FindTrackPointForTimestamp_AfterTrackStart()
-    {
-        var timestamp = new DateTimeOffset(2020, 6, 10, 14, 54, 0, TimeSpan.Zero);
-
-        var trackPoint = gpxService.FindTrackPointForTimestamp(gpxTrack, timestamp);
-
-        Assert.Null(trackPoint);
+        gpxService = new GpxService(metadataService);
     }
 
     [Fact]
@@ -158,12 +107,54 @@ public class GpxServiceTest
     {
         var gpxTrack = gpxService.ParseGpxTrack(GpxExample);
 
-        Assert.Equal(3, gpxTrack.Count);
+        Assert.Equal(3, gpxTrack.Points.Count);
 
-        Assert.Equal(52.52, gpxTrack[0].Latitude);
-        Assert.Equal(13.38, gpxTrack[0].Longitude);
-        Assert.Equal(36, gpxTrack[0].Ele);
-        Assert.Equal(new DateTimeOffset(2011, 1, 13, 1, 1, 1, TimeSpan.Zero), gpxTrack[0].Time);
+        Assert.Equal(52.52, gpxTrack.Points[0].Latitude);
+        Assert.Equal(13.38, gpxTrack.Points[0].Longitude);
+        Assert.Equal(36, gpxTrack.Points[0].Ele);
+        Assert.Equal(new DateTimeOffset(2011, 1, 13, 1, 1, 1, TimeSpan.Zero), gpxTrack.Points[0].Time);
+    }
+
+    [Fact]
+    public async Task AppliesGpxTrackToFile()
+    {
+        var dateTaken = DateTime.Now;
+        var gpxTrackPoint = new GpxTrackPoint()
+        {
+            Latitude = 40.124848,
+            Longitude = -36.128498,
+            Ele = 358,
+            Time = dateTaken,
+        };
+        var gpxTrack = new GpxTrack(new[] { gpxTrackPoint });
+        var file = Substitute.For<IBitmapFileInfo>();
+        metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken).Returns(dateTaken);
+        metadataService.GetMetadataAsync(file, MetadataProperties.GeoTag).Returns((GeoTag?)null);
+
+        bool applied = await gpxService.TryApplyGpxTrackToFile(gpxTrack, file);
+
+        Assert.True(applied);
+        await metadataService.Received().WriteMetadataAsync(file, MetadataProperties.GeoTag, 
+            Arg.Is<GeoTag>(geoTag => IsGeoTagEqualsGpxTrackPoint(geoTag, gpxTrackPoint)));
+    }
+
+    [Fact]
+    public async Task DoesNotApplyGpxTrackToFileWihtoutDateTaken()
+    {
+        var gpxTrack = new GpxTrack(new List<GpxTrackPoint>());
+        var file = Substitute.For<IBitmapFileInfo>();
+        metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken).Returns((DateTime?)null);
+
+        bool applied = await gpxService.TryApplyGpxTrackToFile(gpxTrack, file);
+
+        Assert.False(applied);
+    }
+
+    private bool IsGeoTagEqualsGpxTrackPoint(GeoTag geoTag, GpxTrackPoint gpxTrackPoint)
+    {
+        return geoTag.Latitude == gpxTrackPoint.Latitude
+            && geoTag.Longitude == gpxTrackPoint.Longitude
+            && geoTag.Altitude == gpxTrackPoint.Ele;
     }
 
 }

@@ -109,7 +109,7 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
         return await ParallelProcessingUtil.ProcessParallelAsync(mediaFilesToProcess, async mediaFile => 
         {
             if (await metadataService.GetMetadataAsync(mediaFile, MetadataProperties.DateTaken) is { } dateTaken 
-                && gpxService.FindTrackPointForTimestamp(gpxTrack, dateTaken) is { } gpxTrackPoint)
+                && gpxTrack.FindTrackPointForTimestamp(dateTaken) is { } gpxTrackPoint)
             {
                 var geoTag = new GeoTag()
                 {
