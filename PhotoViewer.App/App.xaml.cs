@@ -10,6 +10,7 @@ using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
+using PhotoViewer.App.Views.Dialogs;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
@@ -155,8 +156,18 @@ public partial class App : Application
         {
             Log.Fatal($"An unhandled exception occurred: {args.Message}");
         }
+
         args.Handled = true;
-        ShowUnhandledExceptionDialog(args);
+
+        if (Window?.Content?.XamlRoot is null)
+        {
+            Log.Info("Exit application after unhandled exception in startup");
+            Exit();
+        }
+        else
+        {
+            ShowUnhandledExceptionDialog(args);
+        }
     }
 
     private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs args)
@@ -171,46 +182,34 @@ public partial class App : Application
             return;
         }
 
-        isUnhandeldExceptionDialogShown = true;
-
-        var sendCrashReportCheckBox = new CheckBox() { Content = "Send crash report with log" };
-
-        var dialog = new ContentDialog
+        try
         {
-            XamlRoot = Window.Content.XamlRoot,
-            RequestedTheme = ((FrameworkElement)Window.Content).RequestedTheme,
-            Title = "Unhandled Exception",
-            Content = new StackPanel()
+            isUnhandeldExceptionDialogShown = true;
+
+            var dialog = new UnhandledExceptionDialog(Window, args.Message);
+
+            var dialogResult = await dialog.ShowAsync();
+
+            if (dialog.IsSendCrashReportChecked)
             {
-                Spacing = 8,
-                Children = {
-                    new TextBlock() {
-                        TextWrapping = TextWrapping.Wrap,
-                        Text = $"An unhandled exception occurred: {args.Message}"
-                    },
-                    sendCrashReportCheckBox
-                }
-            },
-            PrimaryButtonText = "Exit Application",
-            CloseButtonText = "Ignore"
-        };
+                await CrashReportService.TrySendCrashReportAsync();
+            }
 
-        var dialogResult = await dialog.ShowAsync();
-
-        if (sendCrashReportCheckBox.IsChecked is true)
-        {
-            await CrashReportService.TrySendCrashReportAsync();
+            if (dialogResult == ContentDialogResult.Primary)
+            {
+                Log.Info("User decided to exit application after unhandled exception ");
+                Exit();
+            }
+            else
+            {
+                Log.Info("User decided to ignore unhandled exception");
+                isUnhandeldExceptionDialogShown = false;
+            }
         }
-
-        if (dialogResult == ContentDialogResult.Primary)
+        catch (Exception e)
         {
-            Log.Info("Exit application after unhandled exception");
+            Log.Error("Failed to show unhandled exception dialog, exit application now", e);
             Exit();
-        }
-        else
-        {
-            Log.Info("Ignore unhandled exception");
-            isUnhandeldExceptionDialogShown = false;
         }
     }
 

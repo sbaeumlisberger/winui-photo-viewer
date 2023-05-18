@@ -37,6 +37,7 @@
     <None Remove="Views\Dialogs\ManagePeopleDialog.xaml" />
     <None Remove="Views\Dialogs\MoveRawFilesToSubfolderDialog.xaml" />
     <None Remove="Views\Dialogs\ShiftDatenTakenDialog.xaml" />
+    <None Remove="Views\Dialogs\UnhandledExceptionDialog.xaml" />
     <None Remove="Views\FlipViewPage.xaml" />
     <None Remove="Views\BitmapFlipViewItem.xaml" />
     <None Remove="Views\BitmapViewer.xaml" />
@@ -184,6 +185,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Strings.cs</LastGenOutput>
     </None>
+    <Page Update="Views\Dialogs\UnhandledExceptionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\Dialogs\ManagePeopleDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

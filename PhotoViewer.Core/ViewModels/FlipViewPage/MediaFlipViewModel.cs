@@ -76,8 +76,6 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     private CancellationTokenSource? diashowLoopCancellationTokenSource;
 
-    //private bool ignoreSelectionChanges = false;
-
     private VirualizedCollection<IMediaFileInfo, IMediaFlipViewItemModel> itemModels;
 
     public MediaFlipViewModel(
@@ -165,13 +163,11 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     public void SetItems(IReadOnlyList<IMediaFileInfo> files, IMediaFileInfo? startFile = null)
     {
         Log.Debug("SetItems called");
-        //ignoreSelectionChanges = true;
         Stopwatch sw = Stopwatch.StartNew();
         Items = new ObservableList<IMediaFileInfo>(files);
         itemModels.SetKeys(Items);
         sw.Stop();
         Log.Info($"Set {Items.Count} Items took {sw.ElapsedMilliseconds} ms");
-        //ignoreSelectionChanges = false;
         var fileToSelect = startFile ?? Items.FirstOrDefault();
         Log.Debug("Set SelectedItem " + fileToSelect);
         SelectedItem = fileToSelect;
@@ -184,10 +180,6 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     public void Select(IMediaFileInfo? mediaFileInfo)
     {
-        //if (ignoreSelectionChanges)
-        //{
-        //    throw new InvalidOperationException();
-        //}
         if (mediaFileInfo is null && Items.Any())
         {
             throw new InvalidOperationException();

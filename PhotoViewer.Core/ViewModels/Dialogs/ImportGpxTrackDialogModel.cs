@@ -108,18 +108,8 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
 
         return await ParallelProcessingUtil.ProcessParallelAsync(mediaFilesToProcess, async mediaFile => 
         {
-            if (await metadataService.GetMetadataAsync(mediaFile, MetadataProperties.DateTaken) is { } dateTaken 
-                && gpxTrack.FindTrackPointForTimestamp(dateTaken) is { } gpxTrackPoint)
-            {
-                var geoTag = new GeoTag()
-                {
-                    Latitude = gpxTrackPoint.Latitude,
-                    Longitude = gpxTrackPoint.Longitude,
-                    Altitude = gpxTrackPoint.Ele,
-                    AltitudeReference = AltitudeReference.Unspecified, // TODO
-                };
-                await metadataService.WriteMetadataAsync(mediaFile, MetadataProperties.GeoTag, geoTag);
-            }       
+            await gpxService.TryApplyGpxTrackToFile(gpxTrack, mediaFile);
+            
         }, progress, cancellationToken);
     }
 
