@@ -6,6 +6,7 @@ using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Commands;
+using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
@@ -34,7 +35,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
 
     public bool IsSetAsLockscreenBackgroundItemVisible => personalizationService.CanSetLockScreenBackground;
 
-    //public bool IsRenameItemVisible => Files.Count == 1 && renameCallback is not null;
+    public bool IsRenameItemVisible => isRenameFilesEnabled && Files.Count == 1;
 
     public bool IsRotateItemVisible => Files.All(file => file is IBitmapFileInfo bitmapFile && rotateBitmapService.CanRotate(bitmapFile));
     
@@ -52,6 +53,8 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
 
     private readonly IClipboardService clipboardService;
 
+    private readonly bool isRenameFilesEnabled;
+
     public MediaFileContextMenuModel(
         IMessenger messenger,
         IMetadataService metadataService,
@@ -59,7 +62,8 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
         IRotateBitmapService rotateBitmapService,
         IDialogService dialogService,
         IClipboardService clipboardService,
-        IDeleteFilesCommand deleteCommand) : base(messenger)
+        IDeleteFilesCommand deleteCommand,
+        bool isRenameFilesEnabled) : base(messenger)
     {
         this.metadataService = metadataService;
         this.personalizationService = personalizationService;
@@ -67,6 +71,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
         this.dialogService = dialogService;
         this.clipboardService = clipboardService;
         DeleteCommand = deleteCommand;
+        this.isRenameFilesEnabled = isRenameFilesEnabled;
     }
 
     [RelayCommand]
@@ -151,7 +156,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
     [RelayCommand]
     private void Rename()
     {
-        // TODO
+        Messenger.Send(new ActivateRenameFileMessage(Files.First()));
     }
 
     [RelayCommand]

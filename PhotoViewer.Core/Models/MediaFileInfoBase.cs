@@ -1,4 +1,5 @@
-﻿using Windows.Foundation;
+﻿using PhotoViewer.App.Utils.Logging;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
@@ -13,6 +14,8 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
 
     public string FileName => StorageFile.Name;
 
+    public string FileNameWithoutExtension => Path.GetFileNameWithoutExtension(FileName);
+
     public string FilePath => StorageFile.Path;
 
     public string FileExtension => StorageFile.FileType;
@@ -20,6 +23,8 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
     public string ContentType => StorageFile.ContentType;
 
     public virtual IReadOnlyList<IStorageFile> LinkedStorageFiles => Array.Empty<IStorageFile>();
+
+    public IEnumerable<IStorageFile> StorageFiles => Enumerable.Repeat(StorageFile, 1).Concat(LinkedStorageFiles);
 
     private DateTimeOffset? dateModified;
 
@@ -128,6 +133,16 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
         await memoryStream.FlushAsync().AsTask().ConfigureAwait(false);
         memoryStream.Seek(0);
         return memoryStream;
+    }
+
+    public async Task RenameAsync(string newName)
+    {
+        foreach (var file in StorageFiles)
+        {
+            string newFileName = newName + file.FileType;
+            Log.Info($"Rename {file.Name} to {newFileName}");
+            await file.RenameAsync(newFileName).AsTask().ConfigureAwait(false);
+        }
     }
 
     public override string ToString()

@@ -5,6 +5,7 @@
     xmlns:local="using:PhotoViewer.App.Views"
     xmlns:converters="using:PhotoViewer.App.Converters"
     xmlns:res="using:PhotoViewer.App.Resources"
+    xmlns:utils="using:PhotoViewer.App.Utils"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -12,7 +13,7 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <converters:MediaFileInfoToThumbnailConverter x:Key="MediaFileInfoToThumbnailConverter"/>             
+        <converters:MediaFileInfoToThumbnailConverter x:Key="MediaFileInfoToThumbnailConverter"/>
     </UserControl.Resources>
 
     <StackPanel Background="Transparent" Padding="8">
@@ -55,10 +56,9 @@
                         </Setter>
                     </Style>
                 </ToolTip.Style>
-                <StackPanel>
+                <StackPanel Spacing="8">
                     <Image MaxHeight="600" x:Name="toolTipImage"/>
-                    <TextBlock 
-                        Margin="0,8,0,0" 
+                    <TextBlock
                         Text="{x:Bind ViewModel.DisplayName, Mode=OneWay}"
                         TextAlignment="Center"/>
                 </StackPanel>
@@ -105,12 +105,23 @@
                 Foreground="Orange" 
                 Text="{x:Bind ConvertRatingToStars(ViewModel.Rating), Mode=OneWay}" />
         </Grid>
+        
         <TextBlock    
             Margin="0,8,0,0"
+            Visibility="{x:Bind ViewModel.IsNotRenaming, Mode=OneWay}"
             Width="{x:Bind ViewModel.ThumbnailSize, Mode=OneWay}"
             Text="{x:Bind ViewModel.DisplayName, Mode=OneWay}" 
             VerticalAlignment="Center"
             TextAlignment="Center"/>
+        <TextBox 
+            x:Name="fileNameTextBox"
+            Margin="0,2,0,0"
+            Visibility="{x:Bind ViewModel.IsRenaming, Mode=OneWay}"
+            Width="{x:Bind ViewModel.ThumbnailSize, Mode=OneWay}"
+            Text="{x:Bind ViewModel.NewName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+            utils:TextBoxExtension.IsClearButtonHidden="True"
+            KeyDown="FileNameTextBox_KeyDown"
+            LostFocus="FileNameTextBox_LostFocus"/>
     </StackPanel>
 
 </UserControl>

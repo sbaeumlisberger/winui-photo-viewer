@@ -2,6 +2,7 @@
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System.Threading.Tasks;
@@ -34,10 +35,10 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     private TaskCompletionSource? playbackCompletionSource;
 
-    public VideoFlipViewItemModel(IMediaFileInfo mediaFile, IMediaFileContextMenuModel contextMenuModel, IMessenger messenger) : base(messenger)
+    public VideoFlipViewItemModel(IMediaFileInfo mediaFile, IViewModelFactory viewModelFactory, IMessenger messenger) : base(messenger)
     {
         MediaItem = mediaFile;
-        ContextMenuModel = contextMenuModel;
+        ContextMenuModel = viewModelFactory.CreateMediaFileContextMenuModel();
         ContextMenuModel.Files = new[] { mediaFile };
     }
 

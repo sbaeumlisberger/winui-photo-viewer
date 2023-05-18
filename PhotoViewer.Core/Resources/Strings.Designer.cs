@@ -187,6 +187,15 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File could not be renamed.
+        /// </summary>
+        public static string RenameFileErrorDialog_Title {
+            get {
+                return ResourceManager.GetString("RenameFileErrorDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to set desktop background.
         /// </summary>
         public static string SetDesktopBackgroundFailedDialog_Ttile {

@@ -871,6 +871,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rename.
+        /// </summary>
+        internal static string MediaFileContextMenu_Rename {
+            get {
+                return ResourceManager.GetString("MediaFileContextMenu_Rename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rotate.
         /// </summary>
         internal static string MediaFileContextMenu_Rotate {
@@ -1330,7 +1339,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Elemente, {1} ausgewählt.
+        ///   Looks up a localized string similar to {0} elements, {1} selected.
         /// </summary>
         internal static string OverviewPage_SelectionInfo {
             get {

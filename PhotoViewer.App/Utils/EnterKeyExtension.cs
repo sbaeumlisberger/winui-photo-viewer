@@ -5,11 +5,11 @@ using Windows.System;
 
 namespace PhotoViewer.App.Utils;
 
-public static class EnterKeyExtension
+public class EnterKeyExtension
 {
 
-    public static readonly DependencyProperty CommandProperty = DependencyPropertyHelper.RegisterAttached<ICommand?>(
-        typeof(EnterKeyExtension), nameof(CommandProperty), null, OnCommandChanged);
+    public static readonly DependencyProperty CommandProperty = DependencyPropertyHelper<EnterKeyExtension>
+        .RegisterAttached<ICommand?>(null, OnCommandChanged);
 
     public static ICommand GetCommand(DependencyObject obj)
     {

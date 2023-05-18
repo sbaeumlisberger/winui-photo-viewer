@@ -387,6 +387,9 @@
   <data name="MediaFileContextMenu_Properties" xml:space="preserve">
     <value>Properties</value>
   </data>
+  <data name="MediaFileContextMenu_Rename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
   <data name="MediaFileContextMenu_Rotate" xml:space="preserve">
     <value>Rotate</value>
   </data>
@@ -553,7 +556,7 @@
     <value>View</value>
   </data>
   <data name="OverviewPage_SelectionInfo" xml:space="preserve">
-    <value>{0} Elemente, {1} ausgewählt</value>
+    <value>{0} elements, {1} selected</value>
   </data>
   <data name="OverviewPage_Title" xml:space="preserve">
     <value>Overview</value>

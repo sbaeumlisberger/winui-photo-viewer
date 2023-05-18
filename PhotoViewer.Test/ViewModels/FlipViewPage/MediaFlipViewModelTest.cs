@@ -148,7 +148,7 @@ public class MediaFlipViewModelTest
     }
 
     [Fact]
-    public void Receive_MediaFilesDeletedMessage_Empty()
+    public async void Receive_MediaFilesDeletedMessage_Empty()
     {
         var files = Enumerable.Range(0, 1).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[0];
@@ -156,6 +156,7 @@ public class MediaFlipViewModelTest
         mediaFlipViewModel.SetItems(files, startFile);
 
         messenger.Send(new MediaFilesDeletedMessage(new[] { startFile }));
+        await mediaFlipViewModel.LastDispatchTask;
 
         Assert.Empty(mediaFlipViewModel.Items);
         Assert.Null(mediaFlipViewModel.SelectedItem);

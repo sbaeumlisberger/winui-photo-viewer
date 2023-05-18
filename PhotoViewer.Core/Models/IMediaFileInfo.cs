@@ -1,4 +1,5 @@
-﻿using Windows.Foundation;
+﻿using PhotoViewer.App.Utils.Logging;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
@@ -12,6 +13,8 @@ public interface IMediaFileInfo
 
     string FileName { get; }
 
+    string FileNameWithoutExtension { get; }
+
     string FilePath { get; }
 
     string FileExtension { get; }
@@ -20,7 +23,7 @@ public interface IMediaFileInfo
 
     IReadOnlyList<IStorageFile> LinkedStorageFiles { get; }
 
-    IEnumerable<IStorageFile> StorageFiles => new[] { StorageFile }.Concat(LinkedStorageFiles);
+    IEnumerable<IStorageFile> StorageFiles { get; }
 
     Task<IRandomAccessStream> OpenAsync(FileAccessMode fileAccessMode);
 
@@ -31,6 +34,8 @@ public interface IMediaFileInfo
     Task<Size> GetSizeInPixelsAsync();
 
     Task<IRandomAccessStream?> GetThumbnailAsync();
+
+    Task RenameAsync(string newName);
 
     void InvalidateCache();
 }

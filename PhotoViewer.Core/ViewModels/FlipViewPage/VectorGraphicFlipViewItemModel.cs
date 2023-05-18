@@ -2,6 +2,7 @@
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System.Text;
@@ -28,10 +29,10 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
 
     private readonly CancelableTaskRunner initRunner = new CancelableTaskRunner();
 
-    public VectorGraphicFlipViewItemModel(IMediaFileInfo mediaFile, IMediaFileContextMenuModel contextMenuModel) : base(null!)
+    public VectorGraphicFlipViewItemModel(IMediaFileInfo mediaFile, IViewModelFactory viewModelFactory) : base(null!)
     {
         MediaItem = mediaFile;
-        ContextMenuModel = contextMenuModel;
+        ContextMenuModel = viewModelFactory.CreateMediaFileContextMenuModel();
         ContextMenuModel.Files = new[] { mediaFile };
     }
 

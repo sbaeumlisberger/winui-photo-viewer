@@ -159,6 +159,9 @@
   <data name="RemovePeopleTagErrorDialog_Title" xml:space="preserve">
     <value>Could not remove people tag</value>
   </data>
+  <data name="RenameFileErrorDialog_Title" xml:space="preserve">
+    <value>File could not be renamed</value>
+  </data>
   <data name="SetDesktopBackgroundFailedDialog_Ttile" xml:space="preserve">
     <value>Failed to set desktop background</value>
   </data>

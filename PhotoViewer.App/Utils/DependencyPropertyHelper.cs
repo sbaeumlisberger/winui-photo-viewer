@@ -1,10 +1,11 @@
 ﻿using Microsoft.UI.Xaml;
 using PhotoViewer.Core.Utils;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace PhotoViewer.App.Utils;
 
-public class DependencyPropertyHelper<TDependencyObject> where TDependencyObject : DependencyObject
+public class DependencyPropertyHelper<TDependencyObject>
 {
     public static DependencyProperty Register(string propertyName, Type propertyType, object? defaultValue = null)
     {
@@ -13,21 +14,18 @@ public class DependencyPropertyHelper<TDependencyObject> where TDependencyObject
 
     public static DependencyProperty Register(string propertyName, Type propertyType, object? defaultValue, Action<TDependencyObject, DependencyPropertyChangedEventArgs> propertyChangedCallback)
     {
-        var metadata = new PropertyMetadata(defaultValue, (obj, args) => propertyChangedCallback((TDependencyObject)obj, args));
+        var metadata = new PropertyMetadata(defaultValue, (obj, args) => propertyChangedCallback((TDependencyObject)(object)obj, args));
         return DependencyProperty.Register(propertyName, typeof(TDependencyObject), propertyType, metadata);
     }
-}
 
-public class DependencyPropertyHelper
-{
-    public static DependencyProperty RegisterAttached<TProperty>(Type ownerType, string propertyName, TProperty defaultValue)
+    public static DependencyProperty RegisterAttached<TProperty>(TProperty defaultValue, [CallerMemberName] string propertyName = "")
     {
-        return DependencyProperty.RegisterAttached(propertyName.StripEnd("Property"), ownerType, typeof(TProperty), new PropertyMetadata(defaultValue));
+        return DependencyProperty.RegisterAttached(propertyName.StripEnd("Property"), typeof(TDependencyObject), typeof(TProperty), new PropertyMetadata(defaultValue));
     }
 
-    public static DependencyProperty RegisterAttached<TProperty>(Type ownerType, string propertyName, TProperty defaultValue, Action<DependencyObject, DependencyPropertyChangedEventArgs> propertyChangedCallback)
+    public static DependencyProperty RegisterAttached<TProperty>(TProperty defaultValue, Action<DependencyObject, DependencyPropertyChangedEventArgs> propertyChangedCallback, [CallerMemberName] string propertyName = "")
     {
         var metadata = new PropertyMetadata(defaultValue, (obj, args) => propertyChangedCallback(obj, args));
-        return DependencyProperty.RegisterAttached(propertyName.StripEnd("Property"), ownerType, typeof(TProperty), metadata);
+        return DependencyProperty.RegisterAttached(propertyName.StripEnd("Property"), typeof(TDependencyObject), typeof(TProperty), metadata);
     }
 }

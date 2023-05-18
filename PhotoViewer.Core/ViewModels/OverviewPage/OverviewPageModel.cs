@@ -35,7 +35,7 @@ public partial class OverviewPageModel : ViewModelBase
 
         OverviewPageCommandBarModel = viewModelFactory.CreateOverviewPageCommandBarModel();
         MetadataPanelModel = viewModelFactory.CreateMetadataPanelModel(false);
-        ContextMenuModel = viewModelFactory.CreateMediaFileContextMenuModel();
+        ContextMenuModel = viewModelFactory.CreateMediaFileContextMenuModel(isRenameFilesEnabled: true);
 
         Messenger.Register<MediaFilesLoadingMessage>(this, OnMediaItemsLoadedMessageReceived);
         Messenger.Register<MediaFilesDeletedMessage>(this, OnMediaItemsDeletedMessageReceived);

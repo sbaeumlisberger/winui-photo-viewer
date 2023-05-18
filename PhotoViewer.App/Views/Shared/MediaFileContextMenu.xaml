@@ -73,7 +73,18 @@
             </MenuFlyoutSubItem>
 
             <MenuFlyoutSeparator/>
+            
+            <MenuFlyoutItem 
+                Icon="Rename" 
+                Text="{x:Bind res:Strings.MediaFileContextMenu_Rename}"
+                Command="{x:Bind ViewModel.RenameCommand, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.IsRenameItemVisible, Mode=OneWay}">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="F2"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
 
+            
             <MenuFlyoutItem 
                 Icon="Rotate" 
                 Text="{x:Bind res:Strings.MediaFileContextMenu_Rotate}"

@@ -23,7 +23,7 @@ public interface IViewModelFactory
     ITagPeopleToolModel CreateTagPeopleToolModel(IBitmapFileInfo bitmapFile);
     IOverviewItemModel CreateOverviewItemModel(IMediaFileInfo mediaFile);
     IOverviewPageCommandBarModel CreateOverviewPageCommandBarModel();
-    IMediaFileContextMenuModel CreateMediaFileContextMenuModel();
+    IMediaFileContextMenuModel CreateMediaFileContextMenuModel(bool isRenameFilesEnabled = false);
     ICompareViewModel CreateCompareViewModel(IObservableList<IBitmapFileInfo> bitmapFiles);
     ICropImageToolModel CreateCropImageToolModel(IBitmapFileInfo bitmapFile);
     IImageViewModel CreateImageViewModel(IBitmapFileInfo bitmapFile);
@@ -107,12 +107,11 @@ public class ViewModelFactory : IViewModelFactory
 
     public IMediaFlipViewModel CreateMediaFlipViewModel()
     {
-        var deleteFilesCommand = CreateDeleteFilesCommand(); // TODO cache?
         return new MediaFlipViewModel(
               messenger,
               dialogService,
               mediaFilesLoaderService,
-              (mediaFile) => CreateMediaFlipViewItemModel(mediaFile, deleteFilesCommand),
+              CreateMediaFlipViewItemModel,
               settings);
     }
 
@@ -151,7 +150,7 @@ public class ViewModelFactory : IViewModelFactory
 
     public IOverviewItemModel CreateOverviewItemModel(IMediaFileInfo mediaFile)
     {
-        return new OverviewItemModel(mediaFile, messenger, metadataService);
+        return new OverviewItemModel(mediaFile, messenger, metadataService, dialogService);
     }
 
     public IOverviewPageCommandBarModel CreateOverviewPageCommandBarModel()
@@ -160,10 +159,10 @@ public class ViewModelFactory : IViewModelFactory
         return new OverviewPageCommandBarModel(messenger, dialogService, mediaFilesLoaderService, deleteFilesCommand, rotateBitmapService, settings);
     }
 
-    public IMediaFileContextMenuModel CreateMediaFileContextMenuModel()
+    public IMediaFileContextMenuModel CreateMediaFileContextMenuModel(bool isRenameFilesEnabled = false)
     {
         var deleteFilesCommand = CreateDeleteFilesCommand();
-        return CreateMediaFileContextMenuModel(deleteFilesCommand);
+        return CreateMediaFileContextMenuModel(deleteFilesCommand, isRenameFilesEnabled);
     }
 
     private IDeleteFilesCommand CreateDeleteFilesCommand()
@@ -171,19 +170,18 @@ public class ViewModelFactory : IViewModelFactory
         return new DeleteFilesCommand(messenger, deleteMediaService, dialogService, settingService, settings);
     }
 
-    private IMediaFlipViewItemModel CreateMediaFlipViewItemModel(IMediaFileInfo mediaFile, IDeleteFilesCommand deleteFilesCommand)
+    private IMediaFlipViewItemModel CreateMediaFlipViewItemModel(IMediaFileInfo mediaFile)
     {
-        var mediaFileContextFlyoutModel = CreateMediaFileContextMenuModel(deleteFilesCommand);
         return mediaFile switch
         {
-            IBitmapFileInfo bitmapFile => CreateBitmapFlipViewItemModel(bitmapFile, mediaFileContextFlyoutModel),
-            IVideoFileInfo => new VideoFlipViewItemModel(mediaFile, mediaFileContextFlyoutModel, messenger),
-            IVectorGraphicFileInfo => new VectorGraphicFlipViewItemModel(mediaFile, mediaFileContextFlyoutModel),
+            IBitmapFileInfo bitmapFile => CreateBitmapFlipViewItemModel(bitmapFile),
+            IVideoFileInfo => new VideoFlipViewItemModel(mediaFile, this, messenger),
+            IVectorGraphicFileInfo => new VectorGraphicFlipViewItemModel(mediaFile, this),
             _ => throw new Exception($"Unexcpected type of media file: {mediaFile.GetType()}")
         };
     }
 
-    private IMediaFileContextMenuModel CreateMediaFileContextMenuModel(IDeleteFilesCommand deleteFilesCommand)
+    private IMediaFileContextMenuModel CreateMediaFileContextMenuModel(IDeleteFilesCommand deleteFilesCommand, bool isRenameFilesEnabled = false)
     {
         return new MediaFileContextMenuModel(
             messenger,
@@ -192,10 +190,11 @@ public class ViewModelFactory : IViewModelFactory
             rotateBitmapService,
             dialogService,
             clipboardService,
-            deleteFilesCommand);
+            deleteFilesCommand,
+            isRenameFilesEnabled);
     }
 
-    private BitmapFlipViewItemModel CreateBitmapFlipViewItemModel(IBitmapFileInfo bitmapFile, IMediaFileContextMenuModel mediaFileContextFlyoutModel)
+    private BitmapFlipViewItemModel CreateBitmapFlipViewItemModel(IBitmapFileInfo bitmapFile)
     {
         return new BitmapFlipViewItemModel(bitmapFile, this, messenger);
     }

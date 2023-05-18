@@ -18,19 +18,19 @@ public enum SuggestionListDirection
     Up
 }
 
-public static class AutoSuggestBoxExtension
+public class AutoSuggestBoxExtension
 {
-    public static readonly DependencyProperty IsSuggestionListOverflowEnabledProperty = DependencyPropertyHelper.RegisterAttached(
-       typeof(AutoSuggestBoxExtension), nameof(IsSuggestionListOverflowEnabledProperty), false, OnIsSuggestionListOverflowEnabledChanged);
+    public static readonly DependencyProperty IsSuggestionListOverflowEnabledProperty = DependencyPropertyHelper<AutoSuggestBoxExtension>
+        .RegisterAttached(false, OnIsSuggestionListOverflowEnabledChanged);
 
-    public static readonly DependencyProperty SuggestionListDirectionProperty = DependencyPropertyHelper.RegisterAttached(
-       typeof(AutoSuggestBoxExtension), nameof(SuggestionListDirectionProperty), SuggestionListDirection.Auto, OnSuggestionListDirectionChanged);
+    public static readonly DependencyProperty SuggestionListDirectionProperty = DependencyPropertyHelper<AutoSuggestBoxExtension>
+        .RegisterAttached(SuggestionListDirection.Auto, OnSuggestionListDirectionChanged);
 
-    private static readonly DependencyProperty IsSuggestionListOpenChangedCallbackTokenProperty = DependencyPropertyHelper.RegisterAttached<long?>
-    (typeof(AutoSuggestBoxExtension), nameof(IsSuggestionListOpenChangedCallbackTokenProperty), null);
+    private static readonly DependencyProperty IsSuggestionListOpenChangedCallbackTokenProperty = DependencyPropertyHelper<AutoSuggestBoxExtension>
+        .RegisterAttached<long?>(null);
 
-    private static readonly DependencyProperty VerticalOffsetChangedCallbackTokenProperty = DependencyPropertyHelper.RegisterAttached<long?>
-        (typeof(AutoSuggestBoxExtension), nameof(VerticalOffsetChangedCallbackTokenProperty), null);
+    private static readonly DependencyProperty VerticalOffsetChangedCallbackTokenProperty = DependencyPropertyHelper<AutoSuggestBoxExtension>
+        .RegisterAttached<long?>(null);
 
     public static bool GetIsSuggestionListOverflowEnabled(DependencyObject obj) => (bool)obj.GetValue(IsSuggestionListOverflowEnabledProperty);
     public static void SetIsSuggestionListOverflowEnabled(DependencyObject obj, bool value) => obj.SetValue(IsSuggestionListOverflowEnabledProperty, value);

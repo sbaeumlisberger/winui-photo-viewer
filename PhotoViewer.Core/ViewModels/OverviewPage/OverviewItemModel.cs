@@ -4,8 +4,10 @@ using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Utils;
 using Tocronx.SimpleAsync;
 
@@ -19,7 +21,9 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
 
     public IMediaFileInfo MediaFile { get; }
 
-    public string DisplayName { get; }
+    public string DisplayName { get; private set; }
+
+    public string NewName { get; set; }
 
     public double ThumbnailSize { get; private set; } = 160;
 
@@ -31,13 +35,21 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
 
     public int Rating { get; private set; } = 0;
 
+    public bool IsRenaming { get; private set; } = false;
+
+    public bool IsNotRenaming => !IsRenaming;
+
     private readonly IMetadataService metadataService;
 
-    public OverviewItemModel(IMediaFileInfo mediaFile, IMessenger messenger, IMetadataService metadataService) : base(messenger)
+    private readonly IDialogService dialogService;
+
+    public OverviewItemModel(IMediaFileInfo mediaFile, IMessenger messenger, IMetadataService metadataService, IDialogService dialogService) : base(messenger)
     {
         MediaFile = mediaFile;
         DisplayName = mediaFile.DisplayName;
+        NewName = mediaFile.FileNameWithoutExtension;
         this.metadataService = metadataService;
+        this.dialogService = dialogService;
         InitializeAsync().FireAndForget();
     }
 
@@ -45,6 +57,7 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
     {
         Messenger.Register<ChangeThumbnailSizeMessage>(this, Receive);
         Messenger.Register<BitmapModifiedMesssage>(this, Receive);
+        Messenger.Register<ActivateRenameFileMessage>(this, Receive);
 
         if (MediaFile is IBitmapFileInfo bitmapFile && bitmapFile.IsMetadataSupported)
         {
@@ -65,6 +78,14 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
         }
     }
 
+    private void Receive(ActivateRenameFileMessage msg)
+    {
+        if (msg.MediaFile == MediaFile)
+        {
+            IsRenaming = true;
+        }
+    }
+
     private async void Receive(MetadataModifiedMessage msg)
     {
         if (msg.Files.Contains(MediaFile))
@@ -82,4 +103,45 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
         Rating = metadata.Get(MetadataProperties.Rating);
     }
 
+    public void CancelRenaming()
+    {
+        Log.Info("User canceld renaming");
+        IsRenaming = false;
+        NewName = MediaFile.FileNameWithoutExtension;
+    }
+
+    public async void ConfirmRenaming()
+    {
+        Log.Info("User confirmed renaming");
+
+        if (string.IsNullOrWhiteSpace(NewName))
+        {
+            Log.Info("Ignore renaming because input was invalid");
+            return;
+        }
+
+        IsRenaming = false;
+
+        if (NewName == MediaFile.FileNameWithoutExtension)
+        {
+            Log.Info("Ignore renaming because file name was not changed");
+            return;
+        }
+
+        try
+        {          
+            await MediaFile.RenameAsync(NewName);
+            DisplayName = MediaFile.DisplayName;
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"Failed to rename {MediaFile} to {NewName}", ex);
+            NewName = MediaFile.FileNameWithoutExtension;
+            await dialogService.ShowDialogAsync(new MessageDialogModel()
+            {
+                Title = Strings.RenameFileErrorDialog_Title,
+                Message = ex.Message
+            });
+        }
+    }
 }

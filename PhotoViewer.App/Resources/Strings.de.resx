@@ -387,6 +387,9 @@
   <data name="MediaFileContextMenu_Properties" xml:space="preserve">
     <value>Eigenschaften</value>
   </data>
+  <data name="MediaFileContextMenu_Rename" xml:space="preserve">
+    <value>Umbenennen</value>
+  </data>
   <data name="MediaFileContextMenu_Rotate" xml:space="preserve">
     <value>Drehen</value>
   </data>

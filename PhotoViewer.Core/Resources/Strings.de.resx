@@ -159,6 +159,9 @@
   <data name="RemovePeopleTagErrorDialog_Title" xml:space="preserve">
     <value>Personenmarkierung konnte nicht entfernet werden</value>
   </data>
+  <data name="RenameFileErrorDialog_Title" xml:space="preserve">
+    <value>Datei konnte nicht umbennant werden</value>
+  </data>
   <data name="SetDesktopBackgroundFailedDialog_Ttile" xml:space="preserve">
     <value>Desktop-Hintergrund konnte nicht festgelegt werden</value>
   </data>
