@@ -101,7 +101,7 @@ public static class CollectionsUtil
         var index = list.IndexOf(element);
         if (index == -1)
         {
-            throw new ArgumentException(nameof(element));
+            throw new ArgumentException("The specified element was not found.", nameof(element));
         }
         int leftNeighboursCount = Math.Min(maxAmountPerSide, index);
         var leftNeighbours = list.Skip(index - leftNeighboursCount).Take(leftNeighboursCount);

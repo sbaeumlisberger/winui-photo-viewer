@@ -69,7 +69,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
         var startMediaFile = GetStartMediaFile(startFile);
         return new LoadMediaFilesTask(startMediaFile, Task.Run(async () =>
         {
-            var mediaFiles = await LoadMediaFilesFromFilesQueryAsync(startMediaFile, neighboringFilesQuery, config).ConfigureAwait(false);
+            var mediaFiles = await LoadMediaFilesFromNeighboringFilesQueryAsync(startMediaFile, neighboringFilesQuery, config).ConfigureAwait(false);
             if (startMediaFile is null)
             {
                 startMediaFile = FindStartMediaFile(mediaFiles, startFile);
@@ -101,12 +101,19 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
         }));
     }
 
-    private async Task<List<IMediaFileInfo>> LoadMediaFilesFromFilesQueryAsync(IMediaFileInfo? startMediaFile, IStorageQueryResultBase filesQuery, LoadMediaConfig config)
+    private async Task<List<IMediaFileInfo>> LoadMediaFilesFromNeighboringFilesQueryAsync(IMediaFileInfo? startMediaFile, IStorageQueryResultBase filesQuery, LoadMediaConfig config)
     {
         var sw = Stopwatch.StartNew();
         var files = await fileSystemService.ListFilesAsync(filesQuery).ConfigureAwait(false);
         sw.Stop();
         Log.Info($"filesQuery.GetFilesAsync took {sw.ElapsedMilliseconds}ms");
+
+        /* We cannot use the neighboring files if the start file is not one of them. This is the 
+         * case when the application was launched for a shortcut to a file from another folder. */
+        if (startMediaFile != null && !files.Any(file => file.IsEqual(startMediaFile.StorageFile))) 
+        {
+            return new List<IMediaFileInfo>(1) { startMediaFile };
+        }
 
         if (!string.IsNullOrEmpty(config.RAWsFolderName))
         {

@@ -32,11 +32,11 @@ public class MediaFilesLoaderServiceTest
     {
         var files = new List<IStorageFile>
         {
-            MockFile("File 01.jpg"),
-            MockFile("File 02.jpg"),
-            MockFile("File 02.arw"),
-            MockFile("File 03.jpg"),
-            MockFile("File 04.mp4")
+            MockStorageFile("File 01.jpg"),
+            MockStorageFile("File 02.jpg"),
+            MockStorageFile("File 02.arw"),
+            MockStorageFile("File 03.jpg"),
+            MockStorageFile("File 04.mp4")
         };
         var folder = MockFolder(files);
         var config = new LoadMediaConfig(false, null, false);
@@ -65,11 +65,11 @@ public class MediaFilesLoaderServiceTest
     {
         var files = new List<IStorageFile>
         {
-            MockFile("File 01.jpg"),
-            MockFile("File 02.jpg"),
-            MockFile("File 03.jpg"),
-            MockFile("File 04.jpg"),
-            MockFile("File 05.jpg")
+            MockStorageFile("File 01.jpg"),
+            MockStorageFile("File 02.jpg"),
+            MockStorageFile("File 03.jpg"),
+            MockStorageFile("File 04.jpg"),
+            MockStorageFile("File 05.jpg")
         };
         var neighboringFilesQuery = MockNeighboringFilesQuery(files);
         var startFile = files[2]; // "File 03.jpg"
@@ -101,13 +101,13 @@ public class MediaFilesLoaderServiceTest
     {
         var files = new List<IStorageFile>
         {
-            MockFile("File 01.jpg"),
-            MockFile("File 02.jpg"),
-            MockFile("File 03.png"),
-            MockFile("File 03.jpg"),
-            MockFile("File 03.arw"),
-            MockFile("File 04.jpg"),
-            MockFile("File 04.arw"),
+            MockStorageFile("File 01.jpg"),
+            MockStorageFile("File 02.jpg"),
+            MockStorageFile("File 03.png"),
+            MockStorageFile("File 03.jpg"),
+            MockStorageFile("File 03.arw"),
+            MockStorageFile("File 04.jpg"),
+            MockStorageFile("File 04.arw"),
         };
         var neighboringFilesQuery = MockNeighboringFilesQuery(files);
         var startFile = files[3]; // "File 03.jpg"
@@ -139,16 +139,16 @@ public class MediaFilesLoaderServiceTest
     {
         var files = new List<IStorageFile>
         {
-            MockFile("File 01.jpg"),
-            MockFile("File 01.arw"),
-            MockFile("File 02.jpg"),
-            MockFile("File 03.jpg"),
-            MockFile("File 04.jpg"),
+            MockStorageFile("File 01.jpg"),
+            MockStorageFile("File 01.arw"),
+            MockStorageFile("File 02.jpg"),
+            MockStorageFile("File 03.jpg"),
+            MockStorageFile("File 04.jpg"),
         };
         var rawFilesInSubfolder = new List<IStorageFile>
         {
-            MockFile("File 03.arw"),
-            MockFile("File 04.arw"),
+            MockStorageFile("File 03.arw"),
+            MockStorageFile("File 04.arw"),
         };
         var neighboringFilesQuery = MockNeighboringFilesQuery(files);
         var startFile = files[2]; // "File 02.jpg"
@@ -180,14 +180,14 @@ public class MediaFilesLoaderServiceTest
     {
         var files = new List<IStorageFile>
         {
-            MockFile("File 01.jpg"),
-            MockFile("File 02.jpg"),
-            MockFile("File 03.jpg"),
-            MockFile("File 04.jpg"),
-            MockFile("File 05.jpg")
+            MockStorageFile("File 01.jpg"),
+            MockStorageFile("File 02.jpg"),
+            MockStorageFile("File 03.jpg"),
+            MockStorageFile("File 04.jpg"),
+            MockStorageFile("File 05.jpg")
         };
         var neighboringFilesQuery = MockNeighboringFilesQuery(files);
-        var startFile = MockFile("File 03[1].jpg", FileAttributes.Temporary | FileAttributes.ReadOnly, Path.GetTempPath());
+        var startFile = MockStorageFile("File 03[1].jpg", FileAttributes.Temporary | FileAttributes.ReadOnly, Path.GetTempPath());
         var config = new LoadMediaConfig(false, null, false);
 
         var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
@@ -218,10 +218,10 @@ public class MediaFilesLoaderServiceTest
         string nonExistingFilePath = Path.Combine(FolderPath, "File 03.jpg");
         var arguments = new[]
         {
-            MockFile("File 01.jpg").Path,
-            MockFile("File 02.txt").Path,
+            MockStorageFile("File 01.jpg").Path,
+            MockStorageFile("File 02.txt").Path,
             nonExistingFilePath,
-            MockFile("File 04.png").Path
+            MockStorageFile("File 04.png").Path
         };
         fileSystemServiceMock.Setup(m => m.Exists(nonExistingFilePath)).Returns(false);
         fileSystemServiceMock.Setup(m => m.TryGetFileAsync(nonExistingFilePath)).ReturnsAsync((IStorageFile?)null);
@@ -241,7 +241,39 @@ public class MediaFilesLoaderServiceTest
         AssertMediaFiles(expectedMediaFiles, result.MediaFiles);
     }
 
-    private IStorageFile MockFile(string fileName, FileAttributes attributes = FileAttributes.Normal, string? folderPath = null)
+    [Fact]
+    public async Task NeigboringFilesAreIgnoredWhenTheStartFileIsNotPartOfThem() 
+    {
+        var files = new List<IStorageFile>
+        {
+            MockStorageFile("File 01.jpg"),
+            MockStorageFile("File 02.jpg"),
+            MockStorageFile("File 03.jpg"),
+            MockStorageFile("File 04.jpg"),
+            MockStorageFile("File 05.jpg")
+        };
+        var neighboringFilesQuery = MockNeighboringFilesQuery(files);
+        var startFile = MockStorageFile("Some Other File.jpg");
+        var config = new LoadMediaConfig(false, null, false);
+
+        var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
+
+        Assert.NotNull(loadMediaFilesTask.StartMediaFile);
+        Assert.Equal(startFile.Name, loadMediaFilesTask.StartMediaFile.FileName);
+
+        var result = await loadMediaFilesTask.WaitForResultAsync();
+
+        Assert.NotNull(result.StartMediaFile);
+        Assert.Equal(startFile.Name, result.StartMediaFile.FileName);
+
+        var expectedMediaFiles = new[]
+        {
+            new []{ "Some Other File.jpg" },
+        };
+        AssertMediaFiles(expectedMediaFiles, result.MediaFiles);
+    }
+
+    private IStorageFile MockStorageFile(string fileName, FileAttributes attributes = FileAttributes.Normal, string? folderPath = null)
     {
         string path = Path.Combine(folderPath ?? FolderPath, fileName);
         var mock = new Mock<IStorageFile>();
