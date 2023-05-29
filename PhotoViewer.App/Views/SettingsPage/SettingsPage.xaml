@@ -120,8 +120,14 @@
                     Header="{x:Bind res:Strings.SettingsPage_ShowVideoFilesHeader}"
                     IsOn="{x:Bind ViewModel.Settings.IncludeVideos, Mode=TwoWay}"/>
 
+              
+            </StackPanel>
+        </ScrollViewer>
+
+        <ScrollViewer Grid.Column="1" Grid.Row="1" Margin="16,0,0,0">
+            <StackPanel Padding="0,0,0,32">              
                 <TextBlock
-                    Margin="0,32,0,8" Style="{ThemeResource SubtitleTextBlockStyle}" 
+                    Margin="0,8,0,8" Style="{ThemeResource SubtitleTextBlockStyle}" 
                     Text="{x:Bind res:Strings.SettingsPage_ManageSettingsSectionTittle}"/>
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <Button 
@@ -130,27 +136,10 @@
                     <Button 
                         Content="{x:Bind res:Strings.SettingsPage_ImportSettingsButton}" 
                         Command="{x:Bind ViewModel.ImportCommand}"/>
+                    <Button 
+                        Content="{x:Bind res:Strings.SettingsPage_ResetSettingsButton}"
+                        Command="{x:Bind ViewModel.ResetCommand}"/>
                 </StackPanel>
-                <Button 
-                    Margin="0,8,0,0" 
-                    Content="{x:Bind res:Strings.SettingsPage_ResetSettingsButton}"
-                    Command="{x:Bind ViewModel.ResetCommand}"/>
-            </StackPanel>
-        </ScrollViewer>
-
-        <ScrollViewer Grid.Column="1" Grid.Row="1" Margin="16,0,0,0">
-            <StackPanel Padding="0,0,0,32">
-                <TextBlock
-                    Margin="0,8,0,8"
-                    Style="{ThemeResource SubtitleTextBlockStyle}"
-                    Text="{x:Bind res:Strings.SettingsPage_AboutSectionTittle}"/>
-                <TextBlock Text="WinUI Photo Viewer"/>
-                <TextBlock Text="Version 1.0.0"/>
-                <TextBlock Text="© Sebastian Bäumlisberger"/>
-                <HyperlinkButton 
-                    Padding="0"
-                    Content="GitHub"
-                    NavigateUri="https://github.com/sbaeumlisberger/winui-photo-viewer"/>
 
                 <TextBlock 
                     Margin="0,32,0,8" 
@@ -163,6 +152,18 @@
                     Margin="0,12,0,0"
                     IsOn="{x:Bind ViewModel.Settings.IsDebugLogEnabled, Mode=TwoWay}"
                     Header="{x:Bind res:Strings.SettingsPage_IsDebugLogEnabledToggleHeader}"/>
+
+                <TextBlock
+                    Margin="0,32,0,8"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="{x:Bind res:Strings.SettingsPage_AboutSectionTittle}"/>
+                <TextBlock Text="WinUI Photo Viewer"/>
+                <TextBlock Text="Version 1.0.0"/>
+                <TextBlock Text="© Sebastian Bäumlisberger"/>
+                <HyperlinkButton 
+                    Padding="0"
+                    Content="GitHub"
+                    NavigateUri="https://github.com/sbaeumlisberger/winui-photo-viewer"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

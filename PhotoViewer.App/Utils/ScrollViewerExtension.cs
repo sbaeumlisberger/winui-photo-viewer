@@ -8,11 +8,19 @@ using Windows.System;
 
 namespace PhotoViewer.App.Views;
 
-internal static class ScrollViewerHelper
+internal static class ScrollViewerExtension
 {
-    public static void EnableAdvancedZoomBehaviour(ScrollViewer scrollViewer)
+    public static void EnableAdvancedZoomBehaviour(this ScrollViewer scrollViewer)
     {
         new AdvancedScrollViewerZoomBehaviour(scrollViewer);
+    }
+
+    public static void Zoom(this ScrollViewer scrollViewer, float zoomFactor)
+    {
+        double zoomDelta = zoomFactor - scrollViewer.ZoomFactor;
+        double horizontalOffset = scrollViewer.HorizontalOffset + scrollViewer.ViewportWidth / 2 * zoomDelta;
+        double verticalOffset = scrollViewer.VerticalOffset + scrollViewer.ViewportHeight / 2 * zoomDelta;
+        scrollViewer.ChangeView(horizontalOffset, verticalOffset, zoomFactor);
     }
 
     private class AdvancedScrollViewerZoomBehaviour

@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using PhotoVieweApp.Utils;
 using PhotoViewer.App.Utils;
+using PhotoViewer.Core.Utils;
 using System;
 using System.Diagnostics;
 using Windows.Foundation;

@@ -4,11 +4,15 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Shapes;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.Views;
+using PhotoViewer.Core.Utils;
 using System;
+using Windows.Devices.Display.Core;
 using Windows.Foundation;
 
 namespace PhotoViewer.App.Controls;
@@ -26,6 +30,7 @@ public sealed partial class BitmapViewer : UserControl
     public IBitmapImageModel? BitmapImage { get => (IBitmapImageModel?)GetValue(BitmapImageProperty); set => SetValue(BitmapImageProperty, value); }
 
     public bool IsScaleUpEnabeld { get => (bool)GetValue(IsScaleUpEnabeldProperty); set => SetValue(IsScaleUpEnabeldProperty, value); }
+
     public new object Content { get => GetValue(ContentProperty); set => SetValue(ContentProperty, value); }
 
     public ScrollViewer ScrollViewer => scrollViewer;
@@ -38,7 +43,7 @@ public sealed partial class BitmapViewer : UserControl
     {
         this.InitializeComponent();
 
-        ScrollViewerHelper.EnableAdvancedZoomBehaviour(scrollViewer);
+        scrollViewer.EnableAdvancedZoomBehaviour();
 
         Unloaded += BitmapViewer_Unloaded;
 
@@ -104,7 +109,7 @@ public sealed partial class BitmapViewer : UserControl
         ViewChanged?.Invoke(this, e);
     }
 
-    private void InvalidateCanvas() 
+    private void InvalidateCanvas()
     {
         try
         {
@@ -130,7 +135,7 @@ public sealed partial class BitmapViewer : UserControl
                 DrawToCanvas(args.DrawingSession, BitmapImage);
             }
         }
-        catch(Exception ex) 
+        catch (Exception ex)
         {
             Log.Error("Failed to handle draw event", ex);
         }
@@ -138,7 +143,7 @@ public sealed partial class BitmapViewer : UserControl
 
     private void UpdateDummy(IBitmapImageModel image)
     {
-        double displayScale = XamlRoot.RasterizationScale;
+        double displayScale = canvasControl.Dpi / 96;
         var imageSize = new Size(image.SizeInDIPs.Width / displayScale, image.SizeInDIPs.Height / displayScale);
 
         double imageAspectRadio = imageSize.Width / imageSize.Height;
@@ -193,6 +198,10 @@ public sealed partial class BitmapViewer : UserControl
 
         ICanvasImage canvasImage = animatedBitmapRenderer != null ? animatedBitmapRenderer.RenderTarget : image.CanvasImage;
 
+        drawingSession.Units = CanvasUnits.Pixels;
+        double displayScale = canvasControl.Dpi / 96;
+        var dstRectInPixels = new Rect(dstRect.X * displayScale, dstRect.Y * displayScale, dstRect.Width * displayScale, dstRect.Height * displayScale);
+
         if (sourceColorProfile is not null || outputColorProfile is not null)
         {
             using var colorProfileEffect = new ColorManagementEffect()
@@ -207,11 +216,33 @@ public sealed partial class BitmapViewer : UserControl
                 colorProfileEffect.Quality = ColorManagementEffectQuality.Best;
             }
 
-            drawingSession.DrawImage(colorProfileEffect, dstRect, srcRect);
+            drawingSession.DrawImage(colorProfileEffect, dstRectInPixels, srcRect, 1, CanvasImageInterpolation.NearestNeighbor);
         }
         else
         {
-            drawingSession.DrawImage(canvasImage, dstRect, srcRect);
+            drawingSession.DrawImage(canvasImage, dstRectInPixels, srcRect, 1, CanvasImageInterpolation.NearestNeighbor);
         }
     }
+
+
+    private void Dummy_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+        if (BitmapImage is null)
+        {
+            return;
+        }
+
+        double dummyWidthInDIPs = dummy.ActualWidth * dummy.XamlRoot.RasterizationScale;
+        double orginalSizeZoomFactor = BitmapImage.SizeInDIPs.Width / dummyWidthInDIPs;
+
+        if (!MathUtil.ApproximateEquals(scrollViewer.ZoomFactor, orginalSizeZoomFactor))
+        {
+            scrollViewer.Zoom((float)orginalSizeZoomFactor);
+        }
+        else
+        {
+            scrollViewer.Zoom(1);
+        }
+    }
+
 }

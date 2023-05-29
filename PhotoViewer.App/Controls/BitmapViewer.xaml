@@ -15,10 +15,12 @@
         <ScrollViewer 
             x:Name="scrollViewer"
             MinZoomFactor="1"
+            MaxZoomFactor="20"
             ViewChanged="ScrollViewer_ViewChanged">
             <Grid 
                 x:Name="dummy" 
-                Background="Transparent">
+                Background="Transparent"
+                DoubleTapped="Dummy_DoubleTapped">
                 <ContentPresenter Content="{x:Bind Content, Mode=OneWay}"/>
             </Grid>
         </ScrollViewer>
