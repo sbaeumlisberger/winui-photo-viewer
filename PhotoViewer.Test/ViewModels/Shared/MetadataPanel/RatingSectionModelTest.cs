@@ -25,11 +25,13 @@ public class RatingSectionModelTest
 
     private readonly IDialogService dialogService = Substitute.For<IDialogService>();
 
+    private readonly IMessenger messenger = new StrongReferenceMessenger();
+
     private readonly RatingSectionModel ratingSectionModel;
 
     public RatingSectionModelTest()
     {
-        ratingSectionModel = new RatingSectionModel(writeFilesRunner, metadataService, dialogService);
+        ratingSectionModel = new RatingSectionModel(writeFilesRunner, metadataService, dialogService, messenger);
     }
 
     [Fact]

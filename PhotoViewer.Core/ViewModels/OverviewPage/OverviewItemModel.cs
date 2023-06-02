@@ -55,13 +55,13 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
 
     private async Task InitializeAsync()
     {
-        Messenger.Register<ChangeThumbnailSizeMessage>(this, Receive);
-        Messenger.Register<BitmapModifiedMesssage>(this, Receive);
-        Messenger.Register<ActivateRenameFileMessage>(this, Receive);
+        Register<ChangeThumbnailSizeMessage>(Receive);
+        Register<BitmapModifiedMesssage>(Receive);
+        Register<ActivateRenameFileMessage>(Receive);
 
         if (MediaFile is IBitmapFileInfo bitmapFile && bitmapFile.IsMetadataSupported)
         {
-            Messenger.Register<MetadataModifiedMessage>(this, Receive);
+            Register<MetadataModifiedMessage>(Receive);
             await LoadMetadataInfoAsync(bitmapFile);
         }
     }

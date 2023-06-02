@@ -98,7 +98,7 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 
         if (metadataProperty is IMetadataProperty<string> stringProperty)
         {
-            values = metadata.Select(m => m.Get(stringProperty)).ToList();
+            values = metadata.Select(m => m.Get(stringProperty).Trim()).ToList();
         }
         else if (metadataProperty is IMetadataProperty<string[]> stringArrayProperty)
         {

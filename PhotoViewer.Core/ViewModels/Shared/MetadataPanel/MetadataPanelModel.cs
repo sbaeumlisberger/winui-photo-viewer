@@ -72,7 +72,7 @@ namespace PhotoViewer.Core.ViewModels
             LocationSectionModel = new LocationSectionModel(writeFilesRunner, metadataService, locationService, dialogService, viewModelFactory, gpxService, messenger);
             PeopleSectionModel = new PeopleSectionModel(writeFilesRunner, messenger, metadataService, peopleSuggestionsService, dialogService, tagPeopleOnPhotoButtonVisible);
             KeywordsSectionModel = new KeywordsSectionModel(writeFilesRunner, messenger, metadataService, keywordSuggestionsService, dialogService);
-            RatingSectionModel = new RatingSectionModel(writeFilesRunner, metadataService, dialogService);
+            RatingSectionModel = new RatingSectionModel(writeFilesRunner, metadataService, dialogService, messenger);
             AuthorTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, dialogService, MetadataProperties.Author);
             CopyrightTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, dialogService, MetadataProperties.Copyright);
             DateTakenSectionModel = new DateTakenSectionModel(writeFilesRunner, messenger, metadataService, dialogService);

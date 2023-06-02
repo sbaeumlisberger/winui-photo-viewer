@@ -1,6 +1,8 @@
-﻿using MetadataAPI;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
+using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Utils;
 using Tocronx.SimpleAsync;
 
@@ -24,8 +26,8 @@ namespace PhotoViewer.Core.ViewModels
         private readonly IMetadataService metadataService;
         private readonly IDialogService dialogService;
 
-        public RatingSectionModel(SequentialTaskRunner writeFilesRunner, IMetadataService metadataService, IDialogService dialogService)
-            : base(writeFilesRunner, null!)
+        public RatingSectionModel(SequentialTaskRunner writeFilesRunner, IMetadataService metadataService, IDialogService dialogService, IMessenger messenger)
+            : base(writeFilesRunner, messenger)
         {
             this.metadataService = metadataService;
             this.dialogService = dialogService;
@@ -68,6 +70,8 @@ namespace PhotoViewer.Core.ViewModels
                         await metadataService.WriteMetadataAsync(file, MetadataProperties.Rating, rating).ConfigureAwait(false);
                     }
                 });
+
+                Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Rating));
 
                 if (result.HasFailures) 
                 {
