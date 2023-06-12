@@ -110,7 +110,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 
         /* We cannot use the neighboring files if the start file is not one of them. This is the 
          * case when the application was launched for a shortcut to a file from another folder. */
-        if (startMediaFile != null && !files.Any(file => file.IsEqual(startMediaFile.StorageFile))) 
+        if (startMediaFile != null && !files.Any(file => file.IsSameFile(startMediaFile.StorageFile)))
         {
             return new List<IMediaFileInfo>(1) { startMediaFile };
         }
@@ -170,12 +170,12 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
         return null;
     }
 
-    private List<IMediaFileInfo> ConvertFilesToMediaFiles(IMediaFileInfo? startFile, IReadOnlyList<IStorageFile> files, LoadMediaConfig config)
+    private List<IMediaFileInfo> ConvertFilesToMediaFiles(IMediaFileInfo? startMediaFile, IReadOnlyList<IStorageFile> files, LoadMediaConfig config)
     {
         Stopwatch sw = Stopwatch.StartNew();
 
         bool linkRAWs = config.LinkRAWs;
-        bool includeVideos = config.IncludeVideos || startFile is VideoFileInfo;
+        bool includeVideos = config.IncludeVideos || startMediaFile is VideoFileInfo;
 
         List<IMediaFileInfo> mediaFiles = new List<IMediaFileInfo>();
 
@@ -189,9 +189,9 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
         {
             string fileExtension = file.FileType.ToLower();
 
-            if (startFile != null && file.IsEqual(startFile.StorageFile))
+            if (startMediaFile != null && file.IsSameFile(startMediaFile.StorageFile))
             {
-                mediaFiles.Add(startFile);
+                mediaFiles.Add(startMediaFile);
             }
             else if (BitmapFileInfo.CommonFileExtensions.Contains(fileExtension))
             {
@@ -221,7 +221,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             }
         }
 
-        if (linkRAWs)
+        if (linkRAWs && rawFilesToLink.Any())
         {
             LinkRawFiles(rawFilesToLink, mediaFiles);
         }
@@ -235,7 +235,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
     private IMediaFileInfo FindStartMediaFile(IReadOnlyList<IMediaFileInfo> mediaFiles, IStorageFile startFile)
     {
         if (mediaFiles.FirstOrDefault(mediaFile =>
-            mediaFile.StorageFile.IsEqual(startFile)) is IMediaFileInfo mediaFile)
+            mediaFile.StorageFile.IsSameFile(startFile)) is IMediaFileInfo mediaFile)
         {
             return mediaFile;
         }
@@ -256,20 +256,17 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 
     private void LinkRawFiles(IList<IStorageFile> rawFilesToLink, IList<IMediaFileInfo> mediaFiles)
     {
-        if (rawFilesToLink.Any())
-        {
-            IList<IBitmapFileInfo> possibleLinkBitmapFiles = mediaFiles.OfType<IBitmapFileInfo>()
-                .Where(bitmapFile => GetLinkPrio(bitmapFile.FileExtension) is not null).ToList();
+        IList<IBitmapFileInfo> possibleLinkBitmapFiles = mediaFiles.OfType<IBitmapFileInfo>()
+            .Where(bitmapFile => GetLinkPrio(bitmapFile.FileExtension) is not null).ToList();
 
-            foreach (var rawFile in rawFilesToLink)
-            {
-                string rawFileName = Path.GetFileNameWithoutExtension(rawFile.Name);
-                var bitmapFile = possibleLinkBitmapFiles
-                    .Where(bitmapFile => Path.GetFileNameWithoutExtension(bitmapFile.FileName) == rawFileName)
-                    .OrderByDescending(bitmapFile => GetLinkPrio(bitmapFile.FileExtension))
-                    .First();
-                bitmapFile.LinkStorageFile(rawFile);
-            }
+        foreach (var rawFile in rawFilesToLink)
+        {
+            string rawFileName = Path.GetFileNameWithoutExtension(rawFile.Name);
+            var bitmapFile = possibleLinkBitmapFiles
+                .Where(bitmapFile => Path.GetFileNameWithoutExtension(bitmapFile.FileName) == rawFileName)
+                .OrderByDescending(bitmapFile => GetLinkPrio(bitmapFile.FileExtension))
+                .First();
+            bitmapFile.LinkStorageFile(rawFile);
         }
     }
 

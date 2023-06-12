@@ -47,7 +47,7 @@ internal class MetadataService : IMetadataService
             MetadataProperties.Title
     };
 
-    private static readonly ConditionalWeakTable<IBitmapFileInfo, AsyncCache<MetadataView>> cacheTable = new();
+    private static readonly ConditionalWeakTable<IBitmapFileInfo, Task<MetadataView>> cacheTable = new();
 
     public Task<MetadataView> GetMetadataAsync(IBitmapFileInfo bitmap)
     {
@@ -55,8 +55,7 @@ internal class MetadataService : IMetadataService
         {
             throw new NotSupportedException("The file format does not support any metadata.");
         }
-        var cache = cacheTable.GetOrCreateValue(bitmap);
-        return cache.GetOrCreateValueAsync(() => ReadMetadataAsync(bitmap));
+        return cacheTable.GetValue(bitmap, bitmap => ReadMetadataAsync(bitmap));
     }
 
     public async Task<T> GetMetadataAsync<T>(IBitmapFileInfo bitmap, IReadonlyMetadataProperty<T> propertyDefinition)
@@ -71,7 +70,7 @@ internal class MetadataService : IMetadataService
 
         using (var fileStream = await bitmap.OpenAsync(FileAccessMode.ReadWrite).ConfigureAwait(false))
         {
-            var metadataEncoder = new MetadataEncoder(fileStream.AsStream());
+            var metadataEncoder = new MetadataEncoder(fileStream);
             metadataEncoder.AutoResizeLargeThumbnails = true;
             metadataEncoder.SetProperties(propertySet);
             await metadataEncoder.EncodeAsync().ConfigureAwait(false);
@@ -88,41 +87,44 @@ internal class MetadataService : IMetadataService
 
     public void UpdateCache<T>(IBitmapFileInfo bitmap, IMetadataProperty<T> property, T value)
     {
-        if (cacheTable.TryGetValue(bitmap, out var cache) && cache.TryGetValue(out var metadataView))
+        if (cacheTable.TryGetValue(bitmap, out var metadataViewTask) && metadataViewTask.IsCompleted)
         {
-            metadataView.Source[property.Identifier] = value;
+            metadataViewTask.Result.Source[property.Identifier] = value;
         }
     }
 
-    private async Task<MetadataView> ReadMetadataAsync(IBitmapFileInfo file)
+    private Task<MetadataView> ReadMetadataAsync(IBitmapFileInfo file)
     {
-        Log.Info($"Read metadata for file {file.DisplayName}");
-
-        using (var fileStream = await file.OpenAsync(FileAccessMode.Read).ConfigureAwait(false))
+        return Task.Run(async () =>
         {
-            var wic = new WICImagingFactory();
+            Log.Info($"Read metadata for file {file.DisplayName}");
 
-            var decoder = wic.CreateDecoderFromStream(fileStream.AsStream(), WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
+            using (var fileStream = await file.OpenAsync(FileAccessMode.Read).ConfigureAwait(false))
+            {
+                var wic = new WICImagingFactory();
 
-            var frame = decoder.GetFrame(0);
+                var decoder = wic.CreateDecoderFromStream(fileStream, WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
 
-            var metadataReader = new MetadataReader(frame.GetMetadataQueryReader(), decoder.GetDecoderInfo());
+                var frame = decoder.GetFrame(0);
 
-            var metadata = AllMetadataProperties.ToDictionary(
-                metadataProperty => metadataProperty.Identifier,
-                metadataProperty => metadataReader.GetProperty(metadataProperty));
+                var metadataReader = new MetadataReader(frame.GetMetadataQueryReader(), decoder.GetDecoderInfo());
 
-            return new MetadataView(metadata);
-        }
+                var metadata = AllMetadataProperties.ToDictionary(
+                    metadataProperty => metadataProperty.Identifier,
+                    metadataProperty => metadataReader.GetProperty(metadataProperty));
+
+                return new MetadataView(metadata);
+            }
+        });
     }
 
     private void UpdateMetadataCache(IBitmapFileInfo bitmap, MetadataPropertySet metadataPropertySet)
     {
-        if (cacheTable.TryGetValue(bitmap, out var cache) && cache.TryGetValue(out var metadataView))
+        if (cacheTable.TryGetValue(bitmap, out var metadataViewTask) && metadataViewTask.IsCompleted)
         {
             foreach (var (property, value) in metadataPropertySet)
             {
-                metadataView.Source[property.Identifier] = value;
+                metadataViewTask.Result.Source[property.Identifier] = value;
             }
         }
     }

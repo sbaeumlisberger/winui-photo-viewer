@@ -60,7 +60,7 @@ public partial class App : Application
         Strings.Culture = new CultureInfo(language);
         PhotoViewer.Core.Resources.Strings.Culture = new CultureInfo(language);
 
-        this.InitializeComponent();
+        this.InitializeComponent();       
 
         stopwatch.Stop();
         Log.Info($"App constructor took {stopwatch.ElapsedMilliseconds}ms");
@@ -83,6 +83,9 @@ public partial class App : Application
         Log.Info($"OnLaunched took {stopwatch.ElapsedMilliseconds}ms");
 
         messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask));
+
+        // TODO check event log for crashes
+        // https://www.c-sharpcorner.com/UploadFile/d551d3/reading-and-querying-eventviewer-efficiently-with-C-Sharp/
     }
 
     private ApplicationSettings LoadSettings()
@@ -190,9 +193,10 @@ public partial class App : Application
 
             var dialogResult = await dialog.ShowAsync();
 
-            if (dialog.IsSendCrashReportChecked)
+            if (dialog.IsSendErrorReportChecked)
             {
-                await CrashReportService.TrySendCrashReportAsync();
+                Log.Info("Sending error report");
+                await ErrorReportService.TrySendErrorReportAsync();
             }
 
             if (dialogResult == ContentDialogResult.Primary)

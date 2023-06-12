@@ -13,8 +13,6 @@ namespace PhotoViewer.App.Views;
 
 public sealed partial class VectorGraphicFlipViewItem : UserControl, IMVVMControl<VectorGraphicFlipViewItemModel>
 {
-    private VectorGraphicFlipViewItemModel ViewModel  => DataContext as VectorGraphicFlipViewItemModel;
-
     public VectorGraphicFlipViewItem()
     {
         this.InitializeComponentMVVM(updateBindingsAlways: true);
@@ -63,7 +61,7 @@ public sealed partial class VectorGraphicFlipViewItem : UserControl, IMVVMContro
 
     private void ScrollDummy_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
-        if (ViewModel.IsContextMenuEnabeld)
+        if (ViewModel!.IsContextMenuEnabeld)
         {
             dummy.ShowAttachedFlyout(args);
         }

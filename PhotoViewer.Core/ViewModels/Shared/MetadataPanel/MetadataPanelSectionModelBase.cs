@@ -5,6 +5,7 @@ using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using System;
 using System.Collections.Generic;
@@ -19,18 +20,23 @@ namespace PhotoViewer.Core.ViewModels
     {
         public bool IsWriting { get; private set; }
 
-        public Task WriteTask => writeFilesRunner.ExecutionTask;
+        public Task WriteFilesTask { get; private set; } = Task.CompletedTask;
 
         protected IReadOnlyList<IBitmapFileInfo> Files { get; private set; } = Array.Empty<IBitmapFileInfo>();
 
-        private readonly SequentialTaskRunner writeFilesRunner;
-
         private IList<MetadataView> metadata = Array.Empty<MetadataView>();
 
-        protected MetadataPanelSectionModelBase(SequentialTaskRunner writeFilesRunner, IMessenger messenger)
-            : base(messenger)
+        private readonly IBackgroundTaskService backgroundTaskService;
+        private readonly IDialogService dialogService;
+
+        protected MetadataPanelSectionModelBase(
+            IMessenger messenger,
+            IBackgroundTaskService backgroundTaskService, 
+            IDialogService dialogService)
+            : base(messenger) 
         {
-            this.writeFilesRunner = writeFilesRunner;
+            this.backgroundTaskService = backgroundTaskService;
+            this.dialogService = dialogService;
         }
 
         public void UpdateFilesChanged(IReadOnlyList<IBitmapFileInfo> files, IList<MetadataView> metadata)
@@ -38,6 +44,8 @@ namespace PhotoViewer.Core.ViewModels
             BeforeFilesChanged();
             Files = files;
             this.metadata = metadata;
+            WriteFilesTask = Task.CompletedTask;
+            IsWriting = false;
             OnFilesChanged(metadata);
         }
 
@@ -45,30 +53,53 @@ namespace PhotoViewer.Core.ViewModels
         {
             OnMetadataModified(metadata, metadataProperty);
         }
+
         protected virtual void BeforeFilesChanged() { }
 
         protected abstract void OnFilesChanged(IList<MetadataView> metadata);
 
         protected abstract void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty);
 
-        protected Task EnqueueWriteFiles(Func<IReadOnlyList<IBitmapFileInfo>, Task> writeFiles)
+        protected async Task<ProcessingResult<IBitmapFileInfo>> WriteFilesAsync(Func<IBitmapFileInfo, Task> processFile)
         {
-            var files = Files.ToList();
+            IsWriting = true;
 
-            return writeFilesRunner.Enqueue(async () =>
+            var writeFilesTask = ExecuteWriteFilesAsync(Files.ToList(), processFile);
+
+            WriteFilesTask = writeFilesTask;
+
+            var result = await writeFilesTask;
+
+            if (writeFilesTask.Id == WriteFilesTask.Id)
             {
-                await RunInContextAsync(() => IsWriting = true).ConfigureAwait(false);
+                await RunInContextAsync(() => IsWriting = false).ConfigureAwait(false);
+            }
 
-                await writeFiles(files).ConfigureAwait(false);
+            if (result.HasFailures)
+            {
+                await ShowWriteMetadataFailedDialog(result);
+            }
 
-                if (writeFilesRunner.IsEmpty)
-                {
-                    await RunInContextAsync(() => IsWriting = false).ConfigureAwait(false);
-                }
-            });
+            return result;
         }
 
-        protected async Task ShowWriteMetadataFailedDialog(IDialogService dialogService, ProcessingResult<IBitmapFileInfo> processingResult) 
+        private Task<ProcessingResult<IBitmapFileInfo>> ExecuteWriteFilesAsync(
+            IReadOnlyList<IBitmapFileInfo> files, Func<IBitmapFileInfo, Task> processFile)
+        {
+            var task = ParallelizationUtil.ProcessParallelAsync(files, async file =>
+            {
+                using (await file.AcquireExclusiveAccessAsync().ConfigureAwait(false))
+                {
+                    await processFile(file).ConfigureAwait(false);
+                }
+            });
+
+            backgroundTaskService.RegisterBackgroundTask(task);
+
+            return task;
+        }
+
+        private async Task ShowWriteMetadataFailedDialog(ProcessingResult<IBitmapFileInfo> processingResult)
         {
             await dialogService.ShowDialogAsync(new MessageDialogModel()
             {
@@ -76,6 +107,5 @@ namespace PhotoViewer.Core.ViewModels
                 Message = string.Join("\n", processingResult.Failures.Select(failure => failure.Element.FileName + ": " + failure.Exception.Message))
             });
         }
-
     }
 }

@@ -9,9 +9,6 @@ namespace PhotoViewer.App.Views;
 [ViewRegistration(typeof(ImportGpxTrackDialogModel))]
 public sealed partial class ImportGpxTrackDialog : MultiViewDialogBase, IMVVMControl<ImportGpxTrackDialogModel>
 {
-
-    private ImportGpxTrackDialogModel ViewModel => (ImportGpxTrackDialogModel)DataContext;
-
     public ImportGpxTrackDialog()
     {
         this.InitializeComponentMVVM();

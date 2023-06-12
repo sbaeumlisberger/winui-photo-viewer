@@ -120,6 +120,12 @@
   <data name="AddPeopleTagErrorDialog_Title" xml:space="preserve">
     <value>Personenmarkierung konnte nicht hinzugeügt werden</value>
   </data>
+  <data name="BackgroundTasksRunningMessage_Multiple" xml:space="preserve">
+    <value>{0} Hintergrundaufgaben werden ausgeführt</value>
+  </data>
+  <data name="BackgroundTasksRunningMessage_Single" xml:space="preserve">
+    <value>Eine Hintergrundaufgabe wird ausgeführt</value>
+  </data>
   <data name="ComparePage_Title" xml:space="preserve">
     <value>Vergleichen</value>
   </data>
@@ -167,6 +173,15 @@
   </data>
   <data name="SetLockscreenBackgroundFailedDialog_Ttile" xml:space="preserve">
     <value>Hintergrund des Sperrbildschirms konnte nicht festgelegt werden</value>
+  </data>
+  <data name="WaitForBackgroundTaskDialog_Message" xml:space="preserve">
+    <value>Es wird auf die Ausführung von Hintergrundaufgaben gewartet ...</value>
+  </data>
+  <data name="WaitForBackgroundTaskDialog_PrimaryButton" xml:space="preserve">
+    <value>Beenden erzwingen</value>
+  </data>
+  <data name="WaitForBackgroundTaskDialog_Title" xml:space="preserve">
+    <value>Warten auf Hintergrundaufgaben</value>
   </data>
   <data name="WriteMetadataFailedDialog_Title" xml:space="preserve">
     <value>Schreiben der Metadaten fehlgeschlagen</value>

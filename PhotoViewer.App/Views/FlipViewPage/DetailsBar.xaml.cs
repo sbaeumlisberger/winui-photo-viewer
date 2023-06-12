@@ -9,9 +9,6 @@ namespace PhotoViewer.App.Views;
 
 public sealed partial class DetailsBar : UserControl, IMVVMControl<DetailsBarModel>
 {
-
-    private DetailsBarModel ViewModel => (DetailsBarModel)DataContext;
-
     public DetailsBar()
     {
         this.InitializeComponentMVVM();

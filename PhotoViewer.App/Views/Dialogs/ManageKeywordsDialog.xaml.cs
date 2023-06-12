@@ -20,9 +20,6 @@ namespace PhotoViewer.App.Views.Dialogs;
 [ViewRegistration(typeof(ManageKeywordsDialogModel))]
 public sealed partial class ManageKeywordsDialog : ContentDialog, IMVVMControl<ManageKeywordsDialogModel>
 {
-
-    private ManageKeywordsDialogModel ViewModel => (ManageKeywordsDialogModel)DataContext;
-
     public ManageKeywordsDialog()
     {
         this.InitializeComponentMVVM();
@@ -31,6 +28,6 @@ public sealed partial class ManageKeywordsDialog : ContentDialog, IMVVMControl<M
     private void RemoveButton_Click(object sender, RoutedEventArgs e)
     {
         string keyword = (string)((FrameworkElement)sender).DataContext;
-        ViewModel.RemoveCommand.ExecuteAsync(keyword);
+        ViewModel!.RemoveCommand.ExecuteAsync(keyword);
     }
 }

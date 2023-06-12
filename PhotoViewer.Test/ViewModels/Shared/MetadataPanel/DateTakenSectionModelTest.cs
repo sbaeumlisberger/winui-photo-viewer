@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
 using Moq;
+using NSubstitute;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -18,17 +20,16 @@ namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
 
 public class DateTakenSectionModelTest
 {
-
-    private readonly SequentialTaskRunner writeFilesRunner = new SequentialTaskRunner();
     private readonly IMessenger messenger = new StrongReferenceMessenger();
     private readonly IMetadataService metadataService = Mock.Of<IMetadataService>();
     private readonly IDialogService dialogService = Mock.Of<IDialogService>();
-    private readonly DateTakenSectionModel dateTakenSectionModel;
+    private readonly IBackgroundTaskService backgroundTaskService = Substitute.For<IBackgroundTaskService>();
 
+    private readonly DateTakenSectionModel dateTakenSectionModel;
 
     public DateTakenSectionModelTest()
     {
-        dateTakenSectionModel = new DateTakenSectionModel(writeFilesRunner, messenger, metadataService, dialogService);
+        dateTakenSectionModel = new DateTakenSectionModel(messenger, metadataService, dialogService, backgroundTaskService);
     }
 
     [Theory]

@@ -19,17 +19,19 @@ public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFil
     public VirtualKey AcceleratorKey => VirtualKey.Delete;
 
     private readonly IMessenger messenger;
-    private readonly IDeleteMediaService deleteMediaService;
+    private readonly IDeleteMediaFilesService deleteMediaFilesService;
     private readonly IDialogService dialogService;
     private readonly ISettingsService settingsService;
+    private readonly IBackgroundTaskService backgroundTaskService;
     private readonly ApplicationSettings settings;
 
-    public DeleteFilesCommand(IMessenger messenger, IDeleteMediaService deleteMediaService, IDialogService dialogService, ISettingsService settingsService, ApplicationSettings settings)
+    public DeleteFilesCommand(IMessenger messenger, IDeleteMediaFilesService deleteMediaService, IDialogService dialogService, ISettingsService settingsService, IBackgroundTaskService backgroundTaskService, ApplicationSettings settings)
     {
         this.messenger = messenger;
-        this.deleteMediaService = deleteMediaService;
+        this.deleteMediaFilesService = deleteMediaService;
         this.dialogService = dialogService;
         this.settingsService = settingsService;
+        this.backgroundTaskService = backgroundTaskService;
         this.settings = settings;
     }
 
@@ -52,10 +54,14 @@ public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFil
             };
         }
 
-        var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
+        var task = ParallelizationUtil.ProcessParallelAsync(files, async file =>
         {
-            await deleteMediaService.DeleteMediaAsync(file, deleteLinkedFiles);
+            await deleteMediaFilesService.DeleteMediaFileAsync(file, deleteLinkedFiles);
         });
+
+        backgroundTaskService.RegisterBackgroundTask(task);
+
+        var result = await task;
 
         messenger.Send(new MediaFilesDeletedMessage(result.ProcessedElements));
 

@@ -15,26 +15,34 @@ namespace PhotoViewer.App.Views;
 
 public sealed partial class VideoFlipViewItem : UserControl, IMVVMControl<VideoFlipViewItemModel>
 {
-    private VideoFlipViewItemModel ViewModel => DataContext as VideoFlipViewItemModel;
-
     public VideoFlipViewItem()
     {
         this.InitializeComponentMVVM(updateBindingsAlways: true);
     }
 
     partial void ConnectToViewModel(VideoFlipViewItemModel viewModel)
-    { 
-        mediaPlayerElement.SetMediaPlayer(viewModel.MediaPlayer); 
+    {
+        viewModel.PropertyChanged += ViewModel_PropertyChanged;
+        mediaPlayerElement.SetMediaPlayer(viewModel.MediaPlayer);
     }
 
     partial void DisconnectFromViewModel(VideoFlipViewItemModel viewModel)
-    { 
+    {
+        viewModel.PropertyChanged -= ViewModel_PropertyChanged;
         mediaPlayerElement.SetMediaPlayer(null);
+    }
+
+    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ViewModel.MediaPlayer))
+        {
+            mediaPlayerElement.SetMediaPlayer(ViewModel!.MediaPlayer);
+        }
     }
 
     private void MediaPlayerElement_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
-        if (ViewModel.IsContextMenuEnabeld)
+        if (ViewModel!.IsContextMenuEnabeld)
         {
             mediaPlayerElement.ShowAttachedFlyout(args);
         }

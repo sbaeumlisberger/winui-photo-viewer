@@ -118,32 +118,45 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     }
 
     private async void OnReceive(MediaFilesLoadingMessage msg)
-    {
-        ShowLoadingUI = true;
-        bool preview = false;
-
-        if (msg.LoadMediaFilesTask.StartMediaFile is { } startFile)
+    {          
+        try
         {
-            preview = true;
-            SetItems(new[] { startFile }, startFile);
+            ShowLoadingUI = true;
+
+            SetItems(Array.Empty<IMediaFileInfo>());
+
+            bool preview = false;
+
+            if (msg.LoadMediaFilesTask.StartMediaFile is { } startFile)
+            {
+                preview = true;
+                SetItems(new[] { startFile }, startFile);
+                ShowLoadingUI = false;
+                IsLoadingMoreFiles = true;
+            }
+
+            var result = await msg.LoadMediaFilesTask.WaitForResultAsync();
+
+            SetItems(result.MediaFiles, result.StartMediaFile);
+
+            if (preview)
+            {
+                // linked files may have changed -> update window title
+                Messenger.Send(new ChangeWindowTitleMessage(SelectedItem?.DisplayName ?? ""));
+
+                UpdateFlipViewItemModels();
+            }
+        }
+        catch (Exception ex)
+        {
+            // TODO show dialog
+            Log.Error("Failed to load files", ex);
+        }
+        finally
+        {
             ShowLoadingUI = false;
-            IsLoadingMoreFiles = true;
+            IsLoadingMoreFiles = false;
         }
-
-        var result = await msg.LoadMediaFilesTask.WaitForResultAsync(); // TODO error handling
-
-        SetItems(result.MediaFiles, result.StartMediaFile);
-
-        if (preview)
-        {
-            // linked files may have changed -> update window title
-            Messenger.Send(new ChangeWindowTitleMessage(SelectedItem?.DisplayName ?? ""));
-
-            UpdateFlipViewItemModels();
-        }
-
-        ShowLoadingUI = false;
-        IsLoadingMoreFiles = false;
     }
 
     private async void OnReceive(MediaFilesDeletedMessage msg)
@@ -257,7 +270,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         Log.Info($"Initialize ViewModel for {mediaFile.DisplayName}");
         var itemModel = mediaFlipViewItemModelFactory.Invoke(mediaFile);
         itemModel.IsDiashowActive = IsDiashowActive;
-        _ = itemModel.InitializeAsync();
+        itemModel.InitializeAsync().LogOnException();
         return itemModel;
     }
 

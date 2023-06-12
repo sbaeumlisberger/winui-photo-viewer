@@ -106,7 +106,7 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
 
         var mediaFilesToProcess = mediaFiles.OfType<IBitmapFileInfo>().Where(bitmap => bitmap.IsMetadataSupported).ToList();
 
-        return await ParallelProcessingUtil.ProcessParallelAsync(mediaFilesToProcess, async mediaFile => 
+        return await ParallelizationUtil.ProcessParallelAsync(mediaFilesToProcess, async mediaFile => 
         {
             await gpxService.TryApplyGpxTrackToFile(gpxTrack, mediaFile);
             

@@ -11,15 +11,15 @@ namespace PhotoViewer.Core.Utils;
 public static class StorageItemUtil
 {
 
-    public static bool IsEqual(this IStorageItem storageItemA, IStorageItem storageItemB)
+    public static bool IsSameFile(this IStorageItem storageItemA, IStorageItem storageItemB)
     {
-        if (storageItemA is IStorageItem2 storageItem2A)
-        {
-            return storageItem2A.IsEqual(storageItemB);
-        }
         if (!string.IsNullOrEmpty(storageItemA.Path))
         {
             return storageItemA.Path == storageItemB.Path;
+        }
+        if (storageItemA is IStorageItem2 storageItem2A)
+        {
+            return storageItem2A.IsEqual(storageItemB);
         }
         return storageItemA.Equals(storageItemB);
     }

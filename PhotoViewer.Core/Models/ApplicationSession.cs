@@ -21,7 +21,14 @@ public class ApplicationSession : IApplicationSession
     {
         messenger.Register<MediaFilesLoadingMessage>(this, async msg =>
         {
-            files = new List<IMediaFileInfo>((await msg.LoadMediaFilesTask.WaitForResultAsync()).MediaFiles); // TODO error handling?
+            try
+            {
+                files = new List<IMediaFileInfo>((await msg.LoadMediaFilesTask.WaitForResultAsync()).MediaFiles);
+            }
+            catch 
+            { 
+                // TODO ?
+            }
         });
 
         messenger.Register<MediaFilesDeletedMessage>(this, msg =>

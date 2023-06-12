@@ -11,6 +11,7 @@ using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
+using Windows.Media.FaceAnalysis;
 using Xunit;
 
 namespace PhotoViewer.Test.ViewModels.FlipViewPage;
@@ -147,6 +148,20 @@ public class TagPeopleToolModelTest
     }
 
     [Fact]
+    public async Task SelectsFirstSuggestFace_OnEnabledAfterDisabled()
+    {
+        await InitializeTagPeopleToolModel(active: true);
+        tagPeopleToolModel.BitmapImage = exampleBitmapImage;
+
+        tagPeopleToolModel.IsEnabled = true;
+        tagPeopleToolModel.IsEnabled = false;
+        tagPeopleToolModel.IsEnabled = true;
+
+        AssertSuggestedFaces(tagPeopleToolModel.SuggestedFaces, 1);
+        Assert.Equal(expectedSuggestedFaces[0], tagPeopleToolModel.SelectionRect);
+    }
+
+    [Fact]
     public async Task ClearsSelectionRectAndAutoSuggestBoxText_OnDisabled()
     {
         await InitializeTagPeopleToolModel(active: true);
@@ -154,12 +169,40 @@ public class TagPeopleToolModelTest
         tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
 
         tagPeopleToolModel.IsEnabled = false;
-
-        Assert.Equal(expectedSuggestedFaces.Count - 1, tagPeopleToolModel.SuggestedFaces.Count); // TODO is this correct?
+        
         Assert.Equal(default, tagPeopleToolModel.SelectionRect);
         Assert.Equal(string.Empty, tagPeopleToolModel.AutoSuggestBoxText);
+        Assert.Equal(expectedSuggestedFaces.Count, tagPeopleToolModel.SuggestedFaces.Count);
     }
 
+    [Fact]
+    public async Task RestoresSuggestedFaces_OnDisabled()
+    {
+        await InitializeTagPeopleToolModel(active: true);
+        tagPeopleToolModel.IsEnabled = true;
+        tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
+        tagPeopleToolModel.SkipCurrentDetectedFace();
+
+        tagPeopleToolModel.IsEnabled = false;
+
+        Assert.Equal(expectedSuggestedFaces.Count, tagPeopleToolModel.SuggestedFaces.Count);
+    }
+
+    [Fact]
+    public async Task ClearsSuggestedFaces_OnDisabledWhenPeopleTagged()
+    {
+        await InitializeTagPeopleToolModel(active: true);
+        tagPeopleToolModel.IsEnabled = true;
+        tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
+
+        metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People).Returns(examplePeopleTags);
+        messenger.Send(new MetadataModifiedMessage(new[] { bitmapFile }, MetadataProperties.People));
+        await tagPeopleToolModel.LastDispatchTask;
+
+        tagPeopleToolModel.IsEnabled = false;
+
+        Assert.Empty(tagPeopleToolModel.SuggestedFaces);
+    }
 
     [Fact]
     public void SendsTagPeopleToolActiveChangedMessage_WhenExitPeopleTaggingCalled()

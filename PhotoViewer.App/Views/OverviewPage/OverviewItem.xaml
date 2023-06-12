@@ -116,7 +116,7 @@
         <TextBox 
             x:Name="fileNameTextBox"
             Margin="0,2,0,0"
-            Visibility="{x:Bind ViewModel.IsRenaming, Mode=OneWay}"
+            Visibility="{x:Bind ViewModel.IsRenaming, Mode=OneWay, FallbackValue=Collapsed}"
             Width="{x:Bind ViewModel.ThumbnailSize, Mode=OneWay}"
             Text="{x:Bind ViewModel.NewName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
             utils:TextBoxExtension.IsClearButtonHidden="True"

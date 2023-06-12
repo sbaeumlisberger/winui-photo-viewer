@@ -24,8 +24,6 @@ namespace PhotoViewer.App.Views;
 [ViewRegistration(typeof(ComparePageModel))]
 public sealed partial class ComparePage : Page, IMVVMControl<ComparePageModel>
 {
-    private ComparePageModel ViewModel => (ComparePageModel)DataContext;
-
     public ComparePage()
     {
         DataContext = ViewModelFactory.Instance.CreateComparePageModel();
@@ -39,6 +37,6 @@ public sealed partial class ComparePage : Page, IMVVMControl<ComparePageModel>
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        ViewModel.OnNavigatedTo(e.Parameter);
+        ViewModel!.OnNavigatedTo(e.Parameter);
     }
 }

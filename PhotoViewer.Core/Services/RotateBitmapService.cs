@@ -106,7 +106,7 @@ internal class RotateBitmapService : IRotateBitmapService
 
     private static async Task RotateByPixelAsync(IBitmapFileInfo file)
     {
-        using (IRandomAccessStream fileStream = await file.OpenAsync(FileAccessMode.ReadWrite).ConfigureAwait(false),
+        using (IRandomAccessStream fileStream = await file.OpenAsRandomAccessStreamAsync(FileAccessMode.ReadWrite).ConfigureAwait(false),
                                    memoryStream = new InMemoryRandomAccessStream())
         {
             BitmapDecoder decoder = await BitmapDecoder.CreateAsync(fileStream).AsTask().ConfigureAwait(false);

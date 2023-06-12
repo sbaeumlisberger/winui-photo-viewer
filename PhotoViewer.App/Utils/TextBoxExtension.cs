@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using PhotoViewer.App.Utils.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,12 @@ public class TextBoxExtension
         void UpdateClearButton()
         {
             var clearButton = textBox.FindChild("DeleteButton")!;
+
+            if(clearButton is null) 
+            {
+                Log.Error("clearButton is null");
+                return;
+            }
 
             if (args.NewValue is true)
             {

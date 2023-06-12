@@ -6,17 +6,16 @@ using System.Collections.Generic;
 
 namespace PhotoViewer.App.Views;
 
-public sealed partial class FlipViewPageCommandBar : CommandBar
+public sealed partial class FlipViewPageCommandBar : CommandBar, IMVVMControl<FlipViewPageCommandBarModel>
 {
-    private FlipViewPageCommandBarModel ViewModel => (FlipViewPageCommandBarModel)DataContext;
-
     public FlipViewPageCommandBar()
     {
-        this.InitializeComponent();
+        this.InitializeComponentMVVM();
     }
 
     private List<IMediaFileInfo> ListOf(IMediaFileInfo element) 
     {
         return CollectionsUtil.ListOf(element);
     }
+
 }

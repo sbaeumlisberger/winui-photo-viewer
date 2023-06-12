@@ -11,9 +11,6 @@ namespace PhotoViewer.App.Views;
 [ViewRegistration(typeof(DeleteSingleRawFilesDialogModel))]
 public sealed partial class DeleteSingleRawFilesDialog : MultiViewDialogBase, IMVVMControl<DeleteSingleRawFilesDialogModel>
 {
-
-    private DeleteSingleRawFilesDialogModel ViewModel => (DeleteSingleRawFilesDialogModel)DataContext;
-
     public DeleteSingleRawFilesDialog()
     {
         this.InitializeComponentMVVM();
@@ -21,7 +18,7 @@ public sealed partial class DeleteSingleRawFilesDialog : MultiViewDialogBase, IM
 
     private void CancelButton_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.Progress?.Cancel();
+        ViewModel!.Progress?.Cancel();
         Hide();
     }
 

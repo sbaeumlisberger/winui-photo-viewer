@@ -10,6 +10,7 @@ using Tocronx.SimpleAsync;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace PhotoViewer.App.ViewModels;
 
@@ -21,19 +22,21 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     public bool IsDiashowActive { get; set; }
 
-    public Task PlaybackCompletedTask => playbackCompletionSource?.Task ?? Task.CompletedTask;
+    public Task PlaybackCompletedTask => playbackCompletionSource.Task;
 
     public MediaPlayer? MediaPlayer { get; private set; }
 
     public bool IsContextMenuEnabeld => !IsDiashowActive;
 
     public IMediaFileContextMenuModel ContextMenuModel { get; }
+    
+    private IRandomAccessStream? mediaStream;
 
     private MediaSource? mediaSource;
 
     private readonly CancelableTaskRunner initRunner = new CancelableTaskRunner();
 
-    private TaskCompletionSource? playbackCompletionSource;
+    private readonly TaskCompletionSource playbackCompletionSource = new TaskCompletionSource();
 
     public VideoFlipViewItemModel(IMediaFileInfo mediaFile, IViewModelFactory viewModelFactory, IMessenger messenger) : base(messenger)
     {
@@ -46,14 +49,11 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
     {
         await initRunner.RunAndCancelPrevious(async cancellationToken =>
         {
-            playbackCompletionSource?.SetResult();
-            playbackCompletionSource = new TaskCompletionSource();
-
-            using var stream = await MediaItem.OpenAsync(FileAccessMode.Read);
+            mediaStream = await MediaItem.OpenAsRandomAccessStreamAsync(FileAccessMode.Read);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            mediaSource = MediaSource.CreateFromStream(stream, MediaItem.ContentType);
+            mediaSource = MediaSource.CreateFromStream(mediaStream, MediaItem.ContentType);
             mediaSource.StateChanged += MediaSource_StateChanged;
             mediaSource.OpenOperationCompleted += MediaSource_OpenOperationCompleted;
 
@@ -73,13 +73,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
     {
         initRunner.Cancel();
 
-        if (this.mediaSource is { } mediaSource)
-        {
-            this.mediaSource = null;
-            mediaSource.StateChanged -= MediaSource_StateChanged;
-            mediaSource.OpenOperationCompleted -= MediaSource_OpenOperationCompleted;
-            mediaSource.Dispose();
-        }
+        playbackCompletionSource.SetResult();
 
         if (MediaPlayer is { } mediaPlayer)
         {
@@ -87,6 +81,20 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
             mediaPlayer.MediaEnded -= MediaPlayer_MediaEnded;
             mediaPlayer.MediaFailed -= MediaPlayer_MediaFailed;
             mediaPlayer.Dispose();
+        }
+
+        if (this.mediaSource is { } mediaSource)
+        {
+            this.mediaSource = null;            
+            mediaSource.StateChanged -= MediaSource_StateChanged;
+            mediaSource.OpenOperationCompleted -= MediaSource_OpenOperationCompleted;
+            mediaSource.Dispose();
+        }
+
+        if (this.mediaStream is { } mediaStream)
+        {
+            this.mediaStream = null;
+            mediaStream.Dispose();
         }
 
         ContextMenuModel.Cleanup();
@@ -146,12 +154,12 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     private void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
     {
-        playbackCompletionSource?.SetResult();
+        playbackCompletionSource.SetResult();
     }
 
     private void MediaPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
     {
         Log.Error($"An error occured playing \"{MediaItem.DisplayName}\": {args.Error}: {args.ErrorMessage}", args.ExtendedErrorCode);
-        playbackCompletionSource?.SetResult();
+        playbackCompletionSource.SetResult();
     }
 }

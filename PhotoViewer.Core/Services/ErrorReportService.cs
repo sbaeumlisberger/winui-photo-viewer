@@ -13,9 +13,9 @@ using Windows.Storage;
 
 namespace PhotoViewer.Core.Services;
 
-public class CrashReportService
+public class ErrorReportService
 {
-    public static async Task TrySendCrashReportAsync()
+    public static async Task TrySendErrorReportAsync()
     {
         try
         {
@@ -29,19 +29,19 @@ public class CrashReportService
             bodyBuilder.AppendLine(await FileIO.ReadTextAsync(logFile).AsTask().ConfigureAwait(false));
 
             using var smtpClient = new SmtpClient("smtp-mail.outlook.com", 587) { EnableSsl = true };
-            smtpClient.Credentials = new NetworkCredential("universe-photos@outlook.com", "tEa8wTr7gz0k"); // TODO protect password
+            smtpClient.Credentials = new NetworkCredential("universe-photos@outlook.com", CompileTimeConstants.EMailPassword);
 
             var emailMessage = new MailMessage();
             emailMessage.From = new MailAddress("universe-photos@outlook.com");
             emailMessage.To.Add("s.baeumlisberger@live.de");
-            emailMessage.Subject = $"WinUI Photo Viewer Crash Report {DateTime.Now:g}";
+            emailMessage.Subject = $"WinUI Photo Viewer Error Report {DateTime.Now:g}";
             emailMessage.Body = bodyBuilder.ToString();
 
             await smtpClient.SendMailAsync(emailMessage).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
-            Debug.WriteLine("Failed to send crash report: " + ex);
+            Debug.WriteLine("Failed to send error report: " + ex);
         }
     }
 

@@ -19,8 +19,6 @@ namespace PhotoViewer.App.Views;
 
 public sealed partial class OverviewItem : UserControl, IMVVMControl<OverviewItemModel>
 {
-    public OverviewItemModel? ViewModel => DataContext as OverviewItemModel;
-
     public OverviewItem()
     {
         this.InitializeComponentMVVM();
@@ -60,7 +58,7 @@ public sealed partial class OverviewItem : UserControl, IMVVMControl<OverviewIte
                 {
                     var bitmapImage = new BitmapImage();
                     toolTipImage.Source = bitmapImage;
-                    using var stream = await ViewModel.MediaFile.OpenAsync(FileAccessMode.Read);
+                    using var stream = await ViewModel.MediaFile.OpenAsRandomAccessStreamAsync(FileAccessMode.Read);
                     await bitmapImage.SetSourceAsync(stream);
                 }
                 catch (Exception ex)

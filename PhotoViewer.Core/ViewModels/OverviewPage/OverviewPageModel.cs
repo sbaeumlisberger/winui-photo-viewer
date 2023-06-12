@@ -9,6 +9,7 @@ using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.Models;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.Core;
+using PhotoViewer.App.Utils.Logging;
 
 namespace PhotoViewer.App.ViewModels;
 
@@ -18,13 +19,17 @@ public partial class OverviewPageModel : ViewModelBase
 
     public IMediaFileContextMenuModel ContextMenuModel { get; }
 
-    public ObservableCollection<IMediaFileInfo> Items { get; private set; } = new ObservableCollection<IMediaFileInfo>();
+    public IObservableReadOnlyList<IMediaFileInfo> Items { get; private set; } = new ObservableList<IMediaFileInfo>();
 
     public IReadOnlyList<IMediaFileInfo> SelectedItems { get; set; } = Array.Empty<IMediaFileInfo>();
 
     public IOverviewPageCommandBarModel OverviewPageCommandBarModel { get; }
 
+    public bool ShowLoadingUI { get; set; } = false;
+
     private readonly IViewModelFactory viewModelFactory;
+
+    private readonly Dictionary<IMediaFileInfo, IOverviewItemModel> itemModels = new Dictionary<IMediaFileInfo, IOverviewItemModel>();
 
     public OverviewPageModel(
         ApplicationSession session,
@@ -37,10 +42,10 @@ public partial class OverviewPageModel : ViewModelBase
         MetadataPanelModel = viewModelFactory.CreateMetadataPanelModel(false);
         ContextMenuModel = viewModelFactory.CreateMediaFileContextMenuModel(isRenameFilesEnabled: true);
 
-        Messenger.Register<MediaFilesLoadingMessage>(this, OnMediaItemsLoadedMessageReceived);
-        Messenger.Register<MediaFilesDeletedMessage>(this, OnMediaItemsDeletedMessageReceived);
+        Messenger.Register<MediaFilesLoadingMessage>(this, OnReceived);
+        Messenger.Register<MediaFilesDeletedMessage>(this, OnReceived);
 
-        Items = new ObservableCollection<IMediaFileInfo>(session.Files);
+        Items = new ObservableList<IMediaFileInfo>(session.Files);
     }
 
     protected override void OnCleanup()
@@ -48,6 +53,8 @@ public partial class OverviewPageModel : ViewModelBase
         OverviewPageCommandBarModel.Cleanup();
         MetadataPanelModel.Cleanup();
         ContextMenuModel.Cleanup();
+        itemModels.Values.ForEach(itemModel => itemModel.Cleanup());
+        itemModels.Clear();
     }
 
     public void ShowItem(IMediaFileInfo mediaItem)
@@ -55,19 +62,44 @@ public partial class OverviewPageModel : ViewModelBase
         Messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel), mediaItem));
     }
 
-    public IOverviewItemModel GetItemModel(IMediaFileInfo mediaFile) 
+    public IOverviewItemModel GetItemModel(IMediaFileInfo mediaFile)
     {
-        return viewModelFactory.CreateOverviewItemModel(mediaFile);
+        if (!itemModels.TryGetValue(mediaFile, out var itemModel))
+        {
+            itemModel = viewModelFactory.CreateOverviewItemModel(mediaFile);
+            itemModels.Add(mediaFile, itemModel);
+        }
+        return itemModel;
     }
 
-    private async void OnMediaItemsLoadedMessageReceived(MediaFilesLoadingMessage msg)
+    private async void OnReceived(MediaFilesLoadingMessage msg)
     {
-        Items = new ObservableCollection<IMediaFileInfo>((await msg.LoadMediaFilesTask.WaitForResultAsync()).MediaFiles); // TODO error handling
+        try
+        {
+            ShowLoadingUI = true;
+          
+            SelectedItems = Array.Empty<IMediaFileInfo>();
+            Items = new ObservableList<IMediaFileInfo>();
+            itemModels.Values.ForEach(itemModel => itemModel.Cleanup());
+            itemModels.Clear();       
+
+            Items = new ObservableList<IMediaFileInfo>((await msg.LoadMediaFilesTask.WaitForResultAsync()).MediaFiles);
+        }
+        catch (Exception ex)
+        {
+            // TODO show dialog
+            Log.Error("Failed to load files", ex);
+        }
+        finally 
+        { 
+            ShowLoadingUI = false; 
+        }
     }
 
-    private void OnMediaItemsDeletedMessageReceived(MediaFilesDeletedMessage msg)
+    private void OnReceived(MediaFilesDeletedMessage msg)
     {
-        msg.Files.ForEach(mediaItem => Items.Remove(mediaItem));
+        msg.Files.ForEach(mediaFile => ((ObservableList<IMediaFileInfo>)Items).Remove(mediaFile));
+        msg.Files.ForEach(mediaFile => { itemModels[mediaFile].Cleanup(); itemModels.Remove(mediaFile); });
     }
 
     partial void OnSelectedItemsChanged()

@@ -39,13 +39,13 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
     private readonly CancelableTaskRunner updateRunner = new CancelableTaskRunner();
 
     internal LocationSectionModel(
-        SequentialTaskRunner writeFilesRunner,
         IMetadataService metadataService,
         ILocationService locationService,
         IDialogService dialogService,
         IViewModelFactory viewModelFactory,
         IGpxService gpxService,
-        IMessenger messenger) : base(writeFilesRunner, messenger)
+        IMessenger messenger,
+        IBackgroundTaskService backgroundTaskService) : base(messenger, backgroundTaskService, dialogService)
     {
         this.metadataService = metadataService;
         this.locationService = locationService;
@@ -143,49 +143,31 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
                 return;
             }
 
-            await EnqueueWriteFiles(async (files) =>
+            var modifiedFiles = new List<IBitmapFileInfo>();
+
+            // TODO show progress dialog
+            var result = await WriteFilesAsync(async file =>
             {
-                var modifiedFiles = new List<IBitmapFileInfo>();
-
-                // TODO show progress dialog
-                var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
+                if (await gpxService.TryApplyGpxTrackToFile(gpxTrack, file))
                 {
-                    if (await gpxService.TryApplyGpxTrackToFile(gpxTrack, file))
-                    {
-                        modifiedFiles.Add(file);
-                    }
-                });
-
-                Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.GeoTag));
-
-                if (result.HasFailures)
-                {
-                    await ShowWriteMetadataFailedDialog(dialogService, result);
+                    modifiedFiles.Add(file);
                 }
             });
+
+            Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.GeoTag));
         }
     }
 
     private async Task SaveLocation(Location? location)
     {
-        await EnqueueWriteFiles(async (files) =>
+        var result = await WriteFilesAsync(async file =>
         {
-            var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
-            {
-                await metadataService.WriteMetadataAsync(file, MetadataProperties.Address,
-                    location?.Address?.ToAddressTag()).ConfigureAwait(false);
-                await metadataService.WriteMetadataAsync(file, MetadataProperties.GeoTag,
-                    location?.Geopoint?.ToGeoTag()).ConfigureAwait(false);
-            });
-
-            Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Address));
-            Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.GeoTag));
-
-            if (result.HasFailures)
-            {
-                await ShowWriteMetadataFailedDialog(dialogService, result);
-            }
+            await metadataService.WriteMetadataAsync(file, MetadataProperties.Address, location?.Address?.ToAddressTag()).ConfigureAwait(false);
+            await metadataService.WriteMetadataAsync(file, MetadataProperties.GeoTag, location?.Geopoint?.ToGeoTag()).ConfigureAwait(false);
         });
+
+        Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Address));
+        Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.GeoTag));
     }
 
     private void UpdateForLocation(Location location)

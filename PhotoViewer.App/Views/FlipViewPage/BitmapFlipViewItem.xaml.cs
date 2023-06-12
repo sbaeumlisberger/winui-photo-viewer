@@ -10,8 +10,6 @@ namespace PhotoViewer.App.Views;
 
 public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<BitmapFlipViewItemModel>
 {
-    private BitmapFlipViewItemModel ViewModel => DataContext as BitmapFlipViewItemModel;
-
     public BitmapFlipViewItem()
     {
         this.InitializeComponentMVVM(updateBindingsAlways: true);
@@ -30,7 +28,7 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
 
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(ViewModel.IsSelected) && !ViewModel.IsSelected)
+        if (e.PropertyName == nameof(ViewModel.IsSelected) && !ViewModel!.IsSelected)
         {
             bitmapViewer.ScrollViewer.ChangeView(0, 0, 1);
         }
@@ -38,7 +36,7 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
 
     private void ScrollViewer_ViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
     {
-        if (ViewModel.PeopleTagToolModel != null)
+        if (ViewModel!.PeopleTagToolModel != null)
         {
             ViewModel.PeopleTagToolModel.UIScaleFactor = 1 / bitmapViewer.ScrollViewer.ZoomFactor;
         }

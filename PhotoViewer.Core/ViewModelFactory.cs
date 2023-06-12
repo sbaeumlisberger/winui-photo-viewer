@@ -11,11 +11,13 @@ using PhotoViewer.Core.ViewModels;
 using System.Diagnostics;
 using PhotoViewer.App.Utils.Logging;
 using System.Windows.Input;
+using PhotoViewer.Core.ViewModels.Shared;
 
 namespace PhotoViewer.Core;
 
 public interface IViewModelFactory
 {
+    MainWindowModel CreateMainWindowModel();
     IDetailsBarModel CreateDetailsBarModel();
     IMediaFlipViewModel CreateMediaFlipViewModel();
     IFlipViewPageCommandBarModel CreateFlipViewPageCommandBarModel(ICommand selectPreviousCommand, ICommand selectNextCommand);
@@ -28,6 +30,7 @@ public interface IViewModelFactory
     ICropImageToolModel CreateCropImageToolModel(IBitmapFileInfo bitmapFile);
     IImageViewModel CreateImageViewModel(IBitmapFileInfo bitmapFile);
     EditLocationDialogModel CreateEditLocationDialogModel(Location? orginalLocation, Func<Location?, Task> saveLocation);
+    BackgroundTasksViewModel CreateBackgroundTasksViewModel();
 }
 
 public class ViewModelFactory : IViewModelFactory
@@ -39,7 +42,7 @@ public class ViewModelFactory : IViewModelFactory
     private readonly ApplicationSession applicationSession;
     private readonly IMediaFilesLoaderService mediaFilesLoaderService = new MediaFilesLoaderService();
     private readonly IMetadataService metadataService = new MetadataService();
-    private readonly IDeleteMediaService deleteMediaService = new DeleteMediaService();
+    private readonly IDeleteMediaFilesService deleteMediaService = new DeleteMediaFilesService();
     private readonly IRotateBitmapService rotateBitmapService;
     private readonly ICachedImageLoaderService imageLoaderService = CachedImageLoaderService.Instance;
     private readonly IDisplayRequestService displayRequestService = new DisplayRequestService();
@@ -53,6 +56,7 @@ public class ViewModelFactory : IViewModelFactory
     private readonly IDialogService dialogService;
     private readonly IFaceDetectionService faceDetectionService = new FaceDetectionService();
     private readonly ICropImageService cropImageService;
+    private readonly IBackgroundTaskService backgroundTaskService = new BackgroundTaskService();
 
     private ViewModelFactory(IMessenger messenger, ApplicationSettings settings, IDialogService dialogService)
     {
@@ -68,6 +72,11 @@ public class ViewModelFactory : IViewModelFactory
     public static void Initialize(IMessenger messenger, ApplicationSettings settings, IDialogService dialogService)
     {
         Instance = new ViewModelFactory(messenger, settings, dialogService);
+    }
+
+    public MainWindowModel CreateMainWindowModel() 
+    {
+        return new MainWindowModel(messenger, backgroundTaskService, dialogService);
     }
 
     public FlipViewPageModel CreateFlipViewPageModel()
@@ -115,7 +124,8 @@ public class ViewModelFactory : IViewModelFactory
               settings);
     }
 
-    public IFlipViewPageCommandBarModel CreateFlipViewPageCommandBarModel(ICommand selectPreviousCommand, ICommand selectNextCommand)
+    public IFlipViewPageCommandBarModel CreateFlipViewPageCommandBarModel(
+        ICommand selectPreviousCommand, ICommand selectNextCommand)
     {
         var deleteFilesCommand = CreateDeleteFilesCommand();
         return new FlipViewPageCommandBarModel(
@@ -123,10 +133,11 @@ public class ViewModelFactory : IViewModelFactory
             dialogService,
             mediaFilesLoaderService,
             rotateBitmapService,
+            this,
             selectPreviousCommand,
             selectNextCommand,
             settings,
-            deleteFilesCommand,
+            deleteFilesCommand,    
             new MoveRawFilesToSubfolderCommand(applicationSession, settings, dialogService),
             new DeleteSingleRawFilesCommand(applicationSession, dialogService),
             new ShiftDatenTakenCommand(applicationSession, messenger, dialogService, metadataService),
@@ -144,6 +155,7 @@ public class ViewModelFactory : IViewModelFactory
                peopleSuggestionsService,
                keywordsSuggestionsService,
                gpxService,
+               backgroundTaskService,
                settings,
                showTagPeopleOnPhotoButton);
     }
@@ -156,7 +168,14 @@ public class ViewModelFactory : IViewModelFactory
     public IOverviewPageCommandBarModel CreateOverviewPageCommandBarModel()
     {
         var deleteFilesCommand = CreateDeleteFilesCommand();
-        return new OverviewPageCommandBarModel(messenger, dialogService, mediaFilesLoaderService, deleteFilesCommand, rotateBitmapService, settings);
+        return new OverviewPageCommandBarModel(
+            messenger,
+            dialogService,
+            mediaFilesLoaderService,
+            deleteFilesCommand,
+            rotateBitmapService,
+            this,
+            settings);
     }
 
     public IMediaFileContextMenuModel CreateMediaFileContextMenuModel(bool isRenameFilesEnabled = false)
@@ -167,7 +186,13 @@ public class ViewModelFactory : IViewModelFactory
 
     private IDeleteFilesCommand CreateDeleteFilesCommand()
     {
-        return new DeleteFilesCommand(messenger, deleteMediaService, dialogService, settingService, settings);
+        return new DeleteFilesCommand(
+            messenger, 
+            deleteMediaService,
+            dialogService,
+            settingService, 
+            backgroundTaskService, 
+            settings);
     }
 
     private IMediaFlipViewItemModel CreateMediaFlipViewItemModel(IMediaFileInfo mediaFile)
@@ -181,7 +206,8 @@ public class ViewModelFactory : IViewModelFactory
         };
     }
 
-    private IMediaFileContextMenuModel CreateMediaFileContextMenuModel(IDeleteFilesCommand deleteFilesCommand, bool isRenameFilesEnabled = false)
+    private IMediaFileContextMenuModel CreateMediaFileContextMenuModel(
+        IDeleteFilesCommand deleteFilesCommand, bool isRenameFilesEnabled = false)
     {
         return new MediaFileContextMenuModel(
             messenger,
@@ -223,5 +249,10 @@ public class ViewModelFactory : IViewModelFactory
     public EditLocationDialogModel CreateEditLocationDialogModel(Location? orginalLocation, Func<Location?, Task> saveLocation)
     {
         return new EditLocationDialogModel(orginalLocation, saveLocation, locationService, clipboardService);
+    }
+
+    public BackgroundTasksViewModel CreateBackgroundTasksViewModel()
+    {
+        return new BackgroundTasksViewModel(backgroundTaskService);
     }
 }

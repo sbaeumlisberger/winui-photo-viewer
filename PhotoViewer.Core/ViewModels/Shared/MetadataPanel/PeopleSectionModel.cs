@@ -25,7 +25,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 
     public bool IsTagPeopleOnPhotoButtonChecked { get; private set; }
 
-    private bool CanAddPerson => !string.IsNullOrWhiteSpace(AutoSuggestBoxText);
+    private bool CanAddPerson => !string.IsNullOrWhiteSpace(AutoSuggestBoxText) && !IsWriting;
 
     private ObservableList<ItemWithCountModel> people = new();
 
@@ -36,12 +36,12 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
     private readonly IDialogService dialogService;
 
     internal PeopleSectionModel(
-        SequentialTaskRunner writeFilesRunner,
         IMessenger messenger,
         IMetadataService metadataService,
         ISuggestionsService suggestionsService,
         IDialogService dialogService,
-        bool tagPeopleOnPhotoButtonVisible) : base(writeFilesRunner, messenger)
+        IBackgroundTaskService backgroundTaskService,
+        bool tagPeopleOnPhotoButtonVisible) : base(messenger, backgroundTaskService, dialogService)
     {
         this.metadataService = metadataService;
         this.suggestionsService = suggestionsService;
@@ -59,11 +59,17 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
     {
         people.Clear();
         people.AddRange(CreateItemModels(metadata));
+        AutoSuggestBoxText = string.Empty;
     }
 
     protected override void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty)
     {
         people.MatchTo(CreateItemModels(metadata));
+    }
+
+    partial void OnIsWritingChanged()
+    {
+        OnPropertyChanged(nameof(CanAddPerson));
     }
 
     private void Receive(SetTagPeopleToolActiveMessage msg)
@@ -97,66 +103,54 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
     }
 
 
-    [RelayCommand(CanExecute = nameof(CanAddPerson))]
+    [RelayCommand(CanExecute = nameof(CanAddPerson), AllowConcurrentExecutions = true)]
     private async Task AddPersonAsync()
     {
         string personName = AutoSuggestBoxText.Trim();
 
-        await EnqueueWriteFiles(async (files) =>
+        var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
+
+        var result = await WriteFilesAsync(async file =>
         {
-            var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
+            var peopleTagsFromFile = await metadataService.GetMetadataAsync(file, MetadataProperties.People).ConfigureAwait(false);
 
-            var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
+            if (!peopleTagsFromFile.Any(peopleTag => peopleTag.Name == personName))
             {
-                var peopleTagsFromFile = await metadataService.GetMetadataAsync(file, MetadataProperties.People).ConfigureAwait(false);
-
-                if (!peopleTagsFromFile.Any(peopleTag => peopleTag.Name == personName))
-                {
-                    peopleTagsFromFile.Add(new PeopleTag(personName));
-                    await metadataService.WriteMetadataAsync(file, MetadataProperties.People, peopleTagsFromFile).ConfigureAwait(false);
-                    modifiedFiles.Add(file);
-                }
-            });
-
-            Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.People));
-
-            if (result.IsSuccessful)
-            {
-                AutoSuggestBoxText = string.Empty;
-                await suggestionsService.AddSuggestionAsync(personName);
-            }
-            else
-            {
-                await ShowWriteMetadataFailedDialog(dialogService, result);
+                peopleTagsFromFile.Add(new PeopleTag(personName));
+                await metadataService.WriteMetadataAsync(file, MetadataProperties.People, peopleTagsFromFile).ConfigureAwait(false);
+                modifiedFiles.Add(file);
             }
         });
+
+        Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.People));
+
+        if (result.IsSuccessful)
+        {
+            if (AutoSuggestBoxText.Trim() == personName)
+            {
+                AutoSuggestBoxText = string.Empty;
+            }
+            await suggestionsService.AddSuggestionAsync(personName);
+        }
     }
 
     [RelayCommand]
     private async Task RemovePeopleTagAsync(string personName)
     {
-        await EnqueueWriteFiles(async (files) =>
+        var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
+
+        var result = await WriteFilesAsync(async file =>
         {
-            var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
+            var peopleTags = await metadataService.GetMetadataAsync(file, MetadataProperties.People).ConfigureAwait(false);
 
-            var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
+            if (peopleTags.RemoveFirst(peopleTag => peopleTag.Name == personName))
             {
-                var peopleTags = await metadataService.GetMetadataAsync(file, MetadataProperties.People).ConfigureAwait(false);
-
-                if (peopleTags.RemoveFirst(peopleTag => peopleTag.Name == personName))
-                {
-                    await metadataService.WriteMetadataAsync(file, MetadataProperties.People, peopleTags).ConfigureAwait(false);
-                    modifiedFiles.Add(file);
-                }
-            });
-
-            Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.People));
-
-            if (result.HasFailures)
-            {
-                await ShowWriteMetadataFailedDialog(dialogService, result);
+                await metadataService.WriteMetadataAsync(file, MetadataProperties.People, peopleTags).ConfigureAwait(false);
+                modifiedFiles.Add(file);
             }
         });
+
+        Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.People));
     }
 
     [RelayCommand]

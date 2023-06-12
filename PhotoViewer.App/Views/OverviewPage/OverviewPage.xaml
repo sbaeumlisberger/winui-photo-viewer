@@ -5,7 +5,7 @@
     xmlns:local="using:PhotoViewer.App.Views"
     xmlns:converters="using:PhotoViewer.App.Converters"
     xmlns:models="using:PhotoViewer.App.Models"
-    xmlns:resources="using:PhotoViewer.App.Resources"
+    xmlns:res="using:PhotoViewer.App.Resources"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -37,14 +37,29 @@
             FlyoutBase.AttachedFlyout="{x:Bind mediaFileContextMenuHolder.MediaFileContextMenu}">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="models:IMediaFileInfo">
-                    <local:OverviewItem 
-                        Margin="8"
-                        DataContextChanged="OverviewItem_DataContextChanged"
-                        DoubleTapped="OverviewItem_DoubleTapped"
-                        ContextRequested="OverviewItem_ContextRequested"/>
+                    <Border DataContextChanged="OverviewItemBorder_DataContextChanged">
+                        <local:OverviewItem 
+                            Margin="8"                        
+                            DoubleTapped="OverviewItem_DoubleTapped"
+                            ContextRequested="OverviewItem_ContextRequested"/>
+                    </Border>
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>
+
+        <StackPanel
+            Grid.Column="1" 
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Visibility="{x:Bind ViewModel.ShowLoadingUI, Mode=OneWay}">
+            <TextBlock 
+                    HorizontalAlignment="Center" 
+                    Text="{x:Bind res:Strings.LoadingFilesMessage}"/>
+            <ProgressRing
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Center"
+                    IsActive="{x:Bind ViewModel.ShowLoadingUI, Mode=OneWay}"/>
+        </StackPanel>
 
         <TextBlock Grid.Column="1" Grid.Row="1" Margin="8"
             Text="{x:Bind FormatSelectionInfo(ViewModel.Items, ViewModel.SelectedItems), Mode=OneWay}"/>

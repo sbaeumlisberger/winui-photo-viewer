@@ -54,7 +54,7 @@ public class ImageLoaderService : IImageLoaderService
 
     private async Task<IBitmapImageModel> LoadGifAsync(IBitmapFileInfo file, CancellationToken cancellationToken)
     {
-        using (var fileStream = await file.OpenAsync(FileAccessMode.Read).ConfigureAwait(false))
+        using (var fileStream = await file.OpenAsRandomAccessStreamAsync(FileAccessMode.Read).ConfigureAwait(false))
         {
             cancellationToken.ThrowIfCancellationRequested();
             return await gifImageLoaderService.LoadAsync(file.DisplayName, Device, fileStream, cancellationToken).ConfigureAwait(false);
@@ -63,7 +63,7 @@ public class ImageLoaderService : IImageLoaderService
 
     private async Task<IBitmapImageModel> LoadBitmapAsync(IBitmapFileInfo file, CancellationToken cancellationToken)
     {
-        using (var fileStream = await file.OpenAsync(FileAccessMode.Read).ConfigureAwait(false))
+        using (var fileStream = await file.OpenAsRandomAccessStreamAsync(FileAccessMode.Read).ConfigureAwait(false))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ColorSpaceInfo colorSpace = GetColorSpaceInfo(fileStream);

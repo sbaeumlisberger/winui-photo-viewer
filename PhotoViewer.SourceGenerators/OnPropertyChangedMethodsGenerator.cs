@@ -51,7 +51,7 @@ public class OnPropertyChangedMethodsGenerator : IIncrementalGenerator
     {
         var @namespace = Utils.GetNamespace(classSymbol);
 
-        var propertyNames = classSymbol.GetMembers().OfType<IPropertySymbol>().Select(prop => prop.Name).ToList();
+        var propertyNames = FindPropertyNames(classSymbol);
 
         if (propertyNames.Any())
         {
@@ -98,4 +98,19 @@ public class OnPropertyChangedMethodsGenerator : IIncrementalGenerator
         return propertyNames.Select(propertyName =>
             $"partial void On{propertyName}Changed();");
     }
+
+    private static List<string> FindPropertyNames(ITypeSymbol classSymbol)
+    {
+        var propertyNames = new List<string>();
+        ITypeSymbol? currentClassSymbol = classSymbol;
+
+        while (currentClassSymbol != null)
+        {
+            propertyNames.AddRange(currentClassSymbol.GetMembers().OfType<IPropertySymbol>().Select(prop => prop.Name));
+            currentClassSymbol = currentClassSymbol.BaseType;
+        }
+
+        return propertyNames;
+    }
+
 }

@@ -46,6 +46,16 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <XamlUICommand 
+            x:Name="RemovePeopleTagCommand"
+            Command="{x:Bind ViewModel.PeopleSectionModel.RemovePeopleTagCommand}"/>
+        <XamlUICommand 
+            x:Name="RemoveKeywordCommand"
+            Command="{x:Bind ViewModel.KeywordsSectionModel.RemoveKeywordCommand}"/>
+        <XamlUICommand 
+            x:Name="ApplyKeywordToAllCommand"
+            Command="{x:Bind ViewModel.KeywordsSectionModel.ApplyKeywordToAllCommand}"/>        
     </UserControl.Resources>
 
     <Grid 
@@ -73,7 +83,14 @@
             </Button>
         </RelativePanel>
 
-        <ScrollViewer Grid.Row="1" Grid.Column="0" VerticalScrollBarVisibility="Auto">
+        <Border Grid.Row="1" Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}">
+            <ProgressRing
+                IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center"/>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Visibility="{x:Bind ViewModel.IsLoaded, Mode=OneWay}">
 
             <StackPanel VerticalAlignment="Top" Padding="16,0,16,16">
 
@@ -127,7 +144,7 @@
                                             <MenuFlyoutItem
                                                 Icon="Delete"
                                                 Text="{x:Bind res:Strings.MetadataPanel_RemovePeopleTag}"
-                                                Command="{Binding ViewModel.PeopleSectionModel.RemovePeopleTagCommand, Mode=OneTime, ElementName=uc}"
+                                                Command="{StaticResource RemovePeopleTagCommand}"                                              
                                                 CommandParameter="{x:Bind Value}"/>
                                         </MenuFlyout>
                                     </local:ItemWithCount.ContextFlyout>
@@ -165,7 +182,7 @@
                         </Button>
                         <ProgressRing
                             Grid.Column="1" Width="32" Height="32"
-                            IsActive="{x:Bind ViewModel.PeopleSectionModel.AddPersonCommand.IsRunning, Mode=OneWay}" />
+                            IsActive="{x:Bind ViewModel.PeopleSectionModel.IsWriting, Mode=OneWay}" />
                     </Grid>
                     <ToggleButton 
                         Margin="0,4,0,0"
@@ -186,12 +203,12 @@
                                             <MenuFlyoutItem
                                                 Icon="Delete"
                                                 Text="{x:Bind res:Strings.MetadataPanel_RemoveKeyword}"
-                                                Command="{Binding ViewModel.KeywordsSectionModel.RemoveKeywordCommand, Mode=OneTime, ElementName=uc}"
+                                                Command="{StaticResource RemoveKeywordCommand}"
                                                 CommandParameter="{x:Bind Value}"/>
                                             <MenuFlyoutItem
                                                 Icon="Add"
                                                 Text="{x:Bind res:Strings.MetadataPanel_ApplyKeywordToAll}"
-                                                Command="{Binding ViewModel.KeywordsSectionModel.ApplyKeywordToAllCommand, Mode=OneTime, ElementName=uc}"
+                                                Command="{StaticResource ApplyKeywordToAllCommand}"                                                
                                                 CommandParameter="{x:Bind Value}"/>
                                         </MenuFlyout>
                                     </local:ItemWithCount.ContextFlyout>
@@ -229,7 +246,7 @@
                         </Button>
                         <ProgressRing
                             Grid.Column="1" Width="32" Height="32"
-                            IsActive="{x:Bind ViewModel.KeywordsSectionModel.AddKeywordCommand.IsRunning, Mode=OneWay}" />
+                            IsActive="{x:Bind ViewModel.KeywordsSectionModel.IsWriting, Mode=OneWay}" />
                     </Grid>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_RatingHeader}" Style="{StaticResource HeaderStyle}"/>
@@ -251,7 +268,7 @@
                     <TextBox
                         Text="{x:Bind ViewModel.CopyrightTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.CopyrightTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_CopyrightPlaceholder), Mode=OneWay}"
-                       utils:EnterKeyExtension.Command="{x:Bind ViewModel.CopyrightTextboxModel.SignalTypingCompletedCommand}"/>
+                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.CopyrightTextboxModel.SignalTypingCompletedCommand}"/>
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.CopyrightTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_DateTakenHeader}" Style="{StaticResource HeaderStyle}"/>                                       

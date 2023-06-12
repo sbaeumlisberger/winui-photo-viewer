@@ -13,12 +13,12 @@ namespace PhotoViewer.Core.Services;
 
 internal interface IFaceDetectionService
 {
-    Task<List<DetectedFaceModel>> DetectFacesAsync(ICanvasBitmapImageModel bitmapImage, CancellationToken cancellationToken);
+    Task<List<DetectedFaceModel>> DetectFacesAsync(ICanvasBitmapImageModel bitmapImage, CancellationToken cancellationToken = default);
 }
 
 internal class FaceDetectionService : IFaceDetectionService
 {
-    public async Task<List<DetectedFaceModel>> DetectFacesAsync(ICanvasBitmapImageModel bitmapImage, CancellationToken cancellationToken)
+    public async Task<List<DetectedFaceModel>> DetectFacesAsync(ICanvasBitmapImageModel bitmapImage, CancellationToken cancellationToken = default)
     {
         if (!FaceDetector.IsSupported)
         {

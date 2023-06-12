@@ -8,8 +8,6 @@ namespace PhotoViewer.App.Views;
 
 public sealed partial class MediaFileContextMenuHolder : UserControl, IMVVMControl<MediaFileContextMenuModel>
 {
-    public MediaFileContextMenuModel ViewModel => (MediaFileContextMenuModel)DataContext;
-
     public MenuFlyout MediaFileContextMenu { get; }
 
     public MediaFileContextMenuHolder()

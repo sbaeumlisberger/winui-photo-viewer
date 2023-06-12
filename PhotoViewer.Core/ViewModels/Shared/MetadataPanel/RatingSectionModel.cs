@@ -3,6 +3,7 @@ using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using Tocronx.SimpleAsync;
 
@@ -26,8 +27,11 @@ namespace PhotoViewer.Core.ViewModels
         private readonly IMetadataService metadataService;
         private readonly IDialogService dialogService;
 
-        public RatingSectionModel(SequentialTaskRunner writeFilesRunner, IMetadataService metadataService, IDialogService dialogService, IMessenger messenger)
-            : base(writeFilesRunner, messenger)
+        public RatingSectionModel(
+            IMetadataService metadataService,
+            IDialogService dialogService,
+            IMessenger messenger,
+            IBackgroundTaskService backgroundTaskService) : base(messenger, backgroundTaskService, dialogService)
         {
             this.metadataService = metadataService;
             this.dialogService = dialogService;
@@ -47,7 +51,7 @@ namespace PhotoViewer.Core.ViewModels
         }
 
         public void Update(IList<MetadataView> metadata)
-        {           
+        {
             var values = metadata.Select(m => m.Get(MetadataProperties.Rating)).ToList();
             bool allEqual = values.All(x => x == values.FirstOrDefault());
             rating = allEqual ? values.FirstOrDefault() : 0;
@@ -56,28 +60,20 @@ namespace PhotoViewer.Core.ViewModels
 
         private async void OnRatingChangedExternal()
         {
-            await WriteFilesAsync(Rating);            
+            await WriteFilesAsync(Rating);
         }
 
-        private async Task WriteFilesAsync(int rating) 
+        private async Task WriteFilesAsync(int rating)
         {
-            await EnqueueWriteFiles(async (files) =>
+            var result = await WriteFilesAsync(async file =>
             {
-                var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
-                {                
-                    if (!Equals(rating, await metadataService.GetMetadataAsync(file, MetadataProperties.Rating).ConfigureAwait(false)))
-                    {
-                        await metadataService.WriteMetadataAsync(file, MetadataProperties.Rating, rating).ConfigureAwait(false);
-                    }
-                });
+                 if (!Equals(rating, await metadataService.GetMetadataAsync(file, MetadataProperties.Rating).ConfigureAwait(false)))
+                 {
+                     await metadataService.WriteMetadataAsync(file, MetadataProperties.Rating, rating).ConfigureAwait(false);
+                 }
+             });
 
-                Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Rating));
-
-                if (result.HasFailures) 
-                {
-                    await ShowWriteMetadataFailedDialog(dialogService, result);
-                }
-            });
+            Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Rating));
         }
 
     }

@@ -14,7 +14,7 @@ internal static class ControlUtil
 
         void connect(TViewModel newViewModel)
         {
-            Log.Debug($"Connect {control} to {newViewModel}");
+            //Log.Debug($"Connect {control} to {newViewModel}");
             viewModel = newViewModel;
             control.ConnectToViewModel(newViewModel);
             if(control.IsLoaded || updateBindingsAlways) // TODO ?
@@ -25,7 +25,7 @@ internal static class ControlUtil
 
         void disconnect(TViewModel currentViewModel)
         {
-            Log.Debug($"Disconnect {control} from {currentViewModel}");
+            //Log.Debug($"Disconnect {control} from {currentViewModel}");
             control.DisconnectFromViewModel(viewModel);
             control.StopBindings();
             viewModel = null;

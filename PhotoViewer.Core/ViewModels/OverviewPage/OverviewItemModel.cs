@@ -13,7 +13,7 @@ using Tocronx.SimpleAsync;
 
 namespace PhotoViewer.Core.ViewModels;
 
-public interface IOverviewItemModel { }
+public interface IOverviewItemModel : IViewModel { }
 
 public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
 {
@@ -50,7 +50,7 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
         NewName = mediaFile.FileNameWithoutExtension;
         this.metadataService = metadataService;
         this.dialogService = dialogService;
-        InitializeAsync().FireAndForget();
+        InitializeAsync().LogOnException();
     }
 
     private async Task InitializeAsync()
@@ -96,11 +96,18 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
 
     private async Task LoadMetadataInfoAsync(IBitmapFileInfo bitmapFile)
     {
-        var metadata = await metadataService.GetMetadataAsync(bitmapFile);
-        HasKeywords = metadata.Get(MetadataProperties.Keywords).Any();
-        HasPeopleTags = metadata.Get(MetadataProperties.People).Any();
-        HasLocation = metadata.Get(MetadataProperties.GeoTag) != null || metadata.Get(MetadataProperties.Address) != null;
-        Rating = metadata.Get(MetadataProperties.Rating);
+        try
+        {
+            var metadata = await metadataService.GetMetadataAsync(bitmapFile);
+            HasKeywords = metadata.Get(MetadataProperties.Keywords).Any();
+            HasPeopleTags = metadata.Get(MetadataProperties.People).Any();
+            HasLocation = metadata.Get(MetadataProperties.GeoTag) != null || metadata.Get(MetadataProperties.Address) != null;
+            Rating = metadata.Get(MetadataProperties.Rating);
+        }
+        catch(Exception ex) 
+        {
+            Log.Error($"Failed to load metadata for {bitmapFile.FileName}", ex);
+        }
     }
 
     public void CancelRenaming()
@@ -110,7 +117,7 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
         NewName = MediaFile.FileNameWithoutExtension;
     }
 
-    public async void ConfirmRenaming()
+    public async Task ConfirmRenaming()
     {
         Log.Info("User confirmed renaming");
 

@@ -61,6 +61,8 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     private readonly ObservableList<Rect> suggestedFaces = new ObservableList<Rect>();
 
+    private List<Rect> initalSuggestedFaces = new List<Rect>();
+
     internal TagPeopleToolModel(
         IBitmapFileInfo bitmapFile,
         IMessenger messenger,
@@ -116,6 +118,15 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         {
             AutoSuggestBoxText = string.Empty;
             SelectionRect = default;
+
+            if (TaggedPeople.IsEmpty())
+            {
+                suggestedFaces.MatchTo(initalSuggestedFaces);
+            }
+            else
+            {
+                suggestedFaces.Clear();
+            }
         }
     }
 
@@ -130,6 +141,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         else
         {
             suggestedFaces.Clear();
+            initalSuggestedFaces.Clear();
             AutoSuggestBoxText = string.Empty;
             SelectionRect = default;
         }
@@ -210,7 +222,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         {
             await metadataService.WriteMetadataAsync(bitmapFile, MetadataProperties.People, people);
             Messenger.Send(new MetadataModifiedMessage(new[] { bitmapFile }, MetadataProperties.People));
-            _ = suggestionsService.AddSuggestionAsync(personName);
+            suggestionsService.AddSuggestionAsync(personName).LogOnException();
             AutoSuggestBoxText = string.Empty;
             SelectionRect = default;
             TrySelectNextDetectedFace();
@@ -263,7 +275,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         {
             if (BitmapImage is ICanvasBitmapImageModel bitmapImage)
             {
-                var detectedFaces = await faceDetectionService.DetectFacesAsync(bitmapImage, CancellationToken.None);
+                var detectedFaces = await faceDetectionService.DetectFacesAsync(bitmapImage);
 
                 if (!IsActive) { return; }
 
@@ -280,15 +292,13 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
                         faceBox.Height / imageSize.Height));
                 }
 
+                initalSuggestedFaces = suggestedFaces.ToList();
+
                 if (IsEnabled)
                 {
                     TrySelectNextDetectedFace();
                 }
             }
-        }
-        catch (OperationCanceledException)
-        {
-            // operation canceled
         }
         catch (Exception ex)
         {

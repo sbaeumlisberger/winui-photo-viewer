@@ -24,13 +24,13 @@ public class PeopleSectionModelTest
     private const string Name2 = "FirstName2 LastName2";
     private const string Name3 = "FirstName3 LastName3";
 
-    private readonly SequentialTaskRunner writeFilesRunner = new SequentialTaskRunner();
-
     private readonly IMessenger messenger = new StrongReferenceMessenger();
 
     private readonly IMetadataService metadataService = Substitute.For<IMetadataService>();
 
     private readonly ISuggestionsService suggestionsService = Substitute.For<ISuggestionsService>();
+
+    private readonly IBackgroundTaskService backgroundTaskService = Substitute.For<IBackgroundTaskService>();
 
     private readonly IDialogService dialogService = Substitute.For<IDialogService>();
 
@@ -38,7 +38,7 @@ public class PeopleSectionModelTest
 
     public PeopleSectionModelTest()
     {
-        peopleSectionModel = new PeopleSectionModel(writeFilesRunner, messenger, metadataService, suggestionsService, dialogService, false);
+        peopleSectionModel = new PeopleSectionModel(messenger, metadataService, suggestionsService, dialogService, backgroundTaskService, false);
     }
 
     [Fact]
@@ -165,7 +165,7 @@ public class PeopleSectionModelTest
     [Fact]
     public void TagPeopleOnPhotoGetsChecked_WhenMessageReceived() 
     {
-        var peopleSectionModel = new PeopleSectionModel(writeFilesRunner, messenger, metadataService, suggestionsService, dialogService, true);
+        var peopleSectionModel = new PeopleSectionModel(messenger, metadataService, suggestionsService, dialogService, backgroundTaskService, true);
 
         messenger.Send(new SetTagPeopleToolActiveMessage(true));
 

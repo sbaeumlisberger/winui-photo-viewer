@@ -6,6 +6,7 @@ using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
@@ -24,10 +25,13 @@ namespace PhotoViewer.Core.ViewModels
         bool IsVisible { get; set; }
     }
 
-    // TODO gloabl write files indicator!
     public partial class MetadataPanelModel : ViewModelBase, IMetadataPanelModel
     {
         public bool IsVisible { get; set; } = false;
+
+        public bool IsLoading { get; set; } = false;
+
+        public bool IsLoaded => !IsLoading;
 
         public bool IsNoFilesSelectedMessageVisible { get; private set; } = true;
 
@@ -52,8 +56,6 @@ namespace PhotoViewer.Core.ViewModels
 
         private readonly CancelableTaskRunner updateRunner = new CancelableTaskRunner();
 
-        private readonly SequentialTaskRunner writeFilesRunner = new SequentialTaskRunner();
-
         internal MetadataPanelModel(
             IMessenger messenger,
             IMetadataService metadataService,
@@ -63,19 +65,20 @@ namespace PhotoViewer.Core.ViewModels
             ISuggestionsService peopleSuggestionsService,
             ISuggestionsService keywordSuggestionsService,
             IGpxService gpxService,
+            IBackgroundTaskService backgroundTaskService,
             ApplicationSettings applicationSettings,
             bool tagPeopleOnPhotoButtonVisible) : base(messenger)
         {
             this.metadataService = metadataService;
 
-            TitleTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, dialogService, MetadataProperties.Title);
-            LocationSectionModel = new LocationSectionModel(writeFilesRunner, metadataService, locationService, dialogService, viewModelFactory, gpxService, messenger);
-            PeopleSectionModel = new PeopleSectionModel(writeFilesRunner, messenger, metadataService, peopleSuggestionsService, dialogService, tagPeopleOnPhotoButtonVisible);
-            KeywordsSectionModel = new KeywordsSectionModel(writeFilesRunner, messenger, metadataService, keywordSuggestionsService, dialogService);
-            RatingSectionModel = new RatingSectionModel(writeFilesRunner, metadataService, dialogService, messenger);
-            AuthorTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, dialogService, MetadataProperties.Author);
-            CopyrightTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataService, dialogService, MetadataProperties.Copyright);
-            DateTakenSectionModel = new DateTakenSectionModel(writeFilesRunner, messenger, metadataService, dialogService);
+            TitleTextboxModel = new MetadataTextboxModel(metadataService, dialogService, backgroundTaskService, MetadataProperties.Title);
+            LocationSectionModel = new LocationSectionModel(metadataService, locationService, dialogService, viewModelFactory, gpxService, messenger, backgroundTaskService);
+            PeopleSectionModel = new PeopleSectionModel(messenger, metadataService, peopleSuggestionsService, dialogService, backgroundTaskService, tagPeopleOnPhotoButtonVisible);
+            KeywordsSectionModel = new KeywordsSectionModel(messenger, metadataService, keywordSuggestionsService, dialogService, backgroundTaskService);
+            RatingSectionModel = new RatingSectionModel(metadataService, dialogService, messenger, backgroundTaskService);
+            AuthorTextboxModel = new MetadataTextboxModel(metadataService, dialogService, backgroundTaskService, MetadataProperties.Author);
+            CopyrightTextboxModel = new MetadataTextboxModel(metadataService, dialogService, backgroundTaskService, MetadataProperties.Copyright);
+            DateTakenSectionModel = new DateTakenSectionModel(messenger, metadataService, dialogService, backgroundTaskService);
 
             IsVisible = applicationSettings.AutoOpenMetadataPanel;
 
@@ -128,17 +131,30 @@ namespace PhotoViewer.Core.ViewModels
 
         private async Task Update(CancellationToken cancellationToken)
         {
-            var metadata = await Task.WhenAll(supportedFiles.Select(metadataService.GetMetadataAsync));
-            cancellationToken.ThrowIfCancellationRequested();
+            IsLoading = true;
 
-            TitleTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
-            LocationSectionModel.UpdateFilesChanged(supportedFiles, metadata);
-            PeopleSectionModel.UpdateFilesChanged(supportedFiles, metadata);
-            KeywordsSectionModel.UpdateFilesChanged(supportedFiles, metadata);
-            RatingSectionModel.UpdateFilesChanged(supportedFiles, metadata);
-            AuthorTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
-            CopyrightTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
-            DateTakenSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+            try
+            {
+                var metadata = await supportedFiles.MapParallelAsync(metadataService.GetMetadataAsync, cancellationToken);
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                TitleTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
+                LocationSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+                PeopleSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+                KeywordsSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+                RatingSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+                AuthorTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
+                CopyrightTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
+                DateTakenSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException) 
+            {
+                // TODO show dialog
+                Log.Error("Failed to update metadata panel", ex);
+            }
+           
+            IsLoading = false;
         }
 
         [RelayCommand]

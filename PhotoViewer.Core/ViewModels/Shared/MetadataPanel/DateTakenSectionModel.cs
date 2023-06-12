@@ -5,6 +5,7 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Resources;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels.Dialogs;
 using System.Diagnostics;
@@ -33,11 +34,10 @@ public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
     private bool isUpdating = false;
 
     public DateTakenSectionModel(
-        SequentialTaskRunner writeFilesRunner,
         IMessenger messenger,
         IMetadataService metadataService,
-        IDialogService dialogService)
-        : base(writeFilesRunner, messenger!)
+        IDialogService dialogService,
+        IBackgroundTaskService backgroundTaskService) : base(messenger, backgroundTaskService, dialogService)
     {
         this.metadataService = metadataService;
         this.dialogService = dialogService;
@@ -148,23 +148,15 @@ public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
 
     private async Task WriteFilesAsync(DateTime? dateTaken)
     {
-        await EnqueueWriteFiles(async (files) =>
+        var result = await WriteFilesAsync(async file =>
         {
-            var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
+            if (!Equals(dateTaken, await metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken).ConfigureAwait(false)))
             {
-                if (!Equals(dateTaken, await metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken).ConfigureAwait(false)))
-                {
-                    await metadataService.WriteMetadataAsync(file, MetadataProperties.DateTaken, dateTaken).ConfigureAwait(false);
-                }
-            });
-
-            Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.DateTaken));
-
-            if (result.HasFailures)
-            {
-                await ShowWriteMetadataFailedDialog(dialogService, result);
+                await metadataService.WriteMetadataAsync(file, MetadataProperties.DateTaken, dateTaken).ConfigureAwait(false);
             }
         });
+
+        Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.DateTaken));
     }
 
 }

@@ -81,7 +81,7 @@ public partial class MoveRawFilesToSubfolderDialogModel : ViewModelBase
         var rawFilesFolder = await folder.CreateFolderAsync(settings.RawFilesFolderName, CreationCollisionOption.OpenIfExists);
         cancellationToken.ThrowIfCancellationRequested();
 
-        return await ParallelProcessingUtil.ProcessParallelAsync(filesToMove, async file =>
+        return await ParallelizationUtil.ProcessParallelAsync(filesToMove, async file =>
         {
             await file.MoveAsync(rawFilesFolder);
 

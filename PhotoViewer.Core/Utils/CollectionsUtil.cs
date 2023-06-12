@@ -7,9 +7,14 @@ namespace PhotoViewer.App.Utils;
 
 public static class CollectionsUtil
 {
-    public static void RemoveRange<TValue>(this ICollection<TValue> collection, IEnumerable<TValue> source)
+    public static bool IsEmpty<T>(this IEnumerable<T> collection)
     {
-        foreach (TValue item in source)
+        return !collection.Any();
+    }
+
+    public static void RemoveRange<T>(this ICollection<T> collection, IEnumerable<T> source)
+    {
+        foreach (T item in source)
         {
             collection.Remove(item);
         }
@@ -27,7 +32,6 @@ public static class CollectionsUtil
         }
         return false;
     }
-
 
     public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
     {

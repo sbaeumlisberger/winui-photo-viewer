@@ -28,21 +28,19 @@ public sealed partial class MainWindow : WindowEx
 
     private readonly MainWindowModel viewModel;
 
-    private readonly ApplicationSettings settings;
-
     public MainWindow(IMessenger messenger, ApplicationSettings settings)
     {
-        this.settings = settings;
-        viewModel = new MainWindowModel(messenger);
-        this.InitializeComponent();        
-        Closed += MainWindow_Closed;
+        this.InitializeComponent();
         ViewModelFactory.Initialize(messenger, settings, new DialogService(this));
+        viewModel = ViewModelFactory.Instance.CreateMainWindowModel();
+        AppWindow.Closing += AppWindow_Closing;
+        Closed += MainWindow_Closed;
         messenger.Register<ChangeWindowTitleMessage>(this, msg => Title = msg.NewTitle + " - WinUI Photo Viewer");
         messenger.Register<EnterFullscreenMessage>(this, _ => EnterFullscreen());
         messenger.Register<ExitFullscreenMessage>(this, _ => ExitFullscreen());
         messenger.Register<NavigateToPageMessage>(this, msg => NavigateToPage(msg.PageType, msg.Parameter));
         messenger.Register<NavigateBackMessage>(this, _ => NavigateBack());
-        messenger.Register<SettingsChangedMessage>(this, msg => OnSettingsChanged(msg.ChangedSetting));
+        messenger.Register<SettingsChangedMessage>(this, msg => OnSettingsChanged(settings, msg.ChangedSetting));
         ApplyTheme(settings.Theme);
         FocusManager.LosingFocus += FocusManager_LosingFocus;
     }
@@ -56,7 +54,7 @@ public sealed partial class MainWindow : WindowEx
         }
     }
 
-    private void OnSettingsChanged(string? changedSetting)
+    private void OnSettingsChanged(ApplicationSettings settings, string? changedSetting)
     {
         if (changedSetting is null || changedSetting == nameof(ApplicationSettings.Theme))
         {
@@ -76,6 +74,19 @@ public sealed partial class MainWindow : WindowEx
         }
 
         frame.RequestedTheme = elementTheme;
+    }
+
+    private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
+    {
+        try
+        {
+            args.Cancel = true;
+            await viewModel.OnClosingAsync();
+        }
+        finally 
+        {     
+            Close();
+        }
     }
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)

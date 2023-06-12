@@ -4,6 +4,7 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using Tocronx.SimpleAsync;
 using Timer = PhotoViewer.Core.Utils.Timer;
@@ -38,11 +39,11 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
     private readonly ITimer timer;
 
     internal MetadataTextboxModel(
-        SequentialTaskRunner writeFilesRunner,
         IMetadataService metadataService,
         IDialogService dialogService,
+        IBackgroundTaskService backgroundTaskService,
         IMetadataProperty<string> metadataProperty,
-        TimerFactory? timerFactory = null) : base(writeFilesRunner, null!)
+        TimerFactory? timerFactory = null) : base(null!, backgroundTaskService, dialogService)
     {
         this.metadataService = metadataService;
         this.dialogService = dialogService;
@@ -52,11 +53,11 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
     }
 
     internal MetadataTextboxModel(
-        SequentialTaskRunner writeFilesRunner,
         IMetadataService metadataService,
         IDialogService dialogService,
+        IBackgroundTaskService backgroundTaskService,
         IMetadataProperty<string[]> metadataProperty,
-        TimerFactory? timerFactory = null) : base(writeFilesRunner, null!)
+        TimerFactory? timerFactory = null) : base(null!, backgroundTaskService, dialogService)
     {
         this.metadataService = metadataService;
         this.dialogService = dialogService;
@@ -150,34 +151,26 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 
     private async Task WriteFilesAsync(string value)
     {
-        await EnqueueWriteFiles(async (files) =>
+        var result = await WriteFilesAsync(async file =>
         {
-            var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
+            if (metadataProperty is IMetadataProperty<string> stringProperty)
             {
-                if (metadataProperty is IMetadataProperty<string> stringProperty)
+                if (!Equals(value, await metadataService.GetMetadataAsync(file, stringProperty)))
                 {
-                    if (!Equals(value, await metadataService.GetMetadataAsync(file, stringProperty)))
-                    {
-                        await metadataService.WriteMetadataAsync(file, stringProperty, value);
-                    }
+                    await metadataService.WriteMetadataAsync(file, stringProperty, value);
                 }
-                else if (metadataProperty is IMetadataProperty<string[]> stringArrayProperty)
-                {
-                    string[] arrayValue = value.Split(";", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToArray();
-                    if (!Equals(arrayValue, await metadataService.GetMetadataAsync(file, stringArrayProperty)))
-                    {
-                        await metadataService.WriteMetadataAsync(file, stringArrayProperty, arrayValue);
-                    }
-                }
-                else
-                {
-                    throw new Exception("metadataProperty is invalid");
-                }
-            });
-
-            if (result.HasFailures)
+            }
+            else if (metadataProperty is IMetadataProperty<string[]> stringArrayProperty)
             {
-                await ShowWriteMetadataFailedDialog(dialogService, result);
+                string[] arrayValue = value.Split(";", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToArray();
+                if (!Equals(arrayValue, await metadataService.GetMetadataAsync(file, stringArrayProperty)))
+                {
+                    await metadataService.WriteMetadataAsync(file, stringArrayProperty, arrayValue);
+                }
+            }
+            else
+            {
+                throw new Exception("metadataProperty is invalid");
             }
         });
     }

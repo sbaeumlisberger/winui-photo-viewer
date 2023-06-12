@@ -127,7 +127,7 @@ public class DialogService : IDialogService
         {
             Title = messageDialogModel.Title,
             Content = messageDialogModel.Message,
-            PrimaryButtonText = Strings.MessageDialog_PrimaryButtonText,
+            PrimaryButtonText = messageDialogModel.PrimaryButtonText ?? Strings.MessageDialog_PrimaryButtonText,
         };
         InitializeContentDialog(dialog);
         await dialog.ShowAsync();

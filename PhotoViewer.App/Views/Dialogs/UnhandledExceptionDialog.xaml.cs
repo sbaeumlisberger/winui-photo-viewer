@@ -17,7 +17,7 @@ namespace PhotoViewer.App.Views.Dialogs;
 
 public sealed partial class UnhandledExceptionDialog : ContentDialog
 {
-    public bool IsSendCrashReportChecked => sendCrashReportCheckBox.IsChecked ?? false;
+    public bool IsSendErrorReportChecked => sendErrorReportCheckBox.IsChecked ?? false;
 
     public UnhandledExceptionDialog(Window window, string exceptionMessage)
     {

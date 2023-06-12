@@ -1,4 +1,6 @@
 ﻿using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Utils;
+using Tocronx.SimpleAsync;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -8,6 +10,8 @@ namespace PhotoViewer.App.Models;
 
 public abstract class MediaFileInfoBase : IMediaFileInfo
 {
+    private static readonly AsyncLock mtpLock = new AsyncLock();
+
     public string DisplayName => StorageFile.Name + (LinkedStorageFiles.Any() ? "[" + string.Join("|", LinkedStorageFiles.Select(file => file.FileType)) + "]" : string.Empty);
 
     public IStorageFile StorageFile { get; }
@@ -32,21 +36,34 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
 
     private Windows.Storage.Streams.Buffer? buffer;
 
-    private static SemaphoreSlim? semaphore = new SemaphoreSlim(1, 1);
+    private readonly AsyncLockFIFO exlusiveAccessLock = new AsyncLockFIFO();
+
+    public readonly string DebugId;
 
     public MediaFileInfoBase(IStorageFile file)
     {
         StorageFile = file;
+        DebugId = FileName;
     }
 
-    public async Task<IRandomAccessStream> OpenAsync(FileAccessMode fileAccessMode)
+    public async Task<IRandomAccessStream> OpenAsRandomAccessStreamAsync(FileAccessMode fileAccessMode)
+    {
+        return (await OpenAsync(fileAccessMode)).AsRandomAccessStream();
+    }
+
+    public async Task<Stream> OpenAsync(FileAccessMode fileAccessMode)
     {
         if (string.IsNullOrEmpty(FilePath))
         {
             // If the file path is not set, it is probably a file accessed via MTP.            
-            return await OpenMTPAsync(fileAccessMode).ConfigureAwait(false);
+            return (await OpenMTPAsync(fileAccessMode).ConfigureAwait(false)).AsStream();
         }
-        return await StorageFile.OpenAsync(fileAccessMode).AsTask().ConfigureAwait(false);
+
+        if (fileAccessMode == FileAccessMode.Read)
+        {
+            return File.OpenRead(FilePath);
+        }
+        return File.Open(FilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
     }
 
     public async Task<DateTimeOffset> GetDateModifiedAsync()
@@ -78,7 +95,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
 
     public virtual async Task<IRandomAccessStream?> GetThumbnailAsync()
     {
-        if (StorageFile is StorageFile storageFile) 
+        if (StorageFile is StorageFile storageFile)
         {
             return await storageFile.GetThumbnailAsync(ThumbnailMode.SingleItem).AsTask().ConfigureAwait(false);
         }
@@ -92,7 +109,12 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
         buffer = null;
     }
 
-    private async Task<IRandomAccessStream> OpenMTPAsync(FileAccessMode fileAccessMode) 
+    public Task<AsyncLockFIFO.AcquiredLock> AcquireExclusiveAccessAsync()
+    {
+        return exlusiveAccessLock.AcquireAsync();
+    }
+
+    private async Task<IRandomAccessStream> OpenMTPAsync(FileAccessMode fileAccessMode)
     {
         if (fileAccessMode != FileAccessMode.Read)
         {
@@ -105,8 +127,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
             // MTP allows no paralled file operations. Therefore all operations are
             // synchronized. Due to many issues with passing the file streams to
             // native code like Win2D, the stream is copied to an in-memory stream.
-            await semaphore!.WaitAsync().ConfigureAwait(false);
-            try
+            using (await mtpLock.GetLookAsync().ConfigureAwait(false))
             {
                 if (buffer == null)
                 {
@@ -121,10 +142,6 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
                     buffer = new Windows.Storage.Streams.Buffer((uint)fileStream.Size);
                     await fileStream.ReadAsync(buffer, buffer.Capacity, InputStreamOptions.None).AsTask().ConfigureAwait(false);
                 }
-            }
-            finally
-            {
-                semaphore!.Release();
             }
         }
 

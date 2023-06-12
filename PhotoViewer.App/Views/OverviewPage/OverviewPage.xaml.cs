@@ -13,14 +13,13 @@ using PhotoViewer.Core.Utils;
 using System.Collections.Generic;
 using System.Linq;
 using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils.Logging;
 
 namespace PhotoViewer.App.Views;
 
 [ViewRegistration(typeof(OverviewPageModel))]
 public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
 {
-    private OverviewPageModel ViewModel => (OverviewPageModel)DataContext;
-
     private readonly PrintService printService = new PrintService(App.Current.Window);
 
     private PrintRegistration? printRegistration;
@@ -40,7 +39,7 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
     {
         App.Current.Window.Title = Strings.OverviewPage_Title + " - WinUI Photo Viewer"; // TODO use message
 
-        printRegistration = printService.RegisterForPrinting(() => new PhotoPrintJob(ViewModel.SelectedItems.Select(mediaFile => mediaFile.StorageFile).ToList()));
+        printRegistration = printService.RegisterForPrinting(() => new PhotoPrintJob(ViewModel!.SelectedItems.Select(mediaFile => mediaFile.StorageFile).ToList()));
     }
 
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -53,26 +52,28 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
 
     private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        ViewModel.SelectedItems = gridView.SelectedItems.Cast<IMediaFileInfo>().ToList();
+        ViewModel!.SelectedItems = gridView.SelectedItems.Cast<IMediaFileInfo>().ToList();
     }
-    private void OverviewItem_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+
+    private void OverviewItemBorder_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
     {
         if (sender.DataContext is IMediaFileInfo mediaFile)
         {
-            sender.DataContext = ViewModel.GetItemModel(mediaFile);
+            var overviewItem = (OverviewItem)((Border)sender).Child;
+            overviewItem.DataContext = ViewModel!.GetItemModel(mediaFile);
         }
     }
 
     private void OverviewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         var itemModel = (OverviewItemModel)((FrameworkElement)sender).DataContext;
-        ViewModel.ShowItem(itemModel.MediaFile);
+        ViewModel!.ShowItem(itemModel.MediaFile);
     }
 
     private void OverviewItem_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
         var itemModel = (OverviewItemModel)((FrameworkElement)sender).DataContext;
-        if (!ViewModel.SelectedItems.Contains(itemModel.MediaFile))
+        if (!ViewModel!.SelectedItems.Contains(itemModel.MediaFile))
         {
             gridView.SelectedItem = itemModel.MediaFile;
         }

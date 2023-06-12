@@ -23,8 +23,6 @@ namespace PhotoViewer.App.Views;
 
 public sealed partial class CompareView : UserControl, IMVVMControl<CompareViewModel>
 {
-    private CompareViewModel ViewModel => (CompareViewModel)DataContext;
-
     private bool viewCangedProgrammatic = false;
 
     public CompareView()
@@ -61,7 +59,7 @@ public sealed partial class CompareView : UserControl, IMVVMControl<CompareViewM
         if (!viewCangedProgrammatic)
         {
             var scrollViewer = sender.ScrollViewer;
-            ViewModel.OnViewChangedByUser(scrollViewer.ZoomFactor, scrollViewer.HorizontalOffset, scrollViewer.VerticalOffset);
+            ViewModel!.OnViewChangedByUser(scrollViewer.ZoomFactor, scrollViewer.HorizontalOffset, scrollViewer.VerticalOffset);
         }
         else
         {
@@ -71,7 +69,7 @@ public sealed partial class CompareView : UserControl, IMVVMControl<CompareViewM
 
     private async void DeleteButton_Click(object sender, RoutedEventArgs e)
     {
-        if (ViewModel.ShowDeleteAnimation)
+        if (ViewModel!.ShowDeleteAnimation)
         {
             await DeleteStoryboard.RunAsync();
         }
@@ -83,11 +81,11 @@ public sealed partial class CompareView : UserControl, IMVVMControl<CompareViewM
     {
         if (e.AddedItems.FirstOrDefault() is IBitmapFileInfo value)
         {
-            ViewModel.SelectedBitmapFile = value;
+            ViewModel!.SelectedBitmapFile = value;
         }
         else 
         {
-            ((ComboBox)sender).SelectedValue = ViewModel.SelectedBitmapFile;
+            ((ComboBox)sender).SelectedValue = ViewModel!.SelectedBitmapFile;
         }
     }
 }

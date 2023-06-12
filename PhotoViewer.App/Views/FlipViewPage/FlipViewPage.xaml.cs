@@ -12,8 +12,6 @@ namespace PhotoViewer.App.Views;
 [ViewRegistration(typeof(FlipViewPageModel))]
 public sealed partial class FlipViewPage : Page, IMVVMControl<FlipViewPageModel>
 {
-    private FlipViewPageModel ViewModel => (FlipViewPageModel)DataContext;
-
     private readonly PrintService printService = new PrintService(App.Current.Window);
 
     private PrintRegistration? printRegistration;
@@ -36,12 +34,12 @@ public sealed partial class FlipViewPage : Page, IMVVMControl<FlipViewPageModel>
             printService.Unregister(printRegistration);
         }
 
-        ViewModel.OnNavigatedFrom();
+        ViewModel!.OnNavigatedFrom();
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        ViewModel.OnNavigatedTo(e.Parameter, e.NavigationMode != NavigationMode.New);
+        ViewModel!.OnNavigatedTo(e.Parameter, e.NavigationMode != NavigationMode.New);
 
         printRegistration = printService.RegisterForPrinting(() => new PhotoPrintJob(new[] { ViewModel.FlipViewModel.SelectedItem!.StorageFile }));
     }

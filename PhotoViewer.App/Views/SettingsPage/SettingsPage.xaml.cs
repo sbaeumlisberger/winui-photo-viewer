@@ -16,8 +16,6 @@ namespace PhotoViewer.App.Views;
 [ViewRegistration(typeof(SettingsPageModel))]
 public sealed partial class SettingsPage : Page, IMVVMControl<SettingsPageModel>
 {
-    private SettingsPageModel ViewModel => (SettingsPageModel)DataContext;
-
     public SettingsPage()
     {
         DataContext = ViewModelFactory.Instance.CreateSettingsPageModel();
@@ -38,7 +36,7 @@ public sealed partial class SettingsPage : Page, IMVVMControl<SettingsPageModel>
     {
         if (e.AddedItems.FirstOrDefault() is AppTheme theme)
         {
-            ViewModel.Settings.Theme = theme;
+            ViewModel!.Settings.Theme = theme;
         }
     }
 
@@ -46,7 +44,7 @@ public sealed partial class SettingsPage : Page, IMVVMControl<SettingsPageModel>
     {
         if (e.AddedItems.FirstOrDefault() is DeleteLinkedFilesOption option)
         {
-            ViewModel.Settings.DeleteLinkedFilesOption = option;
+            ViewModel!.Settings.DeleteLinkedFilesOption = option;
         }
     }
 }

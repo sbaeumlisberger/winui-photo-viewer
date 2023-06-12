@@ -25,7 +25,7 @@
 
         <XamlUICommand
             x:Key="DeleteSingleRawFilesUICommand"
-           Label="{x:Bind res:Strings.DeleteSingleRawFilesUICommand_Label}" 
+            Label="{x:Bind res:Strings.DeleteSingleRawFilesUICommand_Label}" 
             Command="{x:Bind ViewModel.DeleteSingleRawFilesCommand}">
             <XamlUICommand.KeyboardAccelerators>
                 <KeyboardAccelerator
@@ -47,7 +47,7 @@
 
         <XamlUICommand
             x:Key="ImportGpxTrackUICommand"
-       Label="{x:Bind res:Strings.ImportGpxTrackUICommand_Label}" 
+            Label="{x:Bind res:Strings.ImportGpxTrackUICommand_Label}" 
             Command="{x:Bind ViewModel.ImportGpxTrackCommand}">
             <XamlUICommand.KeyboardAccelerators>
                 <KeyboardAccelerator
@@ -56,6 +56,18 @@
             </XamlUICommand.KeyboardAccelerators>
         </XamlUICommand>
     </CommandBar.Resources>
+
+    <CommandBar.Content>
+        <StackPanel Orientation="Horizontal" Height="48" Spacing="12" Margin="8,0,0,0">
+            <ProgressRing 
+                VerticalAlignment="Center"
+                Width="24" Height="24"
+                IsActive="{x:Bind ViewModel.BackgroundTasks.ShowProgressIndicator,Mode=OneWay}"/>
+            <TextBlock
+                VerticalAlignment="Center"
+                Text="{x:Bind ViewModel.BackgroundTasks.StatusText, Mode=OneWay}"/>
+        </StackPanel>
+    </CommandBar.Content>
     
     <AppBarButton 
         Icon="ViewAll"

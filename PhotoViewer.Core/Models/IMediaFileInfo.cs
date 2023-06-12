@@ -1,4 +1,6 @@
 ﻿using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Utils;
+using Tocronx.SimpleAsync;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -25,7 +27,11 @@ public interface IMediaFileInfo
 
     IEnumerable<IStorageFile> StorageFiles { get; }
 
-    Task<IRandomAccessStream> OpenAsync(FileAccessMode fileAccessMode);
+    Task<AsyncLockFIFO.AcquiredLock> AcquireExclusiveAccessAsync();
+
+    Task<IRandomAccessStream> OpenAsRandomAccessStreamAsync(FileAccessMode fileAccessMode);
+   
+    Task<Stream> OpenAsync(FileAccessMode fileAccessMode);
 
     Task<DateTimeOffset> GetDateModifiedAsync();
 

@@ -83,7 +83,7 @@ public partial class ShiftDatenTakenDialogModel : ViewModelBase
     {
         var filesToShift = mediaFiles.OfType<IBitmapFileInfo>().Where(bitmap => bitmap.IsMetadataSupported).ToList();
 
-        var result = await ParallelProcessingUtil.ProcessParallelAsync(filesToShift, async file =>
+        var result = await ParallelizationUtil.ProcessParallelAsync(filesToShift, async file =>
         {
             if (await metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken) is { } dateTaken)
             {

@@ -82,7 +82,7 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
     private IImageViewModel CreateImageViewModel(IBitmapFileInfo bitmapFile) 
     {
         var imageViewModel = viewModelFactory.CreateImageViewModel(bitmapFile);
-        _ = imageViewModel.InitializeAsync();
+        imageViewModel.InitializeAsync().LogOnException();
         return imageViewModel;
     }
 

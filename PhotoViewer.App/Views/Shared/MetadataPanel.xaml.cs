@@ -8,8 +8,6 @@ using System;
 namespace PhotoViewer.App.Views;
 public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPanelModel>
 {
-    public MetadataPanelModel ViewModel => (MetadataPanelModel)DataContext;
-
     public MetadataPanel()
     {
         this.InitializeComponentMVVM();
@@ -24,7 +22,7 @@ public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPa
     {
         if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
         {
-            sender.ItemsSource = ViewModel.PeopleSectionModel.FindSuggestions(sender.Text);
+            sender.ItemsSource = ViewModel!.PeopleSectionModel.FindSuggestions(sender.Text);
         }
     }
 
@@ -33,12 +31,12 @@ public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPa
         var autoSuggestBox = (AutoSuggestBox)sender;
         if (autoSuggestBox.Text == string.Empty)
         {
-            autoSuggestBox.ItemsSource = ViewModel.PeopleSectionModel.GetRecentSuggestions();
+            autoSuggestBox.ItemsSource = ViewModel!.PeopleSectionModel.GetRecentSuggestions();
             autoSuggestBox.IsSuggestionListOpen = true;
         }
         else 
         {
-            autoSuggestBox.ItemsSource = ViewModel.PeopleSectionModel.FindSuggestions(autoSuggestBox.Text);
+            autoSuggestBox.ItemsSource = ViewModel!.PeopleSectionModel.FindSuggestions(autoSuggestBox.Text);
         }
     }
 
@@ -46,7 +44,7 @@ public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPa
     {
         if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
         {
-            sender.ItemsSource = ViewModel.KeywordsSectionModel.FindSuggestions(sender.Text);
+            sender.ItemsSource = ViewModel!.KeywordsSectionModel.FindSuggestions(sender.Text);
         }
     }
 
@@ -55,12 +53,12 @@ public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPa
         var autoSuggestBox = (AutoSuggestBox)sender;
         if (autoSuggestBox.Text == string.Empty)
         {
-            autoSuggestBox.ItemsSource = ViewModel.KeywordsSectionModel.GetRecentSuggestions();
+            autoSuggestBox.ItemsSource = ViewModel!.KeywordsSectionModel.GetRecentSuggestions();
             autoSuggestBox.IsSuggestionListOpen = true;
         }
         else
         {
-            autoSuggestBox.ItemsSource = ViewModel.KeywordsSectionModel.FindSuggestions(autoSuggestBox.Text);
+            autoSuggestBox.ItemsSource = ViewModel!.KeywordsSectionModel.FindSuggestions(autoSuggestBox.Text);
         }
     }
 

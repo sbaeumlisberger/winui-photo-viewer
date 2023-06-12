@@ -48,13 +48,13 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
 
     public override IReadOnlyList<IStorageFile> LinkedStorageFiles => linkedStorageFiles;
 
-    private List<IStorageFile> linkedStorageFiles = new List<IStorageFile>();
+    private readonly List<IStorageFile> linkedStorageFiles = new List<IStorageFile>();
 
     private Size sizeInPixels = Size.Empty;
 
     public BitmapFileInfo(IStorageFile file) : base(file)
     {
-        IsMetadataSupported = JpegFileExtensions.Contains(StorageFile.FileType.ToLower()) || TiffFileExtensions.Contains(StorageFile.FileType.ToLower());
+        IsMetadataSupported = JpegFileExtensions.Contains(FileExtension.ToLower()) || TiffFileExtensions.Contains(FileExtension.ToLower());
     }
 
     public void LinkStorageFile(IStorageFile storageFile)
@@ -66,15 +66,19 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
     {
         if (sizeInPixels == Size.Empty)
         {
-            using var fileStream = await OpenAsync(FileAccessMode.Read).ConfigureAwait(false);
+            sizeInPixels = await Task.Run(async () =>
+            {
+                using var fileStream = await OpenAsync(FileAccessMode.Read).ConfigureAwait(false);
 
-            var wic = new WICImagingFactory();
+                var wic = new WICImagingFactory();
 
-            var decoder = wic.CreateDecoderFromStream(fileStream.AsStream(), WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
+                var decoder = wic.CreateDecoderFromStream(fileStream, WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
 
-            decoder.GetFrame(0).GetSize(out int width, out int height);
+                decoder.GetFrame(0).GetSize(out int width, out int height);
 
-            sizeInPixels = new Size(width, height);
+                return new Size(width, height);
+
+            }).ConfigureAwait(false);
         }
         return sizeInPixels;
     }
@@ -82,7 +86,7 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
     public override async Task<IRandomAccessStream?> GetThumbnailAsync()
     {
         // loading the full image is much faster and always up-to-date
-        return await OpenAsync(FileAccessMode.Read).ConfigureAwait(false);
+        return await OpenAsRandomAccessStreamAsync(FileAccessMode.Read).ConfigureAwait(false);
     }
 
     public override void InvalidateCache()

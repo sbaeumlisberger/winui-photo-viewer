@@ -43,8 +43,6 @@ public class LocationSectionModelTest
         Altitude = 358
     });
 
-    private readonly SequentialTaskRunner writeFilesRunner = new SequentialTaskRunner();
-
     private readonly IMetadataService metadataService = Substitute.For<IMetadataService>();
 
     private readonly ILocationService locationService = Substitute.For<ILocationService>();
@@ -57,11 +55,13 @@ public class LocationSectionModelTest
 
     private readonly IMessenger messenger = new StrongReferenceMessenger();
 
+    private readonly IBackgroundTaskService backgroundTaskService = Substitute.For<IBackgroundTaskService>();
+
     private readonly LocationSectionModel locationSectionModel;
 
     public LocationSectionModelTest()
     {
-        locationSectionModel = new LocationSectionModel(writeFilesRunner, metadataService, locationService, dialogService, viewModelFactory, gpxService, messenger);
+        locationSectionModel = new LocationSectionModel(metadataService, locationService, dialogService, viewModelFactory, gpxService, messenger, backgroundTaskService);
     }
 
     [Fact]

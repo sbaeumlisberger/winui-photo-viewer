@@ -5,13 +5,17 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core;
 using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
+using PhotoViewer.Core.ViewModels.Shared;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Input;
+using Windows.ApplicationModel.Background;
 using Windows.Storage;
 
 namespace PhotoViewer.App.ViewModels;
@@ -45,6 +49,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     private bool CanNavigateToComparePage => SelectedItemModel?.MediaItem is IBitmapFileInfo;
 
+    public BackgroundTasksViewModel BackgroundTasks { get; }
+
     private readonly IDialogService dialogService;
 
     private readonly IMediaFilesLoaderService loadMediaItemsService;
@@ -58,6 +64,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         IDialogService dialogService,
         IMediaFilesLoaderService loadMediaItemsService,
         IRotateBitmapService rotatePhotoService,
+        IViewModelFactory viewModelFactory,
         ICommand selectPreviousCommand,
         ICommand selectNextCommand,
         ApplicationSettings settings,
@@ -77,8 +84,10 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         SelectNextCommand = selectNextCommand;
         MoveRawFilesToSubfolderCommand = moveRawFilesToSubfolderCommand;
         DeleteSingleRawFilesCommand = deleteSingleRawFilesCommand;
-        ShiftDatenTakenCommand= shiftDatenTakenCommand;
+        ShiftDatenTakenCommand = shiftDatenTakenCommand;
         ImportGpxTrackCommand = importGpxTrackCommand;
+
+        BackgroundTasks = viewModelFactory.CreateBackgroundTasksViewModel();
     }
 
     [RelayCommand]

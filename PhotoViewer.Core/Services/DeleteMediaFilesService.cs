@@ -3,14 +3,14 @@ using Windows.Storage;
 
 namespace PhotoViewer.App.Services;
 
-public interface IDeleteMediaService
+public interface IDeleteMediaFilesService
 {
-    Task DeleteMediaAsync(IMediaFileInfo media, bool deleteLinkedFiles);
+    Task DeleteMediaFileAsync(IMediaFileInfo media, bool deleteLinkedFiles);
 }
 
-internal class DeleteMediaService : IDeleteMediaService
+internal class DeleteMediaFilesService : IDeleteMediaFilesService
 {
-    public async Task DeleteMediaAsync(IMediaFileInfo media, bool deleteLinkedFiles)
+    public async Task DeleteMediaFileAsync(IMediaFileInfo media, bool deleteLinkedFiles)
     {
         await DeleteFileAsync(media.StorageFile).ConfigureAwait(false);
 

@@ -70,6 +70,24 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} background tasks running.
+        /// </summary>
+        public static string BackgroundTasksRunningMessage_Multiple {
+            get {
+                return ResourceManager.GetString("BackgroundTasksRunningMessage_Multiple", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One background task running.
+        /// </summary>
+        public static string BackgroundTasksRunningMessage_Single {
+            get {
+                return ResourceManager.GetString("BackgroundTasksRunningMessage_Single", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Compare.
         /// </summary>
         public static string ComparePage_Title {
@@ -210,6 +228,33 @@ namespace PhotoViewer.Core.Resources {
         public static string SetLockscreenBackgroundFailedDialog_Ttile {
             get {
                 return ResourceManager.GetString("SetLockscreenBackgroundFailedDialog_Ttile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Waiting for background tasks to be completed ....
+        /// </summary>
+        public static string WaitForBackgroundTaskDialog_Message {
+            get {
+                return ResourceManager.GetString("WaitForBackgroundTaskDialog_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Force quit.
+        /// </summary>
+        public static string WaitForBackgroundTaskDialog_PrimaryButton {
+            get {
+                return ResourceManager.GetString("WaitForBackgroundTaskDialog_PrimaryButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Waiting for background tasks.
+        /// </summary>
+        public static string WaitForBackgroundTaskDialog_Title {
+            get {
+                return ResourceManager.GetString("WaitForBackgroundTaskDialog_Title", resourceCulture);
             }
         }
         

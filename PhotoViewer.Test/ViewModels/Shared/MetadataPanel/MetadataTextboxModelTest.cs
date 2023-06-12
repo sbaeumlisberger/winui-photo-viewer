@@ -6,6 +6,7 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System;
@@ -22,9 +23,6 @@ namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
 
 public class MetadataTextboxModelTest
 {
-
-    private readonly SequentialTaskRunner writeFilesRunner = new();
-
     private readonly Mock<ITimer> timerMock = new();
 
     private readonly Mock<IMetadataService> metadataServiceMock = new();
@@ -32,6 +30,8 @@ public class MetadataTextboxModelTest
     private readonly Mock<IMetadataProperty<string>> metadataPropertyMock = new();
 
     private readonly IDialogService dialogService = Substitute.For<IDialogService>();
+
+    private readonly IBackgroundTaskService backgroundTaskService = Substitute.For<IBackgroundTaskService>();
 
     private readonly MetadataTextboxModel metadataTextboxModel;
 
@@ -44,11 +44,11 @@ public class MetadataTextboxModelTest
             Assert.False(autoRestart);
             return timerMock.Object;
         };
-        metadataTextboxModel = new MetadataTextboxModel(writeFilesRunner, metadataServiceMock.Object, dialogService, metadataPropertyMock.Object, timerFactory);
+        metadataTextboxModel = new MetadataTextboxModel(metadataServiceMock.Object, dialogService, backgroundTaskService, metadataPropertyMock.Object, timerFactory);
     }
 
     [Fact]
-    public async Task SetText()
+    public async void SetText()
     {
         var fileMock = new Mock<IBitmapFileInfo>();
         metadataServiceMock
@@ -72,8 +72,9 @@ public class MetadataTextboxModelTest
         timerMock.Raise(m => m.Elapsed += null, EventArgs.Empty);
 
         tsc.SetResult();
-
-        await metadataTextboxModel.WriteTask;
+        await metadataTextboxModel.WriteFilesTask;
+        await Task.Delay(1);
+        await metadataTextboxModel.LastDispatchTask;
 
         Assert.False(metadataTextboxModel.IsWriting);
 
@@ -105,8 +106,8 @@ public class MetadataTextboxModelTest
         timerMock.Verify(m => m.Restart());
 
         timerMock.Raise(m => m.Elapsed += null, EventArgs.Empty);
-        await metadataTextboxModel.WriteTask;
 
+        await metadataTextboxModel.WriteFilesTask;
         metadataServiceMock.Verify(
             m => m.WriteMetadataAsync(fileMock.Object, metadataPropertyMock.Object, "some value 01"),
             Times.Never);

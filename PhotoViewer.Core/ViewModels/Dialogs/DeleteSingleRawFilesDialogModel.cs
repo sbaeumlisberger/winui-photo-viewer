@@ -62,7 +62,7 @@ public partial class DeleteSingleRawFilesDialogModel : ViewModelBase
             .Select(mediaFile => mediaFile.StorageFile)
             .ToList();
 
-        return await ParallelProcessingUtil.ProcessParallelAsync(fileToDelete, async file =>
+        return await ParallelizationUtil.ProcessParallelAsync(fileToDelete, async file =>
         {
             await file.DeleteAsync();
 

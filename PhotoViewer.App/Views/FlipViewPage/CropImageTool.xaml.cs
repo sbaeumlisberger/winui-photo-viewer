@@ -11,8 +11,6 @@ namespace PhotoViewer.App.Views;
 
 public sealed partial class CropImageTool : UserControl, IMVVMControl<CropImageToolModel>
 {
-    public CropImageToolModel? ViewModel => DataContext as CropImageToolModel;
-
     public CropImageTool()
     {
         this.InitializeComponentMVVM();

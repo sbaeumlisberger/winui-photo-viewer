@@ -29,8 +29,6 @@ namespace PhotoViewer.App.Views;
 [ViewRegistration(typeof(EditLocationDialogModel))]
 public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<EditLocationDialogModel>
 {
-    private EditLocationDialogModel ViewModel => (EditLocationDialogModel)DataContext;
-
     private string BingMapHtml { get; } = $$$"""
         <!DOCTYPE html>
         <html>
@@ -82,7 +80,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
     {
         if (e.PropertyName == nameof(ViewModel.Location) && pivot.SelectedIndex == 0)
         {
-            await ShowLocationOnMapAsync(ViewModel.Location);
+            await ShowLocationOnMapAsync(ViewModel!.Location);
         }
     }
 
@@ -90,7 +88,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
     {
         if (pivot.SelectedIndex == 0 && e.RemovedItems.Count == 1)
         {
-            await ShowLocationOnMapAsync(ViewModel.Location);
+            await ShowLocationOnMapAsync(ViewModel!.Location);
         }
     }
 
@@ -100,13 +98,13 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
         string eventType = data["event"]!.GetValue<string>();
         if (eventType == "mapReady")
         {
-            await ShowLocationOnMapAsync(ViewModel.Location);
+            await ShowLocationOnMapAsync(ViewModel!.Location);
         }
         else if (eventType == "mapClick")
         {
             double latitude = data["location"]!["latitude"]!.GetValue<double>();
             double longitude = data["location"]!["longitude"]!.GetValue<double>();
-            ViewModel.OnMapClicked(latitude, longitude);
+            ViewModel!.OnMapClicked(latitude, longitude);
         }
     }
 
@@ -152,7 +150,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
 
     private void LocationSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
     {
-        ViewModel.Location = (Location)args.SelectedItem;
+        ViewModel!.Location = (Location)args.SelectedItem;
         locationSearchBox.Text = string.Empty;
     }
 
@@ -160,7 +158,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
     {
         updateSuggestionsRunner.EnqueueIfEmpty(async () =>
         {
-            locationSearchBox.ItemsSource = await ViewModel.FindLocationsAsync(sender.Text);
+            locationSearchBox.ItemsSource = await ViewModel!.FindLocationsAsync(sender.Text);
         });
     }
 

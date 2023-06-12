@@ -8,6 +8,7 @@ using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
+using PropertyChanged;
 using System.Collections.Concurrent;
 using Tocronx.SimpleAsync;
 
@@ -19,7 +20,7 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
 
     public string AutoSuggestBoxText { get; set; } = string.Empty;
 
-    private bool CanAddKeyword => !string.IsNullOrWhiteSpace(AutoSuggestBoxText);
+    private bool CanAddKeyword => !string.IsNullOrWhiteSpace(AutoSuggestBoxText) && !IsWriting;
 
     private ObservableList<ItemWithCountModel> keywords = new();
 
@@ -30,11 +31,11 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
     private readonly IDialogService dialogService;
 
     internal KeywordsSectionModel(
-        SequentialTaskRunner writeFilesRunner,
         IMessenger messenger,
         IMetadataService metadataService,
         ISuggestionsService suggestionsService,
-        IDialogService dialogService) : base(writeFilesRunner, messenger)
+        IDialogService dialogService,
+        IBackgroundTaskService backgroundTaskService) : base(messenger, backgroundTaskService, dialogService)
     {
         this.metadataService = metadataService;
         this.suggestionsService = suggestionsService;
@@ -45,6 +46,7 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
     {
         keywords.Clear();
         keywords.AddRange(CreateListItemModels(metadata));
+        AutoSuggestBoxText = string.Empty;
     }
 
     protected override void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty)
@@ -53,6 +55,11 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
         {
             keywords.MatchTo(CreateListItemModels(metadata));
         }
+    }
+
+    partial void OnIsWritingChanged()
+    {
+        OnPropertyChanged(nameof(CanAddKeyword));
     }
 
     public IReadOnlyList<string> FindSuggestions(string query)
@@ -75,84 +82,64 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
             .ToList();
     }
 
-    [RelayCommand(CanExecute = nameof(CanAddKeyword))]
+    [RelayCommand(CanExecute = nameof(CanAddKeyword), AllowConcurrentExecutions = true)]
     private async Task AddKeywordAsync()
     {
         string keyword = AutoSuggestBoxText.Trim();
 
-        await EnqueueWriteFiles(async (files) =>
-        {
-            var result = await AddKeywordToFiles(files, keyword);
+        var result = await AddKeywordToFiles(keyword);
 
-            if (result.IsSuccessful)
+        if (result.IsSuccessful)
+        {
+            if (AutoSuggestBoxText.Trim() == keyword)
             {
                 AutoSuggestBoxText = string.Empty;
-                await suggestionsService.AddSuggestionAsync(keyword);
             }
-            else
-            {
-                await ShowWriteMetadataFailedDialog(dialogService, result);
-            }
-        });
+            await suggestionsService.AddSuggestionAsync(keyword);
+        }
     }
 
     [RelayCommand]
     private async Task RemoveKeywordAsync(string keyword)
     {
-        await EnqueueWriteFiles(async (files) =>
+        var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
+
+        var result = await WriteFilesAsync(async file =>
         {
-            var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
+            var keywordsOfFile = await metadataService.GetMetadataAsync(file, MetadataProperties.Keywords).ConfigureAwait(false);
 
-            var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
+            if (keywordsOfFile.Contains(keyword))
             {
-                var keywordsOfFile = await metadataService.GetMetadataAsync(file, MetadataProperties.Keywords).ConfigureAwait(false);
-
-                if (keywordsOfFile.Contains(keyword))
-                {
-                    var keywords = keywordsOfFile.Except(Enumerable.Repeat(keyword, 1)).ToArray();
-                    await metadataService.WriteMetadataAsync(file, MetadataProperties.Keywords, keywords).ConfigureAwait(false);
-                    modifiedFiles.Add(file);
-                }
-            });
-
-            Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.Keywords));
-
-            if (result.HasFailures)
-            {
-                await ShowWriteMetadataFailedDialog(dialogService, result);
+                var keywords = keywordsOfFile.Except(Enumerable.Repeat(keyword, 1)).ToArray();
+                await metadataService.WriteMetadataAsync(file, MetadataProperties.Keywords, keywords).ConfigureAwait(false);
+                modifiedFiles.Add(file);
             }
         });
+
+        Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.Keywords));
     }
 
     [RelayCommand]
     private async Task ApplyKeywordToAllAsync(string keyword)
     {
-        await EnqueueWriteFiles(async (files) =>
-        {
-            var result = await AddKeywordToFiles(files, keyword);
-
-            if (result.HasFailures)
-            {
-                await ShowWriteMetadataFailedDialog(dialogService, result);
-            }
-        });
+        await AddKeywordToFiles(keyword);
     }
 
-    private async Task<ProcessingResult<IBitmapFileInfo>> AddKeywordToFiles(IReadOnlyCollection<IBitmapFileInfo> files, string keyword)
+    private async Task<ProcessingResult<IBitmapFileInfo>> AddKeywordToFiles(string keyword)
     {
         var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
 
-        var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async file =>
-         {
-             var keywordsOfFile = await metadataService.GetMetadataAsync(file, MetadataProperties.Keywords).ConfigureAwait(false);
+        var result = await WriteFilesAsync(async file =>
+        {
+            var keywordsOfFile = await metadataService.GetMetadataAsync(file, MetadataProperties.Keywords).ConfigureAwait(false);
 
-             if (!keywordsOfFile.Contains(keyword))
-             {
-                 var keywords = keywordsOfFile.Append(keyword).ToArray();
-                 await metadataService.WriteMetadataAsync(file, MetadataProperties.Keywords, keywords).ConfigureAwait(false);
-                 modifiedFiles.Add(file);
-             }
-         });
+            if (!keywordsOfFile.Contains(keyword))
+            {
+                var keywords = keywordsOfFile.Append(keyword).ToArray();
+                await metadataService.WriteMetadataAsync(file, MetadataProperties.Keywords, keywords).ConfigureAwait(false);
+                modifiedFiles.Add(file);
+            }
+        });
 
         Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.Keywords));
 

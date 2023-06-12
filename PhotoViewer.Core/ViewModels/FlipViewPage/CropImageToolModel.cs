@@ -71,7 +71,7 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
         Register<ToggleCropImageToolMessage>(Receive);
         Register<BitmapModifiedMesssage>(Receive);
 
-        LoadImageSizeAsync().FireAndForget();
+        LoadImageSizeAsync().LogOnException();
     }
 
     private void Receive(ToggleCropImageToolMessage msg)

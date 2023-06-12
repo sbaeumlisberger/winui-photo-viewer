@@ -64,6 +64,8 @@ public class IMVVMControlGenerator : IIncrementalGenerator
 
                 partial class {{classSymbol.Name}} 
                 {
+                    private {{viewModelType}}? ViewModel => DataContext as {{viewModelType}};
+
                     void IMVVMControl<{{viewModelType}}>.InitializeComponent() => InitializeComponent();
                     void IMVVMControl<{{viewModelType}}>.UpdateBindings() => Bindings.Update();
                     void IMVVMControl<{{viewModelType}}>.StopBindings() => Bindings.StopTracking();

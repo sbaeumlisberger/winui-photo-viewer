@@ -20,9 +20,6 @@ namespace PhotoViewer.App.Views.Dialogs;
 [ViewRegistration(typeof(ManagePeopleDialogModel))]
 public sealed partial class ManagePeopleDialog : ContentDialog, IMVVMControl<ManagePeopleDialogModel>
 {
-
-    private ManagePeopleDialogModel ViewModel => (ManagePeopleDialogModel)DataContext;
-
     public ManagePeopleDialog()
     {
         this.InitializeComponentMVVM();
@@ -31,7 +28,7 @@ public sealed partial class ManagePeopleDialog : ContentDialog, IMVVMControl<Man
     private void RemoveButton_Click(object sender, RoutedEventArgs e)
     {
         string name = (string)((FrameworkElement)sender).DataContext;
-        ViewModel.RemoveCommand.ExecuteAsync(name);
+        ViewModel!.RemoveCommand.ExecuteAsync(name);
     }
 }
 

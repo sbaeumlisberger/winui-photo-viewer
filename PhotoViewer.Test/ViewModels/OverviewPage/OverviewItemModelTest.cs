@@ -52,11 +52,12 @@ public class OverviewItemModelTest
     public async Task RenamesMediaFileWhenConfirmRenaming()
     {
         messenger.Send(new ActivateRenameFileMessage(mediaFile));
+        await overviewItemModel.LastDispatchTask;
         overviewItemModel.NewName = "NewName";
         mediaFile.RenameAsync("NewName").Returns(Task.CompletedTask)
             .AndDoes(_ => mediaFile.DisplayName.Returns("NewName.jpg"));
 
-        overviewItemModel.ConfirmRenaming();
+        await overviewItemModel.ConfirmRenaming();
        
         await mediaFile.Received().RenameAsync("NewName");
         Assert.False(overviewItemModel.IsRenaming);
@@ -67,9 +68,10 @@ public class OverviewItemModelTest
     public async Task DoesNotRenameMediaFileWhenNewNameIsEqual()
     {
         messenger.Send(new ActivateRenameFileMessage(mediaFile));
+        await overviewItemModel.LastDispatchTask;
         overviewItemModel.NewName = "TestFile";
 
-        overviewItemModel.ConfirmRenaming();
+        await overviewItemModel.ConfirmRenaming();
 
         await mediaFile.DidNotReceive().RenameAsync(Arg.Any<string>());
         Assert.False(overviewItemModel.IsRenaming);
@@ -81,9 +83,10 @@ public class OverviewItemModelTest
     public async Task DoesNotRenameMediaFileWhenNewNameEmpty()
     {
         messenger.Send(new ActivateRenameFileMessage(mediaFile));
+        await overviewItemModel.LastDispatchTask;
         overviewItemModel.NewName = "";
 
-        overviewItemModel.ConfirmRenaming();
+        await overviewItemModel.ConfirmRenaming();
 
         Assert.True(overviewItemModel.IsRenaming);
         await mediaFile.DidNotReceive().RenameAsync(Arg.Any<string>());
@@ -98,7 +101,7 @@ public class OverviewItemModelTest
         overviewItemModel.NewName = "NewName";
         mediaFile.RenameAsync("NewName").Throws(new Exception("Some Error Message"));
 
-        overviewItemModel.ConfirmRenaming();
+        await overviewItemModel.ConfirmRenaming();
        
         await dialogService.Received().ShowDialogAsync(Arg.Any<MessageDialogModel>());
         Assert.Equal("TestFile", overviewItemModel.NewName);

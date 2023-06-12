@@ -8,9 +8,6 @@ namespace PhotoViewer.App.Views;
 [ViewRegistration(typeof(MoveRawFilesToSubfolderDialogModel))]
 public sealed partial class MoveRawFilesToSubfolderDialog : MultiViewDialogBase, IMVVMControl<MoveRawFilesToSubfolderDialogModel>
 {
-
-    private MoveRawFilesToSubfolderDialogModel ViewModel => (MoveRawFilesToSubfolderDialogModel)DataContext;
-
     public MoveRawFilesToSubfolderDialog()
     {
         this.InitializeComponentMVVM();

@@ -4,10 +4,14 @@ using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Utils;
+using System.Diagnostics;
 using System.Formats.Tar;
 using Windows.Storage;
 using Windows.Storage.Search;
 using Xunit;
+using Xunit.Abstractions;
+using Xunit.Sdk;
 using FileAttributes = Windows.Storage.FileAttributes;
 
 namespace PhotoViewer.Test.Services;
@@ -20,8 +24,11 @@ public class MediaFilesLoaderServiceTest
 
     private readonly MediaFilesLoaderService mediaFilesLoaderService;
 
-    public MediaFilesLoaderServiceTest()
+    private readonly ITestOutputHelper testOutput;
+
+    public MediaFilesLoaderServiceTest(ITestOutputHelper testOutput)
     {
+        this.testOutput = testOutput;
         Log.Logger = Mock.Of<ILogger>();
         fileSystemServiceMock = new Mock<IFileSystemService>();
         mediaFilesLoaderService = new MediaFilesLoaderService(fileSystemServiceMock.Object);
@@ -94,6 +101,23 @@ public class MediaFilesLoaderServiceTest
             new []{ "File 05.jpg" },
         };
         AssertMediaFiles(expectedMediaFiles, result.MediaFiles);
+    }
+
+    [Fact]
+    public async Task Loads1000MediaFilesFromFilesQueryResultInLessThan100ms()
+    {
+        var files = (await Task.WhenAll(Enumerable.Repeat(1, 1000).Select(_ => CreateStorageFileAsync(Guid.NewGuid() + ".jpg")))).ToList();
+        var neighboringFilesQuery = MockNeighboringFilesQuery(files);
+        var startFile = files[187];
+        var config = new LoadMediaConfig(true, null, false);
+
+        var sw = Stopwatch.StartNew();
+        var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
+        var result = await loadMediaFilesTask.WaitForResultAsync();
+        sw.Stop();
+
+        testOutput.WriteLine("Took: " + sw.ElapsedMilliseconds + "ms");
+        Assert.True(sw.ElapsedMilliseconds < 100);
     }
 
     [Fact]
@@ -242,7 +266,7 @@ public class MediaFilesLoaderServiceTest
     }
 
     [Fact]
-    public async Task NeigboringFilesAreIgnoredWhenTheStartFileIsNotPartOfThem() 
+    public async Task NeigboringFilesAreIgnoredWhenTheStartFileIsNotPartOfThem()
     {
         var files = new List<IStorageFile>
         {
@@ -284,6 +308,14 @@ public class MediaFilesLoaderServiceTest
         fileSystemServiceMock.Setup(m => m.Exists(path)).Returns(true);
         fileSystemServiceMock.Setup(m => m.TryGetFileAsync(path)).ReturnsAsync(mock.Object);
         return mock.Object;
+    }
+
+    private string TestFolderPath = TestUtils.CreateTestFolder();
+
+    private async Task<IStorageFile> CreateStorageFileAsync(string fileName)
+    {
+        var folder = await StorageFolder.GetFolderFromPathAsync(TestFolderPath);
+        return await folder.CreateFileAsync(fileName);
     }
 
     private IStorageFolder MockFolder(List<IStorageFile> files)

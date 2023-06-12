@@ -14,8 +14,6 @@ namespace PhotoViewer.App.Views;
 
 public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipViewModel>
 {
-    private MediaFlipViewModel ViewModel => (MediaFlipViewModel)DataContext;
-
     public MediaFlipView()
     {
         this.InitializeComponentMVVM();
@@ -38,7 +36,7 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
 
     private void FlipView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
-        if (ViewModel.IsDiashowActive)
+        if (ViewModel!.IsDiashowActive)
         {
             flipView.ShowAttachedFlyout(args);
         }
@@ -46,7 +44,7 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
 
     private void FlipView_Tapped(object sender, TappedRoutedEventArgs e)
     {
-        if (ViewModel.IsDiashowActive)
+        if (ViewModel!.IsDiashowActive)
         {
             var window = App.Current.Window;
             var windowCenterX = window.Bounds.Left + window.Bounds.Width / 2;
@@ -70,9 +68,9 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         if (e.AddedItems.Count == 1 && e.RemovedItems.Count == 1)
         {
             // update view model when selection was changed by the user
-            ViewModel.Select((IMediaFileInfo?)flipView.SelectedItem);
+            ViewModel!.Select((IMediaFileInfo?)flipView.SelectedItem);
         }
-        else if (ViewModel.SelectedItem != null && flipView.SelectedItem != ViewModel.SelectedItem)
+        else if (ViewModel!.SelectedItem != null && flipView.SelectedItem != ViewModel.SelectedItem)
         {
             DispatcherQueue.TryEnqueue(() => flipView.SelectedItem = ViewModel.SelectedItem);
         }
@@ -105,7 +103,7 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
     private void ApplyItemsModels()
     {
         Log.Debug($"apply item models");
-        foreach (var itemModel in ViewModel.ItemModels)
+        foreach (var itemModel in ViewModel!.ItemModels)
         {
             if (flipView.ContainerFromItem(itemModel.MediaItem) is FlipViewItem flipViewItem)
             {

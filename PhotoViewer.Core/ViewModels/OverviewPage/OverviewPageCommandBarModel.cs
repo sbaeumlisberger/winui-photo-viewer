@@ -12,6 +12,8 @@ using PhotoViewer.Core.ViewModels;
 using System.ComponentModel;
 using System.Windows.Input;
 using Windows.Storage;
+using PhotoViewer.Core.ViewModels.Shared;
+using PhotoViewer.Core;
 
 namespace PhotoViewer.App.ViewModels;
 
@@ -28,6 +30,9 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
 
     public bool CanRotate => SelectedItems.Any() && SelectedItems.All(file => file is IBitmapFileInfo);
 
+    public BackgroundTasksViewModel BackgroundTasks { get; }
+
+
     private readonly IDialogService dialogService;
 
     private readonly IMediaFilesLoaderService loadMediaItemsService;
@@ -42,6 +47,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
         IMediaFilesLoaderService loadMediaItemsService,
         IDeleteFilesCommand deleteFilesCommand,
         IRotateBitmapService rotateBitmapService,
+        IViewModelFactory viewModelFactory,
         ApplicationSettings settings) : base(messenger)
     {
         this.dialogService = dialogService;
@@ -49,6 +55,8 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
         this.rotateBitmapService = rotateBitmapService;
         this.settings = settings;
         DeleteCommand = deleteFilesCommand;
+
+        BackgroundTasks = viewModelFactory.CreateBackgroundTasksViewModel();
     }
 
     [RelayCommand]
@@ -61,7 +69,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
     private async Task RotateAsync()
     {
         var files = SelectedItems.OfType<IBitmapFileInfo>().ToList();
-        var result = await ParallelProcessingUtil.ProcessParallelAsync(files, async (bitmapFile) =>
+        var result = await ParallelizationUtil.ProcessParallelAsync(files, async (bitmapFile) =>
         {
             await rotateBitmapService.RotateClockwise90DegreesAsync(bitmapFile).ConfigureAwait(false);
         });

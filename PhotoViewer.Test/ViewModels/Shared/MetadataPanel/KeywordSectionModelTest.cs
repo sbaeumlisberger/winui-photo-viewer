@@ -21,8 +21,6 @@ namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
 
 public class KeywordSectionModelTest
 {
-    private readonly SequentialTaskRunner writeFilesRunner = new SequentialTaskRunner();
-
     private readonly IMessenger messenger = new StrongReferenceMessenger();
 
     private readonly IMetadataService metadataService = Substitute.For<IMetadataService>();
@@ -31,11 +29,13 @@ public class KeywordSectionModelTest
 
     private readonly IDialogService dialogService = Substitute.For<IDialogService>();
 
+    private readonly IBackgroundTaskService backgroundTaskService = Substitute.For<IBackgroundTaskService>();
+
     private readonly KeywordsSectionModel keywordsSectionModel;
 
     public KeywordSectionModelTest()
     {
-        keywordsSectionModel = new KeywordsSectionModel(writeFilesRunner, messenger, metadataService, suggestionsService, dialogService);
+        keywordsSectionModel = new KeywordsSectionModel(messenger, metadataService, suggestionsService, dialogService, backgroundTaskService);
     }
 
     [Fact]
@@ -105,6 +105,25 @@ public class KeywordSectionModelTest
     {
         keywordsSectionModel.AutoSuggestBoxText = "   ";
         Assert.False(keywordsSectionModel.AddKeywordCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public void AddKeywordCommandCanNotExecute_WhenIsWriting()
+    {
+        var file = MockBitmapFileInfo();
+        keywordsSectionModel.UpdateFilesChanged(new[] { file }, Substitute.For<IList<MetadataView>>());
+        keywordsSectionModel.AutoSuggestBoxText = "test";
+        var tsc = new TaskCompletionSource();
+        metadataService.WriteMetadataAsync(file, MetadataProperties.Keywords, Arg.Any<string[]>()).Returns(tsc.Task);
+        bool canExecuteChanged = false;
+        keywordsSectionModel.AddKeywordCommand.CanExecuteChanged += (_, _) => canExecuteChanged = true;
+
+        keywordsSectionModel.AddKeywordCommand.ExecuteAsync(null);
+
+        Assert.False(keywordsSectionModel.AddKeywordCommand.CanExecute(null));
+        Assert.True(canExecuteChanged);
+       
+        tsc.SetResult();
     }
 
     [Fact]

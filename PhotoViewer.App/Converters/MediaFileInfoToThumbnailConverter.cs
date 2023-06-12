@@ -9,6 +9,7 @@ namespace PhotoViewer.App.Converters;
 
 public class MediaFileInfoToThumbnailConverter : IValueConverter
 {
+    private const int DecodePixelWidth = 512;
 
     public object Convert(object value, Type targetType, object parameter, string language)
     {
@@ -33,7 +34,7 @@ public class MediaFileInfoToThumbnailConverter : IValueConverter
     {
         try
         {
-            bitmapImage.DecodePixelWidth = 512;
+            bitmapImage.DecodePixelWidth = DecodePixelWidth;
 
             using (var thumb = await mediaFile.GetThumbnailAsync())
             {

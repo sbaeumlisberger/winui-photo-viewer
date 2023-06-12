@@ -120,6 +120,12 @@
   <data name="AddPeopleTagErrorDialog_Title" xml:space="preserve">
     <value>Failed to add people tag</value>
   </data>
+  <data name="BackgroundTasksRunningMessage_Multiple" xml:space="preserve">
+    <value>{0} background tasks running</value>
+  </data>
+  <data name="BackgroundTasksRunningMessage_Single" xml:space="preserve">
+    <value>One background task running</value>
+  </data>
   <data name="ComparePage_Title" xml:space="preserve">
     <value>Compare</value>
   </data>
@@ -167,6 +173,15 @@
   </data>
   <data name="SetLockscreenBackgroundFailedDialog_Ttile" xml:space="preserve">
     <value>Failed to set lockscreen background</value>
+  </data>
+  <data name="WaitForBackgroundTaskDialog_Message" xml:space="preserve">
+    <value>Waiting for background tasks to be completed ...</value>
+  </data>
+  <data name="WaitForBackgroundTaskDialog_PrimaryButton" xml:space="preserve">
+    <value>Force quit</value>
+  </data>
+  <data name="WaitForBackgroundTaskDialog_Title" xml:space="preserve">
+    <value>Waiting for background tasks</value>
   </data>
   <data name="WriteMetadataFailedDialog_Title" xml:space="preserve">
     <value>Writing metadata failed</value>

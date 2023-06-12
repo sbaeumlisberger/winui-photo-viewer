@@ -82,7 +82,7 @@ public class MediaFlipViewModelTest
     }
 
     [Fact]
-    public void Receive_MediaFilesLoadedMessage_DeleteStartFileWhileLoadingMoreFiles()
+    public async void Receive_MediaFilesLoadedMessage_DeleteStartFileWhileLoadingMoreFiles()
     {
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[17];
@@ -90,6 +90,7 @@ public class MediaFlipViewModelTest
         var tsc = new TaskCompletionSource<LoadMediaFilesResult>();
 
         messenger.Send(new MediaFilesLoadingMessage(new LoadMediaFilesTask(startFile, tsc.Task)));
+        await mediaFlipViewModel.LastDispatchTask;
 
         Assert.NotNull(mediaFlipViewModel.SelectedItemModel);
         Assert.Equal(startFile, mediaFlipViewModel.SelectedItemModel.MediaItem);
@@ -98,6 +99,7 @@ public class MediaFlipViewModelTest
         Assert.True(mediaFlipViewModel.IsLoadingMoreFiles);
 
         messenger.Send(new MediaFilesDeletedMessage(new[] { startFile }));
+        await mediaFlipViewModel.LastDispatchTask;
 
         Assert.Null(mediaFlipViewModel.SelectedItem);
         Assert.Null(mediaFlipViewModel.SelectedItemModel);
@@ -113,13 +115,14 @@ public class MediaFlipViewModelTest
     }
 
     [Fact]
-    public void Receive_MediaFilesDeletedMessage()
+    public async void Receive_MediaFilesDeletedMessage()
     {
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[17];
         mediaFlipViewModel.SetItems(files, startFile);
 
         messenger.Send(new MediaFilesDeletedMessage(new[] { startFile }));
+        await mediaFlipViewModel.LastDispatchTask;
 
         var expectedSelectedFile = files[18];
         Assert.Equal(files.Count - 1, mediaFlipViewModel.Items.Count);
@@ -130,7 +133,7 @@ public class MediaFlipViewModelTest
     }
 
     [Fact]
-    public void Receive_MediaFilesDeletedMessage_LastItem()
+    public async void Receive_MediaFilesDeletedMessage_LastItem()
     {
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[199];
@@ -138,6 +141,7 @@ public class MediaFlipViewModelTest
         mediaFlipViewModel.SetItems(files, startFile);
 
         messenger.Send(new MediaFilesDeletedMessage(new[] { startFile }));
+        await mediaFlipViewModel.LastDispatchTask;
 
         var expectedSelectedFile = files[198];
         Assert.Equal(files.Count - 1, mediaFlipViewModel.Items.Count);

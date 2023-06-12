@@ -45,7 +45,7 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
                 IsLoadingFailed = false;
                 using var fileStream = await MediaItem.OpenAsync(FileAccessMode.Read);
                 cancellationToken.ThrowIfCancellationRequested();
-                string svgString = await new StreamReader(fileStream.AsStream()).ReadToEndAsync();
+                string svgString = await new StreamReader(fileStream).ReadToEndAsync();
                 cancellationToken.ThrowIfCancellationRequested();
                 Content = "<html>\n" +
                     "   <head>\n" +

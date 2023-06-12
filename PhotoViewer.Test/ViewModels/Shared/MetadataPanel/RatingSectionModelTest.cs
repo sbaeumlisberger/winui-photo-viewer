@@ -14,24 +14,25 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Tocronx.SimpleAsync;
 using Xunit;
+using PhotoViewer.Core.Services;
 
 namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
 
 public class RatingSectionModelTest
 {
-    private readonly SequentialTaskRunner writeFilesRunner = new SequentialTaskRunner();
-
     private readonly IMetadataService metadataService = Substitute.For<IMetadataService>();
 
     private readonly IDialogService dialogService = Substitute.For<IDialogService>();
 
     private readonly IMessenger messenger = new StrongReferenceMessenger();
 
+    private readonly IBackgroundTaskService backgroundTaskService = Substitute.For<IBackgroundTaskService>();
+
     private readonly RatingSectionModel ratingSectionModel;
 
     public RatingSectionModelTest()
     {
-        ratingSectionModel = new RatingSectionModel(writeFilesRunner, metadataService, dialogService, messenger);
+        ratingSectionModel = new RatingSectionModel(metadataService, dialogService, messenger, backgroundTaskService);
     }
 
     [Fact]
@@ -117,8 +118,8 @@ public class RatingSectionModelTest
         ratingSectionModel.UpdateFilesChanged(files, metadata);
 
         ratingSectionModel.Rating = 3;
-        await ratingSectionModel.WriteTask;
 
+        await ratingSectionModel.WriteFilesTask;
         await VerifyReceivedWriteMetadataAsync(files[0], 3);
         await VerifyNotReceivedWriteMetadataAsync(files[1]);
         await VerifyReceivedWriteMetadataAsync(files[2], 3);
