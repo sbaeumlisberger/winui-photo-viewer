@@ -15,15 +15,12 @@ using Windows.Foundation.Collections;
 
 namespace PhotoViewer.App.Views.Dialogs;
 
-public sealed partial class UnhandledExceptionDialog : ContentDialog
+public sealed partial class CrashReportDialog : ContentDialog
 {
-    public bool IsSendErrorReportChecked => sendErrorReportCheckBox.IsChecked ?? false;
-
-    public UnhandledExceptionDialog(Window window, string exceptionMessage)
+    public CrashReportDialog(Window window)
     {
         XamlRoot = window.Content.XamlRoot;
         RequestedTheme = ((FrameworkElement)window.Content).RequestedTheme;
         this.InitializeComponent();
-        messageTextBlock.Text = "An unhandled exception occurred: " + exceptionMessage;
     }
 }

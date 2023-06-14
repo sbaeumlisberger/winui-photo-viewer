@@ -1,5 +1,5 @@
 <ContentDialog
-    x:Class="PhotoViewer.App.Views.Dialogs.UnhandledExceptionDialog"
+    x:Class="PhotoViewer.App.Views.Dialogs.CrashReportDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PhotoViewer.App.Views.Dialogs"
@@ -7,18 +7,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Style="{StaticResource DefaultContentDialogStyle}"
-    Title = "Unhandled Exception"
-    PrimaryButtonText="Exit Application"
-    CloseButtonText="Ignore Exception">
+    Title="Crash detected"
+    PrimaryButtonText="Send Report"
+    CloseButtonText="Cancel">
 
     <StackPanel Spacing="8">
         <TextBlock 
-            x:Name="messageTextBlock"
+            Text="A crash was detected. Would you like to send a report?"
             TextWrapping="Wrap"/>
-        <CheckBox 
-            x:Name="sendErrorReportCheckBox"
-            Content="Send error report with log"
-            IsChecked="True"/>
-    </StackPanel>              
-               
+    </StackPanel>
+
 </ContentDialog>

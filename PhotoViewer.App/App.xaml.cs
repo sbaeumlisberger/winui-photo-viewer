@@ -16,6 +16,7 @@ using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -60,7 +61,7 @@ public partial class App : Application
         Strings.Culture = new CultureInfo(language);
         PhotoViewer.Core.Resources.Strings.Culture = new CultureInfo(language);
 
-        this.InitializeComponent();       
+        this.InitializeComponent();
 
         stopwatch.Stop();
         Log.Info($"App constructor took {stopwatch.ElapsedMilliseconds}ms");
@@ -84,8 +85,30 @@ public partial class App : Application
 
         messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask));
 
-        // TODO check event log for crashes
-        // https://www.c-sharpcorner.com/UploadFile/d551d3/reading-and-querying-eventviewer-efficiently-with-C-Sharp/
+        await Task.Delay(2000);
+        await TryReportCrashAsync();
+    }
+
+    private async Task TryReportCrashAsync()
+    {
+        try
+        {
+            var errors = await Task.Run(() => new EventLogService().GetErrors());
+
+            if (errors.Any())
+            {
+                var dialog = new CrashReportDialog(Window);
+                
+                if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+                {
+                    await new ErrorReportService().SendCrashReportAsync(string.Join("\n\n", errors));
+                }          
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to check or report application crash", ex);
+        }
     }
 
     private ApplicationSettings LoadSettings()
@@ -195,8 +218,7 @@ public partial class App : Application
 
             if (dialog.IsSendErrorReportChecked)
             {
-                Log.Info("Sending error report");
-                await ErrorReportService.TrySendErrorReportAsync();
+                await TrySendErrorReportAsync();
             }
 
             if (dialogResult == ContentDialogResult.Primary)
@@ -214,6 +236,19 @@ public partial class App : Application
         {
             Log.Error("Failed to show unhandled exception dialog, exit application now", e);
             Exit();
+        }
+    }
+
+    private async Task TrySendErrorReportAsync() 
+    {
+        Log.Info("Sending error report");
+        try
+        {
+            await new ErrorReportService().SendErrorReportAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to send crash report: " + ex);
         }
     }
 

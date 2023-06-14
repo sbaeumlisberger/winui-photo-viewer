@@ -20,7 +20,7 @@
                         <Setter Property="Spacing" Value="8"/>
                         <Setter Property="Margin" Value="0,24,0,0"/>
                         <Setter Property="Grid.Row" Value="1"/>
-                    </Style>                    
+                    </Style>
                     <Style x:Key="DialogButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
                         <Setter Property="MinWidth" Value="120"/>
                     </Style>

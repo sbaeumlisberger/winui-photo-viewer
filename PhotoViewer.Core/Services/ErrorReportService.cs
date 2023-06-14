@@ -15,35 +15,48 @@ namespace PhotoViewer.Core.Services;
 
 public class ErrorReportService
 {
-    public static async Task TrySendErrorReportAsync()
+    public async Task SendErrorReportAsync()
     {
-        try
-        {
-            var version = Package.Current.Id.Version;
-            var logFile = await Log.GetLogFileAsync().ConfigureAwait(false);
+        var logFile = await Log.GetLogFileAsync().ConfigureAwait(false);
+        string log = await FileIO.ReadTextAsync(logFile).AsTask().ConfigureAwait(false);
 
-            var bodyBuilder = new StringBuilder();
-            bodyBuilder.AppendLine("App Version: " + version.Major + "." + version.Minor + "." + version.Build);
-            bodyBuilder.AppendLine("OS Version: " + Environment.OSVersion.VersionString);
-            bodyBuilder.AppendLine();
-            bodyBuilder.AppendLine(await FileIO.ReadTextAsync(logFile).AsTask().ConfigureAwait(false));
+        string subject = $"WinUI Photo Viewer Error Report {DateTime.Now:g}";
+        string body = CreateBody(log);
 
-            using var smtpClient = new SmtpClient("smtp-mail.outlook.com", 587) { EnableSsl = true };
-            smtpClient.Credentials = new NetworkCredential("universe-photos@outlook.com", CompileTimeConstants.EMailPassword);
-
-            var emailMessage = new MailMessage();
-            emailMessage.From = new MailAddress("universe-photos@outlook.com");
-            emailMessage.To.Add("s.baeumlisberger@live.de");
-            emailMessage.Subject = $"WinUI Photo Viewer Error Report {DateTime.Now:g}";
-            emailMessage.Body = bodyBuilder.ToString();
-
-            await smtpClient.SendMailAsync(emailMessage).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine("Failed to send error report: " + ex);
-        }
+        await SendMailAsync(subject, body).ConfigureAwait(false);
     }
 
+    public async Task SendCrashReportAsync(string crashInfo)
+    {
+        string subject = $"WinUI Photo Viewer Crash Report {DateTime.Now:g}";
+        string body = CreateBody(crashInfo);
+
+        await SendMailAsync(subject, body).ConfigureAwait(false);
+    }
+
+    private string CreateBody(string message)
+    {
+        var version = Package.Current.Id.Version;
+        var bodyBuilder = new StringBuilder();
+        bodyBuilder.AppendLine("App Version: " + version.Major + "." + version.Minor + "." + version.Build);
+        bodyBuilder.AppendLine("OS Version: " + Environment.OSVersion.VersionString);
+        bodyBuilder.AppendLine();
+        bodyBuilder.AppendLine(message);
+        return bodyBuilder.ToString();
+    }
+
+    private async Task SendMailAsync(string subject, string body)
+    {
+        using var smtpClient = new SmtpClient("smtp-mail.outlook.com", 587) { EnableSsl = true };
+        smtpClient.Credentials = new NetworkCredential("universe-photos@outlook.com", CompileTimeConstants.EMailPassword);
+
+        var emailMessage = new MailMessage();
+        emailMessage.From = new MailAddress("universe-photos@outlook.com");
+        emailMessage.To.Add("s.baeumlisberger@live.de");
+        emailMessage.Subject = subject;
+        emailMessage.Body = body;
+
+        await smtpClient.SendMailAsync(emailMessage).ConfigureAwait(false);
+    }
 
 }

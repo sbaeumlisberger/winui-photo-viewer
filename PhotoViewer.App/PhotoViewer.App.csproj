@@ -29,6 +29,7 @@
     <None Remove="Views\ComparePage.xaml" />
     <None Remove="Views\CompareView.xaml" />
     <None Remove="Views\CropImageTool.xaml" />
+    <None Remove="Views\Dialogs\CrashReportDialog.xaml" />
     <None Remove="Views\Dialogs\DeleteLinkedFilesDialog.xaml" />
     <None Remove="Views\Dialogs\DeleteSingleRawFilesDialog.xaml" />
     <None Remove="Views\Dialogs\EditLocationDialog.xaml" />
@@ -104,6 +105,10 @@
     </Page>
     <Page Update="Views\Dialogs\DeleteSingleRawFilesDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\Dialogs\CrashReportDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\OverviewPageCommandBar.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

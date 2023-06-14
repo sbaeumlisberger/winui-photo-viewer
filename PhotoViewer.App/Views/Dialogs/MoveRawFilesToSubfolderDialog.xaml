@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     x:Name="dialog"
+    Style="{StaticResource DefaultContentDialogStyle}"
     Title="{x:Bind res:Strings.MoveRawFilesToSubfolderDialog_Title}">
 
     <Grid Width="400" MinHeight="120">
