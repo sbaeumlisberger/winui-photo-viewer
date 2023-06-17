@@ -15,6 +15,7 @@ using System.Linq;
 using Microsoft.UI.Xaml.Media.Imaging;
 using PhotoViewer.App.Utils.Logging;
 using Windows.UI;
+using PhotoViewer.App.Models;
 
 namespace PhotoViewer.App.Utils;
 
@@ -77,12 +78,12 @@ internal class PhotoPrintJob : IPrintJob
 
     private static readonly Color ImageBoxBackgroundColor = Color.FromArgb(255, 240, 240, 240);
 
-    public string Title => string.Join(", ", files.Select(file => file.Name));
+    public string Title => string.Join(", ", files.Select(file => file.FileName));
 
-    private readonly IList<IStorageFile> files;
+    private readonly IList<IMediaFileInfo> files;
     private ImageSource[]? images;
 
-    public PhotoPrintJob(IList<IStorageFile> files)
+    public PhotoPrintJob(IList<IMediaFileInfo> files)
     {
         this.files = files;
     }
@@ -319,7 +320,7 @@ internal class PhotoPrintJob : IPrintJob
             images = await Task.WhenAll(files.Select(async file =>
             {
                 var bitmapImage = new BitmapImage();
-                using var stream = await file.OpenAsync(FileAccessMode.Read);
+                using var stream = await file.OpenAsRandomAccessStreamAsync(FileAccessMode.Read);
                 await bitmapImage.SetSourceAsync(stream);
                 return bitmapImage;
             }));
@@ -327,7 +328,7 @@ internal class PhotoPrintJob : IPrintJob
         }
         catch (Exception ex)
         {
-            Log.Error("Failed to load images for printing", ex); // TODO?
+            Log.Error("Failed to load images for printing", ex);
         }
     }
 

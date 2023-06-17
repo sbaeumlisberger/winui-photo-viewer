@@ -156,6 +156,9 @@
   <data name="MetadataPanel_LocationPlaceholderMultipleValues" xml:space="preserve">
     <value>Different values</value>
   </data>
+  <data name="OverviewPage_Title" xml:space="preserve">
+    <value>Overview</value>
+  </data>
   <data name="PeopleTagAlreadyExistingDialog_Message" xml:space="preserve">
     <value>There already exists a people tag with the name "{0}"</value>
   </data>
@@ -173,6 +176,9 @@
   </data>
   <data name="SetLockscreenBackgroundFailedDialog_Ttile" xml:space="preserve">
     <value>Failed to set lockscreen background</value>
+  </data>
+  <data name="SettingsPage_Title" xml:space="preserve">
+    <value>Settings</value>
   </data>
   <data name="WaitForBackgroundTaskDialog_Message" xml:space="preserve">
     <value>Waiting for background tasks to be completed ...</value>

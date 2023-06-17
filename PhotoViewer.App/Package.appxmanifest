@@ -67,6 +67,11 @@
               <uap:FileType ContentType="image/crw">.crw</uap:FileType>
               <uap:FileType ContentType="video/mp4">.mp4</uap:FileType>
               <uap:FileType ContentType="video/avi">.avi</uap:FileType>
+              <uap:FileType ContentType="video/x-m4v">.m4v</uap:FileType>
+              <uap:FileType ContentType="video/webm">.webm</uap:FileType>
+              <uap:FileType ContentType="video/x-matroska">.mkv</uap:FileType>
+              <uap:FileType ContentType="video/mp2t">.ts</uap:FileType>
+              <uap:FileType ContentType="video/quicktime">.mov</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Photo Viewer</uap:DisplayName>
           </uap:FileTypeAssociation>

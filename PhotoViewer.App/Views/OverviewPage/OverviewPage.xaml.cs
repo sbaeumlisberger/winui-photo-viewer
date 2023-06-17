@@ -37,9 +37,13 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        App.Current.Window.Title = Strings.OverviewPage_Title + " - WinUI Photo Viewer"; // TODO use message
+        ViewModel!.OnNavigatedTo();
 
-        printRegistration = printService.RegisterForPrinting(() => new PhotoPrintJob(ViewModel!.SelectedItems.Select(mediaFile => mediaFile.StorageFile).ToList()));
+        printRegistration = printService.RegisterForPrinting(() => 
+        {
+            var files = ViewModel!.SelectedItems.ToList();
+            return new PhotoPrintJob(files);
+        });
     }
 
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)

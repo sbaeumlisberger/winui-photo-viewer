@@ -1,10 +1,12 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core;
+using System;
 using System.Collections.Generic;
 
 namespace PhotoViewer.App.Views;
@@ -41,6 +43,13 @@ public sealed partial class FlipViewPage : Page, IMVVMControl<FlipViewPageModel>
     {
         ViewModel!.OnNavigatedTo(e.Parameter, e.NavigationMode != NavigationMode.New);
 
-        printRegistration = printService.RegisterForPrinting(() => new PhotoPrintJob(new[] { ViewModel.FlipViewModel.SelectedItem!.StorageFile }));
+        printRegistration = printService.RegisterForPrinting(() =>
+        {
+            if (ViewModel!.FlipViewModel.SelectedItem is { } selectedMediaFile)
+            {
+                return new PhotoPrintJob(new[] { selectedMediaFile });
+            }
+            return new PhotoPrintJob(new IMediaFileInfo[0]);
+        });
     }
 }

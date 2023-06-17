@@ -1348,7 +1348,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Overview.
+        ///   Looks up a localized string similar to .
         /// </summary>
         internal static string OverviewPage_Title {
             get {

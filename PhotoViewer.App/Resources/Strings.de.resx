@@ -558,9 +558,6 @@
   <data name="OverviewPage_SelectionInfo" xml:space="preserve">
     <value>{0} Elemente, {1} ausgewählt</value>
   </data>
-  <data name="OverviewPage_Title" xml:space="preserve">
-    <value>Übersicht</value>
-  </data>
   <data name="Printing_CollapseUnusedSpaceTitle" xml:space="preserve">
     <value>Abstände entfernen</value>
   </data>

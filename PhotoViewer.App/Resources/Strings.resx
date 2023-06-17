@@ -559,7 +559,7 @@
     <value>{0} elements, {1} selected</value>
   </data>
   <data name="OverviewPage_Title" xml:space="preserve">
-    <value>Overview</value>
+    <value />
   </data>
   <data name="Printing_CollapseUnusedSpaceTitle" xml:space="preserve">
     <value>Collapse unused space</value>

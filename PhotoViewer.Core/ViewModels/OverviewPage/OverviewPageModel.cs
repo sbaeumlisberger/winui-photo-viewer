@@ -10,6 +10,8 @@ using PhotoViewer.Core.Models;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.Core;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Resources;
 
 namespace PhotoViewer.App.ViewModels;
 
@@ -55,6 +57,11 @@ public partial class OverviewPageModel : ViewModelBase
         ContextMenuModel.Cleanup();
         itemModels.Values.ForEach(itemModel => itemModel.Cleanup());
         itemModels.Clear();
+    }
+
+    public void OnNavigatedTo() 
+    {
+        Messenger.Send(new ChangeWindowTitleMessage(Strings.OverviewPage_Title));
     }
 
     public void ShowItem(IMediaFileInfo mediaItem)

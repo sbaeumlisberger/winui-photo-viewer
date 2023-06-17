@@ -25,10 +25,8 @@ public sealed partial class SelectionRect : UserControl
     public Size AspectRadio { get => (Size)GetValue(AspectRadioProperty); set => SetValue(AspectRadioProperty, value); }
     public float UIScaleFactor { get => (float)GetValue(UIScaleFactorProperty); set => SetValue(UIScaleFactorProperty, value); }
 
-
-    // TODO use resources
-    private double CornerSize => 8;
-    private double StrokeThickness => 1;
+    private double CornerSize => (double)Resources["CornerSize"]; 
+    private double StrokeThickness => (double)Resources["StrokeThickness"];
 
     private Canvas? Canvas => (Canvas?)Parent;
 
@@ -92,7 +90,7 @@ public sealed partial class SelectionRect : UserControl
             return;
         }
 
-        double cornerOffset = CornerSize / 2 - StrokeThickness / 2;
+        double cornerOffset = CornerSize/ 2 - StrokeThickness / 2;
         var cornerLeftTopTranslateTransform = new TranslateTransform() { X = -cornerOffset, Y = -cornerOffset };
         var cornerRightTopTranslateTransform = new TranslateTransform() { X = cornerOffset, Y = -cornerOffset };
         var cornerRightBottomTranslateTransform = new TranslateTransform() { X = cornerOffset, Y = cornerOffset };

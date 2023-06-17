@@ -13,7 +13,7 @@ internal class VideoFileInfo : MediaFileInfoBase, IVideoFileInfo
 
     public static readonly IReadOnlySet<string> SupportedFileExtensions = new HashSet<string>()
     {
-        ".mp4", ".avi", ".webm", ".mkv", ".ts" // TODO add more
+        ".mp4", ".m4v", ".avi", ".webm", ".mkv", ".ts", ".mov", 
     };
 
     public VideoFileInfo(IStorageFile file) : base(file)

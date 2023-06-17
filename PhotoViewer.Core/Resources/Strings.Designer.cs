@@ -178,6 +178,15 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Overview.
+        /// </summary>
+        public static string OverviewPage_Title {
+            get {
+                return ResourceManager.GetString("OverviewPage_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There already exists a people tag with the name &quot;{0}&quot;.
         /// </summary>
         public static string PeopleTagAlreadyExistingDialog_Message {
@@ -228,6 +237,15 @@ namespace PhotoViewer.Core.Resources {
         public static string SetLockscreenBackgroundFailedDialog_Ttile {
             get {
                 return ResourceManager.GetString("SetLockscreenBackgroundFailedDialog_Ttile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string SettingsPage_Title {
+            get {
+                return ResourceManager.GetString("SettingsPage_Title", resourceCulture);
             }
         }
         

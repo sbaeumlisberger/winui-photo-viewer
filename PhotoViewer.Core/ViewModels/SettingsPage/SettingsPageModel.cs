@@ -46,6 +46,11 @@ namespace PhotoViewer.Core.ViewModels
             Settings.PropertyChanged -= Settings_PropertyChanged;
         }
 
+        public void OnNavigatedTo() 
+        {
+            Messenger.Send(new ChangeWindowTitleMessage(Strings.SettingsPage_Title));
+        }
+
         private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             settingsService.SaveSettings(Settings);
