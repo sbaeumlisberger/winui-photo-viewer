@@ -57,7 +57,7 @@
                     </Style>
                 </ToolTip.Style>
                 <StackPanel Spacing="8">
-                    <Image MaxHeight="600" x:Name="toolTipImage"/>
+                    <Border x:Name="toolTipPreview"/>
                     <TextBlock
                         Text="{x:Bind ViewModel.DisplayName, Mode=OneWay}"
                         TextAlignment="Center"/>

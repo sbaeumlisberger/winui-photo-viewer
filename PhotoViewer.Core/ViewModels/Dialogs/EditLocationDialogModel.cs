@@ -19,6 +19,8 @@ public partial class EditLocationDialogModel : ViewModelBase
 
     public EditLocationDialogDetailsTabModel Details { get; }
 
+    public bool CanSave { get; set; } = true;
+
     private readonly ILocationService locationService;
 
     private readonly Func<Location?, Task> onSave;
@@ -29,6 +31,7 @@ public partial class EditLocationDialogModel : ViewModelBase
         this.onSave = onSave;
         Details = new EditLocationDialogDetailsTabModel(clipboardService);
         Details.LocationChanged += Details_LocationChanged;
+        Details.PropertyChanged += Details_PropertyChanged;
         Location = location;
         Details.Update(Location);
     }
@@ -36,6 +39,14 @@ public partial class EditLocationDialogModel : ViewModelBase
     private void Details_LocationChanged(object? sender, Location? location)
     {
         Location = location;
+    }
+
+    private void Details_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Details.CanSave))
+        {
+            CanSave = Details.CanSave;
+        }
     }
 
     partial void OnLocationChanged()
@@ -65,7 +76,7 @@ public partial class EditLocationDialogModel : ViewModelBase
         Location = null;
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanSave))]
     public async Task Save()
     {
         await onSave.Invoke(Location);

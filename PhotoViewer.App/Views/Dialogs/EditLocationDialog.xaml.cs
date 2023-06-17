@@ -10,18 +10,12 @@ using PhotoViewer.App.Utils.Logging;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Windows.Devices.Geolocation;
-using MetadataAPI.Data;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using System.Net;
 using System.Threading.Tasks;
-using System.Globalization;
 using System.ComponentModel;
-using Microsoft.UI.Xaml;
 using Tocronx.SimpleAsync;
-using Windows.Services.Maps;
 using Windows.ApplicationModel.DataTransfer;
-using System.Security.Cryptography;
 using PhotoViewer.Core;
 
 namespace PhotoViewer.App.Views;
@@ -57,6 +51,8 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
 
     private readonly SequentialTaskRunner updateSuggestionsRunner = new SequentialTaskRunner();
 
+    private Location? locationShowedOnMap;
+
     public EditLocationDialog()
     {
         this.InitializeComponentMVVM();
@@ -80,7 +76,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
     {
         if (e.PropertyName == nameof(ViewModel.Location) && pivot.SelectedIndex == 0)
         {
-            await ShowLocationOnMapAsync(ViewModel!.Location);
+            await ShowLocationOnMapAsync(ViewModel!.Location, centerAndZoomLocation: false);
         }
     }
 
@@ -88,7 +84,11 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
     {
         if (pivot.SelectedIndex == 0 && e.RemovedItems.Count == 1)
         {
-            await ShowLocationOnMapAsync(ViewModel!.Location);
+            var location = ViewModel!.Location;
+            if (location != locationShowedOnMap)
+            {
+                await ShowLocationOnMapAsync(location, centerAndZoomLocation: true);
+            }
         }
     }
 
@@ -98,7 +98,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
         string eventType = data["event"]!.GetValue<string>();
         if (eventType == "mapReady")
         {
-            await ShowLocationOnMapAsync(ViewModel!.Location);
+            await ShowLocationOnMapAsync(ViewModel!.Location, centerAndZoomLocation: true);
         }
         else if (eventType == "mapClick")
         {
@@ -108,8 +108,10 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
         }
     }
 
-    private async Task ShowLocationOnMapAsync(Location? location)
+    private async Task ShowLocationOnMapAsync(Location? location, bool centerAndZoomLocation)
     {
+        locationShowedOnMap = location;
+
         Geopoint? geopoint = null;
 
         if (location?.Geopoint != null)
@@ -137,8 +139,13 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
             var mapLocation = new Microsoft.Maps.Location({{latitude.ToInvariantString()}}, {{longitude.ToInvariantString()}});
             var pushpin = new Microsoft.Maps.Pushpin(mapLocation, { title: '{{title}}'});
             map.entities.push(pushpin);
-            map.setView({ center: mapLocation, zoom: 10 });
             """;
+
+        if (centerAndZoomLocation)
+        {
+            script += "\n";
+            script += "map.setView({ center: mapLocation, zoom: 10 });";
+        }
 
         await mapWebView.ExecuteScriptAsync(script);
     }

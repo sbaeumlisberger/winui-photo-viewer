@@ -47,31 +47,7 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
                 cancellationToken.ThrowIfCancellationRequested();
                 string svgString = await new StreamReader(fileStream).ReadToEndAsync();
                 cancellationToken.ThrowIfCancellationRequested();
-                Content = "<html>\n" +
-                    "   <head>\n" +
-                    "       <style>\n" +
-                    "           body {\n" +
-                    "               margin: 0px;\n" +
-                    "           }\n" +
-                    "           \n" +
-                    "           ::-webkit-scrollbar {\n" +
-                    "               display: none;\n" +
-                    "           }\n" +
-                    "           \n" +
-                    "           svg {\n" +
-                    "               max-width: 100%;\n" +
-                    "               max-height: 100%;\n" +
-                    "               position: absolute;\n" +
-                    "               top: 50%;\n" +
-                    "               left: 50%;\n" +
-                    "               translate: -50% -50%;\n" +
-                    "           }\n" +
-                    "       </style>\n" +
-                    "   </head>\n" +
-                    "   <body>\n" +
-                    "       " + svgString + "\n" +
-                    "   </body>\n" +
-                    "</html>\n";
+                Content = SvgUtil.EmbedInHtml(svgString);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {

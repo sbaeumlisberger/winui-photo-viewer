@@ -14,6 +14,11 @@ using PhotoViewer.App.Converters;
 using PhotoViewer.Core.Models;
 using Microsoft.UI.Xaml.Input;
 using Windows.System;
+using PhotoViewer.App.Models;
+using System.IO;
+using System.Threading;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 
 namespace PhotoViewer.App.Views;
 
@@ -50,32 +55,57 @@ public sealed partial class OverviewItem : UserControl, IMVVMControl<OverviewIte
 
     private async void ToolTip_Opened(object sender, RoutedEventArgs e)
     {
-        if (ViewModel is not null)
+        if (ViewModel is null)
         {
-            if (ViewModel.MediaFile is IBitmapFileInfo) // TODO vector graphics and videos
+            Log.Error("Could not show preview because view model was null.");
+            return;
+        }
+
+        try
+        {
+            if (ViewModel.MediaFile is IBitmapFileInfo bitmapFile)
             {
-                try
+                var bitmapImage = new BitmapImage();
+                image = new Image() { Source = bitmapImage, MaxWidth = 600, MaxHeight = 600 };
+                toolTipPreview.Child = image;
+                using var stream = await bitmapFile.OpenAsRandomAccessStreamAsync(FileAccessMode.Read);
+                await bitmapImage.SetSourceAsync(stream);
+            }
+            else if (ViewModel.MediaFile is IVectorGraphicFileInfo vectorGraphicFile)
+            {
+                var webView = new WebView2() { Width = 600, Height = 400 };
+                toolTipPreview.Child = webView;
+                await webView.EnsureCoreWebView2Async();
+                using var stream = await vectorGraphicFile.OpenAsync(FileAccessMode.Read);
+                string svgString = await new StreamReader(stream).ReadToEndAsync();
+                webView.NavigateToString(SvgUtil.EmbedInHtml(svgString));
+            }
+            else if (ViewModel.MediaFile is IVideoFileInfo videoFile)
+            {
+                var mediaPlayerElement = new MediaPlayerElement() { Width = 600, Height = 400 };
+                toolTipPreview.Child = mediaPlayerElement;
+                var stream = await videoFile.OpenAsRandomAccessStreamAsync(FileAccessMode.Read);
+                var mediaSource = MediaSource.CreateFromStream(stream, videoFile.ContentType);
+                var mediaPlayer = new MediaPlayer() { Source = mediaSource, AutoPlay = true };
+                mediaPlayerElement.SetMediaPlayer(mediaPlayer);
+                mediaPlayerElement.Unloaded += (_, _) =>
                 {
-                    var bitmapImage = new BitmapImage();
-                    toolTipImage.Source = bitmapImage;
-                    using var stream = await ViewModel.MediaFile.OpenAsRandomAccessStreamAsync(FileAccessMode.Read);
-                    await bitmapImage.SetSourceAsync(stream);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Failed to load image.", ex);
-                }
+                    mediaPlayerElement.SetMediaPlayer(null);
+                    mediaPlayer.Dispose();
+                    mediaSource.Dispose();
+                    stream.Dispose();
+                };
             }
         }
-        else
+        catch (Exception ex)
         {
-            Log.Error("Could not show image preview because view model was null.");
+            Log.Error("Failed to load image.", ex);
         }
     }
 
     private void ToolTip_Closed(object sender, RoutedEventArgs e)
     {
-        toolTipImage.Source = null;
+        toolTipPreview.Child = null;
     }
 
     private string ConvertRatingToStars(int rating)

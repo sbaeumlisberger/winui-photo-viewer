@@ -32,6 +32,8 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
 
     public IList<AltitudeReferenceSystem> AvailableAltitudeReferenceSystems => Enum.GetValues<AltitudeReferenceSystem>();
 
+    public bool CanSave { get; set; } = true;
+
     private bool CanCopyCoordinates => Latitude.Trim() != string.Empty && Longitude.Trim() != string.Empty;
 
     private readonly IClipboardService clipboardService;
@@ -48,10 +50,9 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
 
     private void EditLocationDialogDetailsTabModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (!isUpdating && TryParseLocation(out var location))
+        if (!isUpdating)
         {
-            this.location = location;
-            LocationChanged?.Invoke(this, location);
+            ValidateAndParseLocation();
         }
     }
 
@@ -71,6 +72,7 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
         Longitude = location?.Geopoint?.Position.Longitude.ToInvariantString() ?? string.Empty;
         Altitude = location?.Geopoint?.Position.Altitude.ToString() ?? string.Empty;
         AltitudeReferenceSystem = location?.Geopoint?.AltitudeReferenceSystem ?? AltitudeReferenceSystem.Unspecified;
+        CanSave = true;
         isUpdating = false;
     }
 
@@ -80,49 +82,65 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
         clipboardService.CopyText(Latitude + ", " + Longitude);
     }
 
-    public bool TryParseLocation(out Location? location)
+    private void ValidateAndParseLocation()
     {
-        try
-        {
-            Address? address = null;
-            if (!string.IsNullOrEmpty(Latitude) || !string.IsNullOrEmpty(City)
-                || !string.IsNullOrEmpty(Region) || !string.IsNullOrEmpty(Country))
-            {
-                address = new Address()
-                {
-                    Street = Street,
-                    City = City,
-                    Region = Region,
-                    Country = Country,
-                };
-            }
+        bool valid = true;
 
-            Geopoint? geopoint = null;
-            if (!string.IsNullOrEmpty(Latitude) && !string.IsNullOrEmpty(Longitude))
+        Address? address = null;
+
+        if (!string.IsNullOrEmpty(Latitude) || !string.IsNullOrEmpty(City)
+            || !string.IsNullOrEmpty(Region) || !string.IsNullOrEmpty(Country))
+        {
+            address = new Address()
+            {
+                Street = Street,
+                City = City,
+                Region = Region,
+                Country = Country,
+            };
+        }
+
+        Geopoint? geopoint = null;
+
+        if (AnyFieldFilled(Latitude, Longitude, Altitude))
+        {
+            if (double.TryParse(Latitude, CultureInfo.InvariantCulture, out double latitude)
+                && latitude >= -90 && latitude <= 90
+                && double.TryParse(Longitude, CultureInfo.InvariantCulture, out double longitude)
+                && longitude >= -180 && longitude <= 180
+                && (double.TryParse(Altitude, out double altitude) || string.IsNullOrEmpty(Altitude)))
             {
                 geopoint = new Geopoint(new BasicGeoposition()
                 {
-                    Latitude = double.Parse(Latitude, CultureInfo.InvariantCulture),
-                    Longitude = double.Parse(Longitude, CultureInfo.InvariantCulture),
-                    Altitude = !string.IsNullOrEmpty(Altitude) ? double.Parse(Altitude) : 0,
+                    Latitude = latitude,
+                    Longitude = longitude,
+                    Altitude = altitude,
                 }, AltitudeReferenceSystem);
-            }
-
-            if (address is not null || geopoint is not null)
-            {
-                location = new Location(address, geopoint);
             }
             else
             {
-                location = null;
+                valid = false;
             }
-            return true;
         }
-        catch (Exception ex)
+
+        Location? location = null;
+
+        if (address is not null || geopoint is not null)
         {
-            Log.Error("Failed to process input", ex); // TODO
-            location = null;
-            return false;
+            location = new Location(address, geopoint);
         }
+
+        if (location != this.location)
+        {
+            this.location = location;
+            LocationChanged?.Invoke(this, location);
+        }
+
+        CanSave = valid;
+    }
+
+    private bool AnyFieldFilled(params string[] fields)
+    {
+        return fields.Any(field => !string.IsNullOrEmpty(field));
     }
 }

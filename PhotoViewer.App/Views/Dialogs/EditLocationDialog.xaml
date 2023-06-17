@@ -12,6 +12,7 @@
     Title="{x:Bind res:Strings.EditLocationDialog_Title}"
     PrimaryButtonText="{x:Bind res:Strings.EditLocationDialog_Save}"
     PrimaryButtonCommand="{x:Bind ViewModel.SaveCommand}"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.CanSave, Mode=OneWay}"
     CloseButtonText="{x:Bind res:Strings.EditLocationDialog_Cancel}"
     DefaultButton="Primary">
 
