@@ -462,6 +462,9 @@
   <data name="MetadataPanel_KeywordsHeader" xml:space="preserve">
     <value>Schlagwörter</value>
   </data>
+  <data name="MetadataPanel_LoadingError" xml:space="preserve">
+    <value>Ein Fehler ist aufgetreten</value>
+  </data>
   <data name="MetadataPanel_LocationHeader" xml:space="preserve">
     <value>Aufnahmeort</value>
   </data>

@@ -102,6 +102,10 @@
                     <TextBlock Margin="0,16,0,0" Text="{x:Bind res:Strings.MetadataPanel_AnyFileNotSupported}"/>
                 </StackPanel>
 
+                <StackPanel Visibility="{x:Bind ViewModel.IsErrorOccured, Mode=OneWay}">
+                    <TextBlock Margin="0,16,0,0" Text="{x:Bind res:Strings.MetadataPanel_LoadingError}"/>
+                </StackPanel>
+
                 <StackPanel Visibility="{x:Bind ViewModel.IsInputVisible, Mode=OneWay}">
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_TitleHeader}" Style="{StaticResource HeaderStyle}"/>

@@ -33,6 +33,8 @@ namespace PhotoViewer.Core.ViewModels
 
         public bool IsLoaded => !IsLoading;
 
+        public bool IsErrorOccured { get; set; } = false;
+
         public bool IsNoFilesSelectedMessageVisible { get; private set; } = true;
 
         public bool IsInputVisible { get; private set; } = false;
@@ -117,15 +119,6 @@ namespace PhotoViewer.Core.ViewModels
 
         partial void OnFilesChanged()
         {
-            supportedFiles = Files.OfType<IBitmapFileInfo>().Where(file => file.IsMetadataSupported).ToList();
-
-            IsNoFilesSelectedMessageVisible = !Files.Any();
-
-            bool allFilsSupported = supportedFiles.Count == Files.Count;
-
-            IsInputVisible = Files.Any() && allFilsSupported;
-            IsUnsupportedFilesMessageVisibile = Files.Any() && !allFilsSupported;
-
             updateRunner.RunAndCancelPrevious(Update);
         }
 
@@ -133,25 +126,43 @@ namespace PhotoViewer.Core.ViewModels
         {
             IsLoading = true;
 
-            try
+            supportedFiles = Files.OfType<IBitmapFileInfo>().Where(file => file.IsMetadataSupported).ToList();
+            bool allFilsSupported = supportedFiles.Count == Files.Count;
+
+            IsNoFilesSelectedMessageVisible = !Files.Any();         
+            IsUnsupportedFilesMessageVisibile = Files.Any() && !allFilsSupported;
+
+            if (Files.Any() && allFilsSupported)
             {
-                var metadata = await supportedFiles.MapParallelAsync(metadataService.GetMetadataAsync, cancellationToken);
+                try
+                {
+                    var metadata = await supportedFiles.MapParallelAsync(metadataService.GetMetadataAsync, cancellationToken);
 
-                cancellationToken.ThrowIfCancellationRequested();
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                TitleTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
-                LocationSectionModel.UpdateFilesChanged(supportedFiles, metadata);
-                PeopleSectionModel.UpdateFilesChanged(supportedFiles, metadata);
-                KeywordsSectionModel.UpdateFilesChanged(supportedFiles, metadata);
-                RatingSectionModel.UpdateFilesChanged(supportedFiles, metadata);
-                AuthorTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
-                CopyrightTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
-                DateTakenSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+                    TitleTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
+                    LocationSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+                    PeopleSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+                    KeywordsSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+                    RatingSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+                    AuthorTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
+                    CopyrightTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
+                    DateTakenSectionModel.UpdateFilesChanged(supportedFiles, metadata);
+
+                    IsErrorOccured = false;
+                    IsInputVisible = true;
+                }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    Log.Error("Failed to update metadata panel", ex);
+                    IsErrorOccured = true;
+                    IsInputVisible = false;
+                }
             }
-            catch (Exception ex) when (ex is not OperationCanceledException) 
+            else 
             {
-                // TODO show dialog
-                Log.Error("Failed to update metadata panel", ex);
+                IsErrorOccured = false;
+                IsInputVisible = false;
             }
            
             IsLoading = false;

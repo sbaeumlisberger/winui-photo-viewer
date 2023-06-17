@@ -145,7 +145,6 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
 
             var modifiedFiles = new List<IBitmapFileInfo>();
 
-            // TODO show progress dialog
             var result = await WriteFilesAsync(async file =>
             {
                 if (await gpxService.TryApplyGpxTrackToFile(gpxTrack, file))

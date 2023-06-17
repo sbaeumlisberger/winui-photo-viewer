@@ -1096,6 +1096,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred.
+        /// </summary>
+        internal static string MetadataPanel_LoadingError {
+            get {
+                return ResourceManager.GetString("MetadataPanel_LoadingError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Location.
         /// </summary>
         internal static string MetadataPanel_LocationHeader {
