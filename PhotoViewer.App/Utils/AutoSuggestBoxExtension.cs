@@ -11,6 +11,7 @@ using System.Windows.Input;
 using Windows.System;
 
 namespace PhotoViewer.App.Utils;
+
 public enum SuggestionListDirection
 {
     Auto,
@@ -40,106 +41,125 @@ public class AutoSuggestBoxExtension
 
     private static void OnIsSuggestionListOverflowEnabledChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
     {
-        WhenSuggestionListOpened((AutoSuggestBox)obj, autoSuggestBox =>
+        WhenSuggestionListOpened((AutoSuggestBox)obj, (autoSuggestBox, popup) =>
         {
-            var suggestionsContainer = FindSuggestionsContainer(autoSuggestBox);
+            var suggestionsContainer = (FrameworkElement)popup.Child;
 
             if (GetIsSuggestionListOverflowEnabled(autoSuggestBox))
             {
-                suggestionsContainer.SizeChanged += SuggestionsContainer_SizeChanged;
+                suggestionsContainer.SizeChanged += onSuggestionsContainerSizeChanged;
             }
             else
             {
-                suggestionsContainer.SizeChanged -= SuggestionsContainer_SizeChanged;
+                suggestionsContainer.SizeChanged -= onSuggestionsContainerSizeChanged;
+            }
+
+            static void onSuggestionsContainerSizeChanged(object sender, SizeChangedEventArgs e)
+            {
+                var suggestionsContainer = (Border)sender;
+                suggestionsContainer.MinWidth = !double.IsNaN(suggestionsContainer.Width) ? suggestionsContainer.Width : 0;
+                suggestionsContainer.Width = double.NaN;
             }
         });
     }
 
     private static void OnSuggestionListDirectionChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
     {
-        WhenSuggestionListOpened((AutoSuggestBox)obj, autoSuggestBox =>
+        WhenSuggestionListOpened((AutoSuggestBox)obj, (autoSuggestBox, popup) =>
         {
-            var suggestionListDirection = GetSuggestionListDirection(autoSuggestBox);
+            var suggestionsContainer = (FrameworkElement)popup.Child;
 
-            var popup = FindSuggestionsPopup(autoSuggestBox);
+            var suggestionListDirection = GetSuggestionListDirection(autoSuggestBox);
 
             if (autoSuggestBox.GetValue(VerticalOffsetChangedCallbackTokenProperty) is long verticalOffsetCallbackToken)
             {
                 popup.UnregisterPropertyChangedCallback(Popup.VerticalOffsetProperty, verticalOffsetCallbackToken);
             }
 
-            if (suggestionListDirection == SuggestionListDirection.Down)
+            suggestionsContainer.SizeChanged -= onSuggestionsContainerSizeChanged;
+
+            if (suggestionListDirection != SuggestionListDirection.Auto)
             {
-                autoSuggestBox.SetValue(VerticalOffsetChangedCallbackTokenProperty, popup.RegisterPropertyChangedCallback(Popup.VerticalOffsetProperty, (obj, dp) =>
+                var token = popup.RegisterPropertyChangedCallback(Popup.VerticalOffsetProperty, (obj, dp) =>
                 {
-                    ListView listView = (ListView)((Border)popup.Child).Child;
+                    update();
+                });
+                autoSuggestBox.SetValue(VerticalOffsetChangedCallbackTokenProperty, token);
 
-                    var actualItemOrder = listView.Items;
-                    var expectedItemOrder = ((IEnumerable)autoSuggestBox.ItemsSource).Cast<object>().ToList();
+                suggestionsContainer.SizeChanged += onSuggestionsContainerSizeChanged;
 
-                    if (!actualItemOrder.SequenceEqual(expectedItemOrder))
-                    {
-                        listView.ItemsSource = expectedItemOrder.ToList();
-                    }
-
-                    popup.VerticalOffset = autoSuggestBox.ActualHeight;
-                }));
+                update();
             }
-            else if (suggestionListDirection == SuggestionListDirection.Up)
+
+            void onSuggestionsContainerSizeChanged(object sender, SizeChangedEventArgs e)
             {
-                autoSuggestBox.SetValue(VerticalOffsetChangedCallbackTokenProperty, popup.RegisterPropertyChangedCallback(Popup.VerticalOffsetProperty, (obj, dp) =>
+                update();
+            }
+
+            void update()
+            {
+                ListView listView = (ListView)((Border)popup.Child).Child;
+
+                var actualItemOrder = listView.Items;
+
+                if (autoSuggestBox.ItemsSource is IEnumerable itemSource)
                 {
-                    ListView listView = (ListView)((Border)popup.Child).Child;
-
-                    var actualItemOrder = listView.Items;
-                    var expectedItemOrder = ((IEnumerable)autoSuggestBox.ItemsSource).Cast<object>().Reverse().ToList();
-
-                    if (!actualItemOrder.SequenceEqual(expectedItemOrder))
+                    if (suggestionListDirection == SuggestionListDirection.Down)
                     {
-                        listView.ItemsSource = expectedItemOrder.ToList();
-                    }
+                        var expectedItemOrder = itemSource.Cast<object>().ToList();
 
-                    popup.VerticalOffset = -((Border)popup.Child).ActualHeight;
-                }));
+                        if (!actualItemOrder.SequenceEqual(expectedItemOrder))
+                        {
+                            listView.ItemsSource = expectedItemOrder.ToList();
+                        }
+
+                        popup.VerticalOffset = autoSuggestBox.ActualHeight;
+                    }
+                    else if (suggestionListDirection == SuggestionListDirection.Up)
+                    {
+                        var expectedItemOrder = itemSource.Cast<object>().Reverse().ToList();
+
+                        if (!actualItemOrder.SequenceEqual(expectedItemOrder))
+                        {
+                            listView.ItemsSource = expectedItemOrder.ToList();
+                        }
+
+                        popup.VerticalOffset = -((Border)popup.Child).ActualHeight;
+                    }
+                }
             }
         });
     }
 
-    private static void SuggestionsContainer_SizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        var suggestionsContainer = (Border)sender;
-        suggestionsContainer.MinWidth = !double.IsNaN(suggestionsContainer.Width) ? suggestionsContainer.Width : 0;
-        suggestionsContainer.Width = double.NaN;
-    }
-
-    private static FrameworkElement FindSuggestionsContainer(AutoSuggestBox autoSuggestBox)
-    {
-        var popup = FindSuggestionsPopup(autoSuggestBox);
-        return (FrameworkElement)popup.Child;
-    }
-
-    private static Popup FindSuggestionsPopup(AutoSuggestBox autoSuggestBox)
-    {
-        return (Popup)autoSuggestBox.FindChild("SuggestionsPopup")!;
-    }
-
-    private static void WhenSuggestionListOpened(AutoSuggestBox autoSuggestBox, Action<AutoSuggestBox> callback)
+    private static void WhenSuggestionListOpened(AutoSuggestBox autoSuggestBox, Action<AutoSuggestBox, Popup> callback)
     {
         if (autoSuggestBox.GetValue(IsSuggestionListOpenChangedCallbackTokenProperty) is long token)
         {
             autoSuggestBox.UnregisterPropertyChangedCallback(AutoSuggestBox.IsSuggestionListOpenProperty, token);
         }
 
-        token = default;
         token = autoSuggestBox.RegisterPropertyChangedCallbackSafely(AutoSuggestBox.IsSuggestionListOpenProperty, isSuggestionListOpenPropertyChangedCallback);
-        autoSuggestBox.SetValue(IsSuggestionListOpenChangedCallbackTokenProperty, token); 
+        autoSuggestBox.SetValue(IsSuggestionListOpenChangedCallbackTokenProperty, token);
 
-        void isSuggestionListOpenPropertyChangedCallback(DependencyObject sender, DependencyProperty dp) 
+        void isSuggestionListOpenPropertyChangedCallback(DependencyObject sender, DependencyProperty dp)
         {
-            autoSuggestBox.UnregisterPropertyChangedCallback(AutoSuggestBox.IsSuggestionListOpenProperty, token);
-            autoSuggestBox.SetValue(IsSuggestionListOpenChangedCallbackTokenProperty, null);
-            callback(autoSuggestBox);
+            if (autoSuggestBox.GetValue(IsSuggestionListOpenChangedCallbackTokenProperty) is long token)
+            {
+                autoSuggestBox.UnregisterPropertyChangedCallback(AutoSuggestBox.IsSuggestionListOpenProperty, token);
+                autoSuggestBox.SetValue(IsSuggestionListOpenChangedCallbackTokenProperty, null);
+            }
+            callback(autoSuggestBox, FindSuggestionsPopup(autoSuggestBox));
         }
+
+        if (autoSuggestBox.IsSuggestionListOpen)
+        {
+            callback(autoSuggestBox, FindSuggestionsPopup(autoSuggestBox));
+        }
+    }
+
+    private static Popup FindSuggestionsPopup(AutoSuggestBox autoSuggestBox)
+    {
+        return (Popup)autoSuggestBox.FindChild("SuggestionsPopup")!;
     }
 
 }

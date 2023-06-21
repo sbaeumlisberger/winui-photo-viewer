@@ -17,7 +17,7 @@ public sealed partial class VideoFlipViewItem : UserControl, IMVVMControl<VideoF
 {
     public VideoFlipViewItem()
     {
-        this.InitializeComponentMVVM(updateBindingsAlways: true);
+        this.InitializeComponentMVVM();
     }
 
     partial void ConnectToViewModel(VideoFlipViewItemModel viewModel)

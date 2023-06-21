@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PhotoViewer.App.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace PhotoViewer.Core.Services
 
         IReadOnlyList<string> GetRecentSuggestions();
 
-        IReadOnlyList<string> FindMatches(string query, int count = 10);
+        IReadOnlyList<string> FindMatches(string query, int max = 10);
 
         Task AddSuggestionAsync(string suggestion);
 
@@ -64,13 +65,17 @@ namespace PhotoViewer.Core.Services
             return recent;
         }
 
-        public IReadOnlyList<string> FindMatches(string query, int count)
+        public IReadOnlyList<string> FindMatches(string query, int max)
         {
+            if (string.IsNullOrWhiteSpace(query)) 
+            {
+                return recent.Take(max).ToList();
+            }
             return suggestions
                 .Where(suggestion => suggestion.Contains(query, StringComparison.CurrentCultureIgnoreCase))
                 .OrderByDescending(suggestion => suggestion.StartsWith(query, StringComparison.CurrentCultureIgnoreCase))
                 .ThenBy(suggestion => suggestion)
-                .Take(count)
+                .Take(max)
                 .ToList();
         }
 

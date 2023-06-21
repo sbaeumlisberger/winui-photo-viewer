@@ -118,7 +118,8 @@
                 x:Name="autoSuggestBoxContainer"                
                 Visibility="Collapsed"
                 RenderTransformOrigin="0.5,0"
-                RenderTransform="{StaticResource UIScaleTransform}">
+                RenderTransform="{StaticResource UIScaleTransform}"
+                SizeChanged="AutoSuggestBoxContainer_SizeChanged">
                 <StackPanel
                     Margin="0,8,0,8"     
                     Orientation="Horizontal"
@@ -134,8 +135,7 @@
                         PlaceholderText="{x:Bind res:Strings.TagPeopleTool_NamePlaceholder}"
                         utils:EnterKeyExtension.Command="{x:Bind ViewModel.AddPersonCommand}"
                         QuerySubmitted="AutoSuggestBox_QuerySubmitted"
-                        utils:AutoSuggestBoxExtension.IsSuggestionListOverflowEnabled="True"
-                        utils:AutoSuggestBoxExtension.SuggestionListDirection="Down"                       
+                        utils:AutoSuggestBoxExtension.IsSuggestionListOverflowEnabled="True"                      
                         PreviewKeyDown="AutoSuggestBox_PreviewKeyDown" 
                         KeyDown="AutoSuggestBox_KeyDown"
                         QueryIcon="Accept"/>

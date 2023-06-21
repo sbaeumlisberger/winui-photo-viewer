@@ -12,7 +12,7 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
 {
     public BitmapFlipViewItem()
     {
-        this.InitializeComponentMVVM(updateBindingsAlways: true);
+        this.InitializeComponentMVVM();
         bitmapViewer.ScrollViewer.ViewChanged += ScrollViewer_ViewChanged;
     }
 

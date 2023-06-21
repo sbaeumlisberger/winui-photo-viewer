@@ -15,7 +15,7 @@ public sealed partial class VectorGraphicFlipViewItem : UserControl, IMVVMContro
 {
     public VectorGraphicFlipViewItem()
     {
-        this.InitializeComponentMVVM(updateBindingsAlways: true);
+        this.InitializeComponentMVVM();
         scrollViewer.EnableAdvancedZoomBehaviour();
     }
 

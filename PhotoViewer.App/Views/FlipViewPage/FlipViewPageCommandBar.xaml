@@ -134,10 +134,10 @@
     </AppBarButton>
 
     <!-- enable keyboard accelerators for commands in menu flyout of secondary command -->
-    <AppBarButton Width="0" Command="{StaticResource MoveRawFilesToSubfolderUICommand}"/>
-    <AppBarButton Width="0" Command="{StaticResource DeleteSingleRawFilesUICommand}"/>
-    <AppBarButton Width="0" Command="{StaticResource ShiftDatenTakenUICommand}"/>
-    <AppBarButton Width="0" Command="{StaticResource ImportGpxTrackUICommand}"/>
+    <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource MoveRawFilesToSubfolderUICommand}"/>
+    <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource DeleteSingleRawFilesUICommand}"/>
+    <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource ShiftDatenTakenUICommand}"/>
+    <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource ImportGpxTrackUICommand}"/>
 
     <CommandBar.SecondaryCommands>
         <AppBarButton 

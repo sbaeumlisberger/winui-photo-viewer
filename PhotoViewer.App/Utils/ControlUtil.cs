@@ -8,7 +8,7 @@ namespace PhotoViewer.App.Utils;
 
 internal static class ControlUtil
 {
-    public static void InitializeComponentMVVM<TViewModel>(this IMVVMControl<TViewModel> control, bool updateBindingsAlways = false) where TViewModel : class, IViewModel
+    public static void InitializeComponentMVVM<TViewModel>(this IMVVMControl<TViewModel> control) where TViewModel : class, IViewModel
     {
         TViewModel? viewModel = null;
 
@@ -17,7 +17,8 @@ internal static class ControlUtil
             //Log.Debug($"Connect {control} to {newViewModel}");
             viewModel = newViewModel;
             control.ConnectToViewModel(newViewModel);
-            if(control.IsLoaded || updateBindingsAlways) // TODO ?
+
+            if (control.IsLoaded)
             {
                 control.UpdateBindings();
             }

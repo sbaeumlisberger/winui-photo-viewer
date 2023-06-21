@@ -21,7 +21,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     public TagPeopleTool()
     {
-        this.InitializeComponentMVVM(updateBindingsAlways: true);
+        this.InitializeComponentMVVM();
     }
 
     partial void ConnectToViewModel(TagPeopleToolModel viewModel)
@@ -47,7 +47,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
                 selectionRect.Visibility = Visibility.Visible;
                 UpdateAutoSuggestBoxContainerPosition();
                 autoSuggestBoxContainer.Visibility = Visibility.Visible;
-                autoSuggestBox.Focus(FocusState.Programmatic);
+                FocusAutoSuggestBox();
             }
             else
             {
@@ -93,6 +93,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
                 selectionRect.Height = 0;
                 selectionRect.Visibility = Visibility.Visible;
                 selectionRect.HandOverPointerPressedEvent(args);
+                ViewModel!.ClearSuggestedFaces();
             }
         }
     }
@@ -110,13 +111,13 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
                 selectionRect.Width = DefaultFaceBoxSize;
                 selectionRect.Height = DefaultFaceBoxSize;
                 ViewModel.SelectionRect = GetSelectionRectInPercent();
+                ViewModel!.ClearSuggestedFaces();
             }
         }
     }
 
     private void SelectionRect_InteractionStarted(SelectionRect sender, EventArgs args)
     {
-        ViewModel!.ClearSuggestedFaces();
         autoSuggestBoxContainer.Visibility = Visibility.Collapsed;
     }
 
@@ -124,6 +125,12 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
     {
         autoSuggestBoxContainer.Visibility = Visibility.Visible;
         ViewModel!.SelectionRect = GetSelectionRectInPercent();
+    }
+
+    private void AutoSuggestBoxContainer_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        UpdateAutoSuggestBoxContainerPosition();
+        FocusAutoSuggestBox();
     }
 
     private Rect GetSelectionRectInPercent()
@@ -147,19 +154,25 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         {
             Canvas.SetTop(autoSuggestBoxContainer, selectionRectBounds.Top + selectionRect.Height);
             AutoSuggestBoxExtension.SetSuggestionListDirection(autoSuggestBox, SuggestionListDirection.Down);
+            autoSuggestBoxContainer.RenderTransformOrigin = new Point(0.5, 0);
         }
         else
         {
             Canvas.SetTop(autoSuggestBoxContainer, selectionRectBounds.Top - autoSuggestBoxContainer.ActualHeight);
             AutoSuggestBoxExtension.SetSuggestionListDirection(autoSuggestBox, SuggestionListDirection.Up);
+            autoSuggestBoxContainer.RenderTransformOrigin = new Point(0.5, 1);
         }
     }
 
-    private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    private void AutoSuggestBox_TextChanged(AutoSuggestBox autoSuggestBox, AutoSuggestBoxTextChangedEventArgs args)
     {
-        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+        if (args.Reason == AutoSuggestionBoxTextChangeReason.SuggestionChosen)
         {
-            sender.ItemsSource = ViewModel!.FindSuggestions(sender.Text);
+            FocusAutoSuggestBox(); // set focus back to text box when suggestion chosen via mouse            
+        }
+        else
+        {
+            autoSuggestBox.ItemsSource = ViewModel!.FindSuggestions(autoSuggestBox.Text);
         }
     }
 
@@ -170,12 +183,13 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         if (autoSuggestBox.Text == string.Empty)
         {
             autoSuggestBox.ItemsSource = ViewModel!.GetRecentSuggestions();
-
-            DispatcherQueue.TryEnqueue(() =>
-            {
-                autoSuggestBox.IsSuggestionListOpen = true;
-            });
         }
+        else
+        {
+            autoSuggestBox.ItemsSource = ViewModel!.FindSuggestions(autoSuggestBox.Text);
+        }
+
+        DispatcherQueue.TryEnqueue(() => autoSuggestBox.IsSuggestionListOpen = true);
     }
 
     private void AutoSuggestBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
@@ -204,6 +218,17 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         if (args.ChosenSuggestion is null) // user pressed enter or clicked query button
         {
             ViewModel!.AddPersonCommand.Execute(null);
+        }
+    }
+
+    private void FocusAutoSuggestBox()
+    {
+        if (autoSuggestBox.FocusState == FocusState.Unfocused)
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                autoSuggestBox.Focus(FocusState.Programmatic);
+            });
         }
     }
 
