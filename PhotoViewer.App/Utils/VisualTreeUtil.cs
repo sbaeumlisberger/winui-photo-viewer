@@ -30,4 +30,15 @@ internal static class VisualTreeUtil
         return null;
     }
 
+    public static T? FindParent<T>(this FrameworkElement element) where T : FrameworkElement
+    {
+        var parent = VisualTreeHelper.GetParent(element);
+        
+        while (parent is not null && parent is not T)
+        {
+            parent = VisualTreeHelper.GetParent(parent);
+        }
+
+        return (T?)parent;
+    }
 }

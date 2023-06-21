@@ -132,6 +132,7 @@
                         Text="{x:Bind ViewModel.AutoSuggestBoxText, Mode=TwoWay}"                          
                         TextChanged="AutoSuggestBox_TextChanged"
                         GettingFocus="AutoSuggestBox_GettingFocus"
+                        LosingFocus="AutoSuggestBox_LosingFocus"
                         PlaceholderText="{x:Bind res:Strings.TagPeopleTool_NamePlaceholder}"
                         utils:EnterKeyExtension.Command="{x:Bind ViewModel.AddPersonCommand}"
                         QuerySubmitted="AutoSuggestBox_QuerySubmitted"

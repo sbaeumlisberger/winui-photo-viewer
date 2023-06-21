@@ -11,6 +11,8 @@ using System.ComponentModel;
 using Windows.Foundation;
 using Windows.System;
 using System.Linq;
+using Windows.UI.Core;
+using Microsoft.UI.Xaml.Media;
 
 namespace PhotoViewer.App.Views;
 public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleToolModel>
@@ -194,7 +196,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void AutoSuggestBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
     {
-        if (e.Key == VirtualKey.Tab)
+        if (e.Key == VirtualKey.Tab && !e.IsModifierPressed(VirtualKey.Shift))
         {
             e.Handled = ViewModel!.SkipCurrentDetectedFace();
         }
@@ -252,5 +254,14 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
     private void RemovePeopleTagMenuItem_Click(object sender, RoutedEventArgs e)
     {
         ViewModel!.RemovePeopleTagCommand.Execute(contextRequestedName);
+    }
+
+    private void AutoSuggestBox_LosingFocus(UIElement sender, LosingFocusEventArgs args)
+    {
+        if (!ViewModel!.IsActive) 
+        {
+            // set focus to flipview when exiting people tagging
+            args.TrySetNewFocusedElement(this.FindParent<FlipView>());
+        }
     }
 }
