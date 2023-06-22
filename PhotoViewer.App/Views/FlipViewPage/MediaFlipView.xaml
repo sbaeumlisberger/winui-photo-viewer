@@ -32,16 +32,16 @@
         <converters:BoolToObjectConverter x:Name="DiashowLoopMenuItemTextConverter"
              TrueValue="{x:Bind res:Strings.MediaFlipView_DisableDiashowLoop}"
              FalseValue="{x:Bind res:Strings.MediaFlipView_EnableDiashowLoop}"/>
-        
+
         <Storyboard x:Name="DeleteStoryboard">
             <DoubleAnimation 
                 From="1" To="0" Duration="0:0:0.2"
                 Storyboard.TargetProperty="(FrameworkElement.Opacity)"
                 Storyboard.TargetName="flipView" />
         </Storyboard>
-    
+
     </UserControl.Resources>
-    
+
     <Grid>
         <FlipView
             x:Name="flipView"
@@ -54,7 +54,8 @@
             UseTouchAnimationsForAllNavigation="False"
             ContextRequested="FlipView_ContextRequested"
             Background="{x:Bind ViewModel.IsDiashowActive, Mode=OneWay, Converter={StaticResource FlipViewBackgroundConverter}}"
-            Tapped="FlipView_Tapped">
+            Tapped="FlipView_Tapped"
+            KeyDown="FlipView_KeyDown">
             <FlipView.ItemTemplateSelector>
                 <local:MediaFlipViewItemTemplateSelector>
                     <local:MediaFlipViewItemTemplateSelector.BitmapFileInfoTemplate>
@@ -87,7 +88,7 @@
                         Text="{x:Bind ViewModel.IsDiashowLoopActive, Mode=OneWay, Converter={StaticResource DiashowLoopMenuItemTextConverter}}" 
                         Command="{x:Bind ViewModel.ToogleDiashowLoopCommand}">
                         <MenuFlyoutItem.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Space" />
+                            <KeyboardAccelerator Key="Space"/>
                         </MenuFlyoutItem.KeyboardAccelerators>
                     </MenuFlyoutItem>
                     <MenuFlyoutItem 
@@ -95,34 +96,38 @@
                         Text="{x:Bind res:Strings.MediaFlipView_ExitDiashow}" 
                         Command="{x:Bind ViewModel.ExitDiashowCommand}">
                         <MenuFlyoutItem.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Escape" />
+                            <KeyboardAccelerator Key="Escape"/>
                         </MenuFlyoutItem.KeyboardAccelerators>
                     </MenuFlyoutItem>
                 </MenuFlyout>
             </FlyoutBase.AttachedFlyout>
         </FlipView>
-        
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                Visibility="{x:Bind ViewModel.ShowNoItemsUI, Mode=OneWay}">
+
+        <StackPanel 
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Visibility="{x:Bind ViewModel.ShowNoItemsUI, Mode=OneWay}">
             <TextBlock 
-                    HorizontalAlignment="Center" 
-                    Text="{x:Bind res:Strings.NoItemsMessage}"/>
+                HorizontalAlignment="Center" 
+                Text="{x:Bind res:Strings.NoItemsMessage}"/>
             <Button
-                    Margin="0,8,0,0"
-                    HorizontalAlignment="Center" 
-                    Content="{x:Bind res:Strings.OpenFolderButton}"                    
-                    Command="{x:Bind ViewModel.OpenFolderCommand}"/>
+                Margin="0,8,0,0"
+                HorizontalAlignment="Center" 
+                Content="{x:Bind res:Strings.OpenFolderButton}"  
+                Command="{x:Bind ViewModel.OpenFolderCommand}"/>
         </StackPanel>
 
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                Visibility="{x:Bind ViewModel.ShowLoadingUI, Mode=OneWay}">
+        <StackPanel 
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Visibility="{x:Bind ViewModel.ShowLoadingUI, Mode=OneWay}">
             <TextBlock 
-                    HorizontalAlignment="Center" 
-                    Text="{x:Bind res:Strings.LoadingFilesMessage}"/>
+                HorizontalAlignment="Center" 
+                Text="{x:Bind res:Strings.LoadingFilesMessage}"/>
             <ProgressRing
-                    Margin="0,8,0,0"
-                    HorizontalAlignment="Center"
-                    IsActive="{x:Bind ViewModel.ShowLoadingUI, Mode=OneWay}"/>
+                Margin="0,8,0,0"
+                HorizontalAlignment="Center"
+                IsActive="{x:Bind ViewModel.ShowLoadingUI, Mode=OneWay}"/>
         </StackPanel>
 
         <Grid

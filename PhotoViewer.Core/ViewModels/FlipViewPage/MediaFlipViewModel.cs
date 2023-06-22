@@ -56,7 +56,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     public int SelectedItemNumber => SelectedItem is null ? 0 : Items.IndexOf(SelectedItem) + 1;
 
-    public bool ShowSelectedItemIndicator => Items.Any() && !IsDiashowLoopActive;
+    public bool ShowSelectedItemIndicator => Items.Any() && !IsDiashowActive;
 
     public bool ShowLoadingUI { get; private set; }
 
@@ -306,7 +306,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsDiashowActive))]
     private void ToogleDiashowLoop()
     {
         if (IsDiashowLoopActive)
@@ -321,7 +321,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsDiashowActive))]
     private void ExitDiashow()
     {
         Messenger.Send(new ExitDiashowMessage());

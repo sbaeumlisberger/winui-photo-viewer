@@ -42,7 +42,7 @@
                 Command="{x:Bind ViewModel.PrintCommand, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.IsPrinItemVisible, Mode=OneWay}">
                 <MenuFlyoutItem.KeyboardAccelerators>
-                    <KeyboardAccelerator IsEnabled="False" Modifiers="Control" Key="P"/>
+                    <KeyboardAccelerator Modifiers="Control" Key="P"/>
                 </MenuFlyoutItem.KeyboardAccelerators>
             </MenuFlyoutItem>
 
@@ -83,7 +83,6 @@
                     <KeyboardAccelerator Key="F2"/>
                 </MenuFlyoutItem.KeyboardAccelerators>
             </MenuFlyoutItem>
-
             
             <MenuFlyoutItem 
                 Icon="Rotate" 

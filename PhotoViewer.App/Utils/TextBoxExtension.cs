@@ -25,11 +25,17 @@ public class TextBoxExtension
 
         void UpdateClearButton()
         {
-            var clearButton = textBox.FindChild("DeleteButton")!;
+            var clearButton = textBox.FindChild("DeleteButton");
 
             if(clearButton is null) 
             {
-                Log.Error("clearButton is null");
+                textBox.ApplyTemplate();
+                clearButton = textBox.FindChild("DeleteButton");
+            }
+
+            if (clearButton is null)
+            {
+                Log.Error("clear button not found");
                 return;
             }
 

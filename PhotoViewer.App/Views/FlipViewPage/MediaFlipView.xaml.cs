@@ -7,8 +7,11 @@ using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Utils;
+using System;
 using System.ComponentModel;
 using System.Linq;
+using Windows.Foundation;
+using Windows.System;
 
 namespace PhotoViewer.App.Views;
 
@@ -35,7 +38,7 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
     }
 
     private void FlipView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
-    {
+    {        
         if (ViewModel!.IsDiashowActive)
         {
             flipView.ShowAttachedFlyout(args);
@@ -113,4 +116,18 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         }
     }
 
+    private void FlipView_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        /* keyboard accelerators in an attached flyout are not working, 
+         * therefore they are executed via key down event handler */
+
+        if (e.Key == VirtualKey.Space) 
+        {
+            ViewModel!.ToogleDiashowLoopCommand.TryExecute();
+        }
+        else if (e.Key == VirtualKey.Escape)
+        {
+            ViewModel!.ExitDiashowCommand.TryExecute();
+        }
+    }
 }

@@ -21,6 +21,10 @@
             ScaleY="{x:Bind ViewModel.UIScaleFactor, Mode=OneWay}"/>
     </UserControl.Resources>
 
+    <UserControl.KeyboardAccelerators>
+        <KeyboardAccelerator Key="Escape" Invoked="{x:Bind ViewModel.ExitPeopleTagging}"  />
+    </UserControl.KeyboardAccelerators>
+
     <Grid>
         <ItemsControl ItemsSource="{x:Bind ViewModel.TaggedPeople, Mode=OneWay}" IsTabStop="False">
             <ItemsControl.ItemTemplate>
