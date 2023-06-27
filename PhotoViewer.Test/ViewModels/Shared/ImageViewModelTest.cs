@@ -86,7 +86,7 @@ public class ImageViewModelTest
         Assert.False(imageViewModel.IsLoading);
         Assert.True(imageViewModel.IsLoadingImageFailed);
         Assert.Equal(errorMessage, imageViewModel.ErrorMessage);
-        Assert.Null(bitmapImageLoadedMessageCapture.Message);
+        Assert.False(bitmapImageLoadedMessageCapture.IsMessageCaptured);
     }
 
     [Fact]

@@ -50,7 +50,7 @@ public class MediaFilesLoaderServiceTest
 
         var loadMediaFilesTask = mediaFilesLoaderService.LoadFolder(folder, config);
 
-        Assert.Null(loadMediaFilesTask.StartMediaFile);
+        Assert.Null(loadMediaFilesTask.PreviewMediaFile);
 
         var result = await loadMediaFilesTask.WaitForResultAsync();
 
@@ -84,8 +84,8 @@ public class MediaFilesLoaderServiceTest
 
         var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
 
-        Assert.NotNull(loadMediaFilesTask.StartMediaFile);
-        Assert.Equal("File 03.jpg", loadMediaFilesTask.StartMediaFile.FileName);
+        Assert.NotNull(loadMediaFilesTask.PreviewMediaFile);
+        Assert.Equal("File 03.jpg", loadMediaFilesTask.PreviewMediaFile.FileName);
 
         var result = await loadMediaFilesTask.WaitForResultAsync();
 
@@ -139,8 +139,8 @@ public class MediaFilesLoaderServiceTest
 
         var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
 
-        Assert.NotNull(loadMediaFilesTask.StartMediaFile);
-        Assert.Equal("File 03.jpg", loadMediaFilesTask.StartMediaFile.FileName);
+        Assert.NotNull(loadMediaFilesTask.PreviewMediaFile);
+        Assert.Equal("File 03.jpg", loadMediaFilesTask.PreviewMediaFile.FileName);
 
         var result = await loadMediaFilesTask.WaitForResultAsync();
 
@@ -181,8 +181,8 @@ public class MediaFilesLoaderServiceTest
 
         var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
 
-        Assert.NotNull(loadMediaFilesTask.StartMediaFile);
-        Assert.Equal("File 02.jpg", loadMediaFilesTask.StartMediaFile.FileName);
+        Assert.NotNull(loadMediaFilesTask.PreviewMediaFile);
+        Assert.Equal("File 02.jpg", loadMediaFilesTask.PreviewMediaFile.FileName);
 
         var result = await loadMediaFilesTask.WaitForResultAsync();
 
@@ -216,7 +216,7 @@ public class MediaFilesLoaderServiceTest
 
         var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
 
-        Assert.Null(loadMediaFilesTask.StartMediaFile);
+        Assert.Null(loadMediaFilesTask.PreviewMediaFile);
 
         var result = await loadMediaFilesTask.WaitForResultAsync();
 
@@ -252,8 +252,8 @@ public class MediaFilesLoaderServiceTest
 
         var loadMediaFilesTask = mediaFilesLoaderService.LoadFromArguments(arguments, config);
 
-        Assert.NotNull(loadMediaFilesTask.StartMediaFile);
-        Assert.Equal("File 01.jpg", loadMediaFilesTask.StartMediaFile.FileName);
+        Assert.NotNull(loadMediaFilesTask.PreviewMediaFile);
+        Assert.Equal("File 01.jpg", loadMediaFilesTask.PreviewMediaFile.FileName);
 
         var result = await loadMediaFilesTask.WaitForResultAsync();
 
@@ -282,8 +282,8 @@ public class MediaFilesLoaderServiceTest
 
         var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
 
-        Assert.NotNull(loadMediaFilesTask.StartMediaFile);
-        Assert.Equal(startFile.Name, loadMediaFilesTask.StartMediaFile.FileName);
+        Assert.NotNull(loadMediaFilesTask.PreviewMediaFile);
+        Assert.Equal(startFile.Name, loadMediaFilesTask.PreviewMediaFile.FileName);
 
         var result = await loadMediaFilesTask.WaitForResultAsync();
 

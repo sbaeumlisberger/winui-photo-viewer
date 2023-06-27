@@ -6,7 +6,7 @@ using PhotoViewer.App.Models;
 
 namespace PhotoViewer.Core.Models;
 
-public interface IApplicationSession 
+public interface IApplicationSession
 {
     IReadOnlyList<IMediaFileInfo> Files { get; }
 }
@@ -25,10 +25,7 @@ public class ApplicationSession : IApplicationSession
             {
                 files = new List<IMediaFileInfo>((await msg.LoadMediaFilesTask.WaitForResultAsync()).MediaFiles);
             }
-            catch 
-            { 
-                // TODO ?
-            }
+            catch { /* errors are handled at page level */ }
         });
 
         messenger.Register<MediaFilesDeletedMessage>(this, msg =>

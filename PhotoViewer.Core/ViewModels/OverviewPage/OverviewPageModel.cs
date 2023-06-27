@@ -31,14 +31,17 @@ public partial class OverviewPageModel : ViewModelBase
 
     private readonly IViewModelFactory viewModelFactory;
 
+    private readonly IDialogService dialogService;
+
     private readonly Dictionary<IMediaFileInfo, IOverviewItemModel> itemModels = new Dictionary<IMediaFileInfo, IOverviewItemModel>();
 
     public OverviewPageModel(
         ApplicationSession session,
         IMessenger messenger,
-        IViewModelFactory viewModelFactory) : base(messenger)
+        IViewModelFactory viewModelFactory, IDialogService dialogService) : base(messenger)
     {
         this.viewModelFactory = viewModelFactory;
+        this.dialogService = dialogService;
 
         OverviewPageCommandBarModel = viewModelFactory.CreateOverviewPageCommandBarModel();
         MetadataPanelModel = viewModelFactory.CreateMetadataPanelModel(false);
@@ -94,8 +97,13 @@ public partial class OverviewPageModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            // TODO show dialog
             Log.Error("Failed to load files", ex);
+
+            await dialogService.ShowDialogAsync(new MessageDialogModel()
+            {
+                Title = Strings.LoadFilesErrorDialog_Title,
+                Message = Strings.LoadFilesErrorDialog_Message,
+            });
         }
         finally 
         { 

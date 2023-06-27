@@ -18,6 +18,7 @@ using Tocronx.SimpleAsync;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Controls;
 using NSubstitute;
+using PhotoViewer.Core.Resources;
 
 namespace PhotoViewer.App.ViewModels;
 
@@ -127,10 +128,10 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
             bool preview = false;
 
-            if (msg.LoadMediaFilesTask.StartMediaFile is { } startFile)
+            if (msg.LoadMediaFilesTask.PreviewMediaFile is { } previewMediaFile)
             {
                 preview = true;
-                SetItems(new[] { startFile }, startFile);
+                SetItems(new[] { previewMediaFile }, previewMediaFile);
                 ShowLoadingUI = false;
                 IsLoadingMoreFiles = true;
             }
@@ -141,16 +142,22 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
             if (preview)
             {
-                // linked files may have changed -> update window title
+                // update window title because linked files may have changed
                 Messenger.Send(new ChangeWindowTitleMessage(SelectedItem?.DisplayName ?? ""));
 
-                UpdateFlipViewItemModels();
+                // trigger creation of the item models of the loaded files
+                UpdateFlipViewItemModels(); 
             }
         }
         catch (Exception ex)
         {
-            // TODO show dialog
             Log.Error("Failed to load files", ex);
+
+            await dialogService.ShowDialogAsync(new MessageDialogModel()
+            {
+                Title = Strings.LoadFilesErrorDialog_Title,
+                Message = Strings.LoadFilesErrorDialog_Message,
+            });
         }
         finally
         {

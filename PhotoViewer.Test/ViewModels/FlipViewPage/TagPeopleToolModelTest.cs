@@ -211,7 +211,6 @@ public class TagPeopleToolModelTest
 
         tagPeopleToolModel.ExitPeopleTagging();
 
-        Assert.NotNull(messageCapture.Message);
         Assert.False(messageCapture.Message.IsActive);
     }
 
@@ -282,7 +281,6 @@ public class TagPeopleToolModelTest
 
         await metadataService.Received().WriteMetadataAsync(bitmapFile, MetadataProperties.People,
             Arg.Is<IList<PeopleTag>>(peopleTags => peopleTags[1].Name == "New Person"));
-        Assert.NotNull(metadataModifiedMessageCapture.Message);
         Assert.Single(metadataModifiedMessageCapture.Message.Files);
         Assert.Equal(bitmapFile, metadataModifiedMessageCapture.Message.Files.First());
         Assert.Equal(MetadataProperties.People, metadataModifiedMessageCapture.Message.MetadataProperty);

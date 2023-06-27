@@ -120,6 +120,7 @@
             Width="{x:Bind ViewModel.ThumbnailSize, Mode=OneWay}"
             Text="{x:Bind ViewModel.NewName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
             utils:TextBoxExtension.IsClearButtonHidden="True"
+            TextAlignment="Center"
             KeyDown="FileNameTextBox_KeyDown"
             LostFocus="FileNameTextBox_LostFocus"/>
     </StackPanel>

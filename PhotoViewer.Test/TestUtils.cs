@@ -26,7 +26,18 @@ internal static class TestUtils
         return path;
     }
 
-    internal class Capture<TMessage> { public TMessage? Message { get; set; } };
+    internal class Capture<TMessage>
+    {
+        public TMessage Message
+        {
+            get => message ?? throw new Exception("Message was not captured");
+            set => message = value;
+        }
+
+        public bool IsMessageCaptured => message != null;
+
+        private TMessage? message;
+    };
 
     internal static Capture<TMessage> CaptureMessage<TMessage>(IMessenger messenger) where TMessage : class
     {
@@ -48,7 +59,7 @@ internal static class TestUtils
         obj.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(obj, new PropertyChangedEventArgs(propertyName));
     }
 
-    internal static List<string?> CapturePropertyChangedEvents(INotifyPropertyChanged obj) 
+    internal static List<string?> CapturePropertyChangedEvents(INotifyPropertyChanged obj)
     {
         var events = new List<string?>();
         obj.PropertyChanged += (_, e) => events.Add(e.PropertyName);

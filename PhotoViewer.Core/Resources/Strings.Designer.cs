@@ -160,6 +160,24 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred while loading the files: {}.
+        /// </summary>
+        public static string LoadFilesErrorDialog_Message {
+            get {
+                return ResourceManager.GetString("LoadFilesErrorDialog_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not load files.
+        /// </summary>
+        public static string LoadFilesErrorDialog_Title {
+            get {
+                return ResourceManager.GetString("LoadFilesErrorDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No place taken specified.
         /// </summary>
         public static string MetadataPanel_LocationPlaceholder {

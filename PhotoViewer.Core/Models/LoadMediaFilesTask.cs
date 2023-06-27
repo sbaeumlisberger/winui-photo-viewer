@@ -12,13 +12,13 @@ public class LoadMediaFilesTask
 {
     public static LoadMediaFilesTask Empty => new LoadMediaFilesTask(null, Task.FromResult(new LoadMediaFilesResult(new List<IMediaFileInfo>(), null)));
 
-    public IMediaFileInfo? StartMediaFile { get; }
+    public IMediaFileInfo? PreviewMediaFile { get; }
 
     private Task<LoadMediaFilesResult> resultTask;
 
     public LoadMediaFilesTask(IMediaFileInfo? startMediaFile, Task<LoadMediaFilesResult> resultTask)
     {
-        StartMediaFile = startMediaFile;
+        PreviewMediaFile = startMediaFile;
         this.resultTask = resultTask;
     }
 

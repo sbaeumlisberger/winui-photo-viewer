@@ -90,7 +90,7 @@ public class ViewModelFactory : IViewModelFactory
 
     public OverviewPageModel CreateOverviewPageModel()
     {
-        return new OverviewPageModel(applicationSession, messenger, this);
+        return new OverviewPageModel(applicationSession, messenger, this, dialogService);
     }
 
     public SettingsPageModel CreateSettingsPageModel()

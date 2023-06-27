@@ -149,7 +149,6 @@ public class KeywordSectionModelTest
         await VerifyReceivedWriteMetadataAsync(files[3], "Category C/Keyword 2", "Category B/Keyword 2");
         Assert.Empty(keywordsSectionModel.AutoSuggestBoxText);
         await suggestionsService.Received().AddSuggestionAsync(keyword);
-        Assert.NotNull(messageCapture.Message);
         Assert.Equal(3, messageCapture.Message.Files.Count);
         Assert.Equal(MetadataProperties.Keywords, messageCapture.Message.MetadataProperty);
     }
@@ -174,7 +173,6 @@ public class KeywordSectionModelTest
         await VerifyReceivedWriteMetadataAsync(files[1], "Category A/Keyword 1", "Category C/Keyword 1");
         await VerifyReceivedWriteMetadataAsync(files[2], new string[0]);
         await VerifyReceivedWriteMetadataAsync(files[3], "Category C/Keyword 2");     
-        Assert.NotNull(messageCapture.Message);
         Assert.Equal(3, messageCapture.Message.Files.Count);
         Assert.Equal(MetadataProperties.Keywords, messageCapture.Message.MetadataProperty);
     }

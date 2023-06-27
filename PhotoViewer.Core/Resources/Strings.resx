@@ -150,6 +150,12 @@
   <data name="ImportSettingsFailedDialog_Title" xml:space="preserve">
     <value>Import failed</value>
   </data>
+  <data name="LoadFilesErrorDialog_Message" xml:space="preserve">
+    <value>An error occurred while loading the files: {}</value>
+  </data>
+  <data name="LoadFilesErrorDialog_Title" xml:space="preserve">
+    <value>Could not load files</value>
+  </data>
   <data name="MetadataPanel_LocationPlaceholder" xml:space="preserve">
     <value>No place taken specified</value>
   </data>

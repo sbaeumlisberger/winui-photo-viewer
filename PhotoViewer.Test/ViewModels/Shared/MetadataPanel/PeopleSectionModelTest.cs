@@ -133,7 +133,6 @@ public class PeopleSectionModelTest
         await VerifyReceivedWriteMetadataAsync(files[3], Name3, Name1);
         Assert.Empty(peopleSectionModel.AutoSuggestBoxText);
         await suggestionsService.Received().AddSuggestionAsync(Name1);
-        Assert.NotNull(messageCapture.Message);
         Assert.Equal(3, messageCapture.Message.Files.Count);
         Assert.Equal(MetadataProperties.People, messageCapture.Message.MetadataProperty);
     }
@@ -157,7 +156,6 @@ public class PeopleSectionModelTest
         await VerifyReceivedWriteMetadataAsync(files[1], new string[0]);
         await VerifyNotReceivedWriteMetadataAsync(files[2]);
         await VerifyReceivedWriteMetadataAsync(files[3], Name3);
-        Assert.NotNull(messageCapture.Message);
         Assert.Equal(2, messageCapture.Message.Files.Count);
         Assert.Equal(MetadataProperties.People, messageCapture.Message.MetadataProperty);
     }

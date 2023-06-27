@@ -4,6 +4,7 @@ using PhotoViewer.App.Models;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System;
@@ -55,7 +56,7 @@ public class ComparePageModelTest
 
         comparePageModel.OnNavigatedTo(bitmapFiles[0]);
 
-        Assert.NotNull(messageCapture.Message);
+        Assert.Equal(Strings.ComparePage_Title, messageCapture.Message.NewTitle);
     }
 
     [Fact]
