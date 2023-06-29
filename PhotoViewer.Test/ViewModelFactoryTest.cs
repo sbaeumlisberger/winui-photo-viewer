@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
-using Moq;
+using NSubstitute;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
@@ -25,7 +25,7 @@ public class ViewModelFactoryTest
 
         var stopwatch = Stopwatch.StartNew();
 
-        ViewModelFactory.Initialize(messenger, new ApplicationSettings(), Mock.Of<IDialogService>());
+        ViewModelFactory.Initialize(messenger, new ApplicationSettings(), Substitute.For<IDialogService>());
 
         stopwatch.Stop();
 

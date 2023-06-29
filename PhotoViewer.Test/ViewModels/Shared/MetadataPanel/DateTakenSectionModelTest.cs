@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
-using Moq;
 using NSubstitute;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
@@ -21,8 +20,8 @@ namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
 public class DateTakenSectionModelTest
 {
     private readonly IMessenger messenger = new StrongReferenceMessenger();
-    private readonly IMetadataService metadataService = Mock.Of<IMetadataService>();
-    private readonly IDialogService dialogService = Mock.Of<IDialogService>();
+    private readonly IMetadataService metadataService = Substitute.For<IMetadataService>();
+    private readonly IDialogService dialogService = Substitute.For<IDialogService>();
     private readonly IBackgroundTaskService backgroundTaskService = Substitute.For<IBackgroundTaskService>();
 
     private readonly DateTakenSectionModel dateTakenSectionModel;
@@ -38,7 +37,7 @@ public class DateTakenSectionModelTest
     public void UpdateFilesChanged_SingleFile(bool intial)
     {
         if (!intial) { IntialUpdate(); }
-        var mediaFile = Mock.Of<IBitmapFileInfo>();
+        var mediaFile = Substitute.For<IBitmapFileInfo>();
         var dateTaken = new DateTime(2023, 03, 02, 19, 10, 35);
         var metadata = new[] { CreateMetadataView(dateTaken) };
 
@@ -61,7 +60,7 @@ public class DateTakenSectionModelTest
     public void UpdateFilesChanged_SingleFile_NotPresent(bool intial)
     {
         if (!intial) { IntialUpdate(); }
-        var mediaFile = Mock.Of<IBitmapFileInfo>();
+        var mediaFile = Substitute.For<IBitmapFileInfo>();
         var metadata = new[] { CreateMetadataView(null) };
 
         dateTakenSectionModel.UpdateFilesChanged(new[] { mediaFile }, metadata);
@@ -83,7 +82,7 @@ public class DateTakenSectionModelTest
     public void UpdateFilesChanged_MultipleFiles_SingleValue(bool intial)
     {
         if (!intial) { IntialUpdate(); }
-        var files = Mock.Of<IReadOnlyList<IBitmapFileInfo>>();
+        var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
         var dateTaken = new DateTime(2023, 03, 02, 19, 10, 35);
         var metadata = new[]
         {
@@ -112,7 +111,7 @@ public class DateTakenSectionModelTest
     {
         if (!intial) { IntialUpdate(); }
 
-        var files = Mock.Of<IReadOnlyList<IBitmapFileInfo>>();
+        var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
 
         var earliestDateTaken = new DateTime(2022, 04, 07, 06, 17, 57);
         var betweenDateTaken = new DateTime(2022, 12, 27, 12, 13, 38);
@@ -146,7 +145,7 @@ public class DateTakenSectionModelTest
     public void UpdateFilesChanged_MultipleFiles_NotPresent(bool intial)
     {
         if (!intial) { IntialUpdate(); }
-        var files = Mock.Of<IReadOnlyList<IBitmapFileInfo>>();
+        var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
         var metadata = new[]
         {
             CreateMetadataView(null),
@@ -174,19 +173,19 @@ public class DateTakenSectionModelTest
 
         dateTakenSectionModel.Date = new DateTime(2023, 02, 28);
 
-        Mock.Get(metadataService).Verify(m => m.WriteMetadataAsync(
-            It.IsAny<IBitmapFileInfo>(), MetadataProperties.DateTaken, new DateTime(2023, 02, 28, 11, 38, 12)));
+        metadataService.Received().WriteMetadataAsync(
+            Arg.Any<IBitmapFileInfo>(), MetadataProperties.DateTaken, new DateTime(2023, 02, 28, 11, 38, 12));
 
         dateTakenSectionModel.Time = new TimeSpan(07, 19, 46);
 
-        Mock.Get(metadataService).Verify(m => m.WriteMetadataAsync(
-            It.IsAny<IBitmapFileInfo>(), MetadataProperties.DateTaken, new DateTime(2023, 02, 28, 07, 19, 46)));
+        metadataService.Received().WriteMetadataAsync(
+            Arg.Any<IBitmapFileInfo>(), MetadataProperties.DateTaken, new DateTime(2023, 02, 28, 07, 19, 46));
     }
 
     [Fact]
     public async Task AddDateTakenCommand_Execute()
     {
-        var mediaFile = Mock.Of<IBitmapFileInfo>();
+        var mediaFile = Substitute.For<IBitmapFileInfo>();
         var metadata = new[] { CreateMetadataView(null) };
         dateTakenSectionModel.UpdateFilesChanged(new[] { mediaFile }, metadata);
 
@@ -200,14 +199,14 @@ public class DateTakenSectionModelTest
         Assert.Empty(dateTakenSectionModel.RangeText);
         Assert.False(dateTakenSectionModel.AddDateTakenCommand.CanExecute(null));
         Assert.True(dateTakenSectionModel.ShiftDateTakenCommand.CanExecute(null));
-        Mock.Get(metadataService).Verify(m => m.WriteMetadataAsync(
-            mediaFile, MetadataProperties.DateTaken, It.IsAny<DateTime?>()));
+        await metadataService.Received().WriteMetadataAsync(
+            mediaFile, MetadataProperties.DateTaken, Arg.Any<DateTime?>());
     }
 
     [Fact]
     public void UpdateMetadataModified()
     {
-        var mediaFile = Mock.Of<IBitmapFileInfo>();
+        var mediaFile = Substitute.For<IBitmapFileInfo>();
         var dateTaken = new DateTime(2021, 06, 17, 11, 38, 12);
         var metadataSource = new Dictionary<string, object?>
         {
@@ -237,7 +236,7 @@ public class DateTakenSectionModelTest
         {
             { MetadataProperties.DateTaken.Identifier, new DateTime(2021, 06, 17, 11, 38, 12) }
         };
-        dateTakenSectionModel.UpdateFilesChanged(new[] { Mock.Of<IBitmapFileInfo>() }, new[] { new MetadataView(metadata) });
+        dateTakenSectionModel.UpdateFilesChanged(new[] { Substitute.For<IBitmapFileInfo>() }, new[] { new MetadataView(metadata) });
     }
 
     private MetadataView CreateMetadataView(DateTime? dateTaken)
@@ -250,9 +249,8 @@ public class DateTakenSectionModelTest
 
     private void VerifyNoMetadataWritten()
     {
-        Mock.Get(metadataService).Verify(
-            m => m.WriteMetadataAsync(It.IsAny<IBitmapFileInfo>(), MetadataProperties.DateTaken, It.IsAny<DateTime?>()),
-            Times.Never);
+        metadataService.DidNotReceive()
+            .WriteMetadataAsync(Arg.Any<IBitmapFileInfo>(), MetadataProperties.DateTaken, Arg.Any<DateTime?>());
     }
 
 }

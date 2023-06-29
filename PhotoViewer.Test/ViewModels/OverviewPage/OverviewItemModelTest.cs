@@ -99,7 +99,7 @@ public class OverviewItemModelTest
     {
         messenger.Send(new ActivateRenameFileMessage(mediaFile));
         overviewItemModel.NewName = "NewName";
-        mediaFile.RenameAsync("NewName").Throws(new Exception("Some Error Message"));
+        mediaFile.RenameAsync("NewName").ThrowsAsync(new Exception("Some Error Message"));
 
         await overviewItemModel.ConfirmRenaming();
        

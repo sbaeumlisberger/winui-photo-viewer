@@ -1,17 +1,13 @@
-﻿using Moq;
+﻿using NSubstitute;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils.Logging;
-using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.Utils;
 using System.Diagnostics;
-using System.Formats.Tar;
 using Windows.Storage;
 using Windows.Storage.Search;
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 using FileAttributes = Windows.Storage.FileAttributes;
 
 namespace PhotoViewer.Test.Services;
@@ -20,7 +16,9 @@ public class MediaFilesLoaderServiceTest
 {
     private const string FolderPath = @"A:\TestFolder";
 
-    public readonly Mock<IFileSystemService> fileSystemServiceMock;
+    public readonly ICachedImageLoaderService cachedImageLoaderService = Substitute.For<ICachedImageLoaderService>();
+    
+    public readonly IFileSystemService fileSystemService = Substitute.For<IFileSystemService>();
 
     private readonly MediaFilesLoaderService mediaFilesLoaderService;
 
@@ -29,9 +27,8 @@ public class MediaFilesLoaderServiceTest
     public MediaFilesLoaderServiceTest(ITestOutputHelper testOutput)
     {
         this.testOutput = testOutput;
-        Log.Logger = Mock.Of<ILogger>();
-        fileSystemServiceMock = new Mock<IFileSystemService>();
-        mediaFilesLoaderService = new MediaFilesLoaderService(fileSystemServiceMock.Object);
+        Log.Logger = Substitute.For<ILogger>();
+        mediaFilesLoaderService = new MediaFilesLoaderService(cachedImageLoaderService, fileSystemService);
     }
 
     [Fact]
@@ -247,8 +244,8 @@ public class MediaFilesLoaderServiceTest
             nonExistingFilePath,
             MockStorageFile("File 04.png").Path
         };
-        fileSystemServiceMock.Setup(m => m.Exists(nonExistingFilePath)).Returns(false);
-        fileSystemServiceMock.Setup(m => m.TryGetFileAsync(nonExistingFilePath)).ReturnsAsync((IStorageFile?)null);
+        fileSystemService.Exists(nonExistingFilePath).Returns(false);
+        fileSystemService.TryGetFileAsync(nonExistingFilePath).Returns((IStorageFile?)null);
 
         var loadMediaFilesTask = mediaFilesLoaderService.LoadFromArguments(arguments, config);
 
@@ -300,14 +297,14 @@ public class MediaFilesLoaderServiceTest
     private IStorageFile MockStorageFile(string fileName, FileAttributes attributes = FileAttributes.Normal, string? folderPath = null)
     {
         string path = Path.Combine(folderPath ?? FolderPath, fileName);
-        var mock = new Mock<IStorageFile>();
-        mock.SetupGet(x => x.Name).Returns(fileName);
-        mock.SetupGet(x => x.FileType).Returns(Path.GetExtension(fileName));
-        mock.SetupGet(x => x.Attributes).Returns(attributes);
-        mock.SetupGet(x => x.Path).Returns(path);
-        fileSystemServiceMock.Setup(m => m.Exists(path)).Returns(true);
-        fileSystemServiceMock.Setup(m => m.TryGetFileAsync(path)).ReturnsAsync(mock.Object);
-        return mock.Object;
+        var mock = Substitute.For<IStorageFile>();
+        mock.Name.Returns(fileName);
+        mock.FileType.Returns(Path.GetExtension(fileName));
+        mock.Attributes.Returns(attributes);
+        mock.Path.Returns(path);
+        fileSystemService.Exists(path).Returns(true);
+        fileSystemService.TryGetFileAsync(path).Returns(mock);
+        return mock;
     }
 
     private string TestFolderPath = TestUtils.CreateTestFolder();
@@ -320,24 +317,24 @@ public class MediaFilesLoaderServiceTest
 
     private IStorageFolder MockFolder(List<IStorageFile> files)
     {
-        var folder = Mock.Of<IStorageFolder>();
-        fileSystemServiceMock.Setup(x => x.ListFilesAsync(folder)).Returns(Task.FromResult(files));
+        var folder = Substitute.For<IStorageFolder>();
+        fileSystemService.ListFilesAsync(folder).Returns(files);
         return folder;
     }
 
     private IStorageFolder MockRAWsFolder(List<IStorageFile> files, string name)
     {
         string folderPath = Path.Combine(FolderPath, name);
-        var folder = Mock.Of<IStorageFolder>();
-        fileSystemServiceMock.Setup(x => x.TryGetFolderAsync(folderPath)).Returns(Task.FromResult(folder)!);
-        fileSystemServiceMock.Setup(x => x.ListFilesAsync(folder)).Returns(Task.FromResult(files));
+        var folder = Substitute.For<IStorageFolder>();
+        fileSystemService.TryGetFolderAsync(folderPath).Returns(folder);
+        fileSystemService.ListFilesAsync(folder).Returns(files);
         return folder;
     }
 
     private IStorageQueryResultBase MockNeighboringFilesQuery(List<IStorageFile> files)
     {
-        var neighboringFilesQuery = Mock.Of<IStorageQueryResultBase>();
-        fileSystemServiceMock.Setup(x => x.ListFilesAsync(neighboringFilesQuery)).Returns(Task.FromResult(files));
+        var neighboringFilesQuery = Substitute.For<IStorageQueryResultBase>();
+        fileSystemService.ListFilesAsync(neighboringFilesQuery).Returns(files);
         return neighboringFilesQuery;
     }
 

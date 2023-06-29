@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Moq;
 using NSubstitute;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
@@ -20,7 +19,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-using Xunit.Sdk;
 
 namespace PhotoViewer.Test.ViewModels.FlipViewPage;
 
@@ -42,7 +40,7 @@ public class BitmapFlipViewItemModelTest
 
     public BitmapFlipViewItemModelTest()
     {
-        Log.Logger = Mock.Of<ILogger>();
+        Log.Logger = Substitute.For<ILogger>();
 
         bitmapFileMock.IsMetadataSupported.Returns(true);
 

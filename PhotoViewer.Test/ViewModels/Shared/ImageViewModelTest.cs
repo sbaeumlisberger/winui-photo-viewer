@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using Moq;
 using NSubstitute;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
@@ -53,7 +52,7 @@ public class ImageViewModelTest
         Assert.False(imageViewModel.IsLoadingImageFailed);
         Assert.Empty(imageViewModel.ErrorMessage);
 
-        var bitmapImage = Mock.Of<IBitmapImageModel>();
+        var bitmapImage = Substitute.For<IBitmapImageModel>();
         loadFromFileAsyncTSC.SetResult(bitmapImage);
         await initializeTask;
 
@@ -93,7 +92,7 @@ public class ImageViewModelTest
     public async Task Receive_BitmapModifiedMesssage()
     {
         imageLoadServiceMock.LoadFromFileAsync(bitmapFileMock, Arg.Any<CancellationToken>(), false)
-            .Returns(Mock.Of<IBitmapImageModel>());
+            .Returns(Substitute.For<IBitmapImageModel>());
         await imageViewModel.InitializeAsync();
 
         var loadFromFileAsyncTSC = new TaskCompletionSource<IBitmapImageModel>();
@@ -105,7 +104,7 @@ public class ImageViewModelTest
 
         Assert.True(imageViewModel.IsLoading);
 
-        var bitmapImage = Mock.Of<IBitmapImageModel>();
+        var bitmapImage = Substitute.For<IBitmapImageModel>();
         loadFromFileAsyncTSC.SetResult(bitmapImage);
 
         Assert.False(imageViewModel.IsLoading);
@@ -116,7 +115,7 @@ public class ImageViewModelTest
     public async Task Receive_BitmapModifiedMesssage_Twice()
     {
         imageLoadServiceMock.LoadFromFileAsync(bitmapFileMock, Arg.Any<CancellationToken>(), false)
-            .Returns(Mock.Of<IBitmapImageModel>());
+            .Returns(Substitute.For<IBitmapImageModel>());
         await imageViewModel.InitializeAsync();
 
         var loadFromFileAsyncTSC1 = new TaskCompletionSource<IBitmapImageModel>();
@@ -137,10 +136,10 @@ public class ImageViewModelTest
 
         Assert.True(imageViewModel.IsLoading);
 
-        var bitmapImage1 = Mock.Of<IBitmapImageModel>();
+        var bitmapImage1 = Substitute.For<IBitmapImageModel>();
         loadFromFileAsyncTSC1.SetResult(bitmapImage1);
 
-        var bitmapImage2 = Mock.Of<IBitmapImageModel>();
+        var bitmapImage2 = Substitute.For<IBitmapImageModel>();
         loadFromFileAsyncTSC2.SetResult(bitmapImage2);
 
         Assert.False(imageViewModel.IsLoading);
@@ -150,7 +149,7 @@ public class ImageViewModelTest
     [Fact]
     public void Receive_BitmapRotatedMesssage_OtherFile()
     {
-        messenger.Send(new BitmapModifiedMesssage(Mock.Of<IBitmapFileInfo>()));
+        messenger.Send(new BitmapModifiedMesssage(Substitute.For<IBitmapFileInfo>()));
 
         Assert.False(imageViewModel.IsLoading);
     }

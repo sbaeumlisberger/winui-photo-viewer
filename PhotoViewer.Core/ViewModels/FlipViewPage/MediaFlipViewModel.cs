@@ -17,7 +17,6 @@ using PhotoViewer.Core.Messages;
 using Tocronx.SimpleAsync;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Controls;
-using NSubstitute;
 using PhotoViewer.Core.Resources;
 
 namespace PhotoViewer.App.ViewModels;

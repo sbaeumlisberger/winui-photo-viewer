@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.Messaging;
-using Moq;
 using NSubstitute;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
@@ -24,7 +23,7 @@ public class MediaFlipViewModelTest
 
     public MediaFlipViewModelTest()
     {
-        Log.Logger = Mock.Of<ILogger>();
+        Log.Logger = Substitute.For<ILogger>();
 
         itemModelFactory = (mediaFile) =>
         {
@@ -170,9 +169,9 @@ public class MediaFlipViewModelTest
 
     private IMediaFileInfo MockMediaFileInfo(string fileName)
     {
-        var mock = new Mock<IMediaFileInfo>();
-        mock.SetupGet(m => m.DisplayName).Returns(fileName);
-        mock.SetupGet(m => m.FilePath).Returns("Test/" + fileName);
-        return mock.Object;
+        var mock = Substitute.For<IMediaFileInfo>();
+        mock.DisplayName.Returns(fileName);
+        mock.FilePath.Returns("Test/" + fileName);
+        return mock;
     }
 }

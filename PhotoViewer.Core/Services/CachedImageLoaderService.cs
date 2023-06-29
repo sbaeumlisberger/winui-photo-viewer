@@ -1,7 +1,5 @@
-﻿using Castle.Components.DictionaryAdapter.Xml;
-using PhotoViewer.App.Models;
+﻿using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using System;
@@ -10,8 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Tocronx.SimpleAsync;
-using static PhotoViewer.Core.Models.ImageCache;
 
 namespace PhotoViewer.Core.Services;
 

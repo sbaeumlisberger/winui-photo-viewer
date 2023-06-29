@@ -182,7 +182,7 @@ public class LocationSectionModelTest
         dialogService.When(x => x.ShowDialogAsync(Arg.Any<FileOpenPickerModel>()))
             .Do(callInfo => callInfo.Arg<FileOpenPickerModel>().File = gpxFile);
         string errorMessage = "Some Error Message";
-        gpxService.ReadTrackFromGpxFileAsync(gpxFile).Throws(new Exception(errorMessage));
+        gpxService.ReadTrackFromGpxFileAsync(gpxFile).ThrowsAsync(new Exception(errorMessage));
 
         await locationSectionModel.ImportFromGpxFileCommand.ExecuteAsync(null);
 
