@@ -151,7 +151,7 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 
     private async Task WriteFilesAsync(string value)
     {
-        var result = await WriteFilesAsync(async file =>
+        await WriteFilesAsync(async file =>
         {
             if (metadataProperty is IMetadataProperty<string> stringProperty)
             {

@@ -1,9 +1,11 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Display;
 using Microsoft.UI;
+using Microsoft.UI.Xaml;
 using PhotoViewer.App.Utils.Logging;
 using System;
 using System.Threading.Tasks;
+using WinUIEx;
 
 namespace PhotoViewer.App.Utils;
 
@@ -24,10 +26,11 @@ internal class ColorProfileProvider : IColorProfileProvider
 
     private DisplayInformation? displayInformation;
 
-    public async Task InitializeAsync(WindowId windowId)
+    public async Task InitializeAsync(Window window)
     {
         try
         {
+            var windowId = Win32Interop.GetWindowIdFromWindow(window.GetWindowHandle());
             displayInformation = DisplayInformation.CreateForWindowId(windowId);
             displayInformation.ColorProfileChanged += DisplayInformation_ColorProfileChanged;
             ColorProfile = await LoadColorProfileAsync(displayInformation);

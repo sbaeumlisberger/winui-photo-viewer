@@ -20,8 +20,6 @@ internal class CachedImageLoaderService : ICachedImageLoaderService
 {
     private const int CacheSize = 5;
 
-    public static ICachedImageLoaderService Instance = new CachedImageLoaderService(new ImageLoaderService(new GifImageLoaderService()));
-
     private readonly IImageLoaderService imageLoaderService;
 
     private readonly ImageCache cache;

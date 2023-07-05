@@ -41,7 +41,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
 
     private readonly ApplicationSettings settings;
 
-    public OverviewPageCommandBarModel(
+    internal OverviewPageCommandBarModel(
         IMessenger messenger,
         IDialogService dialogService,
         IMediaFilesLoaderService loadMediaItemsService,

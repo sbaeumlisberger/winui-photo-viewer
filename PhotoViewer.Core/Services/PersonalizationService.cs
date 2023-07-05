@@ -35,7 +35,7 @@ public class PersonalizationService : IPersonalizationService
         {
             throw new ArgumentException("The given file type is not supported.");
         }
-        var storageFile = file as StorageFile ?? await file.CopyAsync(ApplicationData.Current.LocalFolder, "lockscreenBackground" + file.FileType, NameCollisionOption.ReplaceExisting);
+        var storageFile = file as StorageFile ?? await file.CopyAsync(AppData.PrivateFolder, "lockscreenBackground" + file.FileType, NameCollisionOption.ReplaceExisting);
         bool success = await UserProfilePersonalizationSettings.Current.TrySetLockScreenImageAsync(storageFile);
         if (!success)
         {
@@ -53,7 +53,7 @@ public class PersonalizationService : IPersonalizationService
         {
             throw new ArgumentException("The given file type is not supported.");
         }
-        var storageFile = file as StorageFile ?? await file.CopyAsync(ApplicationData.Current.LocalFolder, "desktopBackground" + file.FileType, NameCollisionOption.ReplaceExisting);
+        var storageFile = file as StorageFile ?? await file.CopyAsync(AppData.PrivateFolder, "desktopBackground" + file.FileType, NameCollisionOption.ReplaceExisting);
         bool success = await UserProfilePersonalizationSettings.Current.TrySetWallpaperImageAsync(storageFile);
         if (!success)
         {

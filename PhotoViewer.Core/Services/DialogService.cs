@@ -1,0 +1,39 @@
+﻿using PhotoViewer.App.Services;
+using PhotoViewer.Core.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PhotoViewer.Core;
+
+public class DialogRequestedEventArgs : AsyncEventArgs
+{
+    public object DialogModel { get; }
+
+    public DialogRequestedEventArgs(object dialogModel)
+    {
+        DialogModel = dialogModel;
+    }
+}
+
+internal interface IDialogService
+{
+    event EventHandler<DialogRequestedEventArgs> DialogRequested;
+
+    Task ShowDialogAsync(object dialogModel);
+}
+
+
+internal class DialogService : IDialogService
+{
+    public event EventHandler<DialogRequestedEventArgs>? DialogRequested;
+
+    public async Task ShowDialogAsync(object dialogModel)
+    {
+        var eventArgs = new DialogRequestedEventArgs(dialogModel);
+        DialogRequested?.Invoke(this, eventArgs);
+        await eventArgs.CompletionTask;
+    }
+}

@@ -4,6 +4,7 @@ using NSubstitute;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
@@ -117,9 +118,10 @@ public class MetadataTextboxModelTest
     }
 
     [Fact]
-    public void UnsavedValueIsWrittenWhenFilesChanging()
+    public async Task UnsavedValueIsWrittenWhenFilesChanging()
     {
         var file = Substitute.For<IBitmapFileInfo>();
+        metadataServiceMock.GetMetadataAsync(file, metadataPropertyMock).Returns("value from file");
         metadataTextboxModel.UpdateFilesChanged(new[] { file }, new[] { CreateMetadataView("value from file") });
 
         metadataTextboxModel.Text = "some value";
@@ -127,8 +129,10 @@ public class MetadataTextboxModelTest
         timerMock.IsEnabled.Returns(true);
         var otherFile = Substitute.For<IBitmapFileInfo>();
         metadataTextboxModel.UpdateFilesChanged(new[] { otherFile }, new[] { CreateMetadataView("value from other file") });
-
-        metadataServiceMock.Received().WriteMetadataAsync(file, metadataPropertyMock, "some value");
+      
+        timerMock.Received().Stop();
+        await Task.Delay(10); // TODO
+        await metadataServiceMock.Received().WriteMetadataAsync(file, metadataPropertyMock, "some value");
         Assert.Equal("value from other file", metadataTextboxModel.Text);
     }
 

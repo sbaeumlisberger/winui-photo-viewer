@@ -65,15 +65,14 @@ public class OnPropertyChangedMethodsGenerator : IIncrementalGenerator
 
                 partial class {{classSymbol.Name}} 
                 {
-                   protected override void __EnableOnPropertyChangedMethods()
-                   {
-                        PropertyChanged += (object? sender, PropertyChangedEventArgs e) =>
+                    protected override void _InvokeOnPropertyChangedMethod(string? propertyName)
+                    {
+                        switch(propertyName)
                         {
-                            switch(e.PropertyName)
-                            {
-                                {{Utils.Indent(4, GenerateCaseStatements(propertyNames))}}
-                            }
-                        };
+                            {{Utils.Indent(4, GenerateCaseStatements(propertyNames))}}
+                            default:
+                                break;
+                        }                    
                     }
 
                     {{Utils.Indent(1, GenerateMethodDeclarations(propertyNames))}}
@@ -106,7 +105,8 @@ public class OnPropertyChangedMethodsGenerator : IIncrementalGenerator
 
         while (currentClassSymbol != null)
         {
-            propertyNames.AddRange(currentClassSymbol.GetMembers().OfType<IPropertySymbol>().Select(prop => prop.Name));
+            var propertiesWithSetter = currentClassSymbol.GetMembers().OfType<IPropertySymbol>().Where(prop => prop.SetMethod != null);
+            propertyNames.AddRange(propertiesWithSetter.Select(prop => prop.Name));
             currentClassSymbol = currentClassSymbol.BaseType;
         }
 

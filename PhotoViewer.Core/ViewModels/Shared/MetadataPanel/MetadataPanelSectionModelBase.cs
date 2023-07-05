@@ -29,7 +29,7 @@ namespace PhotoViewer.Core.ViewModels
         private readonly IBackgroundTaskService backgroundTaskService;
         private readonly IDialogService dialogService;
 
-        protected MetadataPanelSectionModelBase(
+        private protected MetadataPanelSectionModelBase(
             IMessenger messenger,
             IBackgroundTaskService backgroundTaskService, 
             IDialogService dialogService)

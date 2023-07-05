@@ -1,34 +1,23 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using NSubstitute;
-using PhotoViewer.App.Messages;
-using PhotoViewer.App.Models;
 using PhotoViewer.App.Resources;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
-using PhotoViewer.App.ViewModels;
 using PhotoViewer.App.Views.Dialogs;
-using PhotoViewer.Core.Models;
+using PhotoViewer.Core;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels;
 using System;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
 using Windows.Globalization;
-using Windows.Storage;
-using WinUIEx;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
+using StringsApp = PhotoViewer.App.Resources.Strings;
+using StringsCore = PhotoViewer.Core.Resources.Strings;
 
 namespace PhotoViewer.App;
 
@@ -36,9 +25,11 @@ public partial class App : Application
 {
     public static new App Current => (App)Application.Current;
 
-    public MainWindow Window { get; private set; } = null!;
+    public ViewModelFactory ViewModelFactory { get; }
 
-    private readonly ApplicationSettings applicationSettings;
+    public MainWindow Window { get; private set; } = null!;
+    
+    private readonly AppModel appModel;
 
     private bool isUnhandeldExceptionDialogShown = false;
 
@@ -46,130 +37,43 @@ public partial class App : Application
     {
         var stopwatch = Stopwatch.StartNew();
 
-        applicationSettings = LoadSettings();
+        var applicationSettings = new SettingsService().LoadSettings();
 
         Log.Logger = new LoggerImpl(applicationSettings.IsDebugLogEnabled);
-
-        stopwatch.Stop();
-        Log.Info($"LoggerImpl took {stopwatch.ElapsedMilliseconds}ms");
-        stopwatch.Start();
 
         UnhandledException += App_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
-        string language = ApplicationLanguages.Languages.First();
-        Strings.Culture = new CultureInfo(language);
-        PhotoViewer.Core.Resources.Strings.Culture = new CultureInfo(language);
+        string language = ApplicationLanguages.Languages[0];
+        StringsApp.Culture = new CultureInfo(language);
+        StringsCore.Culture = new CultureInfo(language);
 
-        this.InitializeComponent();
+        InitializeComponent();
+       
+        ViewModelFactory = new ViewModelFactory(applicationSettings);
+
+        appModel = ViewModelFactory.CreateAppModel();
 
         stopwatch.Stop();
         Log.Info($"App constructor took {stopwatch.ElapsedMilliseconds}ms");
     }
 
-    protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    protected override async void OnLaunched(LaunchActivatedEventArgs _)
     {
-        Log.Info("Application launched");
-        var stopwatch = Stopwatch.StartNew();
-
-        var loadMediaFilesTask = LoadMediaFiles(applicationSettings);
-
-        var messenger = StrongReferenceMessenger.Default;
-
-        await CreateWindowAsync(messenger, applicationSettings);
-
-        messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel)));
-
-        stopwatch.Stop();
-        Log.Info($"OnLaunched took {stopwatch.ElapsedMilliseconds}ms");
-
-        messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask));
-
-        await Task.Delay(2000);
+        var args = AppInstance.GetActivatedEventArgs();
+        await appModel.OnLaunchedAsync(args, CreateWindowAsync);
         await TryReportCrashAsync();
     }
 
-    private async Task TryReportCrashAsync()
-    {
-        try
-        {
-            var errors = await Task.Run(() => new EventLogService().GetErrors());
-
-            if (errors.Any())
-            {
-                var dialog = new CrashReportDialog(Window);
-                
-                if (await dialog.ShowAsync() == ContentDialogResult.Primary)
-                {
-                    await new ErrorReportService().SendCrashReportAsync(string.Join("\n\n", errors));
-                }          
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.Error("Failed to check or report application crash", ex);
-        }
-    }
-
-    private ApplicationSettings LoadSettings()
-    {
-        ISettingsService settingsService = new SettingsService();
-        var settings = settingsService.LoadSettings();
-        return settings;
-    }
-
-    private LoadMediaFilesTask LoadMediaFiles(ApplicationSettings settings)
-    {
-        var activatedEventArgs = AppInstance.GetActivatedEventArgs();
-
-        Log.Info($"Enter LoadMediaFiles ({activatedEventArgs})");
-
-        IMediaFilesLoaderService mediaFilesLoaderService = new MediaFilesLoaderService();
-        var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName, settings.IncludeVideos);
-
-        if (activatedEventArgs is IFileActivatedEventArgsWithNeighboringFiles fileActivatedEventArgsWithNeighboringFiles)
-        {
-            if (fileActivatedEventArgsWithNeighboringFiles.NeighboringFilesQuery is { } neighboringFilesQuery)
-            {
-                var startFile = (IStorageFile)fileActivatedEventArgsWithNeighboringFiles.Files.First();
-                return mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
-            }
-            else
-            {
-                var activatedFiles = fileActivatedEventArgsWithNeighboringFiles.Files.Cast<IStorageFile>().ToList();
-                return mediaFilesLoaderService.LoadFileList(activatedFiles, config);
-            }
-        }
-        else if (activatedEventArgs is IFileActivatedEventArgs fileActivatedEventArgs)
-        {
-            var activatedFiles = fileActivatedEventArgs.Files.Cast<IStorageFile>().ToList();
-            return mediaFilesLoaderService.LoadFileList(activatedFiles, config);
-        }
-        else if (Environment.GetCommandLineArgs().Length > 1)
-        {
-            var arguments = Environment.GetCommandLineArgs().Skip(1).ToList();
-            return mediaFilesLoaderService.LoadFromArguments(arguments, config);
-        }
-        else
-        {
-#if DEBUG
-            return mediaFilesLoaderService.LoadFolder(KnownFolders.PicturesLibrary, config);
-#else
-            return LoadMediaFilesTask.Empty;
-#endif
-        }
-    }
-
-    private Task CreateWindowAsync(IMessenger messenger, ApplicationSettings settings)
+    private async Task CreateWindowAsync(MainWindowModel windowModel)
     {
         var stopwatch = Stopwatch.StartNew();
-        Window = new MainWindow(messenger, settings);
-        Window.Activate();
-        var windowId = Win32Interop.GetWindowIdFromWindow(Window.GetWindowHandle());
-        var task = ColorProfileProvider.Instance.InitializeAsync(windowId);
+        Window = new MainWindow(windowModel);
+        var initialiationTask = ColorProfileProvider.Instance.InitializeAsync(Window);
+        Window.Activate();      
+        await initialiationTask;
         stopwatch.Stop();
         Log.Info($"CreateWindowAsync took {stopwatch.ElapsedMilliseconds}ms");
-        return task;
     }
 
     private void App_UnhandledException(object sender, UnhandledExceptionEventArgs args)
@@ -251,5 +155,28 @@ public partial class App : Application
             Log.Error("Failed to send crash report: " + ex);
         }
     }
+
+    private async Task TryReportCrashAsync()
+    {
+        try
+        {
+            var errors = await Task.Run(() => new EventLogService().GetErrors());
+
+            if (errors.Any())
+            {
+                var dialog = new CrashReportDialog(Window);
+
+                if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+                {
+                    await new ErrorReportService().SendCrashReportAsync(string.Join("\n\n", errors));
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to check or report application crash", ex);
+        }
+    }
+
 
 }

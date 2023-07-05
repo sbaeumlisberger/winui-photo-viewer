@@ -18,7 +18,7 @@ public sealed partial class SettingsPage : Page, IMVVMControl<SettingsPageModel>
 {
     public SettingsPage()
     {
-        DataContext = ViewModelFactory.Instance.CreateSettingsPageModel();
+        DataContext = App.Current.ViewModelFactory.CreateSettingsPageModel();
         this.InitializeComponentMVVM();
     }
 

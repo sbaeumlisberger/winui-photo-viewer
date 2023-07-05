@@ -18,17 +18,17 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
 
     partial void ConnectToViewModel(BitmapFlipViewItemModel viewModel)
     {
-        viewModel.PropertyChanged += ViewModel_PropertyChanged;
+        viewModel.Subscribe(this, nameof(viewModel.IsSelected), OnIsSelectedChanged);
     }
 
     partial void DisconnectFromViewModel(BitmapFlipViewItemModel viewModel)
     {
-        viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+        viewModel.UnsubscribeAll(this);
     }
 
-    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnIsSelectedChanged()
     {
-        if (e.PropertyName == nameof(ViewModel.IsSelected) && !ViewModel!.IsSelected)
+        if (!ViewModel!.IsSelected)
         {
             bitmapViewer.ScrollViewer.ChangeView(0, 0, 1);
         }

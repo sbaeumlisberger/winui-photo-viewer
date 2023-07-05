@@ -62,7 +62,7 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
 
     private readonly IBitmapFileInfo bitmapFile;
 
-    public CropImageToolModel(IBitmapFileInfo bitmapFile, IMessenger messenger, ICropImageService cropImageService, IDialogService dialogService) : base(messenger)
+    internal CropImageToolModel(IBitmapFileInfo bitmapFile, IMessenger messenger, ICropImageService cropImageService, IDialogService dialogService) : base(messenger)
     {
         this.bitmapFile = bitmapFile;
         this.cropImageService = cropImageService;

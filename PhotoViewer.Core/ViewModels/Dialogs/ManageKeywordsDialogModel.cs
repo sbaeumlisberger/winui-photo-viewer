@@ -18,7 +18,7 @@ public partial class ManageKeywordsDialogModel : ViewModelBase
     private readonly ISuggestionsService suggestionsService;
     private readonly IDialogService dialogService;
 
-    public ManageKeywordsDialogModel(ISuggestionsService suggestionsService, IDialogService dialogService)
+    internal ManageKeywordsDialogModel(ISuggestionsService suggestionsService, IDialogService dialogService)
     {
         this.suggestionsService = suggestionsService;
         this.dialogService = dialogService;

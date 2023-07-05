@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Utils;
 using System.ComponentModel;
 
 namespace PhotoViewer.App.Utils;
@@ -10,7 +11,7 @@ public interface IViewModel : INotifyPropertyChanged
     void Cleanup();
 }
 
-public class ViewModelBase : ObservableObject, IViewModel
+public class ViewModelBase : ObservableObjectBase, IViewModel
 {
     public Task LastDispatchTask { get; private set; } = Task.CompletedTask;
 
@@ -22,8 +23,6 @@ public class ViewModelBase : ObservableObject, IViewModel
     {
         Messenger = messenger;
         synchronizationContext = SynchronizationContext.Current;
-        __EnableAutoNotifyCanExecuteChanged();
-        __EnableOnPropertyChangedMethods();
     }
 
     public void Cleanup()
@@ -34,6 +33,18 @@ public class ViewModelBase : ObservableObject, IViewModel
     }
 
     protected virtual void OnCleanup() { }
+
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        _NotifyCanExecuteChanged(e.PropertyName);
+        _InvokeOnPropertyChangedMethod(e.PropertyName);
+
+        base.OnPropertyChanged(e);
+    }
+
+    protected virtual void _NotifyCanExecuteChanged(string? propertyName) { }
+
+    protected virtual void _InvokeOnPropertyChangedMethod(string? propertyName) { }
 
     protected void Register<TMessage>(Action<TMessage> messageHandler) where TMessage : class
     {
@@ -64,7 +75,4 @@ public class ViewModelBase : ObservableObject, IViewModel
         }
     }
 
-    protected virtual void __EnableAutoNotifyCanExecuteChanged() { }
-
-    protected virtual void __EnableOnPropertyChangedMethods() { }
 }

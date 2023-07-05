@@ -3,6 +3,7 @@ using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
+using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.ViewModels;
 using System;

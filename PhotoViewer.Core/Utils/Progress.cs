@@ -12,7 +12,7 @@ using Tocronx.SimpleAsync;
 
 namespace PhotoViewer.Core.Utils;
 
-public partial class Progress : ObservableObject, IProgress<double>
+public partial class Progress : ObservableObjectBase, IProgress<double>
 {
     public bool CanCancel { get; private set; } = false;
 

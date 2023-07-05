@@ -29,7 +29,7 @@ namespace PhotoViewer.Core.ViewModels
 
         public ApplicationSettings Settings { get; }
 
-        public SettingsPageModel(
+        internal SettingsPageModel(
             IMessenger messenger,
             ApplicationSettings settings,
             ISettingsService settingsService,

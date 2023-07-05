@@ -7,7 +7,7 @@ namespace PhotoViewer.App.Utils.Logging;
 
 public class LoggerImpl : ILogger
 {
-    private static readonly string LogFolderPath = Path.Combine(AppData.LocalFolder, "logs");
+    private static readonly string LogFolderPath = Path.Combine(AppData.PublicFolder, "logs");
 
     private static readonly string LogFilePath = Path.Combine(LogFolderPath, "log-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt");
     

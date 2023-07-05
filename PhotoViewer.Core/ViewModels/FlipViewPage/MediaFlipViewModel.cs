@@ -18,6 +18,7 @@ using Tocronx.SimpleAsync;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.Core.Resources;
+using PhotoViewer.Core;
 
 namespace PhotoViewer.App.ViewModels;
 
@@ -78,7 +79,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     private VirualizedCollection<IMediaFileInfo, IMediaFlipViewItemModel> itemModels;
 
-    public MediaFlipViewModel(
+    internal MediaFlipViewModel(
         IMessenger messenger,
         IDialogService dialogService,
         IMediaFilesLoaderService loadMediaItemsService,

@@ -15,9 +15,7 @@ public class EventLogService
 {
     private const string LastCheckTimestampKey = "EventLogLastCheckTimestamp";
 
-    private const string ApplicationName = "PhotoViewer.App.exe";
-
-    private readonly IPropertySet appData = ApplicationData.Current.LocalSettings.Values;
+    private readonly IPropertySet appData = AppData.DataContainer.Values;
 
     public List<string> GetErrors()
     {
@@ -33,16 +31,16 @@ public class EventLogService
         var eventLogQuery = new EventLogQuery("Application", PathType.LogName, query) { ReverseDirection = true };
 
         var eventLogReader = new EventLogReader(eventLogQuery);
-       
+
         for (EventRecord eventRecord; (eventRecord = eventLogReader.ReadEvent()) != null;)
         {
             string description = eventRecord.FormatDescription();
 
-            if (description != null && description.Contains(ApplicationName))
+            if (description != null && description.Contains(AppData.ExecutableName))
             {
                 errors.Add(description);
             }
-        } 
+        }
 
         appData[LastCheckTimestampKey] = DateTimeOffset.UtcNow;
 

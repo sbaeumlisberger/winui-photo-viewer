@@ -26,7 +26,7 @@ public sealed partial class ComparePage : Page, IMVVMControl<ComparePageModel>
 {
     public ComparePage()
     {
-        DataContext = ViewModelFactory.Instance.CreateComparePageModel();
+        DataContext = App.Current.ViewModelFactory.CreateComparePageModel();
         this.InitializeComponentMVVM();
     }
 

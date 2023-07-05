@@ -15,6 +15,7 @@ using System.Xml.Linq;
 using Tocronx.SimpleAsync;
 using Xunit;
 using PhotoViewer.Core.Services;
+using PhotoViewer.Core;
 
 namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
 

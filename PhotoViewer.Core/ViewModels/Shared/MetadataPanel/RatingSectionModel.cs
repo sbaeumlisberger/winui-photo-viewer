@@ -27,7 +27,7 @@ namespace PhotoViewer.Core.ViewModels
         private readonly IMetadataService metadataService;
         private readonly IDialogService dialogService;
 
-        public RatingSectionModel(
+        internal RatingSectionModel(
             IMetadataService metadataService,
             IDialogService dialogService,
             IMessenger messenger,

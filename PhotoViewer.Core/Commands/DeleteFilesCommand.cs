@@ -25,7 +25,7 @@ public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFil
     private readonly IBackgroundTaskService backgroundTaskService;
     private readonly ApplicationSettings settings;
 
-    public DeleteFilesCommand(IMessenger messenger, IDeleteMediaFilesService deleteMediaService, IDialogService dialogService, ISettingsService settingsService, IBackgroundTaskService backgroundTaskService, ApplicationSettings settings)
+    internal DeleteFilesCommand(IMessenger messenger, IDeleteMediaFilesService deleteMediaService, IDialogService dialogService, ISettingsService settingsService, IBackgroundTaskService backgroundTaskService, ApplicationSettings settings)
     {
         this.messenger = messenger;
         this.deleteMediaFilesService = deleteMediaService;

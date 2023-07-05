@@ -20,7 +20,7 @@ public sealed partial class FlipViewPage : Page, IMVVMControl<FlipViewPageModel>
 
     public FlipViewPage()
     {
-        DataContext = ViewModelFactory.Instance.CreateFlipViewPageModel();
+        DataContext = App.Current.ViewModelFactory.CreateFlipViewPageModel();
         this.InitializeComponentMVVM();
     }
 

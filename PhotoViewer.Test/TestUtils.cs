@@ -1,9 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using NSubstitute;
+using NSubstitute.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.ViewModels;
 using System.ComponentModel;
+using System.IO;
 using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace PhotoViewer.Test;
 
@@ -64,5 +67,10 @@ internal static class TestUtils
         var events = new List<string?>();
         obj.PropertyChanged += (_, e) => events.Add(e.PropertyName);
         return events;
+    }
+
+    internal static ConfiguredCall ReturnsAsyncOperation<T>(this object mock, T returnValue)
+    {
+        return mock.Returns(Task.FromResult(returnValue).AsAsyncOperation());
     }
 }

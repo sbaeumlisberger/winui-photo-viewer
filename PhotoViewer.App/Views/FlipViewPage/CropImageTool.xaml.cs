@@ -18,21 +18,13 @@ public sealed partial class CropImageTool : UserControl, IMVVMControl<CropImageT
 
     partial void ConnectToViewModel(CropImageToolModel viewModel)
     {
-        viewModel.PropertyChanged += ViewModel_PropertyChanged;
+        viewModel.Subscribe(this, nameof(viewModel.SelectionInPixels), UpdateSelectionRect);
         UpdateSelectionRect();
     }
 
     partial void DisconnectFromViewModel(CropImageToolModel viewModel)
     {
-        viewModel.PropertyChanged -= ViewModel_PropertyChanged;
-    }
-
-    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(ViewModel.SelectionInPixels))
-        {
-            UpdateSelectionRect();
-        }
+        viewModel.UnsubscribeAll(this);
     }
 
     private void UpdateSelectionRect()

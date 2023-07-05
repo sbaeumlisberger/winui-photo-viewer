@@ -7,6 +7,7 @@ using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.ViewModels;
+using PhotoViewer.Core.ViewModels.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ using WinRT.Interop;
 
 namespace PhotoViewer.App.Services;
 
-public class DialogService : IDialogService
+public class DialogService
 {
     private readonly ViewRegistrations viewRegistrations = ViewRegistrations.Instance;
 
@@ -49,6 +50,8 @@ public class DialogService : IDialogService
                 await ShowLaunchFileDialogAsync(launchFileDialogModel); break;
             case ShareDialogModel shareDialogModel:
                 await ShowShareDialogAsync(shareDialogModel); break;
+            case PrintDialogModel:
+                await ShowPrintUIAsync(); break;
             default:
                 await ShowCustomDialogAsync(dialogModel); break;
         }
@@ -56,18 +59,6 @@ public class DialogService : IDialogService
         if (dialogModel is IViewModel viewModel)
         {
             viewModel.Cleanup();
-        }
-    }
-
-    public async Task ShowPrintUIAsync()
-    {
-        try
-        {
-            await PrintManagerInterop.ShowPrintUIForWindowAsync(windowHandle);
-        }
-        catch (Exception ex)
-        {
-            Log.Error("Failed to show print UI", ex);
         }
     }
 
@@ -157,6 +148,18 @@ public class DialogService : IDialogService
         }
         DataTransferManager.As<IDataTransferManagerInterop>().ShowShareUIForWindow(windowHandle);
         return Task.CompletedTask;
+    }
+
+    private async Task ShowPrintUIAsync()
+    {
+        try
+        {
+            await PrintManagerInterop.ShowPrintUIForWindowAsync(windowHandle);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to show print UI", ex);
+        }
     }
 
     private async Task ShowCustomDialogAsync(object dialogModel)

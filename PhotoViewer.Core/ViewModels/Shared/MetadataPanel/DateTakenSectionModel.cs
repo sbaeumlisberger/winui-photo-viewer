@@ -33,7 +33,7 @@ public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
 
     private bool isUpdating = false;
 
-    public DateTakenSectionModel(
+    internal DateTakenSectionModel(
         IMessenger messenger,
         IMetadataService metadataService,
         IDialogService dialogService,

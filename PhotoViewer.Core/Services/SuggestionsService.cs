@@ -51,8 +51,8 @@ namespace PhotoViewer.Core.Services
 
         public SuggestionsService(string id)
         {
-            filePathSuggestions = Path.Combine(AppData.LocalFolder, id + ".json");
-            filePathRecent = Path.Combine(AppData.LocalFolder, id + "-recent.json");
+            filePathSuggestions = Path.Combine(AppData.PublicFolder, id + ".json");
+            filePathRecent = Path.Combine(AppData.PublicFolder, id + "-recent.json");
             Task.Run(LoadSuggestionsAsync);
         }
         public IReadOnlyList<string> GetAll()

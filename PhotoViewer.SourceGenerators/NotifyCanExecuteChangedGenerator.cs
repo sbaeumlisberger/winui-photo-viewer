@@ -9,7 +9,7 @@ using System.Threading;
 namespace SourceGenerators;
 
 [Generator]
-public class AutoNotifyCanExecuteChangedGenerator : IIncrementalGenerator
+public class NotifyCanExecuteChangedGenerator : IIncrementalGenerator
 {
     private record struct RelayCommandInfo(string CommandName, string CanExecutePropertyName);
 
@@ -80,15 +80,14 @@ public class AutoNotifyCanExecuteChangedGenerator : IIncrementalGenerator
 
                 partial class {{classSymbol.Name}} 
                 {
-                   protected override void __EnableAutoNotifyCanExecuteChanged()
-                   {
-                        PropertyChanged += (object? sender, PropertyChangedEventArgs e) =>
+                    protected override void _NotifyCanExecuteChanged(string? propertyName)
+                    {
+                        switch(propertyName)
                         {
-                            switch(e.PropertyName)
-                            {
-                                {{Utils.Indent(4, GenerateCaseStatements(list))}}
-                            }
-                        };
+                            {{Utils.Indent(3, GenerateCaseStatements(list))}}
+                            default:
+                                break;
+                        }                        
                     }
                 }
                 """;

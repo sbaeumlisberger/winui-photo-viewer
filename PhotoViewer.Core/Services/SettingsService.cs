@@ -25,9 +25,9 @@ public class SettingsService : ISettingsService
 
     private readonly string settingsFilePath;
 
-    public SettingsService(string? appDataFolder = null) 
+    public SettingsService(string? folder = null) 
     {
-        settingsFilePath = Path.Combine(appDataFolder ?? AppData.LocalFolder, "settings.ini");
+        settingsFilePath = Path.Combine(folder ?? AppData.PublicFolder, "settings.ini");
     }
 
     public ApplicationSettings LoadSettings()

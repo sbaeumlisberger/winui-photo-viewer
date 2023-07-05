@@ -43,7 +43,7 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
 
     private readonly IDialogService dialogService;
 
-    public OverviewItemModel(IMediaFileInfo mediaFile, IMessenger messenger, IMetadataService metadataService, IDialogService dialogService) : base(messenger)
+    internal OverviewItemModel(IMediaFileInfo mediaFile, IMessenger messenger, IMetadataService metadataService, IDialogService dialogService) : base(messenger)
     {
         MediaFile = mediaFile;
         DisplayName = mediaFile.DisplayName;

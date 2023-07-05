@@ -17,6 +17,7 @@ namespace PhotoViewer.Core;
 
 public interface IViewModelFactory
 {
+    AppModel CreateAppModel();
     MainWindowModel CreateMainWindowModel();
     IDetailsBarModel CreateDetailsBarModel();
     IMediaFlipViewModel CreateMediaFlipViewModel();
@@ -35,16 +36,14 @@ public interface IViewModelFactory
 
 public class ViewModelFactory : IViewModelFactory
 {
-    public static ViewModelFactory Instance { get; private set; } = null!;
-
-    private readonly IMessenger messenger;
+    private readonly IMessenger messenger = new StrongReferenceMessenger();
     private readonly ApplicationSettings settings;
     private readonly ApplicationSession applicationSession;
-    private readonly IMediaFilesLoaderService mediaFilesLoaderService = new MediaFilesLoaderService();
+    private readonly IMediaFilesLoaderService mediaFilesLoaderService;
     private readonly IMetadataService metadataService = new MetadataService();
     private readonly IDeleteMediaFilesService deleteMediaService = new DeleteMediaFilesService();
     private readonly IRotateBitmapService rotateBitmapService;
-    private readonly ICachedImageLoaderService imageLoaderService = CachedImageLoaderService.Instance;
+    private readonly ICachedImageLoaderService imageLoaderService = new CachedImageLoaderService(new ImageLoaderService(new GifImageLoaderService()));
     private readonly IDisplayRequestService displayRequestService = new DisplayRequestService();
     private readonly ILocationService locationService = new LocationService();
     private readonly ISettingsService settingService = new SettingsService();
@@ -53,30 +52,29 @@ public class ViewModelFactory : IViewModelFactory
     private readonly IGpxService gpxService;
     private readonly ISuggestionsService peopleSuggestionsService = new SuggestionsService("people");
     private readonly ISuggestionsService keywordsSuggestionsService = new SuggestionsService("keywords");
-    private readonly IDialogService dialogService;
+    private readonly IDialogService dialogService = new DialogService();
     private readonly IFaceDetectionService faceDetectionService = new FaceDetectionService();
     private readonly ICropImageService cropImageService;
     private readonly IBackgroundTaskService backgroundTaskService = new BackgroundTaskService();
 
-    private ViewModelFactory(IMessenger messenger, ApplicationSettings settings, IDialogService dialogService)
+    public ViewModelFactory(ApplicationSettings settings) 
     {
-        this.messenger = messenger;
         this.settings = settings;
-        this.dialogService = dialogService;
         gpxService = new GpxService(metadataService);
         applicationSession = new ApplicationSession(messenger);
         rotateBitmapService = new RotateBitmapService(metadataService);
         cropImageService = new CropImageService(messenger, metadataService);
+        mediaFilesLoaderService = new MediaFilesLoaderService(imageLoaderService, new FileSystemService());
     }
 
-    public static void Initialize(IMessenger messenger, ApplicationSettings settings, IDialogService dialogService)
+    public AppModel CreateAppModel()
     {
-        Instance = new ViewModelFactory(messenger, settings, dialogService);
+        return new AppModel(settings, messenger, this, mediaFilesLoaderService);
     }
 
     public MainWindowModel CreateMainWindowModel() 
     {
-        return new MainWindowModel(messenger, backgroundTaskService, dialogService);
+        return new MainWindowModel(settings, messenger, backgroundTaskService, dialogService);
     }
 
     public FlipViewPageModel CreateFlipViewPageModel()

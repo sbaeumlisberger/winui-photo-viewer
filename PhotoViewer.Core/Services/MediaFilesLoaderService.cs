@@ -28,10 +28,10 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 
     private readonly ICachedImageLoaderService cachedImageLoaderService;
 
-    public MediaFilesLoaderService(IFileSystemService? fileSystemService = null, ICachedImageLoaderService? cachedImageLoaderService = null)
+    public MediaFilesLoaderService(ICachedImageLoaderService cachedImageLoaderService, IFileSystemService fileSystemService)
     {
-        this.fileSystemService = fileSystemService ?? new FileSystemService();
-        this.cachedImageLoaderService = cachedImageLoaderService ?? CachedImageLoaderService.Instance;
+        this.cachedImageLoaderService = cachedImageLoaderService;
+        this.fileSystemService = fileSystemService;   
     }
 
     public LoadMediaFilesTask LoadFolder(IStorageFolder storageFolder, LoadMediaConfig config)

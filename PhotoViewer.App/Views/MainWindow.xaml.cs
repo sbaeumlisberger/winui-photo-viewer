@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using PhotoViewer.App.Messages;
@@ -7,15 +6,12 @@ using PhotoViewer.App.Services;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.App.Utils.Logging;
 using System;
-using WinRT.Interop;
 using WinUIEx;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
-using System.ComponentModel;
 using PhotoViewer.Core.Messages;
 using Windows.System;
 using Microsoft.UI.Xaml.Input;
-using PhotoViewer.App.Utils;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.Core.ViewModels;
 using Microsoft.UI.Xaml.Navigation;
@@ -28,21 +24,35 @@ public sealed partial class MainWindow : WindowEx
 
     private readonly MainWindowModel viewModel;
 
-    public MainWindow(IMessenger messenger, ApplicationSettings settings)
+    private readonly DialogService dialogService;
+    public MainWindow(MainWindowModel viewModel)
     {
+        this.viewModel = viewModel;
         this.InitializeComponent();
-        ViewModelFactory.Initialize(messenger, settings, new DialogService(this));
-        viewModel = ViewModelFactory.Instance.CreateMainWindowModel();
         AppWindow.Closing += AppWindow_Closing;
         Closed += MainWindow_Closed;
-        messenger.Register<ChangeWindowTitleMessage>(this, msg => Title = msg.NewTitle + " - WinUI Photo Viewer");
-        messenger.Register<EnterFullscreenMessage>(this, _ => EnterFullscreen());
-        messenger.Register<ExitFullscreenMessage>(this, _ => ExitFullscreen());
-        messenger.Register<NavigateToPageMessage>(this, msg => NavigateToPage(msg.PageType, msg.Parameter));
-        messenger.Register<NavigateBackMessage>(this, _ => NavigateBack());
-        messenger.Register<SettingsChangedMessage>(this, msg => OnSettingsChanged(settings, msg.ChangedSetting));
-        ApplyTheme(settings.Theme);
+
+        // AppWindow.SetIcon(); TODO
+
+        dialogService = new DialogService(this);
+
+        viewModel.DialogRequested += ViewModel_DialogRequested;
+
+        viewModel.Subscribe(this, nameof(viewModel.Title), () => Title = viewModel.Title, initialCallback: true);
+        viewModel.Subscribe(this, nameof(viewModel.Theme), ApplyTheme, initialCallback: true);
+
+        // TODO
+        viewModel.Messenger.Register<EnterFullscreenMessage>(this, _ => EnterFullscreen());
+        viewModel.Messenger.Register<ExitFullscreenMessage>(this, _ => ExitFullscreen());
+        viewModel.Messenger.Register<NavigateToPageMessage>(this, msg => NavigateToPage(msg.PageType, msg.Parameter));
+        viewModel.Messenger.Register<NavigateBackMessage>(this, _ => NavigateBack());
+           
         FocusManager.LosingFocus += FocusManager_LosingFocus;
+    }
+
+    private void ViewModel_DialogRequested(object? sender, DialogRequestedEventArgs e)
+    {
+        e.AddTask(dialogService.ShowDialogAsync(e.DialogModel));
     }
 
     private void FocusManager_LosingFocus(object? sender, LosingFocusEventArgs e)
@@ -54,19 +64,11 @@ public sealed partial class MainWindow : WindowEx
         }
     }
 
-    private void OnSettingsChanged(ApplicationSettings settings, string? changedSetting)
+    private void ApplyTheme()
     {
-        if (changedSetting is null || changedSetting == nameof(ApplicationSettings.Theme))
-        {
-            ApplyTheme(settings.Theme);
-        }
-    }
+        var elementTheme = (ElementTheme)viewModel.Theme;
 
-    private void ApplyTheme(AppTheme theme)
-    {
-        var elementTheme = (ElementTheme)theme;
-
-        if (theme == AppTheme.System)
+        if (viewModel.Theme == AppTheme.System)
         {
             // force update of theme
             bool isDark = App.Current.RequestedTheme == ApplicationTheme.Dark;
@@ -83,8 +85,8 @@ public sealed partial class MainWindow : WindowEx
             args.Cancel = true;
             await viewModel.OnClosingAsync();
         }
-        finally 
-        {     
+        finally
+        {
             Close();
         }
     }
@@ -109,7 +111,7 @@ public sealed partial class MainWindow : WindowEx
         frame.Navigate(viewRegistrations.GetViewTypeForViewModelType(pageModelType), parameter);
     }
 
-    private void NavigateBack() 
+    private void NavigateBack()
     {
         frame.GoBack();
     }

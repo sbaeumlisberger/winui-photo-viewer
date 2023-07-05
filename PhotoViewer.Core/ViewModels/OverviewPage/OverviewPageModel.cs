@@ -35,7 +35,7 @@ public partial class OverviewPageModel : ViewModelBase
 
     private readonly Dictionary<IMediaFileInfo, IOverviewItemModel> itemModels = new Dictionary<IMediaFileInfo, IOverviewItemModel>();
 
-    public OverviewPageModel(
+    internal OverviewPageModel(
         ApplicationSession session,
         IMessenger messenger,
         IViewModelFactory viewModelFactory, IDialogService dialogService) : base(messenger)

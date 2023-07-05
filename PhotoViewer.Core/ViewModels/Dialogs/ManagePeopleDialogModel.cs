@@ -18,7 +18,7 @@ public partial class ManagePeopleDialogModel : ViewModelBase
     private readonly ISuggestionsService suggestionsService;
     private readonly IDialogService dialogService;
 
-    public ManagePeopleDialogModel(ISuggestionsService suggestionsService, IDialogService dialogService)
+    internal ManagePeopleDialogModel(ISuggestionsService suggestionsService, IDialogService dialogService)
     {
         this.suggestionsService = suggestionsService;
         this.dialogService = dialogService;

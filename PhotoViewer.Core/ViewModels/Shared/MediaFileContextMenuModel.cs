@@ -11,6 +11,7 @@ using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels.Dialogs;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -55,7 +56,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
 
     private readonly bool isRenameFilesEnabled;
 
-    public MediaFileContextMenuModel(
+    internal MediaFileContextMenuModel(
         IMessenger messenger,
         IMetadataService metadataService,
         IPersonalizationService personalizationService,
@@ -104,7 +105,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
     [RelayCommand]
     private async Task PrintAsync()
     {
-        await dialogService.ShowPrintUIAsync();
+        await dialogService.ShowDialogAsync(new PrintDialogModel());
     }
 
     [RelayCommand]
