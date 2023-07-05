@@ -27,11 +27,11 @@ public class EnterKeyExtension
 
         if (e.NewValue != null && e.OldValue == null)
         {
-            uiElement.PreviewKeyDown += UIElement_KeyDown;
+            uiElement.KeyDown += UIElement_KeyDown;
         }
         else if (e.NewValue == null)
         {
-            uiElement.PreviewKeyDown -= UIElement_KeyDown;
+            uiElement.KeyDown -= UIElement_KeyDown;
         }
     }
 
@@ -45,6 +45,8 @@ public class EnterKeyExtension
             {
                 command.Execute(null);
             }
+
+            e.Handled = true;
         }
     }
 

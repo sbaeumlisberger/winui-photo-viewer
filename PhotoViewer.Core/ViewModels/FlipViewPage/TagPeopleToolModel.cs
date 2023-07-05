@@ -47,7 +47,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     public string AutoSuggestBoxText { get; set; } = string.Empty;
 
-    public Rect SelectionRect { get; set; }
+    public Rect SelectionRect { get; set; } = Rect.Empty;
 
     private readonly ISuggestionsService suggestionsService;
 
@@ -117,7 +117,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         else
         {
             AutoSuggestBoxText = string.Empty;
-            SelectionRect = default;
+            SelectionRect = Rect.Empty;
 
             if (TaggedPeople.IsEmpty())
             {
@@ -143,7 +143,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
             suggestedFaces.Clear();
             initalSuggestedFaces.Clear();
             AutoSuggestBoxText = string.Empty;
-            SelectionRect = default;
+            SelectionRect = Rect.Empty;
         }
     }
 
@@ -179,14 +179,20 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         else
         {
             AutoSuggestBoxText = string.Empty;
-            SelectionRect = default;
+            SelectionRect = Rect.Empty;
             return false;
         }
     }
 
-    public void ClearSuggestedFaces()
+    public void OnUserStartedSelection()
     {
+        SelectionRect = Rect.Empty;
         suggestedFaces.Clear();
+    }
+
+    public void OnUserEndedSelection(Rect selection)
+    {
+        SelectionRect = selection;
     }
 
     [RelayCommand]
@@ -224,7 +230,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
             Messenger.Send(new MetadataModifiedMessage(new[] { bitmapFile }, MetadataProperties.People));
             suggestionsService.AddSuggestionAsync(personName).LogOnException();
             AutoSuggestBoxText = string.Empty;
-            SelectionRect = default;
+            SelectionRect = Rect.Empty;
             TrySelectNextDetectedFace();
         }
         catch (Exception ex)
