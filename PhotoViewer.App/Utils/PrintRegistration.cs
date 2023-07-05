@@ -6,6 +6,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Printing;
 using Microsoft.UI.Xaml;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PhotoViewer.App.Utils;
 
@@ -101,7 +102,10 @@ internal class PrintRegistration
 
         private void PrintDocument_GetPreviewPage(object sender, GetPreviewPageEventArgs e)
         {
-            printDocument.SetPreviewPage(e.PageNumber, previewPages[e.PageNumber - 1]);
+            if (previewPages.Any())
+            {
+                printDocument.SetPreviewPage(e.PageNumber, previewPages[e.PageNumber - 1]);
+            }
         }
 
         private void PrintTaskOptionDetails_OptionChanged(PrintTaskOptionDetails printTaskOptionDetails, PrintTaskOptionChangedEventArgs args)
