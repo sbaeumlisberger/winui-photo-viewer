@@ -37,9 +37,11 @@ public sealed partial class OverviewItem : UserControl, IMVVMControl<OverviewIte
         });
     }
 
-    partial void ConnectToViewModel(OverviewItemModel viewModel)
+    async partial void ConnectToViewModel(OverviewItemModel viewModel)
     {
         viewModel.ThumbnailInvalidated += ViewModel_ThumbnailInvalidated;
+
+        image.Source = await MediaFileInfoToThumbnailConverter.ConvertAsync(viewModel.MediaFile);
     }
 
     partial void DisconnectFromViewModel(OverviewItemModel viewModel)

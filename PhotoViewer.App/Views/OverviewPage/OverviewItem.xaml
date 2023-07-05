@@ -69,8 +69,7 @@
                 x:Name="image" 
                 Width="{x:Bind ViewModel.ThumbnailSize, Mode=OneWay}" 
                 Height="{x:Bind ViewModel.ThumbnailSize, Mode=OneWay}" 
-                Stretch="Uniform" 
-                Source="{x:Bind ViewModel.MediaFile, Mode=OneWay, Converter={StaticResource MediaFileInfoToThumbnailConverter}}"/>
+                Stretch="Uniform" />
 
             <StackPanel 
                 Orientation="Horizontal" 
