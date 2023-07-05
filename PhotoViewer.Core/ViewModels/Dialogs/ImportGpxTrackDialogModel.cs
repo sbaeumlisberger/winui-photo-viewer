@@ -7,6 +7,7 @@ using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
+using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
@@ -106,11 +107,15 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
 
         var mediaFilesToProcess = mediaFiles.OfType<IBitmapFileInfo>().Where(bitmap => bitmap.IsMetadataSupported).ToList();
 
-        return await ParallelizationUtil.ProcessParallelAsync(mediaFilesToProcess, async mediaFile => 
+        var result = await ParallelizationUtil.ProcessParallelAsync(mediaFilesToProcess, async mediaFile => 
         {
             await gpxService.TryApplyGpxTrackToFile(gpxTrack, mediaFile);
             
         }, progress, cancellationToken);
+
+        Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.GeoTag));
+
+        return result;
     }
 
 }
