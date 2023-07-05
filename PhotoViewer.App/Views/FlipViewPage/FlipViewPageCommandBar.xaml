@@ -111,7 +111,7 @@
         Icon="Delete" 
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_DeleteButton}"
         Command="{x:Bind ViewModel.DeleteCommand}"
-        CommandParameter="{x:Bind ListOf(ViewModel.SelectedItemModel.MediaItem), Mode=OneWay}">
+        CommandParameter="{x:Bind ListOf(ViewModel.SelectedItemModel.MediaItem), FallbackValue={x:Null}, Mode=OneWay}">
         <AppBarButton.KeyboardAccelerators>
             <KeyboardAccelerator Key="{x:Bind ViewModel.DeleteCommand.AcceleratorKey}"/>
         </AppBarButton.KeyboardAccelerators>
