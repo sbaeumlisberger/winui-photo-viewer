@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
@@ -25,7 +27,7 @@ public partial class DeleteSingleRawFilesDialogModel : ViewModelBase
 
     private IReadOnlyCollection<IMediaFileInfo> mediaFiles;
 
-    public DeleteSingleRawFilesDialogModel(IReadOnlyCollection<IMediaFileInfo> mediaFiles)
+    public DeleteSingleRawFilesDialogModel(IMessenger messenger, IReadOnlyCollection<IMediaFileInfo> mediaFiles) : base(messenger)
     {
         this.mediaFiles = mediaFiles;
     }
@@ -40,10 +42,10 @@ public partial class DeleteSingleRawFilesDialogModel : ViewModelBase
         ShowProgress = true;
 
         var result = await DeleteSingleRawFilesAsync(mediaFiles, Progress, cts.Token);
-        
+
         ShowSuccessMessage = result.IsSuccessful;
         ShowErrorMessage = result.HasFailures;
-        Errors = result.Failures.Select(failure => failure.Element.Name + ": " + failure.Exception.Message).ToList();
+        Errors = result.Failures.Select(failure => failure.Element.DisplayName + ": " + failure.Exception.Message).ToList();
 
         ShowProgress = false;
     }
@@ -54,22 +56,34 @@ public partial class DeleteSingleRawFilesDialogModel : ViewModelBase
         Progress?.Cancel();
     }
 
-    private async Task<ProcessingResult<IStorageFile>> DeleteSingleRawFilesAsync(IReadOnlyCollection<IMediaFileInfo> mediaFiles, IProgress<double> progress, CancellationToken cancellationToken)
+    private async Task<ProcessingResult<IMediaFileInfo>> DeleteSingleRawFilesAsync(IReadOnlyCollection<IMediaFileInfo> mediaFiles, IProgress<double> progress, CancellationToken cancellationToken)
     {
-        var fileToDelete = mediaFiles
+        var mediaFilesToDelete = mediaFiles
             .Where(mediaFile => BitmapFileInfo.RawFileExtensions.Contains(mediaFile.FileExtension.ToLower())
                                 && !ExistsFileWithSameName(mediaFiles, mediaFile))
-            .Select(mediaFile => mediaFile.StorageFile)
             .ToList();
 
-        return await ParallelizationUtil.ProcessParallelAsync(fileToDelete, async file =>
+        var result = await ParallelizationUtil.ProcessParallelAsync(mediaFilesToDelete, async mediaFile =>
         {
-            await file.DeleteAsync();
-
+            foreach (var storageFile in mediaFile.StorageFiles)
+            {
+                try
+                {
+                    await storageFile.DeleteAsync().AsTask().ConfigureAwait(false);
+                }
+                catch (FileNotFoundException)
+                {
+                    // files does no longer exist
+                }
+            }
         }, progress, cancellationToken);
+
+        Messenger.Send(new MediaFilesDeletedMessage(result.ProcessedElements));
+
+        return result;
     }
 
-    private static bool ExistsFileWithSameName(IReadOnlyCollection<IMediaFileInfo> mediaFiles, IMediaFileInfo mediaFile) 
+    private static bool ExistsFileWithSameName(IReadOnlyCollection<IMediaFileInfo> mediaFiles, IMediaFileInfo mediaFile)
     {
         string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(mediaFile.FileName);
         var others = mediaFiles.Except(Enumerable.Repeat(mediaFile, 1));

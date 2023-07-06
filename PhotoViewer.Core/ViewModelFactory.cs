@@ -137,7 +137,7 @@ public class ViewModelFactory : IViewModelFactory
             settings,
             deleteFilesCommand,    
             new MoveRawFilesToSubfolderCommand(applicationSession, settings, dialogService),
-            new DeleteSingleRawFilesCommand(applicationSession, dialogService),
+            new DeleteSingleRawFilesCommand(applicationSession, messenger, dialogService),
             new ShiftDatenTakenCommand(applicationSession, messenger, dialogService, metadataService),
             new ImportGpxTrackCommand(applicationSession, messenger, dialogService, metadataService, gpxService));
     }

@@ -156,6 +156,34 @@ public class MediaFilesLoaderServiceTest
     }
 
     [Fact]
+    public async Task UnlinkedRawFileAndXmpFileWithSameNameAreLinked()
+    {
+        var files = new List<IStorageFile>
+        {
+            MockStorageFile("File 01.arw"),
+            MockStorageFile("File 01.xmp"),
+        };
+        var neighboringFilesQuery = MockNeighboringFilesQuery(files);
+        var startFile = files[0];
+        var config = new LoadMediaConfig(true, null, false);
+
+        var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
+
+        Assert.Null(loadMediaFilesTask.PreviewMediaFile);
+
+        var result = await loadMediaFilesTask.WaitForResultAsync();
+
+        Assert.NotNull(result.StartMediaFile);
+        AssertMediaFile(new[] { "File 01.arw", "File 01.xmp" }, result.StartMediaFile);
+
+        var expectedMediaFiles = new[]
+        {
+            new []{ "File 01.arw", "File 01.xmp" }
+        };
+        AssertMediaFiles(expectedMediaFiles, result.MediaFiles);
+    }
+
+    [Fact]
     public async Task LoadMediaFilesFromFilesQueryResult_RAWsFolder()
     {
         var files = new List<IStorageFile>

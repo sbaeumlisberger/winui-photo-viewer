@@ -39,10 +39,13 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
     public static readonly IReadOnlySet<string> RawFileExtensions = new HashSet<string>()
     {
         ".arw", ".cr2", ".crw", ".erf", ".kdc", ".mrw", ".nef", ".nrw", ".orf",
-         ".pef", ".raf", ".raw", ".rw2", ".rwl", ".sr2", ".srw", ".dng",  ".xmp"
+         ".pef", ".raf", ".raw", ".rw2", ".rwl", ".sr2", ".srw", ".dng"
     };
 
-    public static readonly IReadOnlySet<string> SupportedFileExtensions = CommonFileExtensions.Concat(RawFileExtensions).ToHashSet();
+    public static readonly IReadOnlySet<string> RawMetadataFileExtensions = new HashSet<string>()
+    {
+        ".xmp"
+    };
 
     public bool IsMetadataSupported { get; }
 

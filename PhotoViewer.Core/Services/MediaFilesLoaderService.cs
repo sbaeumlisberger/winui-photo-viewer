@@ -4,6 +4,7 @@ using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using System.Diagnostics;
+using System.Formats.Tar;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
@@ -31,7 +32,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
     public MediaFilesLoaderService(ICachedImageLoaderService cachedImageLoaderService, IFileSystemService fileSystemService)
     {
         this.cachedImageLoaderService = cachedImageLoaderService;
-        this.fileSystemService = fileSystemService;   
+        this.fileSystemService = fileSystemService;
     }
 
     public LoadMediaFilesTask LoadFolder(IStorageFolder storageFolder, LoadMediaConfig config)
@@ -179,11 +180,12 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 
         List<IMediaFileInfo> mediaFiles = new List<IMediaFileInfo>();
 
-        IList<IStorageFile> possibleLinkFiles = linkRAWs
+        IList<IStorageFile> possibleLinkTargets = linkRAWs
             ? files.Where(file => GetLinkPrio(file.FileType) is not null).ToList()
             : Array.Empty<IStorageFile>();
 
         List<IStorageFile> rawFilesToLink = new List<IStorageFile>();
+        List<IStorageFile> rawMetadataFilesToLink = new List<IStorageFile>();
 
         foreach (var file in files)
         {
@@ -199,7 +201,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             }
             else if (BitmapFileInfo.RawFileExtensions.Contains(fileExtension))
             {
-                if (linkRAWs && CanRawFileBeLinked(file, possibleLinkFiles))
+                if (linkRAWs && CanRawFileBeLinked(file, possibleLinkTargets))
                 {
                     rawFilesToLink.Add(file);
                 }
@@ -207,6 +209,10 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
                 {
                     mediaFiles.Add(new BitmapFileInfo(file));
                 }
+            }
+            else if (BitmapFileInfo.RawMetadataFileExtensions.Contains(fileExtension))
+            {
+                rawMetadataFilesToLink.Add(file);
             }
             else if (VideoFileInfo.SupportedFileExtensions.Contains(fileExtension))
             {
@@ -221,9 +227,9 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             }
         }
 
-        if (linkRAWs && rawFilesToLink.Any())
+        if (linkRAWs)
         {
-            LinkRawFiles(rawFilesToLink, mediaFiles);
+            LinkRawFiles(mediaFiles, rawFilesToLink, rawMetadataFilesToLink);
         }
 
         sw.Stop();
@@ -254,19 +260,32 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
         return possibleLinkFiles.Any(file => Path.GetFileNameWithoutExtension(file.Name) == rawFileName);
     }
 
-    private void LinkRawFiles(IList<IStorageFile> rawFilesToLink, IList<IMediaFileInfo> mediaFiles)
+    private void LinkRawFiles(IList<IMediaFileInfo> mediaFiles, IList<IStorageFile> rawFilesToLink, IList<IStorageFile> rawMetadataFilesToLink)
     {
-        IList<IBitmapFileInfo> possibleLinkBitmapFiles = mediaFiles.OfType<IBitmapFileInfo>()
-            .Where(bitmapFile => GetLinkPrio(bitmapFile.FileExtension) is not null).ToList();
-
-        foreach (var rawFile in rawFilesToLink)
+        if (rawFilesToLink.Any())
         {
-            string rawFileName = Path.GetFileNameWithoutExtension(rawFile.Name);
-            var bitmapFile = possibleLinkBitmapFiles
-                .Where(bitmapFile => Path.GetFileNameWithoutExtension(bitmapFile.FileName) == rawFileName)
-                .OrderByDescending(bitmapFile => GetLinkPrio(bitmapFile.FileExtension))
-                .First();
-            bitmapFile.LinkStorageFile(rawFile);
+            IList<IBitmapFileInfo> possibleLinkTargets = mediaFiles.OfType<IBitmapFileInfo>()
+                .Where(bitmapFile => GetLinkPrio(bitmapFile.FileExtension) is not null).ToList();
+
+            foreach (var rawFile in rawFilesToLink)
+            {
+                string rawFileName = Path.GetFileNameWithoutExtension(rawFile.Name);
+                var linkTarget = possibleLinkTargets
+                    .Where(x => x.FileNameWithoutExtension == rawFileName)
+                    .OrderByDescending(x => GetLinkPrio(x.FileExtension))
+                    .First();
+                linkTarget.LinkStorageFile(rawFile);
+            }
+        }
+
+        foreach (var rawMetadataFile in rawMetadataFilesToLink)
+        {
+            string rawMetadataFileName = Path.GetFileNameWithoutExtension(rawMetadataFile.Name);
+            var linkTarget = mediaFiles.OfType<IBitmapFileInfo>()
+                .Where(x => x.FileNameWithoutExtension == rawMetadataFileName)
+                .OrderByDescending(x => GetLinkPrio(x.FileExtension))
+                .FirstOrDefault();
+            linkTarget?.LinkStorageFile(rawMetadataFile);
         }
     }
 

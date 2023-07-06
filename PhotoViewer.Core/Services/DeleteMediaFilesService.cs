@@ -12,12 +12,15 @@ internal class DeleteMediaFilesService : IDeleteMediaFilesService
 {
     public async Task DeleteMediaFileAsync(IMediaFileInfo media, bool deleteLinkedFiles)
     {
-        await DeleteFileAsync(media.StorageFile).ConfigureAwait(false);
-
         if (deleteLinkedFiles)
         {
-            await Task.WhenAll(media.LinkedStorageFiles.Select(DeleteFileAsync)).ConfigureAwait(false);
+            foreach(var linkedFile in media.LinkedStorageFiles)
+            {
+                await DeleteFileAsync(linkedFile).ConfigureAwait(false);
+            }
         }
+
+        await DeleteFileAsync(media.StorageFile).ConfigureAwait(false);
     }
 
     private async Task DeleteFileAsync(IStorageFile file)

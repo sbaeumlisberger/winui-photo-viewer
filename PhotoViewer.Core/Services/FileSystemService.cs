@@ -36,7 +36,7 @@ internal class FileSystemService : IFileSystemService
 
     public async Task<IStorageFolder?> TryGetFolderAsync(string path)
     {
-        if (File.Exists(path))
+        if (Directory.Exists(path))
         {
             return await StorageFolder.GetFolderFromPathAsync(path).AsTask().ConfigureAwait(false);
         }
