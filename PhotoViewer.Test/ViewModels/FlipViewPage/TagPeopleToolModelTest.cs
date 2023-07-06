@@ -171,7 +171,7 @@ public class TagPeopleToolModelTest
 
         tagPeopleToolModel.IsEnabled = false;
         
-        Assert.Equal(default, tagPeopleToolModel.SelectionRect);
+        Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRect);
         Assert.Equal(string.Empty, tagPeopleToolModel.AutoSuggestBoxText);
         Assert.Equal(expectedSuggestedFaces.Count, tagPeopleToolModel.SuggestedFaces.Count);
     }
@@ -239,7 +239,7 @@ public class TagPeopleToolModelTest
         tagPeopleToolModel.SkipCurrentDetectedFace();
 
         Assert.Equal(0, tagPeopleToolModel.SuggestedFaces.Count);
-        Assert.Equal(default, tagPeopleToolModel.SelectionRect);
+        Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRect);
         Assert.Equal(string.Empty, tagPeopleToolModel.AutoSuggestBoxText);
     }
 
