@@ -35,7 +35,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 {
     public bool IsEnabled { get; set; } = false;
 
-    public bool IsActive { get; private set; } = false;
+    public bool IsSelectionEnabled { get; private set; } = false;
 
     public IBitmapImageModel? BitmapImage { get; set; }
 
@@ -83,13 +83,13 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         Register<MetadataModifiedMessage>(Receive);
         Register<SetTagPeopleToolActiveMessage>(Receive);
         Register<BitmapModifiedMesssage>(Receive);
-        IsActive = Messenger.Send(new IsTagPeopleToolActiveRequestMessage());
+        IsSelectionEnabled = Messenger.Send(new IsTagPeopleToolActiveRequestMessage());
         await LoadTaggedPeopleAsync();
     }
 
     private void Receive(SetTagPeopleToolActiveMessage msg)
     {
-        IsActive = msg.IsActive;
+        IsSelectionEnabled = msg.IsActive;
     }
 
     private async void Receive(MetadataModifiedMessage msg)
@@ -130,11 +130,11 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         }
     }
 
-    async partial void OnIsActiveChanged()
+    async partial void OnIsSelectionEnabledChanged()
     {
-        TaggedPeople.ForEach(peopleTagVM => peopleTagVM.IsVisible = IsActive);
+        TaggedPeople.ForEach(peopleTagVM => peopleTagVM.IsVisible = IsSelectionEnabled);
 
-        if (IsActive)
+        if (IsSelectionEnabled)
         {
             await ShowDetectedFacesAsync();
         }
@@ -149,7 +149,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     async partial void OnBitmapImageChanged()
     {
-        if (IsActive)
+        if (IsSelectionEnabled)
         {
             await ShowDetectedFacesAsync();
         }
@@ -170,17 +170,18 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         return suggestionsService.GetRecentSuggestions();
     }
 
-    public bool SkipCurrentDetectedFace()
+    public void TrySelectNextDetectedFace()
     {
-        if (TrySelectNextDetectedFace())
+        if (suggestedFaces.Any())
         {
-            return true;
+            AutoSuggestBoxText = string.Empty;
+            SelectionRect = suggestedFaces.First();
+            suggestedFaces.RemoveAt(0);
         }
         else
         {
             AutoSuggestBoxText = string.Empty;
             SelectionRect = Rect.Empty;
-            return false;
         }
     }
 
@@ -229,8 +230,6 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
             await metadataService.WriteMetadataAsync(bitmapFile, MetadataProperties.People, people);
             Messenger.Send(new MetadataModifiedMessage(new[] { bitmapFile }, MetadataProperties.People));
             suggestionsService.AddSuggestionAsync(personName).LogOnException();
-            AutoSuggestBoxText = string.Empty;
-            SelectionRect = Rect.Empty;
             TrySelectNextDetectedFace();
         }
         catch (Exception ex)
@@ -269,7 +268,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     {
         TaggedPeople = (await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People))
              .Where(peopleTag => !peopleTag.Rectangle.IsEmpty)
-             .Select(peopleTag => new PeopleTagViewModel(IsActive, peopleTag.Name, peopleTag.Rectangle.ToRect()))
+             .Select(peopleTag => new PeopleTagViewModel(IsSelectionEnabled, peopleTag.Name, peopleTag.Rectangle.ToRect()))
              .ToList();
     }
 
@@ -283,7 +282,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
             {
                 var detectedFaces = await faceDetectionService.DetectFacesAsync(bitmapImage);
 
-                if (!IsActive) { return; }
+                if (!IsSelectionEnabled) { return; }
 
                 var imageSize = bitmapImage.SizeInDIPs;
 
@@ -310,18 +309,6 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         {
             Log.Error($"Could not detect faces for {bitmapFile.FileName}", ex);
         }
-    }
-
-    private bool TrySelectNextDetectedFace()
-    {
-        if (suggestedFaces.Any())
-        {
-            AutoSuggestBoxText = string.Empty;
-            SelectionRect = suggestedFaces.First();
-            suggestedFaces.RemoveAt(0);
-            return true;
-        }
-        return false;
     }
 
     public override string ToString()

@@ -14,6 +14,7 @@ using System.Linq;
 using Windows.UI.Core;
 using Microsoft.UI.Xaml.Media;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace PhotoViewer.App.Views;
 public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleToolModel>
@@ -60,7 +61,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void PeopleTag_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
-        if (!ViewModel!.IsActive)
+        if (!ViewModel!.IsSelectionEnabled)
         {
             ((PeopleTagViewModel)((FrameworkElement)sender).DataContext).IsVisible = true;
         }
@@ -68,7 +69,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void PeopleTag_PointerExited(object sender, PointerRoutedEventArgs e)
     {
-        if (!ViewModel!.IsActive)
+        if (!ViewModel!.IsSelectionEnabled)
         {
             ((PeopleTagViewModel)((FrameworkElement)sender).DataContext).IsVisible = false;
         }
@@ -81,7 +82,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void SelectionCanvas_PointerPressed(object sender, PointerRoutedEventArgs args)
     {
-        if (ViewModel!.IsActive)
+        if (ViewModel!.IsSelectionEnabled)
         {
             var point = args.GetCurrentPoint((UIElement)sender);
             if (point.Properties.IsLeftButtonPressed)
@@ -99,7 +100,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void SelectionCanvas_PointerReleased(object sender, PointerRoutedEventArgs args)
     {
-        if (ViewModel!.IsActive)
+        if (ViewModel!.IsSelectionEnabled)
         {
             var point = args.GetCurrentPoint((UIElement)sender);
 
@@ -196,7 +197,8 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
     {
         if (e.Key == VirtualKey.Tab && !e.IsModifierPressed(VirtualKey.Shift))
         {
-            e.Handled = ViewModel!.SkipCurrentDetectedFace();
+            ViewModel!.TrySelectNextDetectedFace();
+            e.Handled = true;            
         }
         if (e.Key == VirtualKey.Escape && !autoSuggestBox.IsSuggestionListOpen)
         {
@@ -260,7 +262,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         if (ViewModel!.SelectionRect.IsEmpty)
         {
             // set focus to flipview when hiding autosuggestbox
-            args.MoveFocusTo(this.FindParent<FlipView>()!);
+            args.TrySetNewFocusedElement(this.FindParent<FlipView>()!);
         }
     }
 }

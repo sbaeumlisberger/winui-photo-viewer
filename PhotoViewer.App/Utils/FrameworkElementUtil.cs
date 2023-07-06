@@ -31,30 +31,4 @@ public static class FrameworkElementUtil
         var bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.SetProperty | BindingFlags.Instance;
         typeof(UIElement).InvokeMember("ProtectedCursor", bindingFlags, null, frameworkElement, new object[] { cursor });
     }
-
-    public static async Task FocusAsync(this FrameworkElement frameworkElement)
-    {
-        if (frameworkElement.FocusState != FocusState.Unfocused)
-        {
-            return;
-        }
-
-        for (int i = 0; i < 10; i++)
-        {   
-            frameworkElement.Focus(FocusState.Programmatic);
-         
-            if (frameworkElement.FocusState != FocusState.Unfocused)
-            {
-                break;
-            }
-
-            await Task.Delay(1);
-        }
-    }
-
-    public static void MoveFocusTo(this LosingFocusEventArgs losingFocusEventArgs, FrameworkElement element)
-    {
-        losingFocusEventArgs.TrySetNewFocusedElement(element);
-        element.DispatcherQueue.TryEnqueue(async () => await element.FocusAsync());
-    }
 }

@@ -79,7 +79,7 @@ public class TagPeopleToolModelTest
 
         await tagPeopleToolModel.InitializeAsync();
 
-        Assert.Equal(isActive, tagPeopleToolModel.IsActive);
+        Assert.Equal(isActive, tagPeopleToolModel.IsSelectionEnabled);
         Assert.Equal(2, tagPeopleToolModel.TaggedPeople.Count);
 
         var peopleTagVM1 = tagPeopleToolModel.TaggedPeople[0];
@@ -182,7 +182,7 @@ public class TagPeopleToolModelTest
         await InitializeTagPeopleToolModel(active: true);
         tagPeopleToolModel.IsEnabled = true;
         tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
-        tagPeopleToolModel.SkipCurrentDetectedFace();
+        tagPeopleToolModel.TrySelectNextDetectedFace();
 
         tagPeopleToolModel.IsEnabled = false;
 
@@ -222,21 +222,21 @@ public class TagPeopleToolModelTest
         tagPeopleToolModel.IsEnabled = true;
         tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
 
-        tagPeopleToolModel.SkipCurrentDetectedFace();
+        tagPeopleToolModel.TrySelectNextDetectedFace();
 
         AssertSuggestedFaces(tagPeopleToolModel.SuggestedFaces, 2);
         Assert.Equal(expectedSuggestedFaces[1], tagPeopleToolModel.SelectionRect);
 
         tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
 
-        tagPeopleToolModel.SkipCurrentDetectedFace();
+        tagPeopleToolModel.TrySelectNextDetectedFace();
 
         Assert.Equal(0, tagPeopleToolModel.SuggestedFaces.Count);
         Assert.Equal(expectedSuggestedFaces[2], tagPeopleToolModel.SelectionRect);
 
         tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
 
-        tagPeopleToolModel.SkipCurrentDetectedFace();
+        tagPeopleToolModel.TrySelectNextDetectedFace();
 
         Assert.Equal(0, tagPeopleToolModel.SuggestedFaces.Count);
         Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRect);

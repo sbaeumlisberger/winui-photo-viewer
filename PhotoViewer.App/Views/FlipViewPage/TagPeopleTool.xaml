@@ -95,7 +95,7 @@
 
         <Canvas 
             x:Name="selectionCanvas"
-            Visibility="{x:Bind ViewModel.IsActive, Mode=OneWay}"
+            Visibility="{x:Bind ViewModel.IsSelectionEnabled, Mode=OneWay}"
             Background="Transparent" 
             Loaded="SelectionCanvas_Loaded"
             PointerPressed="SelectionCanvas_PointerPressed" 

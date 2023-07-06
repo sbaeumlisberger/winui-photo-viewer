@@ -69,23 +69,23 @@ internal class PercentagePlacement : ContentPresenter
         {
             if (CenterX)
             {
-                Canvas.SetLeft(this, FitX(PercentageX * canvas!.ActualWidth - this.ActualWidth / 2));
+                Canvas.SetLeft(this, FitX(PercentageX * canvas.ActualWidth - this.ActualWidth / 2));
             }
             else
             {
-                Canvas.SetLeft(this, FitX(PercentageX * canvas!.ActualWidth));
+                Canvas.SetLeft(this, FitX(PercentageX * canvas.ActualWidth));
             }
 
-            Canvas.SetTop(this, FitY(PercentageY * canvas!.ActualHeight));
+            Canvas.SetTop(this, FitY(PercentageY * canvas.ActualHeight));
 
             if (PercentageWidth != double.NaN)
             {
-                this.Width = PercentageWidth * canvas!.ActualWidth;
+                this.Width = PercentageWidth * canvas.ActualWidth;
             }
 
             if (PercentageHeight != double.NaN)
             {
-                this.Height = PercentageHeight * canvas!.ActualHeight;
+                this.Height = PercentageHeight * canvas.ActualHeight;
             }
         }
     }
