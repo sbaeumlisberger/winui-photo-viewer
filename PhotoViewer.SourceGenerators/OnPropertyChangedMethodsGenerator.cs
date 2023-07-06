@@ -105,8 +105,8 @@ public class OnPropertyChangedMethodsGenerator : IIncrementalGenerator
 
         while (currentClassSymbol != null)
         {
-            var propertiesWithSetter = currentClassSymbol.GetMembers().OfType<IPropertySymbol>().Where(prop => prop.SetMethod != null);
-            propertyNames.AddRange(propertiesWithSetter.Select(prop => prop.Name));
+            var properties = currentClassSymbol.GetMembers().OfType<IPropertySymbol>();
+            propertyNames.AddRange(properties.Select(prop => prop.Name));
             currentClassSymbol = currentClassSymbol.BaseType;
         }
 

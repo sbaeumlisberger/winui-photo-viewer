@@ -42,10 +42,10 @@ public sealed partial class MainWindow : WindowEx
         viewModel.Subscribe(this, nameof(viewModel.Theme), ApplyTheme, initialCallback: true);
 
         // TODO
-        viewModel.Messenger.Register<EnterFullscreenMessage>(this, _ => EnterFullscreen());
-        viewModel.Messenger.Register<ExitFullscreenMessage>(this, _ => ExitFullscreen());
-        viewModel.Messenger.Register<NavigateToPageMessage>(this, msg => NavigateToPage(msg.PageType, msg.Parameter));
-        viewModel.Messenger.Register<NavigateBackMessage>(this, _ => NavigateBack());
+        viewModel.MessengerPublic.Register<EnterFullscreenMessage>(this, _ => EnterFullscreen());
+        viewModel.MessengerPublic.Register<ExitFullscreenMessage>(this, _ => ExitFullscreen());
+        viewModel.MessengerPublic.Register<NavigateToPageMessage>(this, msg => NavigateToPage(msg.PageType, msg.Parameter));
+        viewModel.MessengerPublic.Register<NavigateBackMessage>(this, _ => NavigateBack());
            
         FocusManager.LosingFocus += FocusManager_LosingFocus;
     }

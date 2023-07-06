@@ -79,7 +79,7 @@ public class TagPeopleToolModelTest
 
         await tagPeopleToolModel.InitializeAsync();
 
-        Assert.Equal(isActive, tagPeopleToolModel.IsSelectionEnabled);
+        Assert.Equal(isActive, tagPeopleToolModel.IsTagPeopleToolActive);
         Assert.Equal(2, tagPeopleToolModel.TaggedPeople.Count);
 
         var peopleTagVM1 = tagPeopleToolModel.TaggedPeople[0];

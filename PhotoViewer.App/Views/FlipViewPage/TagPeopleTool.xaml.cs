@@ -61,7 +61,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void PeopleTag_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
-        if (!ViewModel!.IsSelectionEnabled)
+        if (!ViewModel!.IsTagPeopleToolActive)
         {
             ((PeopleTagViewModel)((FrameworkElement)sender).DataContext).IsVisible = true;
         }
@@ -69,7 +69,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void PeopleTag_PointerExited(object sender, PointerRoutedEventArgs e)
     {
-        if (!ViewModel!.IsSelectionEnabled)
+        if (!ViewModel!.IsTagPeopleToolActive)
         {
             ((PeopleTagViewModel)((FrameworkElement)sender).DataContext).IsVisible = false;
         }
@@ -82,7 +82,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void SelectionCanvas_PointerPressed(object sender, PointerRoutedEventArgs args)
     {
-        if (ViewModel!.IsSelectionEnabled)
+        if (ViewModel!.IsTagPeopleToolActive)
         {
             var point = args.GetCurrentPoint((UIElement)sender);
             if (point.Properties.IsLeftButtonPressed)
@@ -100,7 +100,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void SelectionCanvas_PointerReleased(object sender, PointerRoutedEventArgs args)
     {
-        if (ViewModel!.IsSelectionEnabled)
+        if (ViewModel!.IsTagPeopleToolActive)
         {
             var point = args.GetCurrentPoint((UIElement)sender);
 

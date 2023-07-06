@@ -17,6 +17,7 @@ using Windows.Media.FaceAnalysis;
 using PhotoViewer.Core.Models;
 using System.Diagnostics;
 using PhotoViewer.App.Messages;
+using Microsoft.UI.Xaml.Media;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -35,7 +36,9 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 {
     public bool IsEnabled { get; set; } = false;
 
-    public bool IsSelectionEnabled { get; private set; } = false;
+    public bool IsTagPeopleToolActive { get; private set; } = false;
+
+    public bool IsSelectionEnabled => IsTagPeopleToolActive && IsEnabled;
 
     public IBitmapImageModel? BitmapImage { get; set; }
 
@@ -43,7 +46,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     public IReadOnlyList<PeopleTagViewModel> TaggedPeople { get; set; } = new List<PeopleTagViewModel>();
 
-    public IObservableReadOnlyList<Rect> SuggestedFaces => suggestedFaces;
+    public IObservableReadOnlyList<Rect> SuggestedFaces => suggestedFacesInPercent;
 
     public string AutoSuggestBoxText { get; set; } = string.Empty;
 
@@ -59,9 +62,9 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     private readonly IBitmapFileInfo bitmapFile;
 
-    private readonly ObservableList<Rect> suggestedFaces = new ObservableList<Rect>();
+    private readonly ObservableList<Rect> suggestedFacesInPercent = new ObservableList<Rect>();
 
-    private List<Rect> initalSuggestedFaces = new List<Rect>();
+    private List<Rect> detectedFaceRectsInPercent = new List<Rect>();
 
     internal TagPeopleToolModel(
         IBitmapFileInfo bitmapFile,
@@ -83,13 +86,13 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         Register<MetadataModifiedMessage>(Receive);
         Register<SetTagPeopleToolActiveMessage>(Receive);
         Register<BitmapModifiedMesssage>(Receive);
-        IsSelectionEnabled = Messenger.Send(new IsTagPeopleToolActiveRequestMessage());
+        IsTagPeopleToolActive = Messenger.Send(new IsTagPeopleToolActiveRequestMessage());
         await LoadTaggedPeopleAsync();
     }
 
     private void Receive(SetTagPeopleToolActiveMessage msg)
     {
-        IsSelectionEnabled = msg.IsActive;
+        IsTagPeopleToolActive = msg.IsActive;
     }
 
     private async void Receive(MetadataModifiedMessage msg)
@@ -108,51 +111,39 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         }
     }
 
-    partial void OnIsEnabledChanged()
-    {
-        if (IsEnabled)
-        {
-            TrySelectNextDetectedFace();
-        }
-        else
-        {
-            AutoSuggestBoxText = string.Empty;
-            SelectionRect = Rect.Empty;
-
-            if (TaggedPeople.IsEmpty())
-            {
-                suggestedFaces.MatchTo(initalSuggestedFaces);
-            }
-            else
-            {
-                suggestedFaces.Clear();
-            }
-        }
-    }
-
-    async partial void OnIsSelectionEnabledChanged()
-    {
-        TaggedPeople.ForEach(peopleTagVM => peopleTagVM.IsVisible = IsSelectionEnabled);
-
-        if (IsSelectionEnabled)
-        {
-            await ShowDetectedFacesAsync();
-        }
-        else
-        {
-            suggestedFaces.Clear();
-            initalSuggestedFaces.Clear();
-            AutoSuggestBoxText = string.Empty;
-            SelectionRect = Rect.Empty;
-        }
-    }
-
     async partial void OnBitmapImageChanged()
     {
+        await DetectFacesAsync();
+
         if (IsSelectionEnabled)
         {
-            await ShowDetectedFacesAsync();
+            ShowSuggestedFaces();
         }
+    }
+
+    partial void OnIsSelectionEnabledChanged()
+    {
+        if (IsSelectionEnabled)
+        {
+            TaggedPeople.ForEach(x => x.IsVisible = true);
+            ShowSuggestedFaces();
+        }
+        else
+        {
+            TaggedPeople.ForEach(x => x.IsVisible = false);
+            AutoSuggestBoxText = string.Empty;
+            SelectionRect = Rect.Empty;
+            suggestedFacesInPercent.Clear();
+        }
+    }
+
+    private void ShowSuggestedFaces() 
+    {
+        if (TaggedPeople.IsEmpty())
+        {
+            suggestedFacesInPercent.MatchTo(detectedFaceRectsInPercent);
+        }
+        TrySelectNextDetectedFace();
     }
 
     public void ExitPeopleTagging()
@@ -172,11 +163,11 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     public void TrySelectNextDetectedFace()
     {
-        if (suggestedFaces.Any())
+        if (suggestedFacesInPercent.Any())
         {
             AutoSuggestBoxText = string.Empty;
-            SelectionRect = suggestedFaces.First();
-            suggestedFaces.RemoveAt(0);
+            SelectionRect = suggestedFacesInPercent.First();
+            suggestedFacesInPercent.RemoveAt(0);
         }
         else
         {
@@ -188,7 +179,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     public void OnUserStartedSelection()
     {
         SelectionRect = Rect.Empty;
-        suggestedFaces.Clear();
+        suggestedFacesInPercent.Clear();
     }
 
     public void OnUserEndedSelection(Rect selection)
@@ -199,8 +190,6 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     [RelayCommand]
     private async Task AddPersonAsync()
     {
-        Debug.Assert(IsEnabled);
-
         string personName = AutoSuggestBoxText.Trim();
 
         if (personName == string.Empty)
@@ -268,13 +257,16 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     {
         TaggedPeople = (await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People))
              .Where(peopleTag => !peopleTag.Rectangle.IsEmpty)
-             .Select(peopleTag => new PeopleTagViewModel(IsSelectionEnabled, peopleTag.Name, peopleTag.Rectangle.ToRect()))
+             .Select(peopleTag => new PeopleTagViewModel(IsTagPeopleToolActive, peopleTag.Name, peopleTag.Rectangle.ToRect()))
              .ToList();
     }
 
-    private async Task ShowDetectedFacesAsync()
+    private async Task DetectFacesAsync()
     {
-        if (TaggedPeople.Any()) { return; }
+        if (TaggedPeople.Any()) 
+        { 
+            return;
+        }
 
         try
         {
@@ -282,7 +274,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
             {
                 var detectedFaces = await faceDetectionService.DetectFacesAsync(bitmapImage);
 
-                if (!IsSelectionEnabled) { return; }
+                var detectedFaceRectsInPercent = new List<Rect>();
 
                 var imageSize = bitmapImage.SizeInDIPs;
 
@@ -290,19 +282,14 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
                 {
                     var faceBox = face.FaceBox;
 
-                    suggestedFaces.Add(new Rect(
+                    detectedFaceRectsInPercent.Add(new Rect(
                         faceBox.X / imageSize.Width,
                         faceBox.Y / imageSize.Height,
                         faceBox.Width / imageSize.Width,
                         faceBox.Height / imageSize.Height));
                 }
 
-                initalSuggestedFaces = suggestedFaces.ToList();
-
-                if (IsEnabled)
-                {
-                    TrySelectNextDetectedFace();
-                }
+                this.detectedFaceRectsInPercent = detectedFaceRectsInPercent;
             }
         }
         catch (Exception ex)

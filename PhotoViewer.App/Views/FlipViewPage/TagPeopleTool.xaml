@@ -70,7 +70,10 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
 
-        <ItemsControl ItemsSource="{x:Bind ViewModel.SuggestedFaces, Mode=OneWay}" IsTabStop="False">
+        <ItemsControl 
+            Visibility="{x:Bind ViewModel.IsSelectionEnabled, Mode=OneWay}"
+            ItemsSource="{x:Bind ViewModel.SuggestedFaces, Mode=OneWay}"
+            IsTabStop="False">
             <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="foundation:Rect">
                     <Canvas>

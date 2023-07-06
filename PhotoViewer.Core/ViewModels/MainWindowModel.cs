@@ -22,7 +22,7 @@ public partial class MainWindowModel : ViewModelBase
 
     public AppTheme Theme { get; private set; }
 
-    public new IMessenger Messenger => base.Messenger; // TODO
+    public IMessenger MessengerPublic => Messenger; // TODO
 
     private DropOutStack<object> navigationStateStack = new DropOutStack<object>(20);
 
