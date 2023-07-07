@@ -31,6 +31,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
     partial void ConnectToViewModel(TagPeopleToolModel viewModel)
     {
         viewModel.Subscribe(this, nameof(ViewModel.SelectionRect), ViewModel_SelectionRectChanged);
+        viewModel.Subscribe(this, nameof(ViewModel.IsNameInputVisible), ViewModel_IsNameInputVisibleChanged);
     }
 
     partial void DisconnectFromViewModel(TagPeopleToolModel viewModel)
@@ -47,21 +48,30 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
             selectionRect.Width = ViewModel.SelectionRect.Width * ActualWidth;
             selectionRect.Height = ViewModel.SelectionRect.Height * ActualHeight;
             selectionRect.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            selectionRect.Visibility = Visibility.Collapsed;
+        }
+    }
 
+    private void ViewModel_IsNameInputVisibleChanged()
+    {
+        if (ViewModel!.IsNameInputVisible)
+        {
             autoSuggestBoxContainer.Visibility = Visibility.Visible;
             UpdateAutoSuggestBoxContainerPosition();
             FocusAutoSuggestBox();
         }
         else
         {
-            selectionRect.Visibility = Visibility.Collapsed;
             autoSuggestBoxContainer.Visibility = Visibility.Collapsed;
         }
     }
 
     private void PeopleTag_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
-        if (!ViewModel!.IsTagPeopleToolActive)
+        if (!ViewModel!.IsSelectionEnabled)
         {
             ((PeopleTagViewModel)((FrameworkElement)sender).DataContext).IsVisible = true;
         }
@@ -69,7 +79,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void PeopleTag_PointerExited(object sender, PointerRoutedEventArgs e)
     {
-        if (!ViewModel!.IsTagPeopleToolActive)
+        if (!ViewModel!.IsSelectionEnabled)
         {
             ((PeopleTagViewModel)((FrameworkElement)sender).DataContext).IsVisible = false;
         }
@@ -82,7 +92,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void SelectionCanvas_PointerPressed(object sender, PointerRoutedEventArgs args)
     {
-        if (ViewModel!.IsTagPeopleToolActive)
+        if (ViewModel!.IsSelectionEnabled)
         {
             var point = args.GetCurrentPoint((UIElement)sender);
             if (point.Properties.IsLeftButtonPressed)
@@ -92,7 +102,6 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
                 Canvas.SetTop(selectionRect, point.Position.Y);
                 selectionRect.Width = 0;
                 selectionRect.Height = 0;
-                selectionRect.Visibility = Visibility.Visible;
                 selectionRect.HandOverPointerPressedEvent(args);
             }
         }
@@ -100,7 +109,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void SelectionCanvas_PointerReleased(object sender, PointerRoutedEventArgs args)
     {
-        if (ViewModel!.IsTagPeopleToolActive)
+        if (ViewModel!.IsSelectionEnabled)
         {
             var point = args.GetCurrentPoint((UIElement)sender);
 
@@ -198,7 +207,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         if (e.Key == VirtualKey.Tab && !e.IsModifierPressed(VirtualKey.Shift))
         {
             ViewModel!.TrySelectNextDetectedFace();
-            e.Handled = true;            
+            e.Handled = true;
         }
         if (e.Key == VirtualKey.Escape && !autoSuggestBox.IsSuggestionListOpen)
         {

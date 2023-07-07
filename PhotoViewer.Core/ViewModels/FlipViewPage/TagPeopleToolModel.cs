@@ -38,7 +38,11 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     public bool IsTagPeopleToolActive { get; private set; } = false;
 
-    public bool IsSelectionEnabled => IsTagPeopleToolActive && IsEnabled;
+    public bool IsSelectionEnabled => IsTagPeopleToolActive && IsEnabled; 
+    
+    public bool IsUserSelecting { get; private set; } = false;
+
+    public bool IsNameInputVisible => !IsUserSelecting && !SelectionRect.IsEmpty;
 
     public IBitmapImageModel? BitmapImage { get; set; }
 
@@ -178,12 +182,13 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     public void OnUserStartedSelection()
     {
-        SelectionRect = Rect.Empty;
+        IsUserSelecting = true;
         suggestedFacesInPercent.Clear();
     }
 
     public void OnUserEndedSelection(Rect selection)
     {
+        IsUserSelecting = false;
         SelectionRect = selection;
     }
 
