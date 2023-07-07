@@ -95,15 +95,24 @@
             <StackPanel VerticalAlignment="Top" Padding="16,0,16,16">
 
                 <StackPanel Visibility="{x:Bind ViewModel.IsNoFilesSelectedMessageVisible, Mode=OneWay}">
-                    <TextBlock Margin="0,16,0,0" Text="{x:Bind res:Strings.MetadataPanel_NoFilesSelected}"/>
+                    <TextBlock 
+                        Margin="0,16,0,0"
+                        TextWrapping="WrapWholeWords"
+                        Text="{x:Bind res:Strings.MetadataPanel_NoFilesSelected}"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind ViewModel.IsUnsupportedFilesMessageVisibile, Mode=OneWay}">                 
-                    <TextBlock Margin="0,16,0,0" Text="{x:Bind res:Strings.MetadataPanel_AnyFileNotSupported}"/>
+                    <TextBlock 
+                        Margin="0,16,0,0"
+                        TextWrapping="WrapWholeWords"
+                        Text="{x:Bind res:Strings.MetadataPanel_AnyFileNotSupported}"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind ViewModel.IsErrorOccured, Mode=OneWay}">
-                    <TextBlock Margin="0,16,0,0" Text="{x:Bind res:Strings.MetadataPanel_LoadingError}"/>
+                    <TextBlock 
+                        Margin="0,16,0,0" 
+                        TextWrapping="WrapWholeWords"
+                        Text="{x:Bind res:Strings.MetadataPanel_LoadingError}"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind ViewModel.IsInputVisible, Mode=OneWay}">

@@ -32,7 +32,7 @@ public sealed partial class MainWindow : WindowEx
         AppWindow.Closing += AppWindow_Closing;
         Closed += MainWindow_Closed;
 
-        // AppWindow.SetIcon(); TODO
+        AppWindow.SetIcon("Assets/icon.ico");
 
         dialogService = new DialogService(this);
 

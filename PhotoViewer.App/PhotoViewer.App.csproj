@@ -239,4 +239,10 @@
     <Folder Include="Views\OverviewPage\" />
   </ItemGroup>
   
+  <ItemGroup>
+    <Content Update="Assets\icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  
 </Project>
