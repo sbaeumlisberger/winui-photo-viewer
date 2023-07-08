@@ -42,7 +42,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     
     public bool IsUserSelecting { get; private set; } = false;
 
-    public bool IsNameInputVisible => !IsUserSelecting && !SelectionRect.IsEmpty;
+    public bool IsNameInputVisible => !IsUserSelecting && !SelectionRectInPercent.IsEmpty;
 
     public IBitmapImageModel? BitmapImage { get; set; }
 
@@ -54,7 +54,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     public string AutoSuggestBoxText { get; set; } = string.Empty;
 
-    public Rect SelectionRect { get; set; } = Rect.Empty;
+    public Rect SelectionRectInPercent { get; set; } = Rect.Empty;
 
     private readonly ISuggestionsService suggestionsService;
 
@@ -136,7 +136,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         {
             TaggedPeople.ForEach(x => x.IsVisible = false);
             AutoSuggestBoxText = string.Empty;
-            SelectionRect = Rect.Empty;
+            SelectionRectInPercent = Rect.Empty;
             suggestedFacesInPercent.Clear();
         }
     }
@@ -170,13 +170,13 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         if (suggestedFacesInPercent.Any())
         {
             AutoSuggestBoxText = string.Empty;
-            SelectionRect = suggestedFacesInPercent.First();
+            SelectionRectInPercent = suggestedFacesInPercent.First();
             suggestedFacesInPercent.RemoveAt(0);
         }
         else
         {
             AutoSuggestBoxText = string.Empty;
-            SelectionRect = Rect.Empty;
+            SelectionRectInPercent = Rect.Empty;
         }
     }
 
@@ -186,10 +186,9 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         suggestedFacesInPercent.Clear();
     }
 
-    public void OnUserEndedSelection(Rect selection)
+    public void OnUserEndedSelection()
     {
         IsUserSelecting = false;
-        SelectionRect = selection;
     }
 
     [RelayCommand]
@@ -214,8 +213,8 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
             return;
         }
 
-        var faceRect = new FaceRect(SelectionRect.X, SelectionRect.Y,
-                                    SelectionRect.Width, SelectionRect.Height);
+        var faceRect = new FaceRect(SelectionRectInPercent.X, SelectionRectInPercent.Y,
+                                    SelectionRectInPercent.Width, SelectionRectInPercent.Height);
 
         people.Add(new PeopleTag(personName, faceRect));
 

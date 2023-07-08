@@ -103,7 +103,8 @@
             Loaded="SelectionCanvas_Loaded"
             PointerPressed="SelectionCanvas_PointerPressed" 
             PointerReleased="SelectionCanvas_PointerReleased"
-            ContextRequested="SelectionCanvas_ContextRequested">
+            ContextRequested="SelectionCanvas_ContextRequested"
+            SizeChanged="SelectionCanvas_SizeChanged">
 
             <FlyoutBase.AttachedFlyout>
                 <MenuFlyout>

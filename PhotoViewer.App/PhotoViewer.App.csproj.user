@@ -9,7 +9,7 @@
     <AppIconSource>C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\Assets\Icon-Color.png</AppIconSource>
     <SplashScreenSource>C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\Assets\Icon-Color.png</SplashScreenSource>
     <PackageLogoSource>C:\Users\Sebastian\Workspace\git\winui-photo-viewer\PhotoViewerApp\Assets\Icon-Color.png</PackageLogoSource>
-    <ActiveDebugProfile>PhotoViewerApp (Package)</ActiveDebugProfile>
+    <ActiveDebugProfile>PhotoViewer.App (Package)</ActiveDebugProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>

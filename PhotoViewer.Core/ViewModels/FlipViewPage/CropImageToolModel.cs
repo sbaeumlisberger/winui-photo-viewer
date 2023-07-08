@@ -98,15 +98,18 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
         }
     }
 
+    partial void OnIsActiveChanged()
+    {
+        if (!IsActive)
+        {
+            ResetSelection();
+        }
+    }
+
     private async Task LoadImageSizeAsync()
     {
         ImageSizeInPixels = await bitmapFile.GetSizeInPixelsAsync();
-
-        SelectionInPixels = new Rect(
-            ImageSizeInPixels.Width * 0.1,
-            ImageSizeInPixels.Height * 0.1,
-            ImageSizeInPixels.Width * 0.8,
-            ImageSizeInPixels.Height * 0.8);
+        ResetSelection();
     }
 
     [RelayCommand]
@@ -115,7 +118,6 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
         try
         {
             await cropImageService.CropImageAsync(bitmapFile, SelectionInPixels);
-
             IsActive = false;
         }
         catch (Exception ex)
@@ -155,7 +157,7 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
         }
     }
 
-    private async Task HandleExceptionOnSaveAsync(Exception ex) 
+    private async Task HandleExceptionOnSaveAsync(Exception ex)
     {
         Log.Error($"Failed to crop image {bitmapFile.FileName}", ex);
 
@@ -170,5 +172,14 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
     private void Cancel()
     {
         IsActive = false;
+    }
+
+    private void ResetSelection() 
+    {
+        SelectionInPixels = new Rect(
+            ImageSizeInPixels.Width * 0.1,
+            ImageSizeInPixels.Height * 0.1,
+            ImageSizeInPixels.Width * 0.8,
+            ImageSizeInPixels.Height * 0.8);
     }
 }

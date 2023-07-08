@@ -118,7 +118,7 @@ public class TagPeopleToolModelTest
         if (isEnabled)
         {
             AssertSuggestedFaces(tagPeopleToolModel.SuggestedFaces, 1);
-            Assert.Equal(new Rect(0.23, 0.22, 0.19, 0.42), tagPeopleToolModel.SelectionRect);
+            Assert.Equal(new Rect(0.23, 0.22, 0.19, 0.42), tagPeopleToolModel.SelectionRectInPercent);
         }
         else
         {
@@ -145,7 +145,7 @@ public class TagPeopleToolModelTest
         tagPeopleToolModel.IsEnabled = true;
 
         AssertSuggestedFaces(tagPeopleToolModel.SuggestedFaces, 1);
-        Assert.Equal(expectedSuggestedFaces[0], tagPeopleToolModel.SelectionRect);
+        Assert.Equal(expectedSuggestedFaces[0], tagPeopleToolModel.SelectionRectInPercent);
     }
 
     [Fact]
@@ -159,7 +159,7 @@ public class TagPeopleToolModelTest
         tagPeopleToolModel.IsEnabled = true;
 
         AssertSuggestedFaces(tagPeopleToolModel.SuggestedFaces, 1);
-        Assert.Equal(expectedSuggestedFaces[0], tagPeopleToolModel.SelectionRect);
+        Assert.Equal(expectedSuggestedFaces[0], tagPeopleToolModel.SelectionRectInPercent);
     }
 
     [Fact]
@@ -171,7 +171,7 @@ public class TagPeopleToolModelTest
 
         tagPeopleToolModel.IsEnabled = false;
         
-        Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRect);
+        Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRectInPercent);
         Assert.Equal(string.Empty, tagPeopleToolModel.AutoSuggestBoxText);
         Assert.Equal(expectedSuggestedFaces.Count, tagPeopleToolModel.SuggestedFaces.Count);
     }
@@ -225,21 +225,21 @@ public class TagPeopleToolModelTest
         tagPeopleToolModel.TrySelectNextDetectedFace();
 
         AssertSuggestedFaces(tagPeopleToolModel.SuggestedFaces, 2);
-        Assert.Equal(expectedSuggestedFaces[1], tagPeopleToolModel.SelectionRect);
+        Assert.Equal(expectedSuggestedFaces[1], tagPeopleToolModel.SelectionRectInPercent);
 
         tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
 
         tagPeopleToolModel.TrySelectNextDetectedFace();
 
         Assert.Equal(0, tagPeopleToolModel.SuggestedFaces.Count);
-        Assert.Equal(expectedSuggestedFaces[2], tagPeopleToolModel.SelectionRect);
+        Assert.Equal(expectedSuggestedFaces[2], tagPeopleToolModel.SelectionRectInPercent);
 
         tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
 
         tagPeopleToolModel.TrySelectNextDetectedFace();
 
         Assert.Equal(0, tagPeopleToolModel.SuggestedFaces.Count);
-        Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRect);
+        Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRectInPercent);
         Assert.Equal(string.Empty, tagPeopleToolModel.AutoSuggestBoxText);
     }
 
@@ -287,7 +287,7 @@ public class TagPeopleToolModelTest
         Assert.Equal(MetadataProperties.People, metadataModifiedMessageCapture.Message.MetadataProperty);
         await suggestionsService.Received().AddSuggestionAsync("New Person");
         AssertSuggestedFaces(tagPeopleToolModel.SuggestedFaces, 2);
-        Assert.Equal(expectedSuggestedFaces[1], tagPeopleToolModel.SelectionRect);
+        Assert.Equal(expectedSuggestedFaces[1], tagPeopleToolModel.SelectionRectInPercent);
     }
 
     private async Task InitializeTagPeopleToolModel(bool active = false, List<PeopleTag>? peopleTags = null)

@@ -21,6 +21,10 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 {
     private const double DefaultFaceBoxSize = 100;
 
+    private static readonly TimeSpan DefaultSelectionTimeSpan = TimeSpan.FromMilliseconds(500);
+
+    private DateTime selectionStartTime = DateTime.MinValue;
+
     private string? contextRequestedName;
 
     public TagPeopleTool()
@@ -30,8 +34,8 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     partial void ConnectToViewModel(TagPeopleToolModel viewModel)
     {
-        viewModel.Subscribe(this, nameof(ViewModel.SelectionRect), ViewModel_SelectionRectChanged);
-        viewModel.Subscribe(this, nameof(ViewModel.IsNameInputVisible), ViewModel_IsNameInputVisibleChanged);
+        viewModel.Subscribe(this, nameof(ViewModel.SelectionRectInPercent), ViewModel_SelectionRectChanged, initialCallback: true);
+        viewModel.Subscribe(this, nameof(ViewModel.IsNameInputVisible), ViewModel_IsNameInputVisibleChanged, initialCallback: true);
     }
 
     partial void DisconnectFromViewModel(TagPeopleToolModel viewModel)
@@ -41,12 +45,9 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void ViewModel_SelectionRectChanged()
     {
-        if (ViewModel!.SelectionRect != Rect.Empty)
+        if (ViewModel!.SelectionRectInPercent != Rect.Empty)
         {
-            Canvas.SetLeft(selectionRect, ViewModel.SelectionRect.X * ActualWidth);
-            Canvas.SetTop(selectionRect, ViewModel.SelectionRect.Y * ActualHeight);
-            selectionRect.Width = ViewModel.SelectionRect.Width * ActualWidth;
-            selectionRect.Height = ViewModel.SelectionRect.Height * ActualHeight;
+            UpdateSelectionRectBounds(ViewModel.SelectionRectInPercent);
             selectionRect.Visibility = Visibility.Visible;
         }
         else
@@ -67,6 +68,15 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         {
             autoSuggestBoxContainer.Visibility = Visibility.Collapsed;
         }
+    }
+
+    private void UpdateSelectionRectBounds(Rect selectionInPercent)
+    {
+        double x = selectionInPercent.X * ActualWidth;
+        double y = selectionInPercent.Y * ActualHeight;
+        double width = selectionInPercent.Width * ActualWidth;
+        double height = selectionInPercent.Height * ActualHeight;
+        selectionRect.SetBounds(new Rect(x, y, width, height));
     }
 
     private void PeopleTag_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -97,11 +107,9 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
             var point = args.GetCurrentPoint((UIElement)sender);
             if (point.Properties.IsLeftButtonPressed)
             {
+                selectionStartTime = DateTime.Now;
                 ViewModel.OnUserStartedSelection();
-                Canvas.SetLeft(selectionRect, point.Position.X);
-                Canvas.SetTop(selectionRect, point.Position.Y);
-                selectionRect.Width = 0;
-                selectionRect.Height = 0;
+                selectionRect.SetBounds(new Rect(point.Position.X, point.Position.Y, 0, 0));
                 selectionRect.HandOverPointerPressedEvent(args);
             }
         }
@@ -113,13 +121,18 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         {
             var point = args.GetCurrentPoint((UIElement)sender);
 
-            if (selectionRect.Width == 0 && selectionRect.Height == 0)
+            var bounds = selectionRect.GetBounds();
+
+            if (bounds.Width <= 1 && bounds.Height <= 1 
+                && DateTime.Now - selectionStartTime < DefaultSelectionTimeSpan)
             {
-                Canvas.SetLeft(selectionRect, Math.Max(0, point.Position.X - DefaultFaceBoxSize / 2));
-                Canvas.SetTop(selectionRect, Math.Max(0, point.Position.Y - DefaultFaceBoxSize / 2));
-                selectionRect.Width = DefaultFaceBoxSize;
-                selectionRect.Height = DefaultFaceBoxSize;
-                ViewModel.OnUserEndedSelection(GetSelectionRectInPercent());
+                double x = Math.Max(0, point.Position.X - DefaultFaceBoxSize / 2);
+                double y = Math.Max(0, point.Position.Y - DefaultFaceBoxSize / 2);
+                double width = DefaultFaceBoxSize;
+                double height = DefaultFaceBoxSize;
+                selectionRect.SetBounds(new Rect(x, y, width, height));
+                ViewModel!.SelectionRectInPercent = GetSelectionRectInPercent();
+                ViewModel.OnUserEndedSelection();
             }
         }
     }
@@ -131,7 +144,8 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void SelectionRect_InteractionEnded(SelectionRect sender, EventArgs args)
     {
-        ViewModel!.OnUserEndedSelection(GetSelectionRectInPercent());
+        ViewModel!.SelectionRectInPercent = GetSelectionRectInPercent();
+        ViewModel!.OnUserEndedSelection();
     }
 
     private void AutoSuggestBoxContainer_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -151,7 +165,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
     {
         var selectionRectBounds = selectionRect.GetBounds();
 
-        double left = selectionRectBounds.Left + selectionRect.Width / 2 - autoSuggestBoxContainer.ActualWidth / 2;
+        double left = selectionRectBounds.Left + selectionRectBounds.Width / 2 - autoSuggestBoxContainer.ActualWidth / 2;
         left = Math.Min(Math.Max(left, 0), ActualWidth - autoSuggestBoxContainer.ActualWidth);
         Canvas.SetLeft(autoSuggestBoxContainer, left);
 
@@ -159,7 +173,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
         if (selectionRectCenterY < ActualHeight / 2)
         {
-            Canvas.SetTop(autoSuggestBoxContainer, selectionRectBounds.Top + selectionRect.Height);
+            Canvas.SetTop(autoSuggestBoxContainer, selectionRectBounds.Top + selectionRectBounds.Height);
             AutoSuggestBoxExtension.SetSuggestionListDirection(autoSuggestBox, SuggestionListDirection.Down);
             autoSuggestBoxContainer.RenderTransformOrigin = new Point(0.5, 0);
         }
@@ -261,6 +275,14 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         }
     }
 
+    private void SelectionCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (ViewModel != null && !ViewModel.SelectionRectInPercent.IsEmpty)
+        {
+            UpdateSelectionRectBounds(ViewModel.SelectionRectInPercent);
+        }
+    }
+
     private void RemovePeopleTagMenuItem_Click(object sender, RoutedEventArgs e)
     {
         ViewModel!.RemovePeopleTagCommand.Execute(contextRequestedName);
@@ -268,10 +290,11 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void AutoSuggestBox_LosingFocus(UIElement sender, LosingFocusEventArgs args)
     {
-        if (ViewModel!.SelectionRect.IsEmpty)
+        if (ViewModel!.SelectionRectInPercent.IsEmpty)
         {
             // set focus to flipview when hiding autosuggestbox
             args.TrySetNewFocusedElement(this.FindParent<FlipView>()!);
         }
     }
+
 }
