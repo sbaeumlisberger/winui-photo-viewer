@@ -1,8 +1,6 @@
-﻿using Windows.Data.Xml.Dom;
+﻿using PhotoViewer.App.Utils.Logging;
 using Windows.Storage;
 using Windows.System.UserProfile;
-using Windows.UI;
-using Windows.UI.Notifications;
 
 namespace PhotoViewer.Core.Services;
 
@@ -35,12 +33,13 @@ public class PersonalizationService : IPersonalizationService
         {
             throw new ArgumentException("The given file type is not supported.");
         }
-        var storageFile = file as StorageFile ?? await file.CopyAsync(AppData.PrivateFolder, "lockscreenBackground" + file.FileType, NameCollisionOption.ReplaceExisting);
-        bool success = await UserProfilePersonalizationSettings.Current.TrySetLockScreenImageAsync(storageFile);
+        var uniqueFile = await file.CopyAsync(AppData.PrivateFolder, "lockscreenBackground" + Guid.NewGuid() + file.FileType);
+        bool success = await UserProfilePersonalizationSettings.Current.TrySetLockScreenImageAsync(uniqueFile);
         if (!success)
         {
             throw new Exception("Background image could not be set successfully.");
         }
+        TryCleanupOldFilesAsync("lockscreenBackground-", uniqueFile.Name);
     }
 
     public async Task SetDesktopBackgroundAsync(IStorageFile file)
@@ -53,11 +52,32 @@ public class PersonalizationService : IPersonalizationService
         {
             throw new ArgumentException("The given file type is not supported.");
         }
-        var storageFile = file as StorageFile ?? await file.CopyAsync(AppData.PrivateFolder, "desktopBackground" + file.FileType, NameCollisionOption.ReplaceExisting);
-        bool success = await UserProfilePersonalizationSettings.Current.TrySetWallpaperImageAsync(storageFile);
+        var uniqueFile = await file.CopyAsync(AppData.PrivateFolder, "desktopBackground-" + Guid.NewGuid() + file.FileType);
+        bool success = await UserProfilePersonalizationSettings.Current.TrySetWallpaperImageAsync(uniqueFile);
         if (!success)
         {
             throw new Exception("Background image could not be set successfully.");
+        }
+        TryCleanupOldFilesAsync("desktopBackground-", uniqueFile.Name);
+    }
+
+    private async void TryCleanupOldFilesAsync(string prefix, string currentFileName)
+    {
+        try
+        {
+            var files = await AppData.PrivateFolder.GetFilesAsync();
+
+            foreach (var file in files)
+            {
+                if (file.Name.StartsWith(prefix) && file.Name != currentFileName)
+                {
+                    await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to cleanup old personalization files.", ex);
         }
     }
 
