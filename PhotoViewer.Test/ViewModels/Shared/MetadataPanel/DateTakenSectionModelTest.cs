@@ -168,18 +168,20 @@ public class DateTakenSectionModelTest
     }
 
     [Fact]
-    public void MetadataIsWrittenWhenDateOrTimeChanged()
+    public async Task MetadataIsWrittenWhenDateOrTimeChanged()
     {
         IntialUpdate();
 
         dateTakenSectionModel.Date = new DateTime(2023, 02, 28);
 
-        metadataService.Received().WriteMetadataAsync(
+        await dateTakenSectionModel.WriteFilesTask;
+        await metadataService.Received().WriteMetadataAsync(
             Arg.Any<IBitmapFileInfo>(), MetadataProperties.DateTaken, new DateTime(2023, 02, 28, 11, 38, 12));
 
         dateTakenSectionModel.Time = new TimeSpan(07, 19, 46);
-
-        metadataService.Received().WriteMetadataAsync(
+     
+        await dateTakenSectionModel.WriteFilesTask;
+        await metadataService.Received().WriteMetadataAsync(
             Arg.Any<IBitmapFileInfo>(), MetadataProperties.DateTaken, new DateTime(2023, 02, 28, 07, 19, 46));
     }
 

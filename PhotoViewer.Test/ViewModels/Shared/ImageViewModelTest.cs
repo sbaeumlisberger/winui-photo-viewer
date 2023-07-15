@@ -20,7 +20,7 @@ using Xunit.Abstractions;
 
 namespace PhotoViewer.Test.ViewModels.Shared;
 
-public class ImageViewModelTest
+public class ImageViewModelTest : IDisposable
 {
     private readonly IBitmapFileInfo bitmapFileMock = Substitute.For<IBitmapFileInfo>();
 
@@ -37,6 +37,11 @@ public class ImageViewModelTest
         bitmapFileMock.IsMetadataSupported.Returns(true);
 
         imageViewModel = new ImageViewModel(bitmapFileMock, imageLoadServiceMock, messenger);
+    }
+
+    void IDisposable.Dispose()
+    {
+        Log.Logger = Substitute.For<ILogger>();
     }
 
     [Fact]

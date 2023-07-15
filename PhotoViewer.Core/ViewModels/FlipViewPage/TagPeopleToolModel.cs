@@ -108,7 +108,11 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     }
 
     private async void Receive(BitmapModifiedMesssage msg)
-    {
+    {  
+        AutoSuggestBoxText = string.Empty;
+        SelectionRectInPercent = Rect.Empty;
+        HideSuggestedFaces();
+
         if (msg.BitmapFile.Equals(bitmapFile))
         {
             await LoadTaggedPeopleAsync();
@@ -137,8 +141,13 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
             TaggedPeople.ForEach(x => x.IsVisible = false);
             AutoSuggestBoxText = string.Empty;
             SelectionRectInPercent = Rect.Empty;
-            suggestedFacesInPercent.Clear();
+            HideSuggestedFaces();
         }
+    }
+
+    private void HideSuggestedFaces()
+    {
+        suggestedFacesInPercent.Clear();
     }
 
     private void ShowSuggestedFaces() 
@@ -261,7 +270,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     {
         TaggedPeople = (await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People))
              .Where(peopleTag => !peopleTag.Rectangle.IsEmpty)
-             .Select(peopleTag => new PeopleTagViewModel(IsTagPeopleToolActive, peopleTag.Name, peopleTag.Rectangle.ToRect()))
+             .Select(peopleTag => new PeopleTagViewModel(IsSelectionEnabled, peopleTag.Name, peopleTag.Rectangle.ToRect()))
              .ToList();
     }
 

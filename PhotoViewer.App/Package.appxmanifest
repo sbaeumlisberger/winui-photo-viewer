@@ -8,11 +8,11 @@
 
   <Identity
     Name="e0a2c53a-fca5-4900-82b0-ae74f7c64dce"
-    Publisher="CN=Sebastian"
+    Publisher="CN=C=DE, Sebastian Bäumlisberger"
     Version="1.0.0.0" />
 
   <Properties>
-    <DisplayName>PhotoViewer.App</DisplayName>
+    <DisplayName>WinUIPhotoViewer</DisplayName>
     <PublisherDisplayName>Sebastian</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>

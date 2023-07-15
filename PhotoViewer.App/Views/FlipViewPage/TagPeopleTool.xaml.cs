@@ -49,6 +49,11 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         {
             UpdateSelectionRectBounds(ViewModel.SelectionRectInPercent);
             selectionRect.Visibility = Visibility.Visible;
+
+            if (ViewModel.IsNameInputVisible) 
+            {
+                UpdateAutoSuggestBoxContainerPosition();
+            }
         }
         else
         {
@@ -280,6 +285,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         if (ViewModel != null && !ViewModel.SelectionRectInPercent.IsEmpty)
         {
             UpdateSelectionRectBounds(ViewModel.SelectionRectInPercent);
+            UpdateAutoSuggestBoxContainerPosition();
         }
     }
 

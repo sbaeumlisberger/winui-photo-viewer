@@ -43,7 +43,7 @@ public class TagPeopleToolModelTest
 
     private readonly List<DetectedFaceModel> exampleDetectedFaces;
 
-    private readonly List<Rect> expectedSuggestedFaces;
+    private readonly List<Rect> exampleSuggestedFaces;
 
     public TagPeopleToolModelTest()
     {
@@ -58,7 +58,7 @@ public class TagPeopleToolModelTest
             new DetectedFaceModel(new BitmapBounds(1520, 190, 360, 400)),
         };
 
-        expectedSuggestedFaces = new List<Rect>() {
+        exampleSuggestedFaces = new List<Rect>() {
             new Rect(0.23, 0.22, 0.19, 0.42),
             new Rect(0.505, 0.23, 0.185, 0.41),
             new Rect(0.76, 0.19, 0.18, 0.4),
@@ -69,144 +69,200 @@ public class TagPeopleToolModelTest
         tagPeopleToolModel = new TagPeopleToolModel(bitmapFile, messenger, suggestionsService, metadataService, dialogService, faceDetectionService);
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task LodasPeopleTags_OnInitialization(bool isActive)
+    [Fact]
+    public async Task InitializeAsync_LoadsPeopleTags()
     {
-        messenger.Register<IsTagPeopleToolActiveRequestMessage>(this, (_, msg) => msg.Reply(isActive));
+        messenger.Register<IsTagPeopleToolActiveRequestMessage>(this, (_, msg) => msg.Reply(false));
         metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People).Returns(examplePeopleTags);
 
         await tagPeopleToolModel.InitializeAsync();
 
-        Assert.Equal(isActive, tagPeopleToolModel.IsTagPeopleToolActive);
         Assert.Equal(2, tagPeopleToolModel.TaggedPeople.Count);
 
         var peopleTagVM1 = tagPeopleToolModel.TaggedPeople[0];
         Assert.Equal(examplePeopleTag1.Name, peopleTagVM1.Name);
-        Assert.Equal(isActive, peopleTagVM1.IsVisible);
         Assert.Equal(examplePeopleTag1.Rectangle.ToRect(), peopleTagVM1.FaceBox);
+        Assert.False(peopleTagVM1.IsVisible);
 
         var peopleTagVM2 = tagPeopleToolModel.TaggedPeople[1];
         Assert.Equal(examplePeopleTag3.Name, peopleTagVM2.Name);
-        Assert.Equal(isActive, peopleTagVM2.IsVisible);
         Assert.Equal(examplePeopleTag3.Rectangle.ToRect(), peopleTagVM2.FaceBox);
-    }
-
-    [Fact]
-    public async void ShowsTaggedPeople_OnActivation()
-    {
-        await InitializeTagPeopleToolModel(peopleTags: examplePeopleTags);
-
-        messenger.Send(new SetTagPeopleToolActiveMessage(true));
-
-        Assert.All(tagPeopleToolModel.TaggedPeople, peopleTagVM => Assert.True(peopleTagVM.IsVisible));
-        Assert.Empty(tagPeopleToolModel.SuggestedFaces);
+        Assert.False(peopleTagVM2.IsVisible);
     }
 
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task SuggestsFaces_OnActivation_WhenNoPeopleTagged(bool isEnabled)
+    public async Task InitializeAsync_SetsIsTagPeopleToolActive(bool isActive)
+    {
+        messenger.Register<IsTagPeopleToolActiveRequestMessage>(this, (_, msg) => msg.Reply(isActive));
+
+        await tagPeopleToolModel.InitializeAsync();
+
+        Assert.Equal(isActive, tagPeopleToolModel.IsTagPeopleToolActive);
+    }
+
+    [Fact]
+    public async void ActivationMessage_ShowsTaggedPeople_WhenIsEnabledTrue()
+    {
+        await InitializeTagPeopleToolModel(peopleTags: examplePeopleTags);
+        tagPeopleToolModel.IsEnabled = true;
+
+        messenger.Send(new SetTagPeopleToolActiveMessage(true));
+
+        Assert.All(tagPeopleToolModel.TaggedPeople, peopleTagVM => Assert.True(peopleTagVM.IsVisible));
+    }
+
+    [Fact]
+    public async void ActivationMessage_DoesNotShowTaggedPeople_WhenIsEnabledFalse()
+    {
+        await InitializeTagPeopleToolModel(peopleTags: examplePeopleTags);
+
+        messenger.Send(new SetTagPeopleToolActiveMessage(true));
+
+        Assert.All(tagPeopleToolModel.TaggedPeople, peopleTagVM => Assert.False(peopleTagVM.IsVisible));
+    }
+
+    [Fact]
+    public async Task ActivationMessage_ShowsSuggestedFaces_WhenNoPeopleTaggedAndIsEnabledTrue()
     {
         await InitializeTagPeopleToolModel();
-        tagPeopleToolModel.IsEnabled = isEnabled;
+        tagPeopleToolModel.IsEnabled = true;
 
         messenger.Send(new SetTagPeopleToolActiveMessage(true));
         await tagPeopleToolModel.LastDispatchTask;
 
-        if (isEnabled)
-        {
-            AssertSuggestedFaces(tagPeopleToolModel.SuggestedFaces, 1);
-            Assert.Equal(new Rect(0.23, 0.22, 0.19, 0.42), tagPeopleToolModel.SelectionRectInPercent);
-        }
-        else
-        {
-            AssertSuggestedFaces(tagPeopleToolModel.SuggestedFaces, 0);
-        }
+        AssertSuggestedFaces(exampleSuggestedFaces.Skip(1), tagPeopleToolModel.SuggestedFaces);
+        Assert.Equal(exampleSuggestedFaces[0], tagPeopleToolModel.SelectionRectInPercent);
     }
 
     [Fact]
-    public async Task SuggestsNoFaces_OnActivation_WhenPeopleTagged()
+    public async Task ActivationMessage_DoesNotShowSuggestedFaces_WhenNoPeopleTaggedAndIsEnabledFalse()
+    {
+        await InitializeTagPeopleToolModel();
+        tagPeopleToolModel.IsEnabled = false;
+
+        messenger.Send(new SetTagPeopleToolActiveMessage(true));
+        await tagPeopleToolModel.LastDispatchTask;
+
+        Assert.Empty(tagPeopleToolModel.SuggestedFaces);
+        Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRectInPercent);
+    }
+
+    [Fact]
+    public async Task ActivationMessage_DoesNotShowSuggestedFaces_WhenPeopleTaggedAndIsEnabledTrue()
     {
         await InitializeTagPeopleToolModel(peopleTags: examplePeopleTags);
 
         messenger.Send(new SetTagPeopleToolActiveMessage(true));
 
         Assert.Empty(tagPeopleToolModel.SuggestedFaces);
+        Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRectInPercent);
     }
 
     [Fact]
-    public async Task SelectsFirstSuggestFace_OnEnabled()
+    public async Task ActivationMessage_DoesNotShowSuggestedFaces_WhenPeopleTaggedAndIsEnabledFalse()
+    {
+        await InitializeTagPeopleToolModel(peopleTags: examplePeopleTags);
+
+        messenger.Send(new SetTagPeopleToolActiveMessage(true));
+
+        Assert.Empty(tagPeopleToolModel.SuggestedFaces);
+        Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRectInPercent);
+    }
+
+    [Fact]
+    public async Task SetIsEnabledTrue_ShowsSuggestedFaces_WhenNoPeopleTaggedAndIsActiveTrue()
     {
         await InitializeTagPeopleToolModel(active: true);
-        tagPeopleToolModel.BitmapImage = exampleBitmapImage;
 
         tagPeopleToolModel.IsEnabled = true;
 
-        AssertSuggestedFaces(tagPeopleToolModel.SuggestedFaces, 1);
-        Assert.Equal(expectedSuggestedFaces[0], tagPeopleToolModel.SelectionRectInPercent);
+        AssertSuggestedFaces(exampleSuggestedFaces.Skip(1), tagPeopleToolModel.SuggestedFaces);
+        Assert.Equal(exampleSuggestedFaces[0], tagPeopleToolModel.SelectionRectInPercent);
     }
 
     [Fact]
-    public async Task SelectsFirstSuggestFace_OnEnabledAfterDisabled()
+    public async Task SetIsEnabledTrue_DoesNotSuggestedFaces_WhenNoPeopleTaggedAndIsActiveFalse()
     {
-        await InitializeTagPeopleToolModel(active: true);
-        tagPeopleToolModel.BitmapImage = exampleBitmapImage;
+        await InitializeTagPeopleToolModel(active: false);
 
         tagPeopleToolModel.IsEnabled = true;
-        tagPeopleToolModel.IsEnabled = false;
-        tagPeopleToolModel.IsEnabled = true;
 
-        AssertSuggestedFaces(tagPeopleToolModel.SuggestedFaces, 1);
-        Assert.Equal(expectedSuggestedFaces[0], tagPeopleToolModel.SelectionRectInPercent);
+        Assert.Empty(tagPeopleToolModel.SuggestedFaces);
+        Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRectInPercent);
     }
 
     [Fact]
-    public async Task ClearsSelectionRectAndAutoSuggestBoxText_OnDisabled()
+    public async Task SetIsEnabledTrue_DoesNotShowSuggestedFaces_WhenPeopleTaggedAndIsActiveTrue()
+    {
+        await InitializeTagPeopleToolModel(active: true, peopleTags: examplePeopleTags);
+
+        tagPeopleToolModel.IsEnabled = true;
+
+        Assert.Empty(tagPeopleToolModel.SuggestedFaces);
+        Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRectInPercent);
+    }
+
+    [Fact]
+    public async Task SetIsEnabledTrue_DoesNotShowSuggestedFaces_WhenPeopleTaggedAndIsActiveFalse()
+    {
+        await InitializeTagPeopleToolModel(active: false);
+
+        tagPeopleToolModel.IsEnabled = true;
+
+        Assert.Empty(tagPeopleToolModel.SuggestedFaces);
+        Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRectInPercent);
+    }
+
+    [Fact]
+    public async Task SetIsEnabledFalse_ClearsSelectionRectAndAutoSuggestBoxTextAndSuggestedFaces()
     {
         await InitializeTagPeopleToolModel(active: true);
         tagPeopleToolModel.IsEnabled = true;
         tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
 
         tagPeopleToolModel.IsEnabled = false;
-        
+
         Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRectInPercent);
         Assert.Equal(string.Empty, tagPeopleToolModel.AutoSuggestBoxText);
-        Assert.Equal(expectedSuggestedFaces.Count, tagPeopleToolModel.SuggestedFaces.Count);
+        Assert.Empty(tagPeopleToolModel.SuggestedFaces);
     }
 
     [Fact]
-    public async Task RestoresSuggestedFaces_OnDisabled()
+    public async Task SetIsEnabledTrue_RestoresSuggestedFaces()
     {
         await InitializeTagPeopleToolModel(active: true);
         tagPeopleToolModel.IsEnabled = true;
         tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
         tagPeopleToolModel.TrySelectNextDetectedFace();
-
         tagPeopleToolModel.IsEnabled = false;
 
-        Assert.Equal(expectedSuggestedFaces.Count, tagPeopleToolModel.SuggestedFaces.Count);
+        tagPeopleToolModel.IsEnabled = true;
+
+        AssertSuggestedFaces(exampleSuggestedFaces.Skip(1), tagPeopleToolModel.SuggestedFaces);
+        Assert.Equal(exampleSuggestedFaces[0], tagPeopleToolModel.SelectionRectInPercent);
     }
 
     [Fact]
-    public async Task ClearsSuggestedFaces_OnDisabledWhenPeopleTagged()
+    public async Task SetIsEnabledTrue_DoesNotRestoreSuggestedFaces_WhenPeopleTagged()
     {
         await InitializeTagPeopleToolModel(active: true);
         tagPeopleToolModel.IsEnabled = true;
         tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
-
         metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People).Returns(examplePeopleTags);
         messenger.Send(new MetadataModifiedMessage(new[] { bitmapFile }, MetadataProperties.People));
         await tagPeopleToolModel.LastDispatchTask;
-
         tagPeopleToolModel.IsEnabled = false;
 
+        tagPeopleToolModel.IsEnabled = true;
+
         Assert.Empty(tagPeopleToolModel.SuggestedFaces);
+        Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRectInPercent);
     }
 
     [Fact]
-    public void SendsTagPeopleToolActiveChangedMessage_WhenExitPeopleTaggingCalled()
+    public void ExitPeopleTagging_SendsTagPeopleToolActiveChangedMessage()
     {
         var messageCapture = TestUtils.CaptureMessage<SetTagPeopleToolActiveMessage>(messenger);
 
@@ -216,7 +272,7 @@ public class TagPeopleToolModelTest
     }
 
     [Fact]
-    public async Task ShowsNextFace_WhenSkipCurrentDetectedFaceCalled()
+    public async Task TrySelectNextDetectedFace_ShowsNextSuggestedFace()
     {
         await InitializeTagPeopleToolModel(active: true);
         tagPeopleToolModel.IsEnabled = true;
@@ -224,15 +280,15 @@ public class TagPeopleToolModelTest
 
         tagPeopleToolModel.TrySelectNextDetectedFace();
 
-        AssertSuggestedFaces(tagPeopleToolModel.SuggestedFaces, 2);
-        Assert.Equal(expectedSuggestedFaces[1], tagPeopleToolModel.SelectionRectInPercent);
+        AssertSuggestedFaces(exampleSuggestedFaces.Skip(2), tagPeopleToolModel.SuggestedFaces);
+        Assert.Equal(exampleSuggestedFaces[1], tagPeopleToolModel.SelectionRectInPercent);
 
         tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
 
         tagPeopleToolModel.TrySelectNextDetectedFace();
 
         Assert.Equal(0, tagPeopleToolModel.SuggestedFaces.Count);
-        Assert.Equal(expectedSuggestedFaces[2], tagPeopleToolModel.SelectionRectInPercent);
+        Assert.Equal(exampleSuggestedFaces[2], tagPeopleToolModel.SelectionRectInPercent);
 
         tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
 
@@ -244,32 +300,28 @@ public class TagPeopleToolModelTest
     }
 
     [Fact]
-    public async Task ShowsErrorDialog_WhenAlreadyTaggedPersonAdded()
+    public async Task OnUserStartedSelection_SetsIsNameInputVisibleFalseAndClearsSuggestedFaces() 
     {
-        await InitializeTagPeopleToolModel(active: true);
-        var peopleTags = new List<PeopleTag>() { new PeopleTag("Already Tagged") };
-        metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People).Returns(peopleTags);
-        tagPeopleToolModel.IsEnabled = true;
+        await InitializeTagPeopleToolModel(active: true, enbaled: true);
 
-        tagPeopleToolModel.AutoSuggestBoxText = "Already Tagged";
-        await tagPeopleToolModel.AddPersonCommand.ExecuteAsync(null);
+        tagPeopleToolModel.OnUserStartedSelection();
 
-        await dialogService.Received().ShowDialogAsync(Arg.Any<MessageDialogModel>());
+        Assert.False(tagPeopleToolModel.IsNameInputVisible);
+        Assert.Empty(tagPeopleToolModel.SuggestedFaces);
     }
 
     [Fact]
-    public async Task DoesNothing_WhenPersonAddedWithoutName()
+    public async Task OnUserEndedSelection_SetsIsNameInputVisibleTrue()
     {
-        await InitializeTagPeopleToolModel(active: true);
-        tagPeopleToolModel.IsEnabled = true;
+        await InitializeTagPeopleToolModel(active: true, enbaled: true);
 
-        await tagPeopleToolModel.AddPersonCommand.ExecuteAsync(null);
+        tagPeopleToolModel.OnUserEndedSelection();
 
-        await metadataService.DidNotReceive().WriteMetadataAsync(bitmapFile, MetadataProperties.People, Arg.Any<IList<PeopleTag>>());
+        Assert.True(tagPeopleToolModel.IsNameInputVisible);
     }
 
     [Fact]
-    public async Task AddsPeopleTagToFileAndShowsNextSelectedFace_WhenPersonAdded()
+    public async Task AddPersonCommandExecuteAsync_AddsPeopleTagToFileAndShowsNextSelectedFace()
     {
         await InitializeTagPeopleToolModel(active: true);
         var peopleTags = new List<PeopleTag>() { new PeopleTag("Already Tagged") };
@@ -286,23 +338,51 @@ public class TagPeopleToolModelTest
         Assert.Equal(bitmapFile, metadataModifiedMessageCapture.Message.Files.First());
         Assert.Equal(MetadataProperties.People, metadataModifiedMessageCapture.Message.MetadataProperty);
         await suggestionsService.Received().AddSuggestionAsync("New Person");
-        AssertSuggestedFaces(tagPeopleToolModel.SuggestedFaces, 2);
-        Assert.Equal(expectedSuggestedFaces[1], tagPeopleToolModel.SelectionRectInPercent);
+        Assert.Single(tagPeopleToolModel.TaggedPeople);
+        Assert.True(tagPeopleToolModel.TaggedPeople[0].IsVisible);
+        AssertSuggestedFaces(exampleSuggestedFaces.Skip(2), tagPeopleToolModel.SuggestedFaces);
+        Assert.Equal(exampleSuggestedFaces[1], tagPeopleToolModel.SelectionRectInPercent);
     }
 
-    private async Task InitializeTagPeopleToolModel(bool active = false, List<PeopleTag>? peopleTags = null)
+    [Fact]
+    public async Task AddPersonCommandExecuteAsync_ShowsErrorDialog_WhenPersonAlreadyTagged()
+    {
+        await InitializeTagPeopleToolModel(active: true);
+        var peopleTags = new List<PeopleTag>() { new PeopleTag("Already Tagged") };
+        metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People).Returns(peopleTags);
+        tagPeopleToolModel.IsEnabled = true;
+
+        tagPeopleToolModel.AutoSuggestBoxText = "Already Tagged";
+        await tagPeopleToolModel.AddPersonCommand.ExecuteAsync(null);
+
+        await dialogService.Received().ShowDialogAsync(Arg.Any<MessageDialogModel>());
+    }
+
+    [Fact]
+    public async Task AddPersonCommandExecuteAsync_DoesNothing_WhenNoNameEntered()
+    {
+        await InitializeTagPeopleToolModel(active: true);
+        tagPeopleToolModel.IsEnabled = true;
+
+        await tagPeopleToolModel.AddPersonCommand.ExecuteAsync(null);
+
+        await metadataService.DidNotReceive().WriteMetadataAsync(bitmapFile, MetadataProperties.People, Arg.Any<IList<PeopleTag>>());
+    }
+
+    private async Task InitializeTagPeopleToolModel(bool active = false, bool enbaled = false, List<PeopleTag>? peopleTags = null)
     {
         messenger.Register<IsTagPeopleToolActiveRequestMessage>(this, (_, msg) => msg.Reply(active));
         metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People).Returns(peopleTags ?? new List<PeopleTag>());
         await tagPeopleToolModel.InitializeAsync();
         tagPeopleToolModel.BitmapImage = exampleBitmapImage;
+        tagPeopleToolModel.IsEnabled = enbaled;
     }
 
-    private void AssertSuggestedFaces(IObservableReadOnlyList<Rect> suggestedFaces, int skip = 0)
+    private void AssertSuggestedFaces(IEnumerable<Rect> expectedSuggestedFaces, IObservableReadOnlyList<Rect> suggestedFaces)
     {
-        Assert.Equal(expectedSuggestedFaces.Count - skip, suggestedFaces.Count);
+        Assert.Equal(expectedSuggestedFaces.Count(), suggestedFaces.Count);
         int i = 0;
-        foreach (var expectedRect in expectedSuggestedFaces.Skip(skip))
+        foreach (var expectedRect in expectedSuggestedFaces)
         {
             Assert.Equal(expectedRect, suggestedFaces[i++]);
         }
