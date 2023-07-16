@@ -156,7 +156,11 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
     private void AutoSuggestBoxContainer_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         UpdateAutoSuggestBoxContainerPosition();
-        FocusAutoSuggestBox();
+
+        if (e.PreviousSize.Width == 0 && e.PreviousSize.Height == 0)
+        {
+            FocusAutoSuggestBox();
+        }
     }
 
     private Rect GetSelectionRectInPercent()
