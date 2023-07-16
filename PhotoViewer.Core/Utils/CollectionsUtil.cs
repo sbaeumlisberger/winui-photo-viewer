@@ -33,6 +33,16 @@ public static class CollectionsUtil
         return false;
     }
 
+    public static bool RemoveLast<T>(this IList<T> list)
+    {
+        if (list.IsEmpty()) 
+        {
+            return false;
+        }
+        list.RemoveAt(list.Count - 1);
+        return true;
+    }
+
     public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
     {
         foreach (var element in enumerable)

@@ -88,11 +88,13 @@ namespace PhotoViewer.Core.Services
 
             if (recent.FirstOrDefault() != suggestion)
             {
-                if (recent.Count == MaxRecentCount)
-                {
-                    recent.RemoveAt(recent.Count - 1);
-                }
+                recent.Remove(suggestion);
                 recent.Insert(0, suggestion);
+
+                if (recent.Count > MaxRecentCount)
+                {
+                    recent.RemoveLast();
+                }
 
                 await PersistRecentAsync();
             }
