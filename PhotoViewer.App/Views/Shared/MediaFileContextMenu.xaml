@@ -29,7 +29,7 @@
                 Icon="Copy" Text="{x:Bind res:Strings.MediaFileContextMenu_Open}" 
                 Command="{x:Bind ViewModel.CopyCommand, Mode=OneWay}">
                 <MenuFlyoutItem.KeyboardAccelerators>
-                    <KeyboardAccelerator Modifiers="Control" Key="C"/>
+                    <KeyboardAccelerator Modifiers="Control,Shift" Key="C"/>
                 </MenuFlyoutItem.KeyboardAccelerators>
             </MenuFlyoutItem>
 
