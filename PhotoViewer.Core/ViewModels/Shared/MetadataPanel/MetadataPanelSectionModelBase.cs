@@ -62,9 +62,11 @@ namespace PhotoViewer.Core.ViewModels
 
         protected async Task<ProcessingResult<IBitmapFileInfo>> WriteFilesAsync(Func<IBitmapFileInfo, Task> processFile)
         {
-            IsWriting = true;
+            var files = Files.ToList();
 
-            var writeFilesTask = ExecuteWriteFilesAsync(Files.ToList(), processFile);
+            await RunInContextAsync(() => IsWriting = true).ConfigureAwait(false);
+
+            var writeFilesTask = ExecuteWriteFilesAsync(files, processFile);
 
             WriteFilesTask = writeFilesTask;
 
