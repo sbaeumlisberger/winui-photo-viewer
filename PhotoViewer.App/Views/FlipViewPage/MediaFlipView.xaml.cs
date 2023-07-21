@@ -65,9 +65,6 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
 
     private void FlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        ApplyItemsModels();
-        FocusSelectedItem();
-
         if (e.AddedItems.Count == 1 && e.RemovedItems.Count == 1)
         {
             // update view model when selection was changed by the user
@@ -77,6 +74,9 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         {
             DispatcherQueue.TryEnqueue(() => flipView.SelectedItem = ViewModel.SelectedItem);
         }
+
+        ApplyItemsModels();
+        FocusSelectedItem();
 
         flipView.Opacity = 1; // reset delete animation 
     }

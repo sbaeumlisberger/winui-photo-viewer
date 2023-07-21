@@ -183,14 +183,12 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     public void SetItems(IReadOnlyList<IMediaFileInfo> files, IMediaFileInfo? startFile = null)
     {
         Log.Debug("SetItems called");
-        Stopwatch sw = Stopwatch.StartNew();
-        Items = new ObservableList<IMediaFileInfo>(files);
-        itemModels.SetKeys(Items);
-        sw.Stop();
-        Log.Info($"Set {Items.Count} Items took {sw.ElapsedMilliseconds} ms");
-        var fileToSelect = startFile ?? Items.FirstOrDefault();
-        Log.Debug("Set SelectedItem " + fileToSelect);
-        SelectedItem = fileToSelect;
+        var items = new ObservableList<IMediaFileInfo>(files);
+        var selectedItem = startFile ?? items.FirstOrDefault();
+        itemModels.SetKeys(items);
+        itemModels.SetSelectedItem(selectedItem);
+        Items = items;    
+        SelectedItem = selectedItem;
     }
 
     public IMediaFlipViewItemModel? TryGetItemModel(IMediaFileInfo mediaFile)
@@ -335,7 +333,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     }
 
     [RelayCommand]
-    private async void OpenFolder()
+    private async Task OpenFolderAsync()
     {
         var folderPickerModel = new FolderPickerModel();
         await dialogService.ShowDialogAsync(folderPickerModel);
