@@ -185,7 +185,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
                 cancellationToken.ThrowIfCancellationRequested();
                 return new Location(location.Address, geopoint);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 Log.Error("Failed to find geo point for address " + location.Address.ToString(), ex);
             }
@@ -198,7 +198,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
                 cancellationToken.ThrowIfCancellationRequested();
                 return new Location(address, location.Geopoint);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 Log.Error("Failed to find address for geopoint " + location.Geopoint.ToDecimalString(), ex);
             }
