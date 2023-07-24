@@ -4,6 +4,7 @@ using PhotoViewer.App.Services;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using Windows.Foundation;
+using Windows.Graphics;
 using Windows.Storage;
 using Xunit;
 using Xunit.Abstractions;
@@ -16,7 +17,7 @@ public class CropImageServiceTest
 
     private readonly string TestFolder = TestUtils.CreateTestFolder();
 
-    public CropImageServiceTest(ITestOutputHelper output) 
+    public CropImageServiceTest(ITestOutputHelper output)
     {
         output.WriteLine("TestFolder: " + TestFolder);
     }
@@ -28,14 +29,14 @@ public class CropImageServiceTest
         var imageFile = new BitmapFileInfo(storageFile);
         ulong orginalFileSize = await GetFileSize(storageFile);
 
-        var newBounds = new Rect(200, 200, 600, 400);
+        var newBounds = new RectInt32(200, 200, 600, 400);
         await cropImageService.CropImageAsync(imageFile, newBounds);
 
         ulong newFileSize = await GetFileSize(storageFile);
         Assert.True(newFileSize < orginalFileSize);
         var imageProperties = await storageFile.Properties.GetImagePropertiesAsync();
-        Assert.Equal(newBounds.Width, imageProperties.Width);
-        Assert.Equal(newBounds.Height, imageProperties.Height);
+        Assert.Equal(newBounds.Width, (int)imageProperties.Width);
+        Assert.Equal(newBounds.Height, (int)imageProperties.Height);
     }
 
     [Fact]
@@ -47,7 +48,7 @@ public class CropImageServiceTest
         var copyFilePath = Path.Combine(TestFolder, "Copy.jpg");
         using var copyStream = File.Create(copyFilePath);
 
-        var newBounds = new Rect(200, 200, 600, 400);
+        var newBounds = new RectInt32(200, 200, 600, 400);
         await cropImageService.CropImageAsync(imageFile, newBounds, copyStream);
         copyStream.Close();
 
@@ -55,8 +56,8 @@ public class CropImageServiceTest
         ulong newFileSize = await GetFileSize(copy);
         Assert.True(newFileSize < orginalFileSize);
         var imageProperties = await copy.Properties.GetImagePropertiesAsync();
-        Assert.Equal(newBounds.Width, imageProperties.Width);
-        Assert.Equal(newBounds.Height, imageProperties.Height);
+        Assert.Equal(newBounds.Width, (int)imageProperties.Width);
+        Assert.Equal(newBounds.Height, (int)imageProperties.Height);
     }
 
     [Fact]
@@ -65,7 +66,7 @@ public class CropImageServiceTest
         var storageFile = await GetTestFileAsync();
         var imageFile = new BitmapFileInfo(storageFile);
 
-        Rect invalidBounds = Rect.Empty;
+        RectInt32 invalidBounds = new RectInt32(0, 0, 0, 0);
         await Assert.ThrowsAnyAsync<ArgumentException>(() => cropImageService.CropImageAsync(imageFile, invalidBounds));
     }
 
@@ -73,7 +74,7 @@ public class CropImageServiceTest
 
     // TODO test update of people tags 
 
-    private async Task<StorageFile> GetTestFileAsync() 
+    private async Task<StorageFile> GetTestFileAsync()
     {
         string srcPath = Path.Combine(Environment.CurrentDirectory, "Resources", "CropImageServiceTest/TestFile.jpg");
         string filePath = Path.Combine(TestFolder, "TestFile.jpg");
