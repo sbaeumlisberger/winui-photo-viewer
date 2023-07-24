@@ -6,6 +6,7 @@
     xmlns:converters="using:PhotoViewer.App.Converters"   
     xmlns:viewModels="using:PhotoViewer.App.ViewModels"
     xmlns:res="using:PhotoViewer.App.Resources"
+    xmlns:controls="using:PhotoViewer.App.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -43,7 +44,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <FlipView
+        <controls:FlipViewPlus
             x:Name="flipView"
             ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" 
             SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}"
@@ -55,7 +56,8 @@
             ContextRequested="FlipView_ContextRequested"
             Background="{x:Bind ViewModel.IsDiashowActive, Mode=OneWay, Converter={StaticResource FlipViewBackgroundConverter}}"
             Tapped="FlipView_Tapped"
-            KeyDown="FlipView_KeyDown">
+            KeyDown="FlipView_KeyDown"
+            PrepareContainer="FlipView_PrepareContainer">
             <FlipView.ItemTemplateSelector>
                 <local:MediaFlipViewItemTemplateSelector>
                     <local:MediaFlipViewItemTemplateSelector.BitmapFileInfoTemplate>
@@ -101,7 +103,7 @@
                     </MenuFlyoutItem>
                 </MenuFlyout>
             </FlyoutBase.AttachedFlyout>
-        </FlipView>
+        </controls:FlipViewPlus>
 
         <StackPanel 
             VerticalAlignment="Center"

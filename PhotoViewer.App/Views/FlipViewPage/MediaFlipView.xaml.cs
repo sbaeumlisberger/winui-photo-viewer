@@ -7,10 +7,6 @@ using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Utils;
-using System;
-using System.ComponentModel;
-using System.Linq;
-using Windows.Foundation;
 using Windows.System;
 
 namespace PhotoViewer.App.Views;
@@ -38,7 +34,7 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
     }
 
     private void FlipView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
-    {        
+    {
         if (ViewModel!.IsDiashowActive)
         {
             flipView.ShowAttachedFlyout(args);
@@ -65,6 +61,8 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
 
     private void FlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        Log.Debug("FlipView_SelectionChanged " + flipView.SelectedIndex);
+
         if (e.AddedItems.Count == 1 && e.RemovedItems.Count == 1)
         {
             // update view model when selection was changed by the user
@@ -75,7 +73,6 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
             DispatcherQueue.TryEnqueue(() => flipView.SelectedItem = ViewModel.SelectedItem);
         }
 
-        ApplyItemsModels();
         FocusSelectedItem();
 
         flipView.Opacity = 1; // reset delete animation 
@@ -88,9 +85,9 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
 
     private void FlipViewItem_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
     {
-        if (sender.DataContext is IMediaFileInfo)
+        if (sender.DataContext is IMediaFileInfo mediaFile)
         {
-            ApplyItemsModels();
+            sender.DataContext = ViewModel?.TryGetItemModel(mediaFile);
         }
     }
 
@@ -103,31 +100,31 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         }
     }
 
-    private void ApplyItemsModels()
-    {
-        Log.Debug($"apply item models");
-        foreach (var itemModel in ViewModel!.ItemModels)
-        {
-            if (flipView.ContainerFromItem(itemModel.MediaItem) is FlipViewItem flipViewItem)
-            {
-                Log.Debug($"apply item model {itemModel.MediaItem.DisplayName} to flipview item");
-                ((FrameworkElement)flipViewItem.ContentTemplateRoot).DataContext = itemModel;
-            }
-        }
-    }
-
     private void FlipView_KeyDown(object sender, KeyRoutedEventArgs e)
     {
         /* keyboard accelerators in an attached flyout are not working, 
          * therefore they are executed via key down event handler */
 
-        if (e.Key == VirtualKey.Space) 
+        if (e.Key == VirtualKey.Space)
         {
             ViewModel!.ToogleDiashowLoopCommand.TryExecute();
         }
         else if (e.Key == VirtualKey.Escape)
         {
             ViewModel!.ExitDiashowCommand.TryExecute();
+        }
+    }
+
+    private void FlipView_PrepareContainer(object sender, (DependencyObject Element, object Item) e)
+    {
+        if (e.Item is IMediaFileInfo mediaFile)
+        {
+            var flipViewItem = (FlipViewItem)e.Element;
+            if (flipViewItem.ContentTemplateRoot is FrameworkElement root)
+            {
+                var itemModel = ViewModel?.TryGetItemModel(mediaFile);
+                root.DataContext = itemModel;
+            }
         }
     }
 }
