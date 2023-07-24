@@ -12,13 +12,14 @@ using System.Net.Security;
 using System.Text;
 using WIC;
 using Windows.Foundation;
+using Windows.Graphics;
 using Windows.Storage;
 
 namespace PhotoViewer.Core.Services;
 
 public interface ICropImageService
 {
-    Task CropImageAsync(IBitmapFileInfo imageFile, Rect newBounds, Stream? dstStream = null);
+    Task CropImageAsync(IBitmapFileInfo imageFile, RectInt32 newBounds, Stream? dstStream = null);
 }
 
 internal class CropImageService : ICropImageService
@@ -35,14 +36,14 @@ internal class CropImageService : ICropImageService
         this.metadataService = metadataService;
     }
 
-    public async Task CropImageAsync(IBitmapFileInfo bitmapFile, Rect newBounds, Stream? dstStream = null)
+    public async Task CropImageAsync(IBitmapFileInfo bitmapFile, RectInt32 newBounds, Stream? dstStream = null)
     {
-        if (newBounds == default || newBounds.IsEmpty)
+        if (newBounds.Width < 1 || newBounds.Height < 1)
         {
             throw new ArgumentOutOfRangeException(nameof(newBounds));
         }
 
-        if (string.IsNullOrEmpty(bitmapFile.FilePath)) 
+        if (string.IsNullOrEmpty(bitmapFile.FilePath))
         {
             throw new Exception("File not writeable (no file path)");
         }
@@ -73,15 +74,15 @@ internal class CropImageService : ICropImageService
                 messenger.Send(new MetadataModifiedMessage(new[] { bitmapFile }, MetadataProperties.People));
             }
         }
-        else 
+        else
         {
             dstStream.SetLength(0);
             await EncodeAsync(bitmapFile, decoder, dstStream, newBounds).ConfigureAwait(false);
             await dstStream.FlushAsync().ConfigureAwait(false);
-        }     
+        }
     }
 
-    private async Task<bool> EncodeAsync(IBitmapFileInfo bitmapFile, IWICBitmapDecoder decoder, Stream dstStream, Rect newBounds) 
+    private async Task<bool> EncodeAsync(IBitmapFileInfo bitmapFile, IWICBitmapDecoder decoder, Stream dstStream, RectInt32 newBounds)
     {
         var newBoundsWIC = ToWICRect(newBounds);
 
@@ -117,7 +118,7 @@ internal class CropImageService : ICropImageService
         return peopleTagsUpdated;
     }
 
-    private bool UpdatePeopleTags(IBitmapFileInfo bitmapFile, MetadataReader metadataReader, MetadataWriter metadataWriter, WICSize sizeBefore, Rect newBounds)
+    private bool UpdatePeopleTags(IBitmapFileInfo bitmapFile, MetadataReader metadataReader, MetadataWriter metadataWriter, WICSize sizeBefore, RectInt32 newBounds)
     {
         var people = metadataReader.GetProperty(MetadataProperties.People);
 
@@ -135,15 +136,17 @@ internal class CropImageService : ICropImageService
                 continue;
             }
 
+            Rect newBoundsRect = new Rect(newBounds.X, newBounds.Y, newBounds.Width, newBounds.Height);
+
             Rect personRectInPixels = new Rect(
                 person.Rectangle.X * sizeBefore.Width,
                 person.Rectangle.Y * sizeBefore.Height,
                 person.Rectangle.Width * sizeBefore.Width,
                 person.Rectangle.Height * sizeBefore.Height);
 
-            if (personRectInPixels.Intersects(newBounds))
+            if (personRectInPixels.Intersects(newBoundsRect))
             {
-                personRectInPixels.Intersect(newBounds);
+                personRectInPixels.Intersect(newBoundsRect);
                 person.Rectangle = new FaceRect(
                     (personRectInPixels.X - newBounds.X) / newBounds.Width,
                     (personRectInPixels.Y - newBounds.Y) / newBounds.Height,
@@ -155,7 +158,7 @@ internal class CropImageService : ICropImageService
                 people.Remove(person);
             }
         }
-             
+
         metadataWriter.SetProperty(MetadataProperties.People, people);
 
         metadataService.UpdateCache(bitmapFile, MetadataProperties.People, people);
@@ -163,14 +166,14 @@ internal class CropImageService : ICropImageService
         return true;
     }
 
-    private WICRect ToWICRect(Rect rect) 
+    private WICRect ToWICRect(RectInt32 rect)
     {
         return new WICRect()
         {
-            X = (int)rect.X,
-            Y = (int)rect.Y,
-            Width = (int)rect.Width,
-            Height = (int)rect.Height
+            X = rect.X,
+            Y = rect.Y,
+            Width = rect.Width,
+            Height = rect.Height
         };
     }
 }

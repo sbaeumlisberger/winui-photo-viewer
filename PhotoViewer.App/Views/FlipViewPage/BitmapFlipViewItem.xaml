@@ -29,6 +29,7 @@
                     x:Load="{x:Bind ViewModel.CanTagPeople}"
                     DataContext="{x:Bind ViewModel.PeopleTagToolModel}"/>
                 <local:CropImageTool
+                    x:Name="cropImageTool"
                     DataContext="{x:Bind ViewModel.CropImageToolModel}"/>
             </Grid>
         </controls:BitmapViewer>

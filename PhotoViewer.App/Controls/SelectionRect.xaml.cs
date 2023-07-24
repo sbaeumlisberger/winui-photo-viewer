@@ -14,18 +14,24 @@ using Windows.System;
 namespace PhotoViewer.App.Controls;
 public sealed partial class SelectionRect : UserControl
 {
+    public class BoundsChangingEventArgs
+    {
+        public required Rect NewBounds { get; set; }
+    }
 
     public static readonly DependencyProperty AspectRadioProperty = DependencyPropertyHelper<SelectionRect>.Register(nameof(AspectRadio), typeof(Size), Size.Empty, (s, e) => s.OnAspectRadioChanged());
     public static readonly DependencyProperty UIScaleFactorProperty = DependencyPropertyHelper<SelectionRect>.Register(nameof(UIScaleFactor), typeof(float), 1f, (s, e) => s.OnUIScaleFactorChanged());
 
     public event TypedEventHandler<SelectionRect, EventArgs>? InteractionStarted;
     public event TypedEventHandler<SelectionRect, EventArgs>? InteractionEnded;
+    public event TypedEventHandler<SelectionRect, BoundsChangingEventArgs>? BoundsChanging;
     public event TypedEventHandler<SelectionRect, EventArgs>? BoundsChanged;
 
     public Size AspectRadio { get => (Size)GetValue(AspectRadioProperty); set => SetValue(AspectRadioProperty, value); }
     public float UIScaleFactor { get => (float)GetValue(UIScaleFactorProperty); set => SetValue(UIScaleFactorProperty, value); }
 
-    private double CornerSize => (double)Resources["CornerSize"];
+    private readonly PointerEventHandler pointerReleasedEventHandler;
+    private readonly PointerEventHandler pointerExitedEventHandler;
 
     private Canvas? canvas;
     private UIElement? root;
@@ -36,6 +42,8 @@ public sealed partial class SelectionRect : UserControl
 
     public SelectionRect()
     {
+        pointerReleasedEventHandler = new PointerEventHandler(Root_PointerReleased);
+        pointerExitedEventHandler = new PointerEventHandler(Root_PointerExited);
         Loaded += SelectionRect_Loaded;
         Unloaded += SelectionRect_Unloaded;
         InitializeComponent();
@@ -63,8 +71,8 @@ public sealed partial class SelectionRect : UserControl
         canvas.PointerMoved += Canvas_PointerMoved;
 
         root = XamlRoot.Content;
-        root.PointerReleased += Root_PointerReleased;
-        root.PointerExited += Root_PointerExited;
+        root.AddHandler(PointerReleasedEvent, pointerReleasedEventHandler, true);
+        root.AddHandler(PointerExitedEvent, pointerExitedEventHandler, true);
 
         OnAspectRadioChanged();
         OnUIScaleFactorChanged();
@@ -80,15 +88,15 @@ public sealed partial class SelectionRect : UserControl
 
         if (root != null)
         {
-            root.PointerReleased -= Root_PointerReleased;
-            root.PointerExited -= Root_PointerExited;
+            root.RemoveHandler(PointerReleasedEvent, pointerReleasedEventHandler);
+            root.RemoveHandler(PointerExitedEvent, pointerExitedEventHandler);
             root = null;
         }
     }
 
     private void OnAspectRadioChanged()
     {
-        if (canvas is null)
+        if (canvas is null || double.IsNaN(Width) || double.IsNaN(Height))
         {
             return;
         }
@@ -109,13 +117,6 @@ public sealed partial class SelectionRect : UserControl
 
     private void OnUIScaleFactorChanged()
     {
-        var borderMargin = CornerSize / 2;
-        rect.Margin = new Thickness(borderMargin);
-        borderLeft.Margin = new Thickness(borderMargin, borderMargin, 0, borderMargin);
-        borderTop.Margin = new Thickness(borderMargin, borderMargin, borderMargin, 0);
-        borderBottom.Margin = new Thickness(borderMargin, 0, borderMargin, borderMargin);
-        borderRight.Margin = new Thickness(0, borderMargin, borderMargin, borderMargin);
-
         if (UIScaleFactor != 1)
         {
             var cornerTransform = new ScaleTransform()
@@ -124,7 +125,7 @@ public sealed partial class SelectionRect : UserControl
                 ScaleY = UIScaleFactor
             };
             cornerLeftTop.RenderTransform = cornerTransform;
-            cornerRightTop.RenderTransform = cornerTransform;      
+            cornerRightTop.RenderTransform = cornerTransform;
             cornerLeftBottom.RenderTransform = cornerTransform;
             cornerRightBottom.RenderTransform = cornerTransform;
 
@@ -145,9 +146,9 @@ public sealed partial class SelectionRect : UserControl
         else
         {
             cornerLeftTop.RenderTransform = null;
-            cornerRightTop.RenderTransform = null; 
+            cornerRightTop.RenderTransform = null;
             cornerLeftBottom.RenderTransform = null;
-            cornerRightBottom.RenderTransform = null;        
+            cornerRightBottom.RenderTransform = null;
             borderLeft.RenderTransform = null;
             borderRight.RenderTransform = null;
             borderTop.RenderTransform = null;
@@ -173,7 +174,7 @@ public sealed partial class SelectionRect : UserControl
     private void Root_PointerReleased(object sender, PointerRoutedEventArgs e)
     {
         EndInteraction();
-    }        
+    }
 
     private void Root_PointerExited(object sender, PointerRoutedEventArgs e)
     {
@@ -231,7 +232,7 @@ public sealed partial class SelectionRect : UserControl
             {
                 double maxHeight = aspectRadio is null ? canvas.ActualHeight : canvas.ActualWidth / (double)aspectRadio;
                 double height = Math.Min(MathUtil.Diff(startBounds.Bottom, currentPointerPosition.Y), maxHeight);
-                double width = aspectRadio is null ? startBounds.Width : height / (double)aspectRadio;
+                double width = aspectRadio is null ? startBounds.Width : height * (double)aspectRadio;
                 double y = currentPointerPosition.Y < startBounds.Bottom ? startBounds.Bottom - height : startBounds.Bottom;
                 double x = Math.Max((startBounds.X + startBounds.Width / 2) - width / 2, 0);
                 SetBounds(new Rect(x, y, width, height));
@@ -261,7 +262,7 @@ public sealed partial class SelectionRect : UserControl
             {
                 double maxHeight = aspectRadio is null ? canvas.ActualHeight : canvas.ActualWidth / (double)aspectRadio;
                 double height = Math.Min(MathUtil.Diff(startBounds.Top, currentPointerPosition.Y), maxHeight);
-                double width = aspectRadio is null ? startBounds.Width : height / (double)aspectRadio;
+                double width = aspectRadio is null ? startBounds.Width : height * (double)aspectRadio;
                 double y = currentPointerPosition.Y < startBounds.Top ? startBounds.Top - height : startBounds.Top;
                 double x = Math.Max((startBounds.X + startBounds.Width / 2) - width / 2, 0);
                 SetBounds(new Rect(x, y, width, height));
@@ -286,19 +287,20 @@ public sealed partial class SelectionRect : UserControl
 
     public Rect GetBounds()
     {
-        double x = Canvas.GetLeft(this) + CornerSize / 2;
-        double y = Canvas.GetTop(this) + CornerSize / 2;
-        double width = Math.Max(Width, CornerSize) - CornerSize;
-        double height = Math.Max(Height, CornerSize) - CornerSize;
-        return new Rect(x, y, width, height);
+        double x = Canvas.GetLeft(this);
+        double y = Canvas.GetTop(this);
+        return new Rect(x, y, Width, Height);
     }
 
     public void SetBounds(Rect bounds)
     {
-        Canvas.SetLeft(this, bounds.X - CornerSize / 2);
-        Canvas.SetTop(this, bounds.Y - CornerSize / 2);
-        Width = bounds.Width + CornerSize;
-        Height = bounds.Height + CornerSize;
+        var boundsChanngingEventArgs = new BoundsChangingEventArgs() { NewBounds = bounds };
+        BoundsChanging?.Invoke(this, boundsChanngingEventArgs);
+        bounds = boundsChanngingEventArgs.NewBounds;
+        Canvas.SetLeft(this, bounds.X);
+        Canvas.SetTop(this, bounds.Y);
+        Width = bounds.Width;
+        Height = bounds.Height;
         BoundsChanged?.Invoke(this, EventArgs.Empty);
     }
 

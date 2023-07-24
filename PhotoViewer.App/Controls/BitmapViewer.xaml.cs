@@ -5,14 +5,12 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Shapes;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.Views;
 using PhotoViewer.Core.Utils;
 using System;
-using Windows.Devices.Display.Core;
 using Windows.Foundation;
 
 namespace PhotoViewer.App.Controls;

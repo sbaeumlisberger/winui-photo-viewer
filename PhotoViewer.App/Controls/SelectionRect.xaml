@@ -5,13 +5,11 @@
     xmlns:local="using:PhotoViewer.App.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    MinWidth="8"
-    MinHeight="8">
+    mc:Ignorable="d">
 
     <UserControl.Resources>
         <x:Double x:Key="CornerSize">8</x:Double>
-        <x:Double x:Key="StrokeThickness">1</x:Double>
+        <x:Double x:Key="StrokeThickness">2</x:Double>
     </UserControl.Resources>
 
     <Grid>
@@ -28,7 +26,8 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Stretch"
             Fill="White"
-            StrokeThickness="0"
+            StrokeThickness="10"
+            Stroke="Transparent"
             PointerPressed="OnPointerPressed"/>
 
         <Rectangle
@@ -37,7 +36,8 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
             Fill="White"
-            StrokeThickness="0"
+            StrokeThickness="10"
+            Stroke="Transparent"
             PointerPressed="OnPointerPressed"/>
 
         <Rectangle
@@ -46,7 +46,8 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Stretch"
             Fill="White"
-            StrokeThickness="0"
+            StrokeThickness="10"
+            Stroke="Transparent"
             PointerPressed="OnPointerPressed"
             RenderTransformOrigin="1,1"/>
 
@@ -56,53 +57,70 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Bottom"
             Fill="White"
-            StrokeThickness="0"
+            StrokeThickness="10"
+            Stroke="Transparent"
             PointerPressed="OnPointerPressed"
             RenderTransformOrigin="1,1"/>
 
-        <Ellipse
-            x:Name="cornerLeftTop"
-            Width="{StaticResource CornerSize}"
-            Height="{StaticResource CornerSize}"
+        <Canvas 
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Fill="White"
-            PointerPressed="OnPointerPressed"
-            Stroke="Black"
-            RenderTransformOrigin="0.5,0.5"/>
-
-        <Ellipse
-            x:Name="cornerRightTop"
             Width="{StaticResource CornerSize}"
-            Height="{StaticResource CornerSize}"
+            Height="{StaticResource CornerSize}">
+            <Rectangle
+                x:Name="cornerLeftTop"
+                Width="{StaticResource CornerSize}"
+                Height="{StaticResource CornerSize}"    
+                Fill="White"
+                PointerPressed="OnPointerPressed"
+                Stroke="Black"
+                RenderTransformOrigin="0,0"/>
+        </Canvas>
+
+        <Canvas  
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
-            Fill="White"
-            PointerPressed="OnPointerPressed"
-            Stroke="Black"
-            RenderTransformOrigin="0.5,0.5"/>
-
-        <Ellipse
-            x:Name="cornerLeftBottom"
             Width="{StaticResource CornerSize}"
-            Height="{StaticResource CornerSize}"
+            Height="{StaticResource CornerSize}">
+            <Rectangle
+                x:Name="cornerRightTop"
+                Width="{StaticResource CornerSize}"
+                Height="{StaticResource CornerSize}"       
+                Fill="White"
+                PointerPressed="OnPointerPressed"
+                Stroke="Black"
+                RenderTransformOrigin="1,0"/>
+        </Canvas>
+
+        <Canvas             
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom"
-            Fill="White"
-            PointerPressed="OnPointerPressed"
-            Stroke="Black"
-            RenderTransformOrigin="0.5,0.5"/>
-
-        <Ellipse
-            x:Name="cornerRightBottom"
             Width="{StaticResource CornerSize}"
-            Height="{StaticResource CornerSize}"
+            Height="{StaticResource CornerSize}">
+            <Rectangle
+                x:Name="cornerLeftBottom"
+                Width="{StaticResource CornerSize}"
+                Height="{StaticResource CornerSize}" 
+                Fill="White"
+                PointerPressed="OnPointerPressed"
+                Stroke="Black"
+                RenderTransformOrigin="0,1"/>
+        </Canvas>
+
+        <Canvas             
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
-            Fill="White"
-            PointerPressed="OnPointerPressed"
-            Stroke="Black"
-            RenderTransformOrigin="0.5,0.5"/>
+            Width="{StaticResource CornerSize}"
+            Height="{StaticResource CornerSize}">
+            <Rectangle
+                x:Name="cornerRightBottom"
+                Width="{StaticResource CornerSize}"
+                Height="{StaticResource CornerSize}"
+                Fill="White"
+                PointerPressed="OnPointerPressed"
+                Stroke="Black"
+                RenderTransformOrigin="1,1"/>
+        </Canvas>
 
     </Grid>
 </UserControl>

@@ -36,10 +36,18 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
 
     private void ScrollViewer_ViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
     {
-        if (ViewModel?.PeopleTagToolModel != null)
+        if (ViewModel != null)
         {
-            ViewModel.PeopleTagToolModel.UIScaleFactor = 1 / bitmapViewer.ScrollViewer.ZoomFactor;
+            float uiScaleFactor = 1.0f / bitmapViewer.ScrollViewer.ZoomFactor;
+
+            ViewModel.CropImageToolModel.UIScaleFactor = uiScaleFactor;
+
+            if (ViewModel.PeopleTagToolModel != null)
+            {
+                ViewModel.PeopleTagToolModel.UIScaleFactor = uiScaleFactor;
+            }            
         }
     }
+
 }
 

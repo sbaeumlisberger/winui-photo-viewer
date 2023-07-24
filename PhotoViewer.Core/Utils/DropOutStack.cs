@@ -4,7 +4,7 @@ namespace PhotoViewer.Core.Utils;
 
 class DropOutStack<T> where T : notnull
 {
-    private T[] array;
+    private readonly T[] array;
     private int top = -1;
     private int count = 0;
 

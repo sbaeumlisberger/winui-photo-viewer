@@ -14,8 +14,9 @@
             Draw="CanvasControl_Draw"/>
         <ScrollViewer 
             x:Name="scrollViewer"
+            UseLayoutRounding="False"
             MinZoomFactor="1"
-            MaxZoomFactor="20"
+            MaxZoomFactor="100"
             ViewChanged="ScrollViewer_ViewChanged">
             <Grid 
                 x:Name="dummy" 

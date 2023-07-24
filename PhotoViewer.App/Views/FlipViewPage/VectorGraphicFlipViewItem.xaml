@@ -18,7 +18,11 @@
             x:Name="webView"
             IsHitTestVisible="False"/>
 
-        <ScrollViewer x:Name="scrollViewer" MinZoomFactor="1" ViewChanged="ScrollViewer_ViewChanged">
+        <ScrollViewer
+            x:Name="scrollViewer"
+            MinZoomFactor="1" 
+            MaxZoomFactor="100" 
+            ViewChanged="ScrollViewer_ViewChanged">
             <Grid                
                 x:Name="dummy"
                 Background="Transparent"

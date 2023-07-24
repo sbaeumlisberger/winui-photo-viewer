@@ -15,6 +15,7 @@ using Windows.UI.Core;
 using Microsoft.UI.Xaml.Media;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using PhotoViewer.Core.Utils;
 
 namespace PhotoViewer.App.Views;
 public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleToolModel>
@@ -36,6 +37,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
     {
         viewModel.Subscribe(this, nameof(ViewModel.SelectionRectInPercent), ViewModel_SelectionRectChanged, initialCallback: true);
         viewModel.Subscribe(this, nameof(ViewModel.IsNameInputVisible), ViewModel_IsNameInputVisibleChanged, initialCallback: true);
+        viewModel.Subscribe(this, nameof(ViewModel.UIScaleFactor), UpdateAutoSuggestBoxContainerPosition);
     }
 
     partial void DisconnectFromViewModel(TagPeopleToolModel viewModel)
@@ -166,31 +168,39 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
     private Rect GetSelectionRectInPercent()
     {
         var bounds = selectionRect.GetBounds();
-        return new Rect(bounds.X / ActualWidth, bounds.Y / ActualHeight,
-                        bounds.Width / ActualWidth, bounds.Height / ActualHeight);
+        return new Rect(
+            bounds.X / selectionCanvas.ActualWidth, 
+            bounds.Y / selectionCanvas.ActualHeight,
+            bounds.Width / selectionCanvas.ActualWidth, 
+            bounds.Height / selectionCanvas.ActualHeight);
     }
 
     private void UpdateAutoSuggestBoxContainerPosition()
     {
+        if (ViewModel is null) 
+        {
+            return;
+        }
+
         var selectionRectBounds = selectionRect.GetBounds();
 
-        double left = selectionRectBounds.Left + selectionRectBounds.Width / 2 - autoSuggestBoxContainer.ActualWidth / 2;
-        left = Math.Min(Math.Max(left, 0), ActualWidth - autoSuggestBoxContainer.ActualWidth);
+        double autoSuggestBoxContainerWidth = autoSuggestBoxContainer.ActualWidth * ViewModel.UIScaleFactor;
+
+        double left = selectionRectBounds.GetCenterX() - autoSuggestBoxContainerWidth / 2;
+        left = Math.Clamp(left, 0, selectionCanvas.ActualWidth - autoSuggestBoxContainerWidth);
         Canvas.SetLeft(autoSuggestBoxContainer, left);
 
-        double selectionRectCenterY = selectionRectBounds.Top + selectionRectBounds.Height / 2;
-
-        if (selectionRectCenterY < ActualHeight / 2)
+        if (selectionRectBounds.GetCenterY() < selectionCanvas.ActualHeight / 2)
         {
             Canvas.SetTop(autoSuggestBoxContainer, selectionRectBounds.Top + selectionRectBounds.Height);
             AutoSuggestBoxExtension.SetSuggestionListDirection(autoSuggestBox, SuggestionListDirection.Down);
-            autoSuggestBoxContainer.RenderTransformOrigin = new Point(0.5, 0);
+            autoSuggestBoxContainer.RenderTransformOrigin = new Point(0, 0);
         }
         else
         {
             Canvas.SetTop(autoSuggestBoxContainer, selectionRectBounds.Top - autoSuggestBoxContainer.ActualHeight);
             AutoSuggestBoxExtension.SetSuggestionListDirection(autoSuggestBox, SuggestionListDirection.Up);
-            autoSuggestBoxContainer.RenderTransformOrigin = new Point(0.5, 1);
+            autoSuggestBoxContainer.RenderTransformOrigin = new Point(0, 1);
         }
     }
 

@@ -125,7 +125,6 @@
             <Grid                           
                 x:Name="autoSuggestBoxContainer"                
                 Visibility="Collapsed"
-                RenderTransformOrigin="0.5,0"
                 RenderTransform="{StaticResource UIScaleTransform}"
                 SizeChanged="AutoSuggestBoxContainer_SizeChanged">
                 <StackPanel
