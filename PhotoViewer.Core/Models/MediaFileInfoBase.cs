@@ -61,7 +61,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
 
         if (fileAccessMode == FileAccessMode.Read)
         {
-            return File.OpenRead(FilePath);
+            return File.Open(FilePath, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete);
         }
         return File.Open(FilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
     }

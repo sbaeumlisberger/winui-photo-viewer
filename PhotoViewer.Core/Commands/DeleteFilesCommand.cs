@@ -90,7 +90,7 @@ public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFil
     {
         string message = Strings.DeleteFilesErrorDialog_Message + "\n";
         message += string.Join("\n", result.Failures
-            .SelectMany(failure => failure.Element.DisplayName + " (" + failure.Exception.Message + ")"));
+            .Select(failure => failure.Element.DisplayName + " (" + failure.Exception.Message + ")"));
 
         var failuresDialog = new MessageDialogModel()
         {
