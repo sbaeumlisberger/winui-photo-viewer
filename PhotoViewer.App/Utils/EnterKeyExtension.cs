@@ -11,6 +11,8 @@ public class EnterKeyExtension
     public static readonly DependencyProperty CommandProperty = DependencyPropertyHelper<EnterKeyExtension>
         .RegisterAttached<ICommand?>(null, OnCommandChanged);
 
+    private static readonly KeyEventHandler KeyDownEventHandler = new KeyEventHandler(UIElement_KeyDown);
+
     public static ICommand GetCommand(DependencyObject obj)
     {
         return (ICommand)obj.GetValue(CommandProperty);
@@ -27,11 +29,11 @@ public class EnterKeyExtension
 
         if (e.NewValue != null && e.OldValue == null)
         {
-            uiElement.KeyDown += UIElement_KeyDown;
+            uiElement.AddHandler(UIElement.KeyDownEvent, KeyDownEventHandler, true);
         }
         else if (e.NewValue == null)
         {
-            uiElement.KeyDown -= UIElement_KeyDown;
+            uiElement.RemoveHandler(UIElement.KeyDownEvent, KeyDownEventHandler);
         }
     }
 
