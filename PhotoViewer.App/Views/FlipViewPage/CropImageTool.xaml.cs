@@ -1,15 +1,10 @@
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Brushes;
-using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Controls;
 using PhotoViewer.App.Utils;
-using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System;
-using System.ComponentModel;
 using Windows.Foundation;
 using Windows.Graphics;
 
@@ -35,7 +30,7 @@ public sealed partial class CropImageTool : UserControl, IMVVMControl<CropImageT
 
     private void UpdateSelectionRect()
     {
-        if (ActualWidth == 0 || ActualHeight == 0)
+        if (selectionCanvas.ActualWidth == 0 || selectionCanvas.ActualHeight == 0)
         {
             return;
         }
@@ -103,10 +98,10 @@ public sealed partial class CropImageTool : UserControl, IMVVMControl<CropImageT
         var imageSizeInPixels = ViewModel!.ImageSizeInPixels;
 
         var selectionInPixels = new RectInt32(
-            (int)Math.Round(args.NewBounds.X / ActualWidth * imageSizeInPixels.Width),
-            (int)Math.Round(args.NewBounds.Y / ActualHeight * imageSizeInPixels.Height),
-            (int)Math.Max(1, Math.Round(args.NewBounds.Width / ActualWidth * imageSizeInPixels.Width)),
-            (int)Math.Max(1, Math.Round(args.NewBounds.Height / ActualHeight * imageSizeInPixels.Height)));
+            (int)Math.Round(args.NewBounds.X / selectionCanvas.ActualWidth * imageSizeInPixels.Width),
+            (int)Math.Round(args.NewBounds.Y / selectionCanvas.ActualHeight * imageSizeInPixels.Height),
+            (int)Math.Max(1, Math.Round(args.NewBounds.Width / selectionCanvas.ActualWidth * imageSizeInPixels.Width)),
+            (int)Math.Max(1, Math.Round(args.NewBounds.Height / selectionCanvas.ActualHeight * imageSizeInPixels.Height)));
 
         ViewModel.SelectionInPixels = selectionInPixels;
 

@@ -234,9 +234,9 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
     private void ResetSelection()
     {
         SelectionInPixels = new RectInt32(
-            (int)Math.Round(ImageSizeInPixels.Width * 0.1),
-            (int)Math.Round(ImageSizeInPixels.Height * 0.1),
-            (int)Math.Round(ImageSizeInPixels.Width * 0.8),
-            (int)Math.Round(ImageSizeInPixels.Height * 0.8));
+            (int)Math.Round(ImageSizeInPixels.Width * 0.1d),
+            (int)Math.Round(ImageSizeInPixels.Height * 0.1d),
+            (int)Math.Round(ImageSizeInPixels.Width * 0.8d),
+            (int)Math.Round(ImageSizeInPixels.Height * 0.8d));
     }
 }
