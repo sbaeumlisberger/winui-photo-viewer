@@ -124,6 +124,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     private async Task RotateAsync()
     {
         var bitmap = (IBitmapFileInfo)SelectedItemModel!.MediaItem;
+        Log.Debug($"Execute rotate command for: {bitmap.DisplayName}");
         try
         {
             await rotateBitmapService.RotateClockwise90DegreesAsync(bitmap);
@@ -136,7 +137,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     }
 
     [RelayCommand]
-    private async void OpenFolder()
+    private async Task OpenFolderAsync()
     {
         var folderPickerModel = new FolderPickerModel();
         await dialogService.ShowDialogAsync(folderPickerModel);

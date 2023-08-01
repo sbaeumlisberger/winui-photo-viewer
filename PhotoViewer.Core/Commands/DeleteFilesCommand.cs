@@ -2,6 +2,7 @@
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
@@ -42,6 +43,8 @@ public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFil
 
     protected override async Task OnExecuteAsync(IReadOnlyCollection<IMediaFileInfo> files)
     {
+        Log.Info($"Execute delete files command for: {string.Join(", ", files.Select(file => file.DisplayName))}");
+
         bool deleteLinkedFiles = false;
 
         if (files.Any(file => file.LinkedStorageFiles.Any()))
@@ -76,7 +79,7 @@ public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFil
         var askDialogModel = new DeleteLinkedFilesDialogModel();
 
         await dialogService.ShowDialogAsync(askDialogModel);
-       
+
         if (askDialogModel.IsRemember)
         {
             settings.DeleteLinkedFilesOption = askDialogModel.IsYes ? DeleteLinkedFilesOption.Yes : DeleteLinkedFilesOption.No;

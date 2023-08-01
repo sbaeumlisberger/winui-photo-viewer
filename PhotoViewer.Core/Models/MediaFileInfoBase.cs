@@ -61,9 +61,9 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
 
         if (fileAccessMode == FileAccessMode.Read)
         {
-            return File.Open(FilePath, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete);
+            return File.Open(FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
         }
-        return File.Open(FilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        return File.Open(FilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);        
     }
 
     public async Task<DateTimeOffset> GetDateModifiedAsync()
