@@ -27,8 +27,6 @@ public interface IMediaFileInfo
 
     IEnumerable<IStorageFile> StorageFiles { get; }
 
-    Task<AsyncLockFIFO.AcquiredLock> AcquireExclusiveAccessAsync();
-
     Task<IRandomAccessStream> OpenAsRandomAccessStreamAsync(FileAccessMode fileAccessMode);
    
     Task<Stream> OpenAsync(FileAccessMode fileAccessMode);

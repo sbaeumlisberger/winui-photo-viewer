@@ -34,16 +34,18 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
 
     private ulong? fileSize;
 
-    private Windows.Storage.Streams.Buffer? buffer;
+    private Windows.Storage.Streams.Buffer? mtpBuffer;
 
-    private readonly AsyncLockFIFO exlusiveAccessLock = new AsyncLockFIFO();
-
+#if DEBUG
     public readonly string DebugId;
+#endif
 
     public MediaFileInfoBase(IStorageFile file)
     {
         StorageFile = file;
+#if DEBUG
         DebugId = FileName;
+#endif
     }
 
     public async Task<IRandomAccessStream> OpenAsRandomAccessStreamAsync(FileAccessMode fileAccessMode)
@@ -63,7 +65,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
         {
             return File.Open(FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
         }
-        return File.Open(FilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);        
+        return File.Open(FilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
     }
 
     public async Task<DateTimeOffset> GetDateModifiedAsync()
@@ -106,12 +108,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
     {
         dateModified = null;
         fileSize = null;
-        buffer = null;
-    }
-
-    public Task<AsyncLockFIFO.AcquiredLock> AcquireExclusiveAccessAsync()
-    {
-        return exlusiveAccessLock.AcquireAsync();
+        mtpBuffer = null;
     }
 
     private async Task<IRandomAccessStream> OpenMTPAsync(FileAccessMode fileAccessMode)
@@ -122,14 +119,14 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
             throw new Exception("Can not write file via MTP!");
         }
 
-        if (buffer == null)
+        if (mtpBuffer == null)
         {
             // MTP allows no paralled file operations. Therefore all operations are
             // synchronized. Due to many issues with passing the file streams to
             // native code like Win2D, the stream is copied to an in-memory stream.
             using (await mtpLock.GetLookAsync().ConfigureAwait(false))
             {
-                if (buffer == null)
+                if (mtpBuffer == null)
                 {
                     using var fileStream = await StorageFile.OpenAsync(fileAccessMode).AsTask().ConfigureAwait(false);
 
@@ -139,14 +136,14 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
                         throw new Exception("File to large!");
                     }
 
-                    buffer = new Windows.Storage.Streams.Buffer((uint)fileStream.Size);
-                    await fileStream.ReadAsync(buffer, buffer.Capacity, InputStreamOptions.None).AsTask().ConfigureAwait(false);
+                    mtpBuffer = new Windows.Storage.Streams.Buffer((uint)fileStream.Size);
+                    await fileStream.ReadAsync(mtpBuffer, mtpBuffer.Capacity, InputStreamOptions.None).AsTask().ConfigureAwait(false);
                 }
             }
         }
 
         var memoryStream = new InMemoryRandomAccessStream();
-        await memoryStream.WriteAsync(buffer).AsTask().ConfigureAwait(false);
+        await memoryStream.WriteAsync(mtpBuffer).AsTask().ConfigureAwait(false);
         await memoryStream.FlushAsync().AsTask().ConfigureAwait(false);
         memoryStream.Seek(0);
         return memoryStream;

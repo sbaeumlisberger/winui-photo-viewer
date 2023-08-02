@@ -1,4 +1,5 @@
-﻿using MetadataAPI;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using MetadataAPI;
 using Newtonsoft.Json.Linq;
 using NSubstitute;
 using PhotoViewer.App.Models;
@@ -11,6 +12,7 @@ using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -22,6 +24,8 @@ namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
 
 public class MetadataTextboxModelTest
 {
+    private readonly IMessenger messenger = new StrongReferenceMessenger();
+
     private readonly ITimer timerMock = Substitute.For<ITimer>();
 
     private readonly IMetadataService metadataServiceMock = Substitute.For<IMetadataService>();
@@ -43,7 +47,7 @@ public class MetadataTextboxModelTest
             Assert.False(autoRestart);
             return timerMock;
         };
-        metadataTextboxModel = new MetadataTextboxModel(metadataServiceMock, dialogService, backgroundTaskService, metadataPropertyMock, timerFactory);
+        metadataTextboxModel = new MetadataTextboxModel(messenger, metadataServiceMock, dialogService, backgroundTaskService, metadataPropertyMock, timerFactory);
     }
 
     [Fact]
@@ -60,7 +64,7 @@ public class MetadataTextboxModelTest
             .AndDoes(_ => Assert.True(metadataTextboxModel.IsWriting));         
        
         var metadata = new Dictionary<string, object?>() { { "test-property", "value from file" } };
-        metadataTextboxModel.UpdateFilesChanged(new[] { fileMock }, new[] { new MetadataView(metadata) });
+        metadataTextboxModel.UpdateFilesChanged(ImmutableList.Create(fileMock), new[] { new MetadataView(metadata) });
         timerMock.IsEnabled.Returns(false);
 
         metadataTextboxModel.Text = "some value";
@@ -94,7 +98,7 @@ public class MetadataTextboxModelTest
             .Returns(Task.CompletedTask)
             .AndDoes(args => { lastWrittenValue = (string)args[2]; });
         var metadata = new Dictionary<string, object?>() { { "test-property", "value from file" } };
-        metadataTextboxModel.UpdateFilesChanged(new[] { fileMock }, new[] { new MetadataView(metadata) });
+        metadataTextboxModel.UpdateFilesChanged(ImmutableList.Create(fileMock), new[] { new MetadataView(metadata) });
 
         metadataTextboxModel.Text = "some value 01";
         timerMock.Received().Restart();
@@ -122,13 +126,13 @@ public class MetadataTextboxModelTest
     {
         var file = Substitute.For<IBitmapFileInfo>();
         metadataServiceMock.GetMetadataAsync(file, metadataPropertyMock).Returns("value from file");
-        metadataTextboxModel.UpdateFilesChanged(new[] { file }, new[] { CreateMetadataView("value from file") });
+        metadataTextboxModel.UpdateFilesChanged(ImmutableList.Create(file), new[] { CreateMetadataView("value from file") });
 
         metadataTextboxModel.Text = "some value";
         timerMock.Received().Restart();
         timerMock.IsEnabled.Returns(true);
         var otherFile = Substitute.For<IBitmapFileInfo>();
-        metadataTextboxModel.UpdateFilesChanged(new[] { otherFile }, new[] { CreateMetadataView("value from other file") });
+        metadataTextboxModel.UpdateFilesChanged(ImmutableList.Create(otherFile), new[] { CreateMetadataView("value from other file") });
       
         timerMock.Received().Stop();
         await Task.Delay(10); // TODO

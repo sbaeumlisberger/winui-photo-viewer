@@ -9,6 +9,7 @@ using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -42,7 +43,7 @@ public class DateTakenSectionModelTest
         var dateTaken = new DateTime(2023, 03, 02, 19, 10, 35);
         var metadata = new[] { CreateMetadataView(dateTaken) };
 
-        dateTakenSectionModel.UpdateFilesChanged(new[] { mediaFile }, metadata);
+        dateTakenSectionModel.UpdateFilesChanged(ImmutableList.Create(mediaFile), metadata);
 
         Assert.True(dateTakenSectionModel.IsSingleValue);
         Assert.False(dateTakenSectionModel.IsNotPresent);
@@ -64,7 +65,7 @@ public class DateTakenSectionModelTest
         var mediaFile = Substitute.For<IBitmapFileInfo>();
         var metadata = new[] { CreateMetadataView(null) };
 
-        dateTakenSectionModel.UpdateFilesChanged(new[] { mediaFile }, metadata);
+        dateTakenSectionModel.UpdateFilesChanged(ImmutableList.Create(mediaFile), metadata);
 
         Assert.False(dateTakenSectionModel.IsSingleValue);
         Assert.True(dateTakenSectionModel.IsNotPresent);
@@ -83,7 +84,7 @@ public class DateTakenSectionModelTest
     public void UpdateFilesChanged_MultipleFiles_SingleValue(bool intial)
     {
         if (!intial) { IntialUpdate(); }
-        var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
+        var files = Substitute.For<IImmutableList<IBitmapFileInfo>>();
         var dateTaken = new DateTime(2023, 03, 02, 19, 10, 35);
         var metadata = new[]
         {
@@ -112,7 +113,7 @@ public class DateTakenSectionModelTest
     {
         if (!intial) { IntialUpdate(); }
 
-        var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
+        var files = Substitute.For<IImmutableList<IBitmapFileInfo>>();
 
         var earliestDateTaken = new DateTime(2022, 04, 07, 06, 17, 57);
         var betweenDateTaken = new DateTime(2022, 12, 27, 12, 13, 38);
@@ -146,7 +147,7 @@ public class DateTakenSectionModelTest
     public void UpdateFilesChanged_MultipleFiles_NotPresent(bool intial)
     {
         if (!intial) { IntialUpdate(); }
-        var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
+        var files = Substitute.For<IImmutableList<IBitmapFileInfo>>();
         var metadata = new[]
         {
             CreateMetadataView(null),
@@ -179,7 +180,7 @@ public class DateTakenSectionModelTest
             Arg.Any<IBitmapFileInfo>(), MetadataProperties.DateTaken, new DateTime(2023, 02, 28, 11, 38, 12));
 
         dateTakenSectionModel.Time = new TimeSpan(07, 19, 46);
-     
+
         await dateTakenSectionModel.WriteFilesTask;
         await metadataService.Received().WriteMetadataAsync(
             Arg.Any<IBitmapFileInfo>(), MetadataProperties.DateTaken, new DateTime(2023, 02, 28, 07, 19, 46));
@@ -190,7 +191,7 @@ public class DateTakenSectionModelTest
     {
         var mediaFile = Substitute.For<IBitmapFileInfo>();
         var metadata = new[] { CreateMetadataView(null) };
-        dateTakenSectionModel.UpdateFilesChanged(new[] { mediaFile }, metadata);
+        dateTakenSectionModel.UpdateFilesChanged(ImmutableList.Create(mediaFile), metadata);
 
         await dateTakenSectionModel.AddDateTakenCommand.ExecuteAsync(null);
 
@@ -216,7 +217,7 @@ public class DateTakenSectionModelTest
             { MetadataProperties.DateTaken.Identifier, dateTaken }
         };
         var metadata = new[] { new MetadataView(metadataSource) };
-        dateTakenSectionModel.UpdateFilesChanged(new[] { mediaFile }, metadata);
+        dateTakenSectionModel.UpdateFilesChanged(ImmutableList.Create(mediaFile), metadata);
         var newDateTaken = new DateTime(2023, 03, 02, 19, 10, 35);
         metadataSource[MetadataProperties.DateTaken.Identifier] = newDateTaken;
 
@@ -239,7 +240,9 @@ public class DateTakenSectionModelTest
         {
             { MetadataProperties.DateTaken.Identifier, new DateTime(2021, 06, 17, 11, 38, 12) }
         };
-        dateTakenSectionModel.UpdateFilesChanged(new[] { Substitute.For<IBitmapFileInfo>() }, new[] { new MetadataView(metadata) });
+        dateTakenSectionModel.UpdateFilesChanged(
+            ImmutableList.Create(Substitute.For<IBitmapFileInfo>()),
+            new[] { new MetadataView(metadata) });
     }
 
     private MetadataView CreateMetadataView(DateTime? dateTaken)

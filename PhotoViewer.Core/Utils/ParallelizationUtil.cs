@@ -27,14 +27,17 @@ namespace PhotoViewer.Core.Utils
 
         public IReadOnlyCollection<Failure<T>> Failures { get; }
 
-        public bool IsSuccessful => !HasFailures;
+        public bool IsSuccessful => !HasFailures && !IsCanceld;
+
+        public bool IsCanceld { get; }
 
         public bool HasFailures => Failures.Any();
 
-        public ProcessingResult(IReadOnlyCollection<T> processedElements, IReadOnlyCollection<Failure<T>> failures)
+        public ProcessingResult(IReadOnlyCollection<T> processedElements, IReadOnlyCollection<Failure<T>> failures, bool canceld)
         {
             ProcessedElements = processedElements;
             Failures = failures;
+            IsCanceld = canceld;
         }
     }
 
@@ -94,7 +97,7 @@ namespace PhotoViewer.Core.Utils
             if (!elements.Any())
             {
                 progress?.Report(1);
-                return new ProcessingResult<T>(new List<T>(), new List<Failure<T>>());
+                return new ProcessingResult<T>(new List<T>(), new List<Failure<T>>(), false);
             }
 
             bool aborted = false;
@@ -124,8 +127,6 @@ namespace PhotoViewer.Core.Utils
                         }
                         catch (OperationCanceledException) // can be thrown by processElement
                         {
-                            aborted = true;
-
                             if (throwOnCancellation)
                             {
                                 throw;
@@ -160,7 +161,7 @@ namespace PhotoViewer.Core.Utils
 
             progress?.Report(1);
 
-            return new ProcessingResult<T>(processedElements, failures);
+            return new ProcessingResult<T>(processedElements, failures, cancellationToken.IsCancellationRequested);
         }
 
     }

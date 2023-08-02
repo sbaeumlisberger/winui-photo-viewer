@@ -11,6 +11,7 @@ using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ public class PeopleSectionModelTest
     [Fact]
     public void UpdatesPeopleList_WhenFilesChanged()
     {
-        var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
+        var files = Substitute.For<IImmutableList<IBitmapFileInfo>>();
         var metadata = new[]
         {
             CreateMetadataView(),
@@ -80,7 +81,7 @@ public class PeopleSectionModelTest
     [Fact]
     public void UpdatesPeopleList_WhenMetadataModified()
     {
-        var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
+        var files = Substitute.For<IImmutableList<IBitmapFileInfo>>();
         var metadataFile1 = CreateMetadataView(Name1);
         var metadataFile2 = CreateMetadataView(Name2);
         var metadata = new[] { metadataFile1, metadataFile2 };
@@ -115,13 +116,11 @@ public class PeopleSectionModelTest
     [Fact]
     public async Task AddPersonCommandAddsPeopleTagToFiles()
     {
-        var files = new[]
-        {
+        var files = ImmutableList.Create(
             MockBitmapFileInfo(),
             MockBitmapFileInfo(Name1),
             MockBitmapFileInfo(Name2),
-            MockBitmapFileInfo(Name3)
-        };
+            MockBitmapFileInfo(Name3));
         peopleSectionModel.UpdateFilesChanged(files, Substitute.For<IList<MetadataView>>());
         peopleSectionModel.AutoSuggestBoxText = Name1;
         var messageCapture = TestUtils.CaptureMessage<MetadataModifiedMessage>(messenger);
@@ -141,13 +140,11 @@ public class PeopleSectionModelTest
     [Fact]
     public async Task RemovePeopleTagCommandRemovesPeopleTagFromFiles()
     {
-        var files = new[]
-        {
+        var files = ImmutableList.Create(        
             MockBitmapFileInfo(),
             MockBitmapFileInfo(Name1),
             MockBitmapFileInfo(Name2),
-            MockBitmapFileInfo(Name1, Name3)
-        };
+            MockBitmapFileInfo(Name1, Name3));
         peopleSectionModel.UpdateFilesChanged(files, Substitute.For<IList<MetadataView>>());
         var messageCapture = TestUtils.CaptureMessage<MetadataModifiedMessage>(messenger);
 
@@ -162,7 +159,7 @@ public class PeopleSectionModelTest
     }
 
     [Fact]
-    public void TagPeopleOnPhotoGetsChecked_WhenMessageReceived() 
+    public void TagPeopleOnPhotoGetsChecked_WhenMessageReceived()
     {
         var peopleSectionModel = new PeopleSectionModel(messenger, metadataService, suggestionsService, dialogService, backgroundTaskService, true);
 

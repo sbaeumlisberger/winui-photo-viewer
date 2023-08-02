@@ -23,6 +23,7 @@ using Windows.Storage;
 using PhotoViewer.Core.Messages;
 using NSubstitute.ExceptionExtensions;
 using PhotoViewer.Core.ViewModels;
+using System.Collections.Immutable;
 
 namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
 
@@ -141,12 +142,10 @@ public class LocationSectionModelTest
     [Fact]
     public async Task AppliesImportedGpxTrackToFiles()
     {
-        var files = new[]
-        {
+        var files = ImmutableList.Create(
             Substitute.For<IBitmapFileInfo>(),
             Substitute.For<IBitmapFileInfo>(),
-            Substitute.For<IBitmapFileInfo>()
-        };
+            Substitute.For<IBitmapFileInfo>());
         locationSectionModel.UpdateFilesChanged(files, new MetadataView[0]);
         var gpxFile = Substitute.For<IStorageFile>();
         dialogService.When(x => x.ShowDialogAsync(Arg.Any<FileOpenPickerModel>()))
@@ -171,12 +170,10 @@ public class LocationSectionModelTest
     [Fact]
     public async Task ShowsDialogForGpxFileParseErrors()
     {
-        var files = new[]
-       {
+        var files = ImmutableList.Create(
             Substitute.For<IBitmapFileInfo>(),
             Substitute.For<IBitmapFileInfo>(),
-            Substitute.For<IBitmapFileInfo>()
-        };
+            Substitute.For<IBitmapFileInfo>());
         locationSectionModel.UpdateFilesChanged(files, new MetadataView[0]);
         var gpxFile = Substitute.For<IStorageFile>();
         dialogService.When(x => x.ShowDialogAsync(Arg.Any<FileOpenPickerModel>()))

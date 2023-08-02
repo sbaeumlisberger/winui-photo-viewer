@@ -154,7 +154,7 @@ public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
             {
                 await metadataService.WriteMetadataAsync(file, MetadataProperties.DateTaken, dateTaken).ConfigureAwait(false);
             }
-        });
+        }, cancelPrevious: true);
 
         Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.DateTaken));
     }

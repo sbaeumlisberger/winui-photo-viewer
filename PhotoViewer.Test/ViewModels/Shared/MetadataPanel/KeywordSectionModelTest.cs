@@ -10,6 +10,7 @@ using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,7 +43,7 @@ public class KeywordSectionModelTest
     [Fact]
     public void UpdatesKeywordsList_WhenFilesChanged()
     {
-        var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
+        var files = Substitute.For<IImmutableList<IBitmapFileInfo>>();
         var metadata = new[]
         {
             CreateMetadataView("Category 1/Keyword 1", "Category 1/Keyword 2"),
@@ -76,7 +77,7 @@ public class KeywordSectionModelTest
     [Fact]
     public void UpdatesKeywordsList_WhenMetadataModified()
     {
-        var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
+        var files = Substitute.For<IImmutableList<IBitmapFileInfo>>();
         var metadataFile1 = CreateMetadataView("Category 1/Keyword 1");
         var metadataFile2 = CreateMetadataView("Category 1/Keyword 2");
         var metadata = new[] { metadataFile1, metadataFile2 };
@@ -109,34 +110,33 @@ public class KeywordSectionModelTest
     }
 
     [Fact]
-    public void AddKeywordCommandCanNotExecute_WhenIsWriting()
+    public async Task AddKeywordCommandCanNotExecute_WhenIsWriting()
     {
         var file = MockBitmapFileInfo();
-        keywordsSectionModel.UpdateFilesChanged(new[] { file }, Substitute.For<IList<MetadataView>>());
+        keywordsSectionModel.UpdateFilesChanged(ImmutableList.Create(file), Substitute.For<IList<MetadataView>>());
         keywordsSectionModel.AutoSuggestBoxText = "test";
         var tsc = new TaskCompletionSource();
         metadataService.WriteMetadataAsync(file, MetadataProperties.Keywords, Arg.Any<string[]>()).Returns(tsc.Task);
         bool canExecuteChanged = false;
         keywordsSectionModel.AddKeywordCommand.CanExecuteChanged += (_, _) => canExecuteChanged = true;
 
-        keywordsSectionModel.AddKeywordCommand.ExecuteAsync(null);
+        _ = keywordsSectionModel.AddKeywordCommand.ExecuteAsync(null);
+        await keywordsSectionModel.LastDispatchTask;
 
         Assert.False(keywordsSectionModel.AddKeywordCommand.CanExecute(null));
         Assert.True(canExecuteChanged);
-       
+
         tsc.SetResult();
     }
 
     [Fact]
     public async Task AddKeywordCommandAddsKeywordToFiles()
     {
-        var files = new[]
-        {
+        var files = ImmutableList.Create(
             MockBitmapFileInfo(),
             MockBitmapFileInfo("Category A/Keyword 1"),
             MockBitmapFileInfo("Category B/Keyword 2"),
-            MockBitmapFileInfo("Category C/Keyword 2")
-        };
+            MockBitmapFileInfo("Category C/Keyword 2"));
         keywordsSectionModel.UpdateFilesChanged(files, Substitute.For<IList<MetadataView>>());
         string keyword = "Category B/Keyword 2";
         keywordsSectionModel.AutoSuggestBoxText = keyword;
@@ -157,13 +157,11 @@ public class KeywordSectionModelTest
     [Fact]
     public async Task RemoveKeywordCommandRemovesKeywordFromFiles()
     {
-        var files = new[]
-       {
+        var files = ImmutableList.Create(
             MockBitmapFileInfo(),
             MockBitmapFileInfo("Category A/Keyword 1", "Category B/Keyword 2", "Category C/Keyword 1"),
             MockBitmapFileInfo("Category B/Keyword 2"),
-            MockBitmapFileInfo("Category C/Keyword 2", "Category B/Keyword 2")
-        };
+            MockBitmapFileInfo("Category C/Keyword 2", "Category B/Keyword 2"));
         keywordsSectionModel.UpdateFilesChanged(files, Substitute.For<IList<MetadataView>>());
         string keyword = "Category B/Keyword 2";
         var messageCapture = TestUtils.CaptureMessage<MetadataModifiedMessage>(messenger);
@@ -173,7 +171,7 @@ public class KeywordSectionModelTest
         await metadataService.DidNotReceive().WriteMetadataAsync(files[0], MetadataProperties.Keywords, Arg.Any<string[]>());
         await VerifyReceivedWriteMetadataAsync(files[1], "Category A/Keyword 1", "Category C/Keyword 1");
         await VerifyReceivedWriteMetadataAsync(files[2], new string[0]);
-        await VerifyReceivedWriteMetadataAsync(files[3], "Category C/Keyword 2");     
+        await VerifyReceivedWriteMetadataAsync(files[3], "Category C/Keyword 2");
         Assert.Equal(3, messageCapture.Message.Files.Count);
         Assert.Equal(MetadataProperties.Keywords, messageCapture.Message.MetadataProperty);
     }

@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using Tocronx.SimpleAsync;
@@ -30,37 +32,37 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 
     public bool HasMultipleValues { get; private set; }
 
-    private readonly IMetadataService metadataService;
+    private bool IsDirty => timer.IsEnabled || IsWriting;
 
-    private readonly IDialogService dialogService;
+    private readonly IMetadataService metadataService;
 
     private readonly IMetadataProperty metadataProperty;
 
     private readonly ITimer timer;
 
     internal MetadataTextboxModel(
+        IMessenger messenger,
         IMetadataService metadataService,
         IDialogService dialogService,
         IBackgroundTaskService backgroundTaskService,
         IMetadataProperty<string> metadataProperty,
-        TimerFactory? timerFactory = null) : base(null!, backgroundTaskService, dialogService)
+        TimerFactory? timerFactory = null) : base(messenger, backgroundTaskService, dialogService)
     {
         this.metadataService = metadataService;
-        this.dialogService = dialogService;
         this.metadataProperty = metadataProperty;
         timer = (timerFactory ?? Timer.Create).Invoke(interval: WaitTime, autoRestart: false);
         timer.Elapsed += (_, _) => _ = WriteValueAsync();
     }
 
     internal MetadataTextboxModel(
+          IMessenger messenger,
         IMetadataService metadataService,
         IDialogService dialogService,
         IBackgroundTaskService backgroundTaskService,
         IMetadataProperty<string[]> metadataProperty,
-        TimerFactory? timerFactory = null) : base(null!, backgroundTaskService, dialogService)
+        TimerFactory? timerFactory = null) : base(messenger, backgroundTaskService, dialogService)
     {
         this.metadataService = metadataService;
-        this.dialogService = dialogService;
         this.metadataProperty = metadataProperty;
         timer = (timerFactory ?? Timer.Create).Invoke(interval: WaitTime, autoRestart: false);
         timer.Elapsed += (_, _) => _ = WriteValueAsync();
@@ -87,7 +89,7 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 
     protected override void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty)
     {
-        if (metadataProperty == this.metadataProperty)
+        if (metadataProperty == this.metadataProperty && !IsDirty)
         {
             Update(metadata);
         }
@@ -127,10 +129,10 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
     /// <summary>
     /// e.g. enter key pressed
     /// </summary>
-    [RelayCommand]
-    private async void SignalTypingCompleted()
+    [RelayCommand(AllowConcurrentExecutions = true)]
+    private async Task ConfirmAsync()
     {
-        Log.Debug("SignalTypingCompleted invoked");
+        Log.Debug("ConfirmAsync invoked");
         if (timer.IsEnabled)
         {
             timer.Stop();
@@ -151,7 +153,7 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 
     private async Task WriteFilesAsync(string value)
     {
-        await WriteFilesAsync(async file =>
+        var result = await WriteFilesAsync(async file =>
         {
             if (metadataProperty is IMetadataProperty<string> stringProperty)
             {
@@ -172,6 +174,11 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
             {
                 throw new Exception("metadataProperty is invalid");
             }
-        });
+        }, cancelPrevious: true);
+
+        if (!result.IsCanceld)
+        {
+            Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, metadataProperty));
+        }
     }
 }

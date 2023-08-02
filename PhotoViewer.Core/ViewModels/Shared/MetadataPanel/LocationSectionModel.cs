@@ -151,7 +151,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
                 {
                     modifiedFiles.Add(file);
                 }
-            });
+            }, cancelPrevious: true);
 
             Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.GeoTag));
         }
@@ -163,7 +163,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         {
             await metadataService.WriteMetadataAsync(file, MetadataProperties.Address, location?.Address?.ToAddressTag()).ConfigureAwait(false);
             await metadataService.WriteMetadataAsync(file, MetadataProperties.GeoTag, location?.Geopoint?.ToGeoTag()).ConfigureAwait(false);
-        });
+        }, cancelPrevious: true);
 
         Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Address));
         Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.GeoTag));

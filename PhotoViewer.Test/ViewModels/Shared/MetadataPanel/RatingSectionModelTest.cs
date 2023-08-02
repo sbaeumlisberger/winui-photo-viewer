@@ -16,6 +16,7 @@ using Tocronx.SimpleAsync;
 using Xunit;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core;
+using System.Collections.Immutable;
 
 namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
 
@@ -39,8 +40,8 @@ public class RatingSectionModelTest
     [Fact]
     public void SetsRating_WhenFilesChanged_OneFile()
     {
-        var raisedPropertyChangedEvents =  TestUtils.CapturePropertyChangedEvents(ratingSectionModel);
-        var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
+        var raisedPropertyChangedEvents = TestUtils.CapturePropertyChangedEvents(ratingSectionModel);
+        var files = Substitute.For<IImmutableList<IBitmapFileInfo>>();
         var metadata = new[] { CreateMetadataView(3) };
 
         ratingSectionModel.UpdateFilesChanged(files, metadata);
@@ -51,10 +52,10 @@ public class RatingSectionModelTest
 
     [Fact]
     public void SetsRatingToZero_WhenFilesChanged_DifferentRatings()
-    { 
-        ratingSectionModel.UpdateFilesChanged(Substitute.For<IReadOnlyList<IBitmapFileInfo>>(), new[] { CreateMetadataView(3) });
+    {
+        ratingSectionModel.UpdateFilesChanged(Substitute.For<IImmutableList<IBitmapFileInfo>>(), new[] { CreateMetadataView(3) });
         var raisedPropertyChangedEvents = TestUtils.CapturePropertyChangedEvents(ratingSectionModel);
-        var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
+        var files = Substitute.For<IImmutableList<IBitmapFileInfo>>();
         var metadata = new[]
         {
             CreateMetadataView(3),
@@ -72,7 +73,7 @@ public class RatingSectionModelTest
     public void SetsRating_WhenFilesChanged_EqualRatings()
     {
         var raisedPropertyChangedEvents = TestUtils.CapturePropertyChangedEvents(ratingSectionModel);
-        var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
+        var files = Substitute.For<IImmutableList<IBitmapFileInfo>>();
         var metadata = new[]
         {
             CreateMetadataView(5),
@@ -90,7 +91,7 @@ public class RatingSectionModelTest
     public void SetsRating_WhenMetadataModified()
     {
         var raisedPropertyChangedEvents = TestUtils.CapturePropertyChangedEvents(ratingSectionModel);
-        var files = Substitute.For<IReadOnlyList<IBitmapFileInfo>>();
+        var files = Substitute.For<IImmutableList<IBitmapFileInfo>>();
         var metadata = new[] { CreateMetadataView(3) };
         ratingSectionModel.UpdateFilesChanged(files, metadata);
 
@@ -104,12 +105,12 @@ public class RatingSectionModelTest
     [Fact]
     public async Task WritesRatingToFiles_WhenRatingChangedFromExternal()
     {
-        var files = new[]
-        {
+        var files = ImmutableList.Create
+        (
             MockBitmapFileInfo(0),
             MockBitmapFileInfo(3),
             MockBitmapFileInfo(5)
-        };
+        );
         var metadata = new[]
         {
             CreateMetadataView(0),
@@ -129,7 +130,7 @@ public class RatingSectionModelTest
     [Fact]
     public void DoesNotWritesRatingToFiles_WhenFilesUpdated()
     {
-        var files = new[] { MockBitmapFileInfo(3) };
+        var files = ImmutableList.Create(MockBitmapFileInfo(3));
         var metadata = new[] { CreateMetadataView(3) };
         ratingSectionModel.UpdateFilesChanged(files, metadata);
 
@@ -164,8 +165,8 @@ public class RatingSectionModelTest
     private async Task VerifyReceivedWriteMetadataAsync(IBitmapFileInfo file, int rating)
     {
         await metadataService.Received().WriteMetadataAsync(
-            file, 
-            MetadataProperties.Rating, 
+            file,
+            MetadataProperties.Rating,
             Arg.Is(rating));
     }
 }

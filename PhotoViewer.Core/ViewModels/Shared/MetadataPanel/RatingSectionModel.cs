@@ -71,9 +71,12 @@ namespace PhotoViewer.Core.ViewModels
                  {
                      await metadataService.WriteMetadataAsync(file, MetadataProperties.Rating, rating).ConfigureAwait(false);
                  }
-             });
+             }, cancelPrevious: true);
 
-            Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Rating));
+            if (!result.IsCanceld)
+            {
+                Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Rating));
+            }
         }
 
     }

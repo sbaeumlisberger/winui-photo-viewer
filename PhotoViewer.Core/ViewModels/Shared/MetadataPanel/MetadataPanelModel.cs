@@ -11,6 +11,7 @@ using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using Tocronx.SimpleAsync;
 
@@ -52,7 +53,7 @@ namespace PhotoViewer.Core.ViewModels
 
         public IReadOnlyList<IMediaFileInfo> Files { get; set; } = Array.Empty<IMediaFileInfo>();
 
-        private IReadOnlyList<IBitmapFileInfo> supportedFiles = Array.Empty<IBitmapFileInfo>();
+        private IImmutableList<IBitmapFileInfo> supportedFiles = ImmutableList<IBitmapFileInfo>.Empty;
 
         private readonly IMetadataService metadataService;
 
@@ -73,13 +74,13 @@ namespace PhotoViewer.Core.ViewModels
         {
             this.metadataService = metadataService;
 
-            TitleTextboxModel = new MetadataTextboxModel(metadataService, dialogService, backgroundTaskService, MetadataProperties.Title);
+            TitleTextboxModel = new MetadataTextboxModel(messenger, metadataService, dialogService, backgroundTaskService, MetadataProperties.Title);
             LocationSectionModel = new LocationSectionModel(metadataService, locationService, dialogService, viewModelFactory, gpxService, messenger, backgroundTaskService);
             PeopleSectionModel = new PeopleSectionModel(messenger, metadataService, peopleSuggestionsService, dialogService, backgroundTaskService, tagPeopleOnPhotoButtonVisible);
             KeywordsSectionModel = new KeywordsSectionModel(messenger, metadataService, keywordSuggestionsService, dialogService, backgroundTaskService);
             RatingSectionModel = new RatingSectionModel(metadataService, dialogService, messenger, backgroundTaskService);
-            AuthorTextboxModel = new MetadataTextboxModel(metadataService, dialogService, backgroundTaskService, MetadataProperties.Author);
-            CopyrightTextboxModel = new MetadataTextboxModel(metadataService, dialogService, backgroundTaskService, MetadataProperties.Copyright);
+            AuthorTextboxModel = new MetadataTextboxModel(messenger, metadataService, dialogService, backgroundTaskService, MetadataProperties.Author);
+            CopyrightTextboxModel = new MetadataTextboxModel(messenger, metadataService, dialogService, backgroundTaskService, MetadataProperties.Copyright);
             DateTakenSectionModel = new DateTakenSectionModel(messenger, metadataService, dialogService, backgroundTaskService);
 
             IsVisible = applicationSettings.AutoOpenMetadataPanel;
@@ -126,7 +127,7 @@ namespace PhotoViewer.Core.ViewModels
         {
             IsLoading = true;
 
-            supportedFiles = Files.OfType<IBitmapFileInfo>().Where(file => file.IsMetadataSupported).ToList();
+            supportedFiles = Files.OfType<IBitmapFileInfo>().Where(file => file.IsMetadataSupported).ToImmutableList();
             bool allFilsSupported = supportedFiles.Count == Files.Count;
 
             IsNoFilesSelectedMessageVisible = !Files.Any();         

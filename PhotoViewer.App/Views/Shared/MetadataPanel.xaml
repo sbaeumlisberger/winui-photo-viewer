@@ -121,7 +121,7 @@
                     <TextBox
                         Text="{x:Bind ViewModel.TitleTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.TitleTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_TitlePlaceholder), Mode=OneWay}"
-                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.TitleTextboxModel.SignalTypingCompletedCommand}"/>
+                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.TitleTextboxModel.ConfirmCommand}"/>
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.TitleTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_LocationHeader}" Style="{StaticResource HeaderStyle}"/>
@@ -274,14 +274,14 @@
                     <TextBox
                         Text="{x:Bind ViewModel.AuthorTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.TitleTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_AuthorPlaceholder), Mode=OneWay}"     
-                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.AuthorTextboxModel.SignalTypingCompletedCommand}"/>
+                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.AuthorTextboxModel.ConfirmCommand}"/>
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.AuthorTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_CopyrightHeader}" Style="{StaticResource HeaderStyle}"/>
                     <TextBox
                         Text="{x:Bind ViewModel.CopyrightTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.CopyrightTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_CopyrightPlaceholder), Mode=OneWay}"
-                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.CopyrightTextboxModel.SignalTypingCompletedCommand}"/>
+                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.CopyrightTextboxModel.ConfirmCommand}"/>
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.CopyrightTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_DateTakenHeader}" Style="{StaticResource HeaderStyle}"/>                                       
