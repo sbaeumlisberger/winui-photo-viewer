@@ -8,8 +8,8 @@
 
   <Identity
     Name="e0a2c53a-fca5-4900-82b0-ae74f7c64dce"
-    Publisher="CN=C=DE, Sebastian Bäumlisberger"
-    Version="1.0.1.0" />
+    Publisher="C=DE, CN=Sebastian Bäumlisberger"
+    Version="1.0.2.0" />
 
   <Properties>
     <DisplayName>WinUIPhotoViewer</DisplayName>
