@@ -12,10 +12,6 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <UserControl.Resources>
-        <converters:MediaFileInfoToThumbnailConverter x:Key="MediaFileInfoToThumbnailConverter"/>
-    </UserControl.Resources>
-
     <StackPanel Background="Transparent" Padding="8">
         <ToolTipService.ToolTip>
             <ToolTip x:Name="tooltip" Opened="ToolTip_Opened" Closed="ToolTip_Closed">
@@ -69,7 +65,7 @@
                 x:Name="image" 
                 Width="{x:Bind ViewModel.ThumbnailSize, Mode=OneWay}" 
                 Height="{x:Bind ViewModel.ThumbnailSize, Mode=OneWay}" 
-                Stretch="Uniform" />
+                Stretch="Uniform"/>
 
             <StackPanel 
                 Orientation="Horizontal" 
@@ -104,12 +100,12 @@
                 Foreground="Orange" 
                 Text="{x:Bind ConvertRatingToStars(ViewModel.Rating), Mode=OneWay}" />
         </Grid>
-        
-        <TextBlock    
+
+        <TextBlock
             Margin="0,8,0,0"
             Visibility="{x:Bind ViewModel.IsNotRenaming, Mode=OneWay}"
             Width="{x:Bind ViewModel.ThumbnailSize, Mode=OneWay}"
-            Text="{x:Bind ViewModel.DisplayName, Mode=OneWay}" 
+            Text="{x:Bind ViewModel.DisplayName, Mode=OneWay}"
             VerticalAlignment="Center"
             TextAlignment="Center"/>
         <TextBox 

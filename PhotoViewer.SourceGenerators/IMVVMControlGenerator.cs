@@ -59,22 +59,71 @@ public class IMVVMControlGenerator : IIncrementalGenerator
                 using System;
                 using Microsoft.UI.Xaml;
                 using PhotoViewer.App.Utils;
+                using PhotoViewer.App.Utils.Logging;
 
                 {{(@namespace != null ? $"namespace {@namespace};" : "")}}
 
                 partial class {{classSymbol.Name}} 
                 {
-                    private {{viewModelType}}? ViewModel => DataContext as {{viewModelType}};
+                    private {{viewModelType}}? ViewModel => _viewModel;
+            
+                    private {{viewModelType}}? _viewModel;
 
-                    void IMVVMControl<{{viewModelType}}>.InitializeComponent() => InitializeComponent();
-                    void IMVVMControl<{{viewModelType}}>.UpdateBindings() => Bindings.Update();
-                    void IMVVMControl<{{viewModelType}}>.StopBindings() => Bindings.StopTracking();
+                    private void InitializeComponentMVVM()
+                    {
+                        Unloaded += (s, e) =>
+                        {
+                            if (_viewModel is {{viewModelType}} currentViewModel)
+                            {
+                                disconnect();
+                            }
+                        };
+
+                        DataContextChanged += (s, e) =>
+                        {
+                            if (e.NewValue != _viewModel)
+                            {
+                                if (_viewModel is {{viewModelType}} currentViewModel)
+                                {
+                                    disconnect();
+                                }
+                                if (e.NewValue is {{viewModelType}} newViewModel)
+                                {
+                                    connect(newViewModel);
+                                }
+                            }
+                        };
+
+                        if(DataContext is {{viewModelType}} newViewModel) 
+                        {
+                            connect(newViewModel);
+                        }
+
+                        InitializeComponent();
+
+                        void connect({{viewModelType}} newViewModel)
+                        {                  
+                            //Log.Debug($"Connect {this} to {newViewModel}");
+                            _viewModel = newViewModel;
+                            ConnectToViewModel(_viewModel);     
+                            if (IsLoaded)
+                            {
+                                Bindings.Update();
+                            }                     
+                        }
+            
+                        void disconnect()
+                        { 
+                            //Log.Debug($"Disconnect {this} from {_viewModel}");
+                            DisconnectFromViewModel(_viewModel);  
+                            Bindings.StopTracking();                        
+                            _viewModel = null;
+                            DataContext = null;
+                        }
+                    }                                   
 
                     partial void ConnectToViewModel({{viewModelType}} viewModel);     
                     partial void DisconnectFromViewModel({{viewModelType}} viewModel);    
-
-                    void IMVVMControl<{{viewModelType}}>.ConnectToViewModel({{viewModelType}} viewModel) => ConnectToViewModel(viewModel);     
-                    void IMVVMControl<{{viewModelType}}>.DisconnectFromViewModel({{viewModelType}} viewModel) => DisconnectFromViewModel(viewModel);   
                 }
             """;
         return code;

@@ -20,7 +20,7 @@ namespace PhotoViewer.Core.ViewModels
 
             private readonly IImmutableList<IBitmapFileInfo> files;
 
-            private readonly AsyncLockFIFO writeLock = new AsyncLockFIFO();
+            private readonly AsyncLockFIFO writeLock;
 
             private readonly IDialogService dialogService;
 

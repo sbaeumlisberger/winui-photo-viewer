@@ -3,10 +3,8 @@ using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.Core.ViewModels;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
-using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Utils;
 using System;
-using Windows.Foundation;
 using System.Linq;
 using Windows.Storage;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -16,7 +14,6 @@ using Microsoft.UI.Xaml.Input;
 using Windows.System;
 using PhotoViewer.App.Models;
 using System.IO;
-using System.Threading;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 
@@ -37,22 +34,22 @@ public sealed partial class OverviewItem : UserControl, IMVVMControl<OverviewIte
         });
     }
 
-    async partial void ConnectToViewModel(OverviewItemModel viewModel)
+    partial void ConnectToViewModel(OverviewItemModel viewModel)
     {
         viewModel.ThumbnailInvalidated += ViewModel_ThumbnailInvalidated;
-
-        image.Source = await MediaFileInfoToThumbnailConverter.ConvertAsync(viewModel.MediaFile);
+        image.Source = MediaFileInfoToThumbnailConverter.Convert(viewModel.MediaFile);
     }
 
     partial void DisconnectFromViewModel(OverviewItemModel viewModel)
     {
         viewModel.ThumbnailInvalidated -= ViewModel_ThumbnailInvalidated;
+        image.Source = null;
     }
 
-    private async void ViewModel_ThumbnailInvalidated(object? sender, EventArgs e)
+    private void ViewModel_ThumbnailInvalidated(object? sender, EventArgs e)
     {
         Log.Info($"Reload thumbnail for {ViewModel!.MediaFile.DisplayName}");
-        image.Source = await MediaFileInfoToThumbnailConverter.ConvertAsync(ViewModel.MediaFile);
+        image.Source = MediaFileInfoToThumbnailConverter.Convert(ViewModel.MediaFile);
     }
 
     private async void ToolTip_Opened(object sender, RoutedEventArgs e)
@@ -65,10 +62,12 @@ public sealed partial class OverviewItem : UserControl, IMVVMControl<OverviewIte
 
         try
         {
+            Log.Debug($"Show preview for {ViewModel.MediaFile.DisplayName}");
+
             if (ViewModel.MediaFile is IBitmapFileInfo bitmapFile)
             {
                 var bitmapImage = new BitmapImage();
-                image = new Image() { Source = bitmapImage, MaxWidth = 600, MaxHeight = 600 };
+                var image = new Image() { Source = bitmapImage, MaxWidth = 600, MaxHeight = 600 };
                 toolTipPreview.Child = image;
                 using var stream = await bitmapFile.OpenAsRandomAccessStreamAsync(FileAccessMode.Read);
                 await bitmapImage.SetSourceAsync(stream);
@@ -136,5 +135,4 @@ public sealed partial class OverviewItem : UserControl, IMVVMControl<OverviewIte
     {
         ViewModel?.ConfirmRenaming();
     }
-
 }

@@ -39,7 +39,7 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
     {
         ViewModel!.OnNavigatedTo();
 
-        printRegistration = printService.RegisterForPrinting(() => 
+        printRegistration = printService.RegisterForPrinting(() =>
         {
             var files = ViewModel!.SelectedItems.ToList();
             return new PhotoPrintJob(files);
@@ -84,7 +84,7 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
         gridView.ShowAttachedFlyout(args);
     }
 
-    private string FormatSelectionInfo(IReadOnlyList<IMediaFileInfo> items, IReadOnlyList<IMediaFileInfo> selectedItems) 
+    private string FormatSelectionInfo(IReadOnlyList<IMediaFileInfo> items, IReadOnlyList<IMediaFileInfo> selectedItems)
     {
         return string.Format(Strings.OverviewPage_SelectionInfo, items.Count, selectedItems.Count);
     }

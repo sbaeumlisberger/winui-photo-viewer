@@ -151,4 +151,9 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
             });
         }
     }
+
+    public override string ToString()
+    {
+        return nameof(OverviewItemModel) + ":" + DisplayName;
+    }
 }

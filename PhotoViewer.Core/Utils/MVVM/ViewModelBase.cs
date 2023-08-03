@@ -27,7 +27,7 @@ public class ViewModelBase : ObservableObjectBase, IViewModel
 
     public void Cleanup()
     {
-        Log.Debug($"Cleanup {this}");
+        //Log.Debug($"Cleanup {this}");
         Messenger?.UnregisterAll(this);
         OnCleanup();
     }

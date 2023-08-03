@@ -7,26 +7,14 @@ using System.Threading.Tasks;
 
 namespace PhotoViewer.App.Converters;
 
-public class MediaFileInfoToThumbnailConverter : IValueConverter
+public class MediaFileInfoToThumbnailConverter
 {
     private const int DecodePixelWidth = 512;
 
-    public object Convert(object value, Type targetType, object parameter, string language)
+    public static BitmapImage Convert(IMediaFileInfo mediaFile) 
     {
         var bitmapImage = new BitmapImage();
-        _ = TryLoadThumbnailAsync((IMediaFileInfo)value, bitmapImage);
-        return bitmapImage;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static async Task<BitmapImage> ConvertAsync(IMediaFileInfo mediaFile) 
-    {
-        var bitmapImage = new BitmapImage();
-        await TryLoadThumbnailAsync(mediaFile, bitmapImage);
+        _ = TryLoadThumbnailAsync(mediaFile, bitmapImage);
         return bitmapImage;
     }
 
