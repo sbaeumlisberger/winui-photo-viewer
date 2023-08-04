@@ -46,7 +46,7 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         if (ViewModel!.IsDiashowActive)
         {
             var window = App.Current.Window;
-            var windowCenterX = window.Bounds.Left + window.Bounds.Width / 2;
+            var windowCenterX = window.Bounds.GetCenterX();
 
             if (e.GetPosition(window.Content).X > windowCenterX)
             {
@@ -73,30 +73,25 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
             DispatcherQueue.TryEnqueue(() => flipView.SelectedItem = ViewModel.SelectedItem);
         }
 
-        FocusSelectedItem();
-
-        flipView.Opacity = 1; // reset delete animation 
+        flipView.Opacity = 1; // reset delete animation
     }
 
-    private void FlipViewItem_Loaded(object sender, RoutedEventArgs e)
+    private void FlipViewItemBorder_Loaded(object sender, RoutedEventArgs e)
     {
-        FocusSelectedItem();
-    }
-
-    private void FlipViewItem_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-    {
-        if (sender.DataContext is IMediaFileInfo mediaFile)
+        if (flipView.ContainerFromItem(flipView.SelectedItem) is FrameworkElement container)
         {
-            sender.DataContext = ViewModel?.TryGetItemModel(mediaFile);
+            container.Focus(FocusState.Programmatic);
         }
     }
 
-    private void FocusSelectedItem()
+    private void FlipViewItemBorder_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
     {
-        if (flipView.SelectedItem is { } selectedItem
-            && flipView.ContainerFromItem(selectedItem) is FlipViewItem flipViewItem)
+        var border = (Border)sender;
+
+        if (border.DataContext is IMediaFileInfo mediaFile)
         {
-            flipViewItem.Focus(FocusState.Programmatic);
+            var flipViewItem = (FrameworkElement)border.Child;
+            flipViewItem.DataContext = ViewModel?.TryGetItemModel(mediaFile);
         }
     }
 
@@ -112,19 +107,6 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         else if (e.Key == VirtualKey.Escape)
         {
             ViewModel!.ExitDiashowCommand.TryExecute();
-        }
-    }
-
-    private void FlipView_PrepareContainer(object sender, (DependencyObject Element, object Item) e)
-    {
-        if (e.Item is IMediaFileInfo mediaFile)
-        {
-            var flipViewItem = (FlipViewItem)e.Element;
-            if (flipViewItem.ContentTemplateRoot is FrameworkElement root)
-            {
-                var itemModel = ViewModel?.TryGetItemModel(mediaFile);
-                root.DataContext = itemModel;
-            }
         }
     }
 }

@@ -3,10 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PhotoViewer.App.Views"    
-    xmlns:converters="using:PhotoViewer.App.Converters"   
-    xmlns:viewModels="using:PhotoViewer.App.ViewModels"
+    xmlns:converters="using:PhotoViewer.App.Converters"
     xmlns:res="using:PhotoViewer.App.Resources"
-    xmlns:controls="using:PhotoViewer.App.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -44,7 +42,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <controls:FlipViewPlus
+        <FlipView
             x:Name="flipView"
             ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" 
             SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}"
@@ -56,23 +54,34 @@
             ContextRequested="FlipView_ContextRequested"
             Background="{x:Bind ViewModel.IsDiashowActive, Mode=OneWay, Converter={StaticResource FlipViewBackgroundConverter}}"
             Tapped="FlipView_Tapped"
-            KeyDown="FlipView_KeyDown"
-            PrepareContainer="FlipView_PrepareContainer">
+            KeyDown="FlipView_KeyDown">
             <FlipView.ItemTemplateSelector>
                 <local:MediaFlipViewItemTemplateSelector>
                     <local:MediaFlipViewItemTemplateSelector.BitmapFileInfoTemplate>
                         <DataTemplate>
-                            <local:BitmapFlipViewItem Loaded="FlipViewItem_Loaded" DataContextChanged="FlipViewItem_DataContextChanged"/>
+                            <Border 
+                                Loaded="FlipViewItemBorder_Loaded" 
+                                DataContextChanged="FlipViewItemBorder_DataContextChanged">
+                                <local:BitmapFlipViewItem />
+                            </Border>
                         </DataTemplate>
                     </local:MediaFlipViewItemTemplateSelector.BitmapFileInfoTemplate>
                     <local:MediaFlipViewItemTemplateSelector.VectorGraphicFileInfoTemplate>
                         <DataTemplate>
-                            <local:VectorGraphicFlipViewItem Loaded="FlipViewItem_Loaded" DataContextChanged="FlipViewItem_DataContextChanged"/>
+                            <Border 
+                                Loaded="FlipViewItemBorder_Loaded"
+                                DataContextChanged="FlipViewItemBorder_DataContextChanged">
+                                <local:VectorGraphicFlipViewItem  />
+                            </Border>
                         </DataTemplate>
                     </local:MediaFlipViewItemTemplateSelector.VectorGraphicFileInfoTemplate>
                     <local:MediaFlipViewItemTemplateSelector.VideoFileInfoTemplate>
                         <DataTemplate>
-                            <local:VideoFlipViewItem Loaded="FlipViewItem_Loaded" DataContextChanged="FlipViewItem_DataContextChanged"/>
+                            <Border 
+                                Loaded="FlipViewItemBorder_Loaded" 
+                                DataContextChanged="FlipViewItemBorder_DataContextChanged">
+                                <local:VideoFlipViewItem  />
+                            </Border>
                         </DataTemplate>
                     </local:MediaFlipViewItemTemplateSelector.VideoFileInfoTemplate>
                 </local:MediaFlipViewItemTemplateSelector>
@@ -103,7 +112,7 @@
                     </MenuFlyoutItem>
                 </MenuFlyout>
             </FlyoutBase.AttachedFlyout>
-        </controls:FlipViewPlus>
+        </FlipView>
 
         <StackPanel 
             VerticalAlignment="Center"

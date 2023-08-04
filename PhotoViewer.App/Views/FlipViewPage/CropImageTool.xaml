@@ -21,7 +21,7 @@
 
     <Canvas
         x:Name="selectionCanvas"    
-        Visibility="{x:Bind ViewModel.IsActive, Mode=OneWay}"
+        Visibility="{x:Bind ViewModel.IsActive, Mode=OneWay, FallbackValue=Collapsed}"
         Background="Transparent"
         SizeChanged="SelectionCanvas_SizeChanged">
 
