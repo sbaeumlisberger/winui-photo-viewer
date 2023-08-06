@@ -76,6 +76,7 @@ public class IMVVMControlGenerator : IIncrementalGenerator
                             if (_viewModel is {{viewModelType}} currentViewModel)
                             {
                                 disconnect();
+                                DataContext = null;
                             }
                         };
 
@@ -118,7 +119,6 @@ public class IMVVMControlGenerator : IIncrementalGenerator
                             DisconnectFromViewModel(_viewModel);  
                             Bindings.StopTracking();                        
                             _viewModel = null;
-                            DataContext = null;
                         }
                     }                                   
 
