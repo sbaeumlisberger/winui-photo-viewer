@@ -1402,6 +1402,69 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you really want to rename all files sorted by date taken with a sequential number as prefix?.
+        /// </summary>
+        internal static string PrefixFilesByDateDialog_ConfirmationMessage {
+            get {
+                return ResourceManager.GetString("PrefixFilesByDateDialog_ConfirmationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Continue.
+        /// </summary>
+        internal static string PrefixFilesByDateDialog_Continue {
+            get {
+                return ResourceManager.GetString("PrefixFilesByDateDialog_Continue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following files could not be renamed:.
+        /// </summary>
+        internal static string PrefixFilesByDateDialog_ErrorMessage {
+            get {
+                return ResourceManager.GetString("PrefixFilesByDateDialog_ErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename all files sorted by date taken with a sequential number as prefix..
+        /// </summary>
+        internal static string PrefixFilesByDateDialog_InProgressMessage {
+            get {
+                return ResourceManager.GetString("PrefixFilesByDateDialog_InProgressMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All files were successfully renamed..
+        /// </summary>
+        internal static string PrefixFilesByDateDialog_SuccessMessage {
+            get {
+                return ResourceManager.GetString("PrefixFilesByDateDialog_SuccessMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename files based on date taken..
+        /// </summary>
+        internal static string PrefixFilesByDateDialog_Title {
+            get {
+                return ResourceManager.GetString("PrefixFilesByDateDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename files based on date taken..
+        /// </summary>
+        internal static string PrefixFilesByDateUICommand_Label {
+            get {
+                return ResourceManager.GetString("PrefixFilesByDateUICommand_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Collapse unused space.
         /// </summary>
         internal static string Printing_CollapseUnusedSpaceTitle {

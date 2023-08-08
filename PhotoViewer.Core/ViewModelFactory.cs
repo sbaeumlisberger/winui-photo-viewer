@@ -1,17 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewer.Core.Models;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Commands;
+using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
-using System.Diagnostics;
-using PhotoViewer.App.Utils.Logging;
-using System.Windows.Input;
 using PhotoViewer.Core.ViewModels.Shared;
+using System.Diagnostics;
+using System.Windows.Input;
 
 namespace PhotoViewer.Core;
 
@@ -57,7 +56,7 @@ public class ViewModelFactory : IViewModelFactory
     private readonly ICropImageService cropImageService;
     private readonly IBackgroundTaskService backgroundTaskService = new BackgroundTaskService();
 
-    public ViewModelFactory(ApplicationSettings settings) 
+    public ViewModelFactory(ApplicationSettings settings)
     {
         this.settings = settings;
         gpxService = new GpxService(metadataService);
@@ -72,7 +71,7 @@ public class ViewModelFactory : IViewModelFactory
         return new AppModel(settings, messenger, this, mediaFilesLoaderService);
     }
 
-    public MainWindowModel CreateMainWindowModel() 
+    public MainWindowModel CreateMainWindowModel()
     {
         return new MainWindowModel(settings, messenger, backgroundTaskService, dialogService);
     }
@@ -135,11 +134,12 @@ public class ViewModelFactory : IViewModelFactory
             selectPreviousCommand,
             selectNextCommand,
             settings,
-            deleteFilesCommand,    
+            deleteFilesCommand,
             new MoveRawFilesToSubfolderCommand(applicationSession, settings, dialogService),
             new DeleteSingleRawFilesCommand(applicationSession, messenger, dialogService),
             new ShiftDatenTakenCommand(applicationSession, messenger, dialogService, metadataService),
-            new ImportGpxTrackCommand(applicationSession, messenger, dialogService, metadataService, gpxService));
+            new ImportGpxTrackCommand(applicationSession, messenger, dialogService, metadataService, gpxService),
+            new PrefixFilesByDateCommand(applicationSession, settings, dialogService, metadataService));
     }
 
     public IMetadataPanelModel CreateMetadataPanelModel(bool showTagPeopleOnPhotoButton)
@@ -185,11 +185,11 @@ public class ViewModelFactory : IViewModelFactory
     private IDeleteFilesCommand CreateDeleteFilesCommand()
     {
         return new DeleteFilesCommand(
-            messenger, 
+            messenger,
             deleteMediaService,
             dialogService,
-            settingService, 
-            backgroundTaskService, 
+            settingService,
+            backgroundTaskService,
             settings);
     }
 

@@ -1,0 +1,91 @@
+﻿using CommunityToolkit.Mvvm.Input;
+using MetadataAPI;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Utils;
+
+namespace PhotoViewer.Core.ViewModels.Dialogs;
+
+public partial class PrefixFilesByDateDialogModel : ViewModelBase
+{
+    public bool ShowConfirmation { get; private set; } = true;
+    public bool ShowProgress { get; private set; } = false;
+    public bool ShowErrorMessage { get; private set; } = false;
+    public bool ShowSuccessMessage { get; private set; } = false;
+
+    public Progress? Progress { get; private set; }
+
+    public IReadOnlyList<string> Errors { get; private set; } = new List<string>();
+
+
+    private readonly IReadOnlyCollection<IMediaFileInfo> mediaFiles;
+
+    private readonly ApplicationSettings settings;
+    private readonly IMetadataService metadataService;
+
+    public PrefixFilesByDateDialogModel(IReadOnlyCollection<IMediaFileInfo> mediaFiles, ApplicationSettings settings, IMetadataService metadataService)
+    {
+        this.mediaFiles = mediaFiles;
+        this.settings = settings;
+        this.metadataService = metadataService;
+    }
+
+    [RelayCommand]
+    private async Task ExecuteAsync()
+    {
+        var cts = new CancellationTokenSource();
+        Progress = new Progress(cts);
+
+        ShowConfirmation = false;
+        ShowProgress = true;
+
+        try
+        {
+            var result = await MoveRawFilesToSubfolderAsync(mediaFiles, Progress, cts.Token);
+
+            ShowSuccessMessage = result.IsSuccessful;
+            ShowErrorMessage = result.HasFailures;
+            Errors = result.Failures.Select(failure => failure.Element.File.FileName + ": " + failure.Exception.Message).ToList();
+
+            ShowProgress = false;
+        }
+        catch (OperationCanceledException)
+        {
+            Log.Info("Prefix files by date was canceled");
+        }
+    }
+
+    [RelayCommand]
+    private void Cancel()
+    {
+        Progress?.Cancel();
+    }
+
+    private async Task<ProcessingResult<(IMediaFileInfo File, string NewName)>> MoveRawFilesToSubfolderAsync(IReadOnlyCollection<IMediaFileInfo> files, IProgress<double> progress, CancellationToken cancellationToken)
+    {
+        int counter = 0;
+        int digits = files.Count.ToString().Length;
+        Dictionary<IMediaFileInfo, DateTime> dateTakenDict = new();
+        foreach (IMediaFileInfo file in files)
+        {
+            if (file is IBitmapFileInfo bitmapFile && await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.DateTaken) is { } dateTaken)
+            {
+                dateTakenDict.Add(file, dateTaken);
+                continue;
+            }
+            dateTakenDict.Add(file, File.GetLastWriteTime(file.FilePath));
+            cancellationToken.ThrowIfCancellationRequested();
+        }
+        var filesToRename = files.OrderBy(file => dateTakenDict[file])
+            .Select((file, index) => (File: file, NewName: (++counter).ToString().PadLeft(digits, '0') + "_" + file.FileName))
+            .ToList();
+        cancellationToken.ThrowIfCancellationRequested();
+        return await ParallelizationUtil.ProcessParallelAsync(filesToRename, async item =>
+        {
+            await item.File.RenameAsync(item.NewName);
+        }, progress, cancellationToken, throwOnCancellation: true);
+    }
+}

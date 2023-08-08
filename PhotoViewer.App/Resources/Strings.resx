@@ -531,6 +531,27 @@
   <data name="MoveRawFilesToSubfolderUICommand_Label" xml:space="preserve">
     <value>Move RAW files to subfolder</value>
   </data>
+  <data name="PrefixFilesByDateDialog_ConfirmationMessage" xml:space="preserve">
+    <value>Do you really want to rename all files sorted by date taken with a sequential number as prefix?</value>
+  </data>
+  <data name="PrefixFilesByDateDialog_Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="PrefixFilesByDateDialog_ErrorMessage" xml:space="preserve">
+    <value>The following files could not be renamed:</value>
+  </data>
+  <data name="PrefixFilesByDateDialog_InProgressMessage" xml:space="preserve">
+    <value>Rename all files sorted by date taken with a sequential number as prefix.</value>
+  </data>
+  <data name="PrefixFilesByDateDialog_SuccessMessage" xml:space="preserve">
+    <value>All files were successfully renamed.</value>
+  </data>
+  <data name="PrefixFilesByDateDialog_Title" xml:space="preserve">
+    <value>Rename files based on date taken.</value>
+  </data>
+  <data name="PrefixFilesByDateUICommand_Label" xml:space="preserve">
+    <value>Rename files based on date taken.</value>
+  </data>
   <data name="NoItemsMessage" xml:space="preserve">
     <value>Nothing to show</value>
   </data>

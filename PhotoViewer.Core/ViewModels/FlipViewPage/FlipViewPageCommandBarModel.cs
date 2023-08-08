@@ -12,10 +12,7 @@ using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using PhotoViewer.Core.ViewModels.Shared;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Windows.Input;
-using Windows.ApplicationModel.Background;
 using Windows.Storage;
 
 namespace PhotoViewer.App.ViewModels;
@@ -40,6 +37,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     public IAcceleratedCommand DeleteSingleRawFilesCommand { get; }
     public IAcceleratedCommand ShiftDatenTakenCommand { get; }
     public IAcceleratedCommand ImportGpxTrackCommand { get; }
+    public IAcceleratedCommand PrefixFilesByDateCommand { get; }
 
     public bool CanStartDiashow => SelectedItemModel != null;
 
@@ -72,7 +70,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         IMoveRawFilesToSubfolderCommand moveRawFilesToSubfolderCommand,
         IDeleteSingleRawFilesCommand deleteSingleRawFilesCommand,
         IShiftDatenTakenCommand shiftDatenTakenCommand,
-        IImportGpxTrackCommand importGpxTrackCommand) : base(messenger)
+        IImportGpxTrackCommand importGpxTrackCommand,
+        IPrefixFilesByDateCommand prefixFilesByDateCommand) : base(messenger)
     {
         this.dialogService = dialogService;
         this.loadMediaItemsService = loadMediaItemsService;
@@ -86,6 +85,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         DeleteSingleRawFilesCommand = deleteSingleRawFilesCommand;
         ShiftDatenTakenCommand = shiftDatenTakenCommand;
         ImportGpxTrackCommand = importGpxTrackCommand;
+        PrefixFilesByDateCommand = prefixFilesByDateCommand;
 
         BackgroundTasks = viewModelFactory.CreateBackgroundTasksViewModel();
     }
@@ -109,7 +109,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     }
 
     [RelayCommand]
-    private void ToggleMetadataPanel() 
+    private void ToggleMetadataPanel()
     {
         Messenger.Send(new ToggleMetataPanelMessage());
     }
@@ -118,7 +118,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     private void CropImage()
     {
         Messenger.Send(new ToggleCropImageToolMessage());
-    }    
+    }
 
     [RelayCommand(CanExecute = nameof(CanRotate))]
     private async Task RotateAsync()
@@ -130,7 +130,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
             await rotateBitmapService.RotateClockwise90DegreesAsync(bitmap);
             Messenger.Send(new BitmapModifiedMesssage(bitmap));
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             Log.Error($"Failed to rotate {bitmap.FilePath}", ex);
         }

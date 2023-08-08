@@ -531,6 +531,27 @@
   <data name="MoveRawFilesToSubfolderUICommand_Label" xml:space="preserve">
     <value>RAW-Dateien in Unterordner verschieben</value>
   </data>
+  <data name="PrefixFilesByDateDialog_ConfirmationMessage" xml:space="preserve">
+    <value>Möchten Sie wirklich alle Dateien sortiert nach Aufnahmedatum mit einer fortlaufenden Nummer als Präfix umbenennen?</value>
+  </data>
+  <data name="PrefixFilesByDateDialog_Continue" xml:space="preserve">
+    <value>Fortfahren</value>
+  </data>
+  <data name="PrefixFilesByDateDialog_ErrorMessage" xml:space="preserve">
+    <value>Die folgenden Dateien konnten nicht verschoben werden:</value>
+  </data>
+  <data name="PrefixFilesByDateDialog_InProgressMessage" xml:space="preserve">
+    <value>Alle Dateien werden sortiert nach Aufnahmedatum mit einer fortlaufenden Nummer als Präfix umbenannt.</value>
+  </data>
+  <data name="PrefixFilesByDateDialog_SuccessMessage" xml:space="preserve">
+    <value>All Dateien wurden erfolgreich umbenannt.</value>
+  </data>
+  <data name="PrefixFilesByDateDialog_Title" xml:space="preserve">
+    <value>Dateien anhand Aufnahmedatum umbenennen.</value>
+  </data>
+  <data name="PrefixFilesByDateUICommand_Label" xml:space="preserve">
+    <value>Dateien anhand Aufnahmedatum umbenennen.</value>
+  </data>
   <data name="NoItemsMessage" xml:space="preserve">
     <value>Keine Fotos zum Anzeigen vorhanden</value>
   </data>
