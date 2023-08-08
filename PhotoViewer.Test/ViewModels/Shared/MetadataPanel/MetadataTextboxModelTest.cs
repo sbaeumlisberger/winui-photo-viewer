@@ -26,7 +26,7 @@ public class MetadataTextboxModelTest
 {
     private readonly IMessenger messenger = new StrongReferenceMessenger();
 
-    private readonly ITimer timerMock = Substitute.For<ITimer>();
+    private readonly TimerMock timerMock = new TimerMock();
 
     private readonly IMetadataService metadataServiceMock = Substitute.For<IMetadataService>();
 
@@ -36,10 +36,13 @@ public class MetadataTextboxModelTest
 
     private readonly IBackgroundTaskService backgroundTaskService = Substitute.For<IBackgroundTaskService>();
 
-    private readonly MetadataTextboxModel metadataTextboxModel;
+    private readonly SynchronizationContextMock synchronizationContextMock = new SynchronizationContextMock();
+
+    private MetadataTextboxModel metadataTextboxModel;
 
     public MetadataTextboxModelTest()
     {
+        using var _ = synchronizationContextMock.Apply();
         Log.Logger = Substitute.For<ILogger>();
         metadataPropertyMock.Identifier.Returns("test-property");
         TimerFactory timerFactory = (interval, autoRestart) =>
@@ -48,11 +51,14 @@ public class MetadataTextboxModelTest
             return timerMock;
         };
         metadataTextboxModel = new MetadataTextboxModel(messenger, metadataServiceMock, dialogService, backgroundTaskService, metadataPropertyMock, timerFactory);
+        TestUtils.CheckSynchronizationContextOfPropertyChangedEvents(metadataTextboxModel, synchronizationContextMock);
     }
 
     [Fact]
-    public async void SetText()
+    public async Task SetText_WritesValueAndSetsIsWriting()
     {
+        using var _ = synchronizationContextMock.Apply();
+
         var fileMock = Substitute.For<IBitmapFileInfo>();
         metadataServiceMock
             .GetMetadataAsync(fileMock, metadataPropertyMock)
@@ -60,82 +66,76 @@ public class MetadataTextboxModelTest
         var tsc = new TaskCompletionSource();
         metadataServiceMock
             .WriteMetadataAsync(fileMock, metadataPropertyMock, "some value")
-            .Returns(tsc.Task)
-            .AndDoes(_ => Assert.True(metadataTextboxModel.IsWriting));         
-       
+            .Returns(tsc.Task); 
+
         var metadata = new Dictionary<string, object?>() { { "test-property", "value from file" } };
         metadataTextboxModel.UpdateFilesChanged(ImmutableList.Create(fileMock), new[] { new MetadataView(metadata) });
-        timerMock.IsEnabled.Returns(false);
 
         metadataTextboxModel.Text = "some value";
 
-        timerMock.Received().Restart();
-        timerMock.IsEnabled.Returns(true);
+        Assert.Equal(1, timerMock.RestartCount);
         Assert.False(metadataTextboxModel.IsWriting);
 
-        timerMock.Elapsed += Raise.EventWith(EventArgs.Empty);
-
-        tsc.SetResult();
-        await metadataTextboxModel.WriteFilesTask;
-        await Task.Delay(1);
+        await timerMock.RaiseElapsed();
         await metadataTextboxModel.LastDispatchTask;
 
+        Assert.True(metadataTextboxModel.IsWriting);
+        
+        tsc.SetResult();
+        await metadataTextboxModel.LastWriteFilesTask;
+        
         Assert.False(metadataTextboxModel.IsWriting);
-
-        // TODO: verify no errors
+        await metadataServiceMock.ReceivedOnce().WriteMetadataAsync(fileMock, metadataPropertyMock, "some value");
     }
 
     [Fact]
-    public async Task SetText_MultipleTimes()
+    public async Task SetText_WritesOnlyLastValue()
     {
+        using var _ = synchronizationContextMock.Apply();
+
         var fileMock = Substitute.For<IBitmapFileInfo>();
         metadataServiceMock
             .GetMetadataAsync(fileMock, metadataPropertyMock)
             .Returns("value from file");
-        string? lastWrittenValue = null;
-        metadataServiceMock
-            .WriteMetadataAsync(fileMock, metadataPropertyMock, Arg.Any<string>())
-            .Returns(Task.CompletedTask)
-            .AndDoes(args => { lastWrittenValue = (string)args[2]; });
         var metadata = new Dictionary<string, object?>() { { "test-property", "value from file" } };
         metadataTextboxModel.UpdateFilesChanged(ImmutableList.Create(fileMock), new[] { new MetadataView(metadata) });
 
         metadataTextboxModel.Text = "some value 01";
-        timerMock.Received().Restart();
-        timerMock.IsEnabled.Returns(true);
+        Assert.Equal(1, timerMock.RestartCount);
 
         metadataTextboxModel.Text = "some value 02";
-        timerMock.Received().Restart();
+        Assert.Equal(2, timerMock.RestartCount);
 
         metadataTextboxModel.Text = "some value 03";
-        timerMock.Received().Restart();
+        Assert.Equal(3, timerMock.RestartCount);
 
-        timerMock.Elapsed += Raise.EventWith(EventArgs.Empty);
+        await timerMock.RaiseElapsed();
+        await metadataTextboxModel.LastWriteFilesTask;
 
-        await metadataTextboxModel.WriteFilesTask;
         await metadataServiceMock.DidNotReceive()
             .WriteMetadataAsync(fileMock, metadataPropertyMock, "some value 01");
         await metadataServiceMock.DidNotReceive()
             .WriteMetadataAsync(fileMock, metadataPropertyMock, "some value 01");
-        await metadataServiceMock.Received(1)
+        await metadataServiceMock.ReceivedOnce()
             .WriteMetadataAsync(fileMock, metadataPropertyMock, "some value 03");
     }
 
     [Fact]
-    public async Task UnsavedValueIsWrittenWhenFilesChanging()
+    public async Task UpdateFilesChanged_WritesUnsavedValue()
     {
+        using var _ = synchronizationContextMock.Apply();
+
         var file = Substitute.For<IBitmapFileInfo>();
         metadataServiceMock.GetMetadataAsync(file, metadataPropertyMock).Returns("value from file");
         metadataTextboxModel.UpdateFilesChanged(ImmutableList.Create(file), new[] { CreateMetadataView("value from file") });
 
         metadataTextboxModel.Text = "some value";
-        timerMock.Received().Restart();
-        timerMock.IsEnabled.Returns(true);
+        Assert.Equal(1, timerMock.RestartCount);
         var otherFile = Substitute.For<IBitmapFileInfo>();
         metadataTextboxModel.UpdateFilesChanged(ImmutableList.Create(otherFile), new[] { CreateMetadataView("value from other file") });
-      
-        timerMock.Received().Stop();
-        await Task.Delay(10); // TODO
+        await metadataTextboxModel.LastWriteFilesTask;
+
+        Assert.False(timerMock.IsEnabled);
         await metadataServiceMock.Received().WriteMetadataAsync(file, metadataPropertyMock, "some value");
         Assert.Equal("value from other file", metadataTextboxModel.Text);
     }

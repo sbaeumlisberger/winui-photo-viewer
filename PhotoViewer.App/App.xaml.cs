@@ -116,25 +116,28 @@ public partial class App : Application
         {
             isUnhandeldExceptionDialogShown = true;
 
-            var dialog = new UnhandledExceptionDialog(Window, args.Message);
-
-            var dialogResult = await dialog.ShowAsync();
-
-            if (dialog.IsSendErrorReportChecked)
+            await Window.DispatcherQueue.TryEnqueueIfRequiredAsync(async () =>
             {
-                await TrySendErrorReportAsync();
-            }
+                var dialog = new UnhandledExceptionDialog(Window, args.Message);
 
-            if (dialogResult == ContentDialogResult.Primary)
-            {
-                Log.Info("User decided to exit application after unhandled exception ");
-                Exit();
-            }
-            else
-            {
-                Log.Info("User decided to ignore unhandled exception");
-                isUnhandeldExceptionDialogShown = false;
-            }
+                var dialogResult = await dialog.ShowAsync();
+
+                if (dialog.IsSendErrorReportChecked)
+                {
+                    await TrySendErrorReportAsync();
+                }
+
+                if (dialogResult == ContentDialogResult.Primary)
+                {
+                    Log.Info("User decided to exit application after unhandled exception ");
+                    Exit();
+                }
+                else
+                {
+                    Log.Info("User decided to ignore unhandled exception");
+                    isUnhandeldExceptionDialogShown = false;
+                }
+            });
         }
         catch (Exception e)
         {

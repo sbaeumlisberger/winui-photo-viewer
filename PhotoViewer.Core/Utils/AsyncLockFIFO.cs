@@ -2,29 +2,16 @@
 
 public class AsyncLockFIFO
 {
-    public class AcquiredLock : IDisposable
-    {
-        private readonly Action action;
-
-        public AcquiredLock(Action action)
-        {
-            this.action = action;
-        }
-
-        public void Dispose()
-        {
-            action();
-        }
-    }
-
     private Task waitTask = Task.CompletedTask;
 
-    public Task<AcquiredLock> AcquireAsync()
+    public Task<IDisposable> AcquireAsync()
     {
         lock (this)
         {
             var lockTSC = new TaskCompletionSource();
-            var acquireTask = waitTask.ContinueWith(_ => new AcquiredLock(() => lockTSC.SetResult()));
+            var acquireTask = waitTask.IsCompleted
+               ? Task.FromResult<IDisposable>(new DisposableAction(() => lockTSC.SetResult()))
+               : waitTask.ContinueWith<IDisposable>(_ => new DisposableAction(() => lockTSC.SetResult()));
             waitTask = lockTSC.Task;
             return acquireTask;
         }

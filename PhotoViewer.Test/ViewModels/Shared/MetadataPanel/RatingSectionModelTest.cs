@@ -121,7 +121,7 @@ public class RatingSectionModelTest
 
         ratingSectionModel.Rating = 3;
 
-        await ratingSectionModel.WriteFilesTask;
+        await ratingSectionModel.LastWriteFilesTask;
         await VerifyReceivedWriteMetadataAsync(files[0], 3);
         await VerifyNotReceivedWriteMetadataAsync(files[1]);
         await VerifyReceivedWriteMetadataAsync(files[2], 3);

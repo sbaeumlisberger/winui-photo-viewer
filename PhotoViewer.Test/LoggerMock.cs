@@ -61,6 +61,10 @@ internal class LoggerMock : ILogger
 
         string line = ($"{timestamp} | {level} | {fileName}:{lineNumber} | {message ?? exception?.Message ?? ""}");
 
-        testOutputHelper.WriteLine(line);
+        try
+        {
+            testOutputHelper.WriteLine(line);
+        }
+        catch { }
     }
 }

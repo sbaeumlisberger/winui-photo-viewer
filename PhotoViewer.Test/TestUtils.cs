@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using NSubstitute;
 using NSubstitute.Core;
+using NSubstitute.ReceivedExtensions;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.ViewModels;
 using System.ComponentModel;
-using System.IO;
 using Windows.Storage;
-using Windows.Storage.Streams;
+using Xunit;
+using Xunit.Sdk;
 
 namespace PhotoViewer.Test;
 
@@ -72,5 +72,23 @@ internal static class TestUtils
     internal static ConfiguredCall ReturnsAsyncOperation<T>(this object mock, T returnValue)
     {
         return mock.Returns(Task.FromResult(returnValue).AsAsyncOperation());
+    }
+
+    internal static void CheckSynchronizationContextOfPropertyChangedEvents(INotifyPropertyChanged obj, SynchronizationContext expectedSynchronizationContext)
+    {
+        obj.PropertyChanged += (s, e) =>
+        {
+            if (SynchronizationContext.Current != expectedSynchronizationContext)
+            {
+                Assert.Fail($"Property changed event for \"{e.PropertyName}\" was not invoked on expected synchronization context.");
+            }
+        };
+    }
+
+    public static T ReceivedOnce<T>(this T substitute) where T : class
+    {
+#pragma warning disable NS5000
+        return substitute.Received(Quantity.Exactly(1));
+#pragma warning restore NS5000
     }
 }

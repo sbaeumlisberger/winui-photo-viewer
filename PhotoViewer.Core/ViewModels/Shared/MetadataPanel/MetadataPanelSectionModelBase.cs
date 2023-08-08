@@ -6,6 +6,7 @@ using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
+using PropertyChanged;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +18,8 @@ namespace PhotoViewer.Core.ViewModels
 
         public bool IsWriting { get; private set; }
 
-        internal Task WriteFilesTask => writeLock.AcquireAsync().ContinueWith(task => task.Result.Dispose());
+        [DoNotNotify]
+        internal Task LastWriteFilesTask { get; private set; } = Task.CompletedTask;
 
         protected IImmutableList<IBitmapFileInfo> Files { get; private set; } = ImmutableList<IBitmapFileInfo>.Empty;
 
@@ -64,6 +66,7 @@ namespace PhotoViewer.Core.ViewModels
         protected async Task<ProcessingResult<IBitmapFileInfo>> WriteFilesAsync(Func<IBitmapFileInfo, Task> processFile, bool cancelPrevious = false)
         {
             var task = WriteFilesAsync(Files, processFile, cancelPrevious);
+            LastWriteFilesTask = task;
             backgroundTaskService.RegisterBackgroundTask(task);
             return await task;
         }

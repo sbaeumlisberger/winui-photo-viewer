@@ -51,7 +51,7 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
         this.metadataService = metadataService;
         this.metadataProperty = metadataProperty;
         timer = (timerFactory ?? Timer.Create).Invoke(interval: WaitTime, autoRestart: false);
-        timer.Elapsed += (_, _) => _ = WriteValueAsync();
+        timer.Elapsed += async (_, _) => await WriteValueAsync();
     }
 
     internal MetadataTextboxModel(
@@ -65,7 +65,7 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
         this.metadataService = metadataService;
         this.metadataProperty = metadataProperty;
         timer = (timerFactory ?? Timer.Create).Invoke(interval: WaitTime, autoRestart: false);
-        timer.Elapsed += (_, _) => _ = WriteValueAsync();
+        timer.Elapsed += async (_, _) => await WriteValueAsync();
     }
 
     protected override void OnCleanup()

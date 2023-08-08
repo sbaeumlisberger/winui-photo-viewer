@@ -16,18 +16,25 @@ internal static class DispatcherQueueUtil
         if (!dispatcherQueue.HasThreadAccess)
         {
             var tsc = new TaskCompletionSource();
-            dispatcherQueue.TryEnqueue(() => 
+            try
             {
-                try
+                dispatcherQueue.TryEnqueue(() =>
                 {
-                    action();
-                }
-                catch(Exception ex)
-                {
-                    tsc.SetException(ex);
-                }
-                tsc.SetResult();
-            });
+                    try
+                    {
+                        action();
+                        tsc.SetResult();
+                    }
+                    catch (Exception ex)
+                    {
+                        tsc.SetException(ex);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                tsc.SetException(ex);
+            }
             return tsc.Task;
         }
         else

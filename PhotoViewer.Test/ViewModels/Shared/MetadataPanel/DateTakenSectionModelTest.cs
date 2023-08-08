@@ -175,13 +175,13 @@ public class DateTakenSectionModelTest
 
         dateTakenSectionModel.Date = new DateTime(2023, 02, 28);
 
-        await dateTakenSectionModel.WriteFilesTask;
+        await dateTakenSectionModel.LastWriteFilesTask;
         await metadataService.Received().WriteMetadataAsync(
             Arg.Any<IBitmapFileInfo>(), MetadataProperties.DateTaken, new DateTime(2023, 02, 28, 11, 38, 12));
 
         dateTakenSectionModel.Time = new TimeSpan(07, 19, 46);
 
-        await dateTakenSectionModel.WriteFilesTask;
+        await dateTakenSectionModel.LastWriteFilesTask;
         await metadataService.Received().WriteMetadataAsync(
             Arg.Any<IBitmapFileInfo>(), MetadataProperties.DateTaken, new DateTime(2023, 02, 28, 07, 19, 46));
     }

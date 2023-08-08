@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Utils;
+using PropertyChanged;
 using System.ComponentModel;
 
 namespace PhotoViewer.App.Utils;
@@ -13,7 +14,8 @@ public interface IViewModel : INotifyPropertyChanged
 
 public class ViewModelBase : ObservableObjectBase, IViewModel
 {
-    public Task LastDispatchTask { get; private set; } = Task.CompletedTask;
+    [DoNotNotify]
+    internal Task LastDispatchTask { get; private set; } = Task.CompletedTask;
 
     protected IMessenger Messenger { get; }
 
@@ -64,8 +66,26 @@ public class ViewModelBase : ObservableObjectBase, IViewModel
         if (SynchronizationContext.Current != synchronizationContext)
         {
             var tsc = new TaskCompletionSource();
-            LastDispatchTask = tsc.Task;
-            synchronizationContext.Post(_ => { action(); tsc.SetResult(); }, null);
+            try
+            {             
+                LastDispatchTask = tsc.Task;
+                synchronizationContext.Post(_ =>
+                {
+                    try
+                    {
+                        action();
+                        tsc.SetResult();
+                    }
+                    catch (Exception e)
+                    {
+                        tsc.SetException(e);
+                    }
+                }, null);             
+            }
+            catch (Exception e)
+            {
+                tsc.SetException(e);
+            }
             return tsc.Task;
         }
         else
