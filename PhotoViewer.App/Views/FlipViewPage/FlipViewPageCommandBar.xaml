@@ -55,6 +55,17 @@
                     Modifiers="{x:Bind ViewModel.ImportGpxTrackCommand.AcceleratorModifiers}"/>
             </XamlUICommand.KeyboardAccelerators>
         </XamlUICommand>
+
+        <XamlUICommand
+            x:Key="PrefixFilesByDateUICommand"
+            Label="{x:Bind res:Strings.PrefixFilesByDateUICommand_Label}" 
+            Command="{x:Bind ViewModel.PrefixFilesByDateCommand}">
+            <XamlUICommand.KeyboardAccelerators>
+                <KeyboardAccelerator
+                    Key="{x:Bind ViewModel.PrefixFilesByDateCommand.AcceleratorKey}"
+                    Modifiers="{x:Bind ViewModel.PrefixFilesByDateCommand.AcceleratorModifiers}"/>
+            </XamlUICommand.KeyboardAccelerators>
+        </XamlUICommand>
     </CommandBar.Resources>
 
     <CommandBar.Content>
@@ -138,7 +149,8 @@
     <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource DeleteSingleRawFilesUICommand}"/>
     <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource ShiftDatenTakenUICommand}"/>
     <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource ImportGpxTrackUICommand}"/>
-
+    <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource PrefixFilesByDateUICommand}"/>
+    
     <CommandBar.SecondaryCommands>
         <AppBarButton 
             Icon="OpenLocal" 
@@ -157,6 +169,7 @@
                     <MenuFlyoutItem Command="{StaticResource DeleteSingleRawFilesUICommand}"/>
                     <MenuFlyoutItem Command="{StaticResource ShiftDatenTakenUICommand}"/>
                     <MenuFlyoutItem Command="{StaticResource ImportGpxTrackUICommand}"/>
+                    <MenuFlyoutItem Command="{StaticResource PrefixFilesByDateUICommand}"/>
                 </MenuFlyout>
             </AppBarButton.Flyout>
         </AppBarButton>
