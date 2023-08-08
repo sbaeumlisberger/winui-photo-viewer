@@ -16,7 +16,7 @@ public partial class MoveRawFilesToSubfolderDialogModel : ViewModelBase
     public bool ShowSuccessMessage { get; private set; } = false;
 
     public Progress? Progress { get; private set; }
-    
+
     public IReadOnlyList<string> Errors { get; private set; } = new List<string>();
 
 
@@ -25,7 +25,7 @@ public partial class MoveRawFilesToSubfolderDialogModel : ViewModelBase
     private readonly ApplicationSettings settings;
 
     public MoveRawFilesToSubfolderDialogModel(IReadOnlyCollection<IMediaFileInfo> mediaFiles, ApplicationSettings settings)
-    {    
+    {
         this.mediaFiles = mediaFiles;
         this.settings = settings;
     }
@@ -68,13 +68,19 @@ public partial class MoveRawFilesToSubfolderDialogModel : ViewModelBase
         {
             foreach (var storageFile in mediaFile.StorageFiles)
             {
-                if (BitmapFileInfo.RawFileExtensions.Contains(storageFile.FileType.ToLower())
+                if ((BitmapFileInfo.RawFileExtensions.Contains(storageFile.FileType.ToLower()) 
+                    || BitmapFileInfo.RawMetadataFileExtensions.Contains(storageFile.FileType.ToLower()))
                     && Path.GetDirectoryName(storageFile.Path) is string directoryPath
                     && !directoryPath.EndsWith("/" + settings.RawFilesFolderName))
                 {
                     filesToMove.Add(storageFile);
                 }
             }
+        }
+
+        if (filesToMove.IsEmpty())
+        {
+            return ProcessingResult<IStorageFile>.Completed;
         }
 
         var folder = await filesToMove.First().GetParentAsync();
@@ -86,5 +92,6 @@ public partial class MoveRawFilesToSubfolderDialogModel : ViewModelBase
             await file.MoveAsync(rawFilesFolder);
 
         }, progress, cancellationToken, throwOnCancellation: true);
+
     }
 }

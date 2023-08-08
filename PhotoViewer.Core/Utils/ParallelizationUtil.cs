@@ -23,6 +23,8 @@ namespace PhotoViewer.Core.Utils
 
     public class ProcessingResult<T>
     {
+        public static ProcessingResult<T> Completed => new ProcessingResult<T>(Array.Empty<T>(), Array.Empty<Failure<T>>(), false);
+
         public IReadOnlyCollection<T> ProcessedElements { get; }
 
         public IReadOnlyCollection<Failure<T>> Failures { get; }

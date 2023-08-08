@@ -52,7 +52,7 @@
 
             <StackPanel Margin="0,8,0,0" Spacing="8">
                 <TextBlock TextWrapping="Wrap" Text="{x:Bind res:Strings.ImportGpxTrackDialog_InProgressMessage}"/>
-                <controls:ProgressControl Progress="{x:Bind ViewModel.Progress}"/>
+                <controls:ProgressControl Progress="{x:Bind ViewModel.Progress, Mode=OneWay}"/>
             </StackPanel>
 
             <StackPanel Grid.Row="1" Style="{StaticResource DialogButtonPanel}">
