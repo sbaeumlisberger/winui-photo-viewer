@@ -89,9 +89,9 @@ public class OverviewItemModelTest
 
         await overviewItemModel.ConfirmRenaming();
 
-        Assert.True(overviewItemModel.IsRenaming);
+        Assert.False(overviewItemModel.IsRenaming);
         await mediaFile.DidNotReceive().RenameAsync(Arg.Any<string>());
-        Assert.Equal("", overviewItemModel.NewName);
+        Assert.Equal("TestFile", overviewItemModel.NewName);
         Assert.Equal("TestFile.jpg", overviewItemModel.DisplayName);
     }
 
@@ -104,6 +104,7 @@ public class OverviewItemModelTest
 
         await overviewItemModel.ConfirmRenaming();
        
+        Assert.False(overviewItemModel.IsRenaming);
         await dialogService.Received().ShowDialogAsync(Arg.Any<MessageDialogModel>());
         Assert.Equal("TestFile", overviewItemModel.NewName);
         Assert.Equal("TestFile.jpg", overviewItemModel.DisplayName);

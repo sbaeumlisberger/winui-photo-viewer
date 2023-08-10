@@ -74,7 +74,7 @@ public class ComparePageModelTest
         comparePageModel.OnNavigatedTo(bitmapFiles.Last());
 
         Assert.Equal(left.SelectedBitmapFile, bitmapFiles.Last());
-        Assert.Null(right.SelectedBitmapFile);
+        Assert.Equal(right.SelectedBitmapFile, bitmapFiles.Last());
     }
 
 }
