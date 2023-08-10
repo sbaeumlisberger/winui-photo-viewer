@@ -67,8 +67,7 @@ public static class CollectionsUtil
     }
 
     /// <summary>Returns the successor of the given element or the deafault value if there is no successor.</summary>
-    [return: MaybeNull]
-    public static T GetSuccessor<T>(this IReadOnlyList<T> list, T element)
+    public static T? GetSuccessor<T>(this IReadOnlyList<T> list, T element)
     {
         var index = list.IndexOf(element);
         if (index == -1)
@@ -83,8 +82,7 @@ public static class CollectionsUtil
     }
 
     /// <summary>Returns the predecessor of the given element or the deafault value if there is no predecessor.</summary>
-    [return: MaybeNull]
-    public static T GetPredecessor<T>(this IReadOnlyList<T> list, T element)
+    public static T? GetPredecessor<T>(this IReadOnlyList<T> list, T element)
     {
         var index = list.IndexOf(element);
         if (index == -1)

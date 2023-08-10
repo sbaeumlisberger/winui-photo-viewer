@@ -64,22 +64,25 @@ public partial class FlipViewPageModel : ViewModelBase
 
     public void OnNavigatedTo(object navigationParameter, bool popNavigationState)
     {
-        IMediaFileInfo? restoredMediaFile = null;
-
-        if (popNavigationState && Messenger.Send<PopNavigationStateMessage>().Response is Dictionary<string, object> navigationState)
-        {
-            restoredMediaFile = (IMediaFileInfo?)navigationState[nameof(FlipViewModel.SelectedItem)];
-
-            if (!session.Files.Contains(restoredMediaFile)) 
-            {
-                restoredMediaFile = null;
-            }
-        }
-
         if (session.Files.Any())
         {
-            FlipViewModel.SetItems(session.Files, (IMediaFileInfo?)navigationParameter ?? restoredMediaFile);
-        }    
+            IMediaFileInfo? selectedItem = null;
+
+            if (popNavigationState)
+            {
+                if (Messenger.Send<PopNavigationStateMessage>().Response is Dictionary<string, object> navigationState)
+                {
+                    var oldSelectedItem = (IMediaFileInfo?)navigationState[nameof(FlipViewModel.SelectedItem)];
+                    selectedItem = session.Files.Contains(oldSelectedItem) ? oldSelectedItem : null;
+                }
+            }
+            else
+            {
+                selectedItem = (IMediaFileInfo?)navigationParameter;
+            }
+
+            FlipViewModel.SetItems(session.Files, selectedItem);
+        }
     }
 
     public void OnNavigatedFrom()

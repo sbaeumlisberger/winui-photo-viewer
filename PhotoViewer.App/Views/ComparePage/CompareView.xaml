@@ -27,8 +27,8 @@
         <ProgressRing
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Visibility="{x:Bind ViewModel.ImageViewModel.IsLoading, Mode=OneWay}"
-            IsActive="{x:Bind ViewModel.ImageViewModel.IsLoading, Mode=OneWay}"/>
+            Visibility="{x:Bind ViewModel.ImageViewModel.IsLoading, Mode=OneWay, FallbackValue=Collapsed}"
+            IsActive="{x:Bind ViewModel.ImageViewModel.IsLoading, Mode=OneWay, FallbackValue=False}"/>
 
         <StackPanel
             Orientation="Horizontal"

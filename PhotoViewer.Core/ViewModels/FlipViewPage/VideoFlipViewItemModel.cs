@@ -73,7 +73,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
     {
         initRunner.Cancel();
 
-        playbackCompletionSource.SetResult();
+        playbackCompletionSource.TrySetResult();
 
         if (MediaPlayer is { } mediaPlayer)
         {

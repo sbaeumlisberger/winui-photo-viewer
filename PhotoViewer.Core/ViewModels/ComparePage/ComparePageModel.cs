@@ -41,7 +41,7 @@ public partial class ComparePageModel : ViewModelBase
     {
         Messenger.Send(new ChangeWindowTitleMessage(Strings.ComparePage_Title));
         Left.SelectedBitmapFile = (IBitmapFileInfo)navigationParameter;
-        Right.SelectedBitmapFile = bitmapFiles.GetSuccessor(Left.SelectedBitmapFile);
+        Right.SelectedBitmapFile = bitmapFiles.GetSuccessor(Left.SelectedBitmapFile) ?? Left.SelectedBitmapFile;
     }
 
     private void Left_ViewChanged(object? sender, ViewState e)
