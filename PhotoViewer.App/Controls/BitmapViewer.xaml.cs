@@ -233,7 +233,7 @@ public sealed partial class BitmapViewer : UserControl
         double dummyWidthInDIPs = dummy.ActualWidth * dummy.XamlRoot.RasterizationScale;
         double orginalSizeZoomFactor = BitmapImage.SizeInDIPs.Width / dummyWidthInDIPs;
 
-        if (!MathUtil.ApproximateEquals(scrollViewer.ZoomFactor, orginalSizeZoomFactor))
+        if (MathUtil.ApproximateEquals(scrollViewer.ZoomFactor, 1))
         {
             scrollViewer.Zoom((float)orginalSizeZoomFactor);
         }
