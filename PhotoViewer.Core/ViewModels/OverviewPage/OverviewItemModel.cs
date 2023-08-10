@@ -104,7 +104,7 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
             HasLocation = metadata.Get(MetadataProperties.GeoTag) != null || metadata.Get(MetadataProperties.Address) != null;
             Rating = metadata.Get(MetadataProperties.Rating);
         }
-        catch(Exception ex) 
+        catch (Exception ex)
         {
             Log.Error($"Failed to load metadata for {bitmapFile.FileName}", ex);
         }
@@ -113,43 +113,51 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
     public void CancelRenaming()
     {
         Log.Info("User canceld renaming");
-        IsRenaming = false;
-        NewName = MediaFile.FileNameWithoutExtension;
+        ExitRenaming();
     }
 
     public async Task ConfirmRenaming()
     {
-        Log.Info("User confirmed renaming");
+        if (!IsRenaming) { throw new InvalidOperationException(); }
 
         if (string.IsNullOrWhiteSpace(NewName))
         {
-            Log.Info("Ignore renaming because input was invalid");
+            Log.Debug("User provided invalid file name");
+            ExitRenaming();
             return;
         }
-
-        IsRenaming = false;
 
         if (NewName == MediaFile.FileNameWithoutExtension)
         {
-            Log.Info("Ignore renaming because file name was not changed");
+            Log.Debug("Exit renaming without change");
+            ExitRenaming();
             return;
         }
 
+        Log.Info($"Rename {MediaFile} to {NewName}");
+
         try
-        {          
+        {
             await MediaFile.RenameAsync(NewName);
             DisplayName = MediaFile.DisplayName;
         }
         catch (Exception ex)
         {
             Log.Error($"Failed to rename {MediaFile} to {NewName}", ex);
-            NewName = MediaFile.FileNameWithoutExtension;
             await dialogService.ShowDialogAsync(new MessageDialogModel()
             {
                 Title = Strings.RenameFileErrorDialog_Title,
                 Message = ex.Message
             });
         }
+
+        ExitRenaming();
+    }
+
+    private void ExitRenaming()
+    {
+        NewName = MediaFile.FileNameWithoutExtension;
+        IsRenaming = false;
     }
 
     public override string ToString()

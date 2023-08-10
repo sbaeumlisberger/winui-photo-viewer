@@ -114,15 +114,15 @@ public sealed partial class OverviewItem : UserControl, IMVVMControl<OverviewIte
         return string.Join(" ", Enumerable.Repeat('\uE00A', rating));
     }
 
-    private void FileNameTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
+    private async void FileNameTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.Escape)
         {
-            ViewModel?.CancelRenaming();
+            ViewModel!.CancelRenaming();
         }
         else if (e.Key == VirtualKey.Enter)
         {
-            ViewModel?.ConfirmRenaming();
+            await ViewModel!.ConfirmRenaming();
         }
         else if (e.Key == VirtualKey.Left || e.Key == VirtualKey.Right
             || e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
@@ -131,8 +131,11 @@ public sealed partial class OverviewItem : UserControl, IMVVMControl<OverviewIte
         }
     }
 
-    private void FileNameTextBox_LostFocus(object sender, RoutedEventArgs e)
+    private async void FileNameTextBox_LostFocus(object sender, RoutedEventArgs e)
     {
-        ViewModel?.ConfirmRenaming();
+        if (ViewModel!.IsRenaming)
+        {
+            await ViewModel.ConfirmRenaming();
+        }
     }
 }

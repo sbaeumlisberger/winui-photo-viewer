@@ -161,7 +161,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
 
     public override string ToString()
     {
-        return DisplayName;
+        return GetType().Name + "(" + DisplayName + ")";
     }
 
 }
