@@ -80,7 +80,7 @@ public partial class PrefixFilesByDateDialogModel : ViewModelBase
             cancellationToken.ThrowIfCancellationRequested();
         }
         var filesToRename = files.OrderBy(file => dateTakenDict[file])
-            .Select((file, index) => (File: file, NewName: (++counter).ToString().PadLeft(digits, '0') + "_" + file.FileName))
+            .Select((file, index) => (File: file, NewName: (++counter).ToString().PadLeft(digits, '0') + "_" + file.FileNameWithoutExtension))
             .ToList();
         cancellationToken.ThrowIfCancellationRequested();
         return await ParallelizationUtil.ProcessParallelAsync(filesToRename, async item =>
