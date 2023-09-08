@@ -159,7 +159,10 @@
                     Style="{ThemeResource SubtitleTextBlockStyle}"
                     Text="{x:Bind res:Strings.SettingsPage_AboutSectionTittle}"/>
                 <TextBlock Text="WinUI Photo Viewer"/>
-                <TextBlock Text="Version 1.0.0"/>
+                <TextBlock>
+                    <Run Text="Version"/>
+                    <Run Text="{x:Bind ViewModel.Version}"/>
+                </TextBlock>           
                 <TextBlock Text="© Sebastian Bäumlisberger"/>
                 <HyperlinkButton 
                     Padding="0"

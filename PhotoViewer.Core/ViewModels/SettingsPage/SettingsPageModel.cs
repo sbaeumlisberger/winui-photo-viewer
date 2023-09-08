@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewer.App.Messages;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
@@ -9,9 +8,7 @@ using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.Utils;
 using System.ComponentModel;
-using Tocronx.SimpleAsync;
 using Windows.Storage;
 using Windows.System;
 
@@ -29,6 +26,8 @@ namespace PhotoViewer.Core.ViewModels
 
         public ApplicationSettings Settings { get; }
 
+        public string Version { get; }
+
         internal SettingsPageModel(
             IMessenger messenger,
             ApplicationSettings settings,
@@ -39,6 +38,8 @@ namespace PhotoViewer.Core.ViewModels
             this.dialogService = dialogService;
             Settings = settings;
             Settings.PropertyChanged += Settings_PropertyChanged;
+            var version = AppData.Version;
+            Version = $"{version.Major}.{version.Minor}.{version.Build}";
         }
 
         protected override void OnCleanup()
