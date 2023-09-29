@@ -16,7 +16,7 @@
 		<PackageReference Include="System.Diagnostics.EventLog" Version="7.0.0" />
 		<PackageReference Include="Tocronx.SimpleAsync" Version="1.5.0" />
 		<PackageReference Include="WIC.DotNet" Version="1.3.1" />
-		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.0.5.1" />
+		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
