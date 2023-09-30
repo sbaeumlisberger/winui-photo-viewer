@@ -5,6 +5,7 @@
     xmlns:local="using:PhotoViewer.App.Views"
     xmlns:controls="using:PhotoViewer.App.Controls"
     xmlns:res="using:PhotoViewer.App.Resources"
+    xmlns:models="using:PhotoViewer.App.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -61,7 +62,13 @@
                 SelectedItem="{x:Bind ViewModel.SelectedBitmapFile, Mode=OneWay}"
                 ItemsSource="{x:Bind ViewModel.BitmapFiles, Mode=OneWay}"
                 SelectionChanged="ComboBox_SelectionChanged"
-                Loaded="HideDropDownGlyph"/>
+                Loaded="HideDropDownGlyph">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="models:IMediaFileInfo">
+                        <TextBlock Text="{x:Bind DisplayName}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
 
             <AppBarButton
                 Icon="Forward"
