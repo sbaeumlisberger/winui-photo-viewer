@@ -38,14 +38,14 @@ public class AppModel
         this.mediaFilesLoaderService = mediaFilesLoaderService;
     }
 
-    public async Task OnLaunchedAsync(IActivatedEventArgs activatedEventArgs, Func<MainWindowModel, Task> showWindow) 
+    public async Task OnLaunchedAsync(IActivatedEventArgs activatedEventArgs, Func<MainWindowModel, IMessenger, Task> showWindow) 
     {
         Log.Info("Application launched");
         var stopwatch = Stopwatch.StartNew();
 
         var loadMediaFilesTask = LoadMediaFiles(activatedEventArgs);
 
-        await showWindow(viewModelFactory.CreateMainWindowModel());
+        await showWindow(viewModelFactory.CreateMainWindowModel(), messenger);
 
         messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel)));
 

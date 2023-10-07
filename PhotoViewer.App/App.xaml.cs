@@ -18,6 +18,7 @@ using Windows.Globalization;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 using StringsApp = PhotoViewer.App.Resources.Strings;
 using StringsCore = PhotoViewer.Core.Resources.Strings;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace PhotoViewer.App;
 
@@ -65,10 +66,10 @@ public partial class App : Application
         await TryReportCrashAsync();
     }
 
-    private async Task CreateWindowAsync(MainWindowModel windowModel)
+    private async Task CreateWindowAsync(MainWindowModel windowModel, IMessenger messenger)
     {
         var stopwatch = Stopwatch.StartNew();
-        Window = new MainWindow(windowModel);
+        Window = new MainWindow(windowModel, messenger);
         var initialiationTask = ColorProfileProvider.Instance.InitializeAsync(Window);
         Window.Activate();      
         await initialiationTask;

@@ -25,9 +25,13 @@ public sealed partial class MainWindow : WindowEx
     private readonly MainWindowModel viewModel;
 
     private readonly DialogService dialogService;
-    public MainWindow(MainWindowModel viewModel)
+
+    private readonly IMessenger messenger;
+
+    public MainWindow(MainWindowModel viewModel, IMessenger messenger)
     {
         this.viewModel = viewModel;
+        this.messenger = messenger;
         this.InitializeComponent();
         AppWindow.Closing += AppWindow_Closing;
         Closed += MainWindow_Closed;
@@ -41,11 +45,10 @@ public sealed partial class MainWindow : WindowEx
         viewModel.Subscribe(this, nameof(viewModel.Title), () => Title = viewModel.Title, initialCallback: true);
         viewModel.Subscribe(this, nameof(viewModel.Theme), ApplyTheme, initialCallback: true);
 
-        // TODO
-        viewModel.MessengerPublic.Register<EnterFullscreenMessage>(this, _ => EnterFullscreen());
-        viewModel.MessengerPublic.Register<ExitFullscreenMessage>(this, _ => ExitFullscreen());
-        viewModel.MessengerPublic.Register<NavigateToPageMessage>(this, msg => NavigateToPage(msg.PageType, msg.Parameter));
-        viewModel.MessengerPublic.Register<NavigateBackMessage>(this, _ => NavigateBack());
+        messenger.Register<EnterFullscreenMessage>(this, _ => EnterFullscreen());
+        messenger.Register<ExitFullscreenMessage>(this, _ => ExitFullscreen());
+        messenger.Register<NavigateToPageMessage>(this, msg => NavigateToPage(msg.PageType, msg.Parameter));
+        messenger.Register<NavigateBackMessage>(this, _ => NavigateBack());
            
         FocusManager.LosingFocus += FocusManager_LosingFocus;
     }
@@ -93,6 +96,7 @@ public sealed partial class MainWindow : WindowEx
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
+        messenger.UnregisterAll(this);
         Log.ArchiveLogFile();
     }
 
