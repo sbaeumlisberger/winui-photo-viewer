@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PhotoViewer.Core.Utils;
 
-internal class VirualizedCollection<TKey, TValue> where TKey : notnull
+internal class VirtualizedCollection<TKey, TValue> where TKey : notnull
 {
     public IReadOnlyList<TValue> RealizedValues => cache.Values.ToList();
 
@@ -18,15 +18,15 @@ internal class VirualizedCollection<TKey, TValue> where TKey : notnull
 
     private IReadOnlyList<TKey> keys;
 
-    private readonly int maxAmountPerSide;
+    private readonly int cacheSizePerSide;
 
     private readonly Func<TKey, TValue> load;
     private readonly Action<TValue> cleanup;
 
-    public VirualizedCollection(IReadOnlyList<TKey> keys, int maxAmountPerSide, Func<TKey, TValue> load, Action<TValue> cleanup)
+    public VirtualizedCollection(IReadOnlyList<TKey> keys, int cacheSizePerSide, Func<TKey, TValue> load, Action<TValue> cleanup)
     {
         this.keys = keys;
-        this.maxAmountPerSide = maxAmountPerSide;
+        this.cacheSizePerSide = cacheSizePerSide;
         this.load = load;
         this.cleanup = cleanup;
     }
@@ -45,7 +45,7 @@ internal class VirualizedCollection<TKey, TValue> where TKey : notnull
     public TValue? SetSelectedItem(TKey? selectedItem)
     {
         var keysThatShouldBeCached = selectedItem is not null
-           ? keys.GetNeighbours(selectedItem, maxAmountPerSide).Prepend(selectedItem).ToList()
+           ? keys.GetNeighbours(selectedItem, cacheSizePerSide).Prepend(selectedItem).ToList()
            : new List<TKey>();
 
         var keysToCache = keysThatShouldBeCached.Except(cache.Keys).ToList();

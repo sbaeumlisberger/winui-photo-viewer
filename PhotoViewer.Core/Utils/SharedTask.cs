@@ -1,32 +1,42 @@
-﻿using ABI.System;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using PhotoViewer.App.Utils;
+using System.Collections.Concurrent;
 
 namespace PhotoViewer.Core.Utils;
 
-internal class SharedTask<T>
+internal class SharedTask<T> : IDisposable
 {
     private readonly CancellationTokenSource cts = new();
 
-    private readonly List<CancellationToken> cancellationTokens = new();
+    private readonly ConcurrentBag<CancellationToken> cancellationTokens = new();
 
-    private Task<T>? task;
+    private readonly ConcurrentBag<CancellationTokenRegistration> cancellationTokenRegistrations = new();
 
-    public void Start(Func<CancellationToken, Task<T>> startTask)
+    private readonly Task<T> task;
+
+    private bool isDisposed = false;
+
+    internal Task<T> InternalTask => task;
+
+    public static SharedTask<T> StartNew(Func<CancellationToken, Task<T>> function)
     {
-        task = startTask(cts.Token);
+        return new SharedTask<T>(function);
+    }
+
+    private SharedTask(Func<CancellationToken, Task<T>> function)
+    {
+        task = function(cts.Token);
     }
 
     public Task<T> GetTask(CancellationToken cancellationToken = default)
     {
-        if (task is null)
+        if (isDisposed)
         {
-            throw new InvalidOperationException();
+            throw new ObjectDisposedException(typeof(SharedTask<T>).FullName);
+        }
+
+        if (task.IsCompleted)
+        {
+            return task;
         }
 
         var tsc = new TaskCompletionSource<T>();
@@ -35,29 +45,47 @@ internal class SharedTask<T>
         {
             cancellationTokens.Add(cancellationToken);
 
-            cancellationToken.Register(() =>
+            cancellationTokenRegistrations.Add(cancellationToken.Register(() =>
             {
                 if (cancellationTokens.All(token => token.IsCancellationRequested))
                 {
                     cts.Cancel();
                 }
                 tsc.TrySetCanceled();
-            });
+            }));
         }
 
-        task.ContinueWith(task =>
+        if (cts.Token.IsCancellationRequested)
         {
-            if (task.IsFaulted)
+            tsc.TrySetCanceled();
+        }
+        else
+        {
+            task.ContinueWith(task =>
             {
-                tsc.TrySetException(task.Exception!);
-            }
-            else if (task.IsCompletedSuccessfully)
-            {
-                tsc.TrySetResult(task.Result);
-            }
-        });
+                if (task.IsCompletedSuccessfully)
+                {
+                    tsc.TrySetResult(task.Result);
+                }
+                else if (task.IsFaulted)
+                {
+                    tsc.TrySetException(task.Exception!);
+                }
+                else if (task.IsCanceled)
+                {
+                    tsc.TrySetCanceled();
+                }
+            });
+        }
 
         return tsc.Task;
     }
 
+    public void Dispose()
+    {
+        isDisposed = true;
+        cancellationTokenRegistrations.ForEach(registration => registration.Dispose());
+        cancellationTokenRegistrations.Clear();
+        cts.Dispose();
+    }
 }

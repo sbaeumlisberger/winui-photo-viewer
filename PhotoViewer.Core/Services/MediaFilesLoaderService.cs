@@ -149,7 +149,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             var bitmapFileInfo = new BitmapFileInfo(startFile);
 
             // preload image
-            cachedImageLoaderService.LoadFromFileAsync(bitmapFileInfo, CancellationToken.None);
+            cachedImageLoaderService.Preload(bitmapFileInfo);
 
             return bitmapFileInfo;
         }

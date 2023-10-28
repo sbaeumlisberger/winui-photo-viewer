@@ -5,7 +5,7 @@ using Windows.Graphics.Imaging;
 
 namespace PhotoViewer.App.Models;
 
-public class CanvasVirtualBitmapImageModel : SharedDisposableBase, ICanvasVirtualBitmapImageModel
+public class CanvasVirtualBitmapImageModel : CacheableDisposable, ICanvasVirtualBitmapImageModel
 {
     public string ID { get; }
 

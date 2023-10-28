@@ -14,6 +14,8 @@ namespace PhotoViewer.Core.Services;
 public interface ICachedImageLoaderService
 {
     Task<IBitmapImageModel> LoadFromFileAsync(IBitmapFileInfo file, CancellationToken cancellationToken, bool reload = false);
+
+    void Preload(IBitmapFileInfo file);
 }
 
 internal class CachedImageLoaderService : ICachedImageLoaderService
@@ -22,49 +24,27 @@ internal class CachedImageLoaderService : ICachedImageLoaderService
 
     private readonly IImageLoaderService imageLoaderService;
 
-    private readonly ImageCache cache;
-
-    private readonly Dictionary<IBitmapFileInfo, SharedTask<IBitmapImageModel>> tasks = new();
+    private readonly AsyncCache<IBitmapFileInfo, IBitmapImageModel> cache;
 
     public CachedImageLoaderService(IImageLoaderService imageLoaderService)
     {
         this.imageLoaderService = imageLoaderService;
-        this.cache = new ImageCache(CacheSize);
+        this.cache = new AsyncCache<IBitmapFileInfo, IBitmapImageModel>(CacheSize, image => image.Dispose());
+    }
+
+    public void Preload(IBitmapFileInfo file) 
+    {
+        Task.Run(() => cache.GetAsync(file, imageLoaderService.LoadFromFileAsync));
     }
 
     public async Task<IBitmapImageModel> LoadFromFileAsync(IBitmapFileInfo file, CancellationToken cancellationToken, bool reload = false)
     {
-        if (!reload)
+        if (reload)
         {
-            if (tasks.TryGetValue(file, out var existingTask))
-            {
-                var image = await existingTask.GetTask(cancellationToken);
-                image.Request();
-                return image;
-            }
-            if (cache.TryGet(file, out var cachedImage))
-            {
-                cachedImage.Request();
-                return cachedImage;
-            }
+            cache.Remove(file);
         }
-
-        var sharedTask = new SharedTask<IBitmapImageModel>();
-        tasks[file] = sharedTask;
-        sharedTask.Start(async cancellationToken =>
-        {
-            try
-            {
-                var image = await imageLoaderService.LoadFromFileAsync(file, cancellationToken);
-                cache.Set(file, image);
-                return image;
-            }
-            finally
-            {
-                tasks.Remove(file);
-            }
-        });       
-
-        return await sharedTask.GetTask(cancellationToken);
+        var image = await cache.GetAsync(file, imageLoaderService.LoadFromFileAsync, cancellationToken);
+        image.RequestUsage();
+        return image;
     }
 }

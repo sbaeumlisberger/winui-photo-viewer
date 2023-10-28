@@ -8,9 +8,9 @@ using Xunit;
 
 namespace PhotoViewer.Test.Utils;
 
-public class SharedDisposableBaseTest
+public class CacheableDisposableTest
 {
-    private class SharedDisposable : SharedDisposableBase
+    private class CacheableDisposableImpl : CacheableDisposable
     {
         public bool IsDisposed { get; private set; } = false;
 
@@ -23,7 +23,7 @@ public class SharedDisposableBaseTest
     [Fact]
     public void OnDisposeIsCalled_WhenCreatedAndDisposed() 
     {
-        var sharedDisposable = new SharedDisposable();
+        var sharedDisposable = new CacheableDisposableImpl();
         sharedDisposable.Dispose();
         Assert.True(sharedDisposable.IsDisposed);
     }
@@ -31,8 +31,8 @@ public class SharedDisposableBaseTest
     [Fact]
     public void OnDisposeIsCalled_WhenDisposedSameTimesAsRequested()
     {
-        var sharedDisposable = new SharedDisposable();
-        sharedDisposable.Request();
+        var sharedDisposable = new CacheableDisposableImpl();
+        sharedDisposable.RequestUsage();
 
         sharedDisposable.Dispose();
         sharedDisposable.Dispose();
@@ -43,8 +43,8 @@ public class SharedDisposableBaseTest
     [Fact]
     public void OnDisposeIsNotCalled_WhenDisposedLessTimesThanRequested()
     {
-        var sharedDisposable = new SharedDisposable();
-        sharedDisposable.Request();
+        var sharedDisposable = new CacheableDisposableImpl();
+        sharedDisposable.RequestUsage();
 
         sharedDisposable.Dispose();
 

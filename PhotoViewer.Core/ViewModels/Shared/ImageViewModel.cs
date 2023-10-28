@@ -7,7 +7,10 @@ using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using static PhotoViewer.Core.Models.ImageCache;
+using PhotoViewer.Core.Utils;
+using System.Threading;
+using Tocronx.SimpleAsync;
+using Windows.UI.WebUI;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -38,7 +41,7 @@ public partial class ImageViewModel : ViewModelBase, IImageViewModel
 
     private readonly ICachedImageLoaderService imageService;
 
-    private CancellationTokenSource? cts;
+    private CancelableTaskRunner loadImageRunner = new CancelableTaskRunner();
 
     private readonly IBitmapFileInfo bitmapFile;
 
@@ -56,57 +59,56 @@ public partial class ImageViewModel : ViewModelBase, IImageViewModel
 
     protected override void OnCleanup()
     {
-        cts?.Cancel();
-        cts?.Dispose();
-        Image.DisposeSafely(() => Image = null);
+        loadImageRunner.Cancel(); 
+        Image.DisposeSafely(() => Image = null);  
     }
 
-    private async Task LoadAsync()
+    private async Task LoadAsync(bool reload = false)
     {
-        try
+        await loadImageRunner.RunAndCancelPrevious(async (cancellationToken) =>
         {
-            bool reload = cts != null;
+            try
+            {
+                Image.DisposeSafely(() => Image = null);
 
-            cts?.Cancel();
-            cts?.Dispose();
-            cts = new CancellationTokenSource();
-            Image.DisposeSafely(() => Image = null);
+                IsLoading = true;
+                IsLoadingImageFailed = false;
+                ErrorMessage = string.Empty;
 
-            IsLoading = true;
-            IsLoadingImageFailed = false;
-            ErrorMessage = string.Empty;
+                var image = await imageService.LoadFromFileAsync(bitmapFile, cancellationToken, reload);
+                cancellationToken.ThrowIfCancellationRequested();
+                Image = image;
 
-            Image = await imageService.LoadFromFileAsync(bitmapFile, cts.Token, reload);
-
-            Messenger.Send(new BitmapImageLoadedMessage(bitmapFile, Image));
-        }
-        catch (OperationCanceledException)
-        {
-            Log.Debug($"Canceled loading {bitmapFile.FileName}");
-        }
-        catch (Exception ex)
-        {
-            Log.Error($"Failed to load {bitmapFile.FileName}", ex);
-            IsLoadingImageFailed = true;
-            ErrorMessage = ex.Message;
-        }
-        finally
-        {
-            IsLoading = false;
-        }
+                Messenger.Send(new BitmapImageLoadedMessage(bitmapFile, Image));
+            }
+            catch (OperationCanceledException)
+            {
+                Log.Debug($"Canceled loading {bitmapFile.FileName}");
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Failed to load {bitmapFile.FileName}", ex);
+                IsLoadingImageFailed = true;
+                ErrorMessage = ex.Message;
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        });
     }
 
     private async void OnReceive(BitmapModifiedMesssage msg)
     {
         if (msg.BitmapFile.Equals(bitmapFile))
         {
-            await LoadAsync();
+            await LoadAsync(reload: true);
         }
     }
 
     [RelayCommand(CanExecute = nameof(IsLoadingImageFailed))]
     private async Task ReloadAsync()
     {
-        await LoadAsync();
+        await LoadAsync(reload: true);
     }
 }

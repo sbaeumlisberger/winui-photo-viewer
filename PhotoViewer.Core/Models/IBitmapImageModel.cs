@@ -5,7 +5,7 @@ using Windows.Graphics.Imaging;
 
 namespace PhotoViewer.App.Models;
 
-public interface IBitmapImageModel : ISharedDisposable
+public interface IBitmapImageModel : ICacheableDisposable
 {
     string ID { get; }
 

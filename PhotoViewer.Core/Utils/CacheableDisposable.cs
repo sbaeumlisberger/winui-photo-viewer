@@ -8,25 +8,25 @@ using System.Threading.Tasks;
 
 namespace PhotoViewer.Core.Utils;
 
-public interface ISharedDisposable : IDisposable
+public interface ICacheableDisposable : IDisposable
 {
-    void Request();
+    void RequestUsage();
 }
 
-public abstract class SharedDisposableBase : ISharedDisposable
+public abstract class CacheableDisposable : ICacheableDisposable
 {
-    private int useCount = 1;
+    private int usageCount = 1;
 
-    public void Request()
+    public void RequestUsage()
     {
-        useCount++;
+        usageCount++;
     }
 
     public void Dispose()
     {
-        useCount--;
+        usageCount--;
 
-        if (useCount == 0)
+        if (usageCount == 0)
         {
             Log.Debug("Dispose " + this);
             OnDispose();

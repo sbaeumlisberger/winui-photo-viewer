@@ -77,7 +77,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     private CancellationTokenSource? diashowLoopCancellationTokenSource;
 
-    private VirualizedCollection<IMediaFileInfo, IMediaFlipViewItemModel> itemModels;
+    private VirtualizedCollection<IMediaFileInfo, IMediaFlipViewItemModel> itemModels;
 
     internal MediaFlipViewModel(
         IMessenger messenger,

@@ -52,7 +52,7 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
 
     private int selectedIndex = -1;
 
-    private readonly VirualizedCollection<IBitmapFileInfo, IImageViewModel> imageViewModels;
+    private readonly VirtualizedCollection<IBitmapFileInfo, IImageViewModel> imageViewModels;
 
     public CompareViewModel(
         IObservableReadOnlyList<IBitmapFileInfo> bitmapFiles, 
