@@ -107,16 +107,25 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
         sw.Stop();
         Log.Info($"filesQuery.GetFilesAsync took {sw.ElapsedMilliseconds}ms");
 
-        /* We cannot use the neighboring files if the start file is not one of them. This is the 
-         * case when the application was launched for a shortcut to a file from another folder. */
+        /* We cannot use the neighboring files if the start file is not included. This is the 
+         * case when the application was launched for a shortcut to a file from another folder. 
+         * In addition, the neighbouring files query sometimes just do not work. */
         if (startMediaFile != null && !files.Any(file => file.IsSameFile(startMediaFile.StorageFile)))
         {
-            return new List<IMediaFileInfo>(1) { startMediaFile };
+            if (Path.GetDirectoryName(startMediaFile.FilePath) is string folderPath
+                && await fileSystemService.TryGetFolderAsync(folderPath) is { } folder)
+            {
+                files = await fileSystemService.ListFilesAsync(folder).ConfigureAwait(false);
+            }
+            else
+            {
+                return new List<IMediaFileInfo>() { startMediaFile };
+            }
         }
 
         if (!string.IsNullOrEmpty(config.RAWsFolderName))
         {
-            string? directory = Path.GetDirectoryName(files.FirstOrDefault()?.Path);
+            string? directory = Path.GetDirectoryName(startMediaFile?.FilePath);
 
             if (!string.IsNullOrEmpty(directory))
             {
