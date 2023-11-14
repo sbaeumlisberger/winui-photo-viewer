@@ -308,12 +308,16 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         ViewModel!.RemovePeopleTagCommand.Execute(contextRequestedName);
     }
 
-    private void AutoSuggestBox_LosingFocus(UIElement sender, LosingFocusEventArgs args)
+    private async void AutoSuggestBox_LosingFocus(UIElement sender, LosingFocusEventArgs args)
     {
         if (ViewModel!.SelectionRectInPercent.IsEmpty)
         {
             // set focus to flipview when hiding autosuggestbox
-            args.TrySetNewFocusedElement(this.FindParent<FlipView>()!);
+            var flipView = this.FindParent<FlipView>()!;
+            if (!args.TrySetNewFocusedElement(flipView))
+            {
+                await flipView.TryFocusAsync();
+            }
         }
     }
 

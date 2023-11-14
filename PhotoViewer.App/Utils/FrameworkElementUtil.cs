@@ -31,4 +31,17 @@ public static class FrameworkElementUtil
         var bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.SetProperty | BindingFlags.Instance;
         typeof(UIElement).InvokeMember("ProtectedCursor", bindingFlags, null, frameworkElement, new object[] { cursor });
     }
+
+    public static async Task<bool> TryFocusAsync(this FrameworkElement frameworkElement) 
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            if (frameworkElement.Focus(FocusState.Programmatic)) 
+            {
+                return true;
+            }
+            await Task.Delay(10);
+        }
+        return false;
+    }
 }
