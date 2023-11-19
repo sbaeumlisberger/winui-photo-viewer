@@ -17,7 +17,7 @@ public class MediaFilesLoaderServiceTest
     private const string FolderPath = @"A:\TestFolder";
 
     public readonly ICachedImageLoaderService cachedImageLoaderService = Substitute.For<ICachedImageLoaderService>();
-    
+
     public readonly IFileSystemService fileSystemService = Substitute.For<IFileSystemService>();
 
     private readonly MediaFilesLoaderService mediaFilesLoaderService;
@@ -291,18 +291,29 @@ public class MediaFilesLoaderServiceTest
     }
 
     [Fact]
-    public async Task NeigboringFilesAreIgnoredWhenTheStartFileIsNotPartOfThem()
+    public async Task LoadNeighboringFilesQuery_FallbacksToFilesFromFolderIfTheStartFileIsNotPartOfNeighboringFiles()
     {
-        var files = new List<IStorageFile>
+        string folderPath = "SomeFolder";
+        var startFile = MockStorageFile("Some Other File.jpg", folderPath: folderPath);
+        var filesFromFolder = new List<IStorageFile>
         {
-            MockStorageFile("File 01.jpg"),
-            MockStorageFile("File 02.jpg"),
-            MockStorageFile("File 03.jpg"),
-            MockStorageFile("File 04.jpg"),
-            MockStorageFile("File 05.jpg")
+            startFile,
+            MockStorageFile("File From Folder 01.jpg"),
+            MockStorageFile("File From Folder 02.jpg"),
         };
-        var neighboringFilesQuery = MockNeighboringFilesQuery(files);
-        var startFile = MockStorageFile("Some Other File.jpg");
+        var folder = Substitute.For<IStorageFolder>();
+        fileSystemService.TryGetFolderAsync(folderPath).Returns(folder);
+        fileSystemService.ListFilesAsync(folder).Returns(filesFromFolder);
+        var neighboringFiles = new List<IStorageFile>
+        {
+            MockStorageFile("Neighboring File 01.jpg"),
+            MockStorageFile("Neighboring File 02.jpg"),
+            MockStorageFile("Neighboring File 03.jpg"),
+            MockStorageFile("Neighboring File 04.jpg"),
+            MockStorageFile("Neighboring File 05.jpg"),
+        };
+        var neighboringFilesQuery = MockNeighboringFilesQuery(neighboringFiles);
+
         var config = new LoadMediaConfig(false, null, false);
 
         var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
@@ -317,7 +328,9 @@ public class MediaFilesLoaderServiceTest
 
         var expectedMediaFiles = new[]
         {
-            new []{ "Some Other File.jpg" },
+            new [] { "Some Other File.jpg" },
+            new [] { "File From Folder 01.jpg" },
+            new [] { "File From Folder 02.jpg" },
         };
         AssertMediaFiles(expectedMediaFiles, result.MediaFiles);
     }

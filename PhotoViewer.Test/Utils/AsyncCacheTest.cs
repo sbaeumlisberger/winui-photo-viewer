@@ -29,8 +29,9 @@ public class AsyncCacheTest
         string key = "some-key";
         try
         {
-            var cancelledTask = Task.FromCanceled<ValueObject>(new CancellationToken(true));
-            var task = cache.GetAsync(key, (_, _) => cancelledTask); 
+            var cancellationToken  = new CancellationToken(true);
+            var cancelledTask = Task.FromCanceled<ValueObject>(cancellationToken);
+            var task = cache.GetAsync(key, (_, _) => cancelledTask, cancellationToken); 
         }
         catch (OperationCanceledException) { }
 
