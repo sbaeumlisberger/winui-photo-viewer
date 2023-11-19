@@ -52,7 +52,6 @@ public class IMVVMControlGenerator : IIncrementalGenerator
         var interfaceSymbol = classSymbol.Interfaces.First(i => i.Name == InterfaceName);
         string viewModelType = Utils.GetFullName(interfaceSymbol.TypeArguments.First());
 
-
         var code = $$"""
                 #nullable enable
 
@@ -71,10 +70,21 @@ public class IMVVMControlGenerator : IIncrementalGenerator
 
                     private void InitializeComponentMVVM()
                     {
+                        bool isLoadingStarted = false;
+
+                        Loading += (s, e) =>
+                        {
+                            isLoadingStarted = true;
+                        };
+
                         Unloaded += (s, e) =>
                         {
                             if (_viewModel is {{viewModelType}} currentViewModel)
                             {
+                                if(Parent is not null) 
+                                {
+                                    Log.Warn($"Received unloaded event for {this} but parent is not null");
+                                }
                                 disconnect();
                                 DataContext = null;
                             }
@@ -106,18 +116,23 @@ public class IMVVMControlGenerator : IIncrementalGenerator
                         {                  
                             //Log.Debug($"Connect {this} to {newViewModel}");
                             _viewModel = newViewModel;
-                            ConnectToViewModel(_viewModel);     
-                            if (IsLoaded)
+                            ConnectToViewModel(_viewModel);
+
+                            if(isLoadingStarted || IsLoaded)
                             {
+                                /* When the control has started loading, the bindings are already 
+                                 * initialised and must be updated to use the new view model. 
+                                 * The IsLoaded property is also checked, as the loading event is 
+                                 * not called in every case (e.g. inside a resource dictionary). */
                                 Bindings.Update();
-                            }                     
+                            }
                         }
             
                         void disconnect()
-                        { 
+                        {
                             //Log.Debug($"Disconnect {this} from {_viewModel}");
-                            DisconnectFromViewModel(_viewModel);  
-                            Bindings.StopTracking();                        
+                            DisconnectFromViewModel(_viewModel);
+                            Bindings.StopTracking();
                             _viewModel = null;
                         }
                     }                                   
