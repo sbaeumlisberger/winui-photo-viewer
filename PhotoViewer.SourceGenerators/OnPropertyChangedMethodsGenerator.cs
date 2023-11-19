@@ -69,7 +69,7 @@ public class OnPropertyChangedMethodsGenerator : IIncrementalGenerator
                     {
                         switch(propertyName)
                         {
-                            {{Utils.Indent(4, GenerateCaseStatements(propertyNames))}}
+                            {{Utils.Indent(3, GenerateCaseStatements(propertyNames))}}
                             default:
                                 break;
                         }                    
@@ -106,7 +106,7 @@ public class OnPropertyChangedMethodsGenerator : IIncrementalGenerator
         while (currentClassSymbol != null)
         {
             var properties = currentClassSymbol.GetMembers().OfType<IPropertySymbol>();
-            propertyNames.AddRange(properties.Select(prop => prop.Name));
+            propertyNames.AddRange(properties.Select(property => property.Name));
             currentClassSymbol = currentClassSymbol.BaseType;
         }
 
