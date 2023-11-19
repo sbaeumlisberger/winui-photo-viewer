@@ -115,6 +115,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to loading {0}.
+        /// </summary>
+        internal static string BitmapFlipViewItem_LoadingMessage {
+            get {
+                return ResourceManager.GetString("BitmapFlipViewItem_LoadingMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reload.
         /// </summary>
         internal static string BitmapFlipViewItem_ReloadButton {

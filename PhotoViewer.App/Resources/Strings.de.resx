@@ -135,6 +135,9 @@
   <data name="AspectRadioMode_Orginal" xml:space="preserve">
     <value>Orginal Seitenverhältnis</value>
   </data>
+  <data name="BitmapFlipViewItem_LoadingMessage" xml:space="preserve">
+    <value>{0} wird geladen</value>
+  </data>
   <data name="BitmapFlipViewItem_ReloadButton" xml:space="preserve">
     <value>Wiederholen</value>
   </data>

@@ -34,12 +34,17 @@
             </Grid>
         </controls:BitmapViewer>
 
-        <ProgressRing 
+        <StackPanel 
             HorizontalAlignment="Center"
             VerticalAlignment="Center" 
-            Visibility="{x:Bind ViewModel.ImageViewModel.IsLoading, Mode=OneWay}"
-            IsActive="{x:Bind ViewModel.ImageViewModel.IsLoading, Mode=OneWay}"/>
-        
+            Visibility="{x:Bind ViewModel.ImageViewModel.IsLoading, Mode=OneWay}">
+            <ProgressRing 
+                IsActive="{x:Bind ViewModel.ImageViewModel.IsLoading, Mode=OneWay}"/>
+            <TextBlock
+                Margin="0,8,0,0"
+                Text="{x:Bind x:String.Format(res:Strings.BitmapFlipViewItem_LoadingMessage, ViewModel.MediaItem.FileName)}"/>
+        </StackPanel>
+    
         <StackPanel 
             HorizontalAlignment="Center" 
             VerticalAlignment="Center" 
