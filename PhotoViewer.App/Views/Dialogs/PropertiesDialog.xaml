@@ -19,7 +19,7 @@
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Padding" Value="4"/>
-            <Setter Property="Height" Value="28"/>
+            <Setter Property="MaxHeight" Value="28"/>
         </Style>
         <Style TargetType="TextBlock">
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -41,7 +41,7 @@
 
         <TextBlock VerticalAlignment="Top" Text="{x:Bind res:Strings.PropertiesDialog_FilePath}"/>
         <StackPanel>
-            <TextBox Text="{x:Bind ViewModel.FilePath, Mode=OneWay}" TextWrapping="Wrap"/>
+            <TextBox Text="{x:Bind ViewModel.FilePath, Mode=OneWay}" TextWrapping="Wrap" MaxHeight="280"/>
             <Button Margin="0,4,0,4" 
                 Content="{x:Bind res:Strings.PropertiesDialog_ShowInExplorer}"
                 Command="{x:Bind ViewModel.ShowInFileExplorerCommand}"/>
