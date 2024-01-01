@@ -16,7 +16,7 @@ namespace PhotoViewer.Core.Services
 
         IReadOnlyList<string> GetRecentSuggestions();
 
-        IReadOnlyList<string> FindMatches(string query, int max = 10);
+        IReadOnlyList<string> FindMatches(string query, int max = 12);
 
         Task AddSuggestionAsync(string suggestion);
 
@@ -33,7 +33,7 @@ namespace PhotoViewer.Core.Services
     {
         private record class JsonObject(List<string> Values);
 
-        private const int MaxRecentCount = 10;
+        private const int MaxRecentCount = 12;
 
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
