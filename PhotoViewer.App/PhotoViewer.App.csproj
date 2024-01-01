@@ -47,6 +47,7 @@
     <None Remove="Views\Dialogs\ManageKeywordsDialog.xaml" />
     <None Remove="Views\Dialogs\ManagePeopleDialog.xaml" />
     <None Remove="Views\Dialogs\MoveRawFilesToSubfolderDialog.xaml" />
+    <None Remove="Views\Dialogs\PrefixFilesByDateDialog.xaml" />
     <None Remove="Views\Dialogs\ShiftDatenTakenDialog.xaml" />
     <None Remove="Views\Dialogs\UnhandledExceptionDialog.xaml" />
     <None Remove="Views\FlipViewPage.xaml" />
@@ -99,6 +100,10 @@
   
   <ItemGroup>
     <Page Update="Views\Dialogs\ImportGpxTrackDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Dialogs\PrefixFilesByDateDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
