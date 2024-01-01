@@ -550,10 +550,10 @@
     <value>All Dateien wurden erfolgreich umbenannt.</value>
   </data>
   <data name="PrefixFilesByDateDialog_Title" xml:space="preserve">
-    <value>Dateien anhand Aufnahmedatum umbenennen.</value>
+    <value>Dateien anhand Aufnahmedatum umbenennen</value>
   </data>
   <data name="PrefixFilesByDateUICommand_Label" xml:space="preserve">
-    <value>Dateien anhand Aufnahmedatum umbenennen.</value>
+    <value>Dateien anhand Aufnahmedatum umbenennen</value>
   </data>
   <data name="NoItemsMessage" xml:space="preserve">
     <value>Keine Fotos zum Anzeigen vorhanden</value>

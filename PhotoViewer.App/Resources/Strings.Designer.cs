@@ -1456,7 +1456,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rename files based on date taken..
+        ///   Looks up a localized string similar to Rename files based on date taken.
         /// </summary>
         internal static string PrefixFilesByDateDialog_Title {
             get {
@@ -1465,7 +1465,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rename files based on date taken..
+        ///   Looks up a localized string similar to Rename files based on date taken.
         /// </summary>
         internal static string PrefixFilesByDateUICommand_Label {
             get {

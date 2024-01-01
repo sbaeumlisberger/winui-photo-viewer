@@ -57,6 +57,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         Register<BitmapModifiedMesssage>(OnReceive);
         Register<BitmapImageLoadedMessage>(OnReceive);
         Register<MediaFilesLoadingMessage>(OnReceive);
+        Register<MediaFilesRenamedMessage>(OnReceive);
     }
 
     private void OnReceive(MetadataModifiedMessage msg)
@@ -108,6 +109,14 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
                 FileName = SelectedItemModel.MediaItem.DisplayName;
             }
         }
+    }
+
+    private void OnReceive(MediaFilesRenamedMessage message)
+    {
+        if(SelectedItemModel is not null && message.MediaFiles.Contains(SelectedItemModel.MediaItem))
+        {
+            FileName = SelectedItemModel.MediaItem.DisplayName;
+        }   
     }
 
     partial void OnSelectedItemModelChanged()

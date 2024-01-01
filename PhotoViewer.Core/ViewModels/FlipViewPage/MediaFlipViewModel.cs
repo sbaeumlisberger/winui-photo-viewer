@@ -93,23 +93,25 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
         itemModels = new(Array.Empty<IMediaFileInfo>(), CacheSize, CreateItemModel, CleanupItemModel);
 
-        Messenger.Register<MediaFilesLoadingMessage>(this, OnReceive);
+        Register<MediaFilesLoadingMessage>(OnReceive);
 
-        Messenger.Register<MediaFilesDeletedMessage>(this, OnReceive);
+        Register<MediaFilesDeletedMessage>(OnReceive);
 
-        Messenger.Register<StartDiashowMessage>(this, msg =>
+        Register<StartDiashowMessage>(msg =>
         {
             IsDiashowActive = true;
             ItemModels.ForEach(itemModel => itemModel.IsDiashowActive = true);
             IsDiashowLoopActive = true;
         });
 
-        Messenger.Register<ExitDiashowMessage>(this, msg =>
+        Register<ExitDiashowMessage>(msg =>
         {
             IsDiashowActive = false;
             ItemModels.ForEach(itemModel => itemModel.IsDiashowActive = false);
             IsDiashowLoopActive = false;
         });
+
+        Register<MediaFilesRenamedMessage>(OnReceive);
     }
 
     protected override void OnCleanup()
@@ -178,6 +180,14 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         msg.Files.ForEach(file => Items.Remove(file));
         SelectedItem = Items.ElementAtOrDefault(Math.Min(selectedIndex, Items.Count - 1));
         UpdateFlipViewItemModels();
+    }
+
+    private void OnReceive(MediaFilesRenamedMessage message)
+    {
+        if (SelectedItem is not null && message.MediaFiles.Contains(SelectedItem))
+        {
+            Messenger.Send(new ChangeWindowTitleMessage(SelectedItem.DisplayName ?? ""));
+        }
     }
 
     public void SetItems(IReadOnlyList<IMediaFileInfo> files, IMediaFileInfo? startFile = null)

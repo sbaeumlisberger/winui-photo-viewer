@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 
@@ -23,13 +25,11 @@ public partial class PrefixFilesByDateDialogModel : ViewModelBase
 
     private readonly IReadOnlyCollection<IMediaFileInfo> mediaFiles;
 
-    private readonly ApplicationSettings settings;
     private readonly IMetadataService metadataService;
 
-    public PrefixFilesByDateDialogModel(IReadOnlyCollection<IMediaFileInfo> mediaFiles, ApplicationSettings settings, IMetadataService metadataService)
+    public PrefixFilesByDateDialogModel(IReadOnlyCollection<IMediaFileInfo> mediaFiles, IMetadataService metadataService, IMessenger messenger) : base(messenger)
     {
         this.mediaFiles = mediaFiles;
-        this.settings = settings;
         this.metadataService = metadataService;
     }
 
@@ -44,7 +44,9 @@ public partial class PrefixFilesByDateDialogModel : ViewModelBase
 
         try
         {
-            var result = await MoveRawFilesToSubfolderAsync(mediaFiles, Progress, cts.Token);
+            var result = await NumberFilesByDateAsync(mediaFiles, Progress, cts.Token);
+
+            Messenger.Send(new MediaFilesRenamedMessage(result.ProcessedElements.Select(x => x.File).ToList()));
 
             ShowSuccessMessage = result.IsSuccessful;
             ShowErrorMessage = result.HasFailures;
@@ -64,14 +66,16 @@ public partial class PrefixFilesByDateDialogModel : ViewModelBase
         Progress?.Cancel();
     }
 
-    private async Task<ProcessingResult<(IMediaFileInfo File, string NewName)>> MoveRawFilesToSubfolderAsync(IReadOnlyCollection<IMediaFileInfo> files, IProgress<double> progress, CancellationToken cancellationToken)
+    private async Task<ProcessingResult<(IMediaFileInfo File, string NewName)>> NumberFilesByDateAsync(IReadOnlyCollection<IMediaFileInfo> files, IProgress<double> progress, CancellationToken cancellationToken)
     {
         int counter = 0;
         int digits = files.Count.ToString().Length;
         Dictionary<IMediaFileInfo, DateTime> dateTakenDict = new();
         foreach (IMediaFileInfo file in files)
         {
-            if (file is IBitmapFileInfo bitmapFile && await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.DateTaken) is { } dateTaken)
+            if (file is IBitmapFileInfo bitmapFile
+                && bitmapFile.IsMetadataSupported
+                && await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.DateTaken) is { } dateTaken)
             {
                 dateTakenDict.Add(file, dateTaken);
                 continue;

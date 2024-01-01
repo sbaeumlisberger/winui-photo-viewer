@@ -139,7 +139,7 @@ public class ViewModelFactory : IViewModelFactory
             new DeleteSingleRawFilesCommand(applicationSession, messenger, dialogService),
             new ShiftDatenTakenCommand(applicationSession, messenger, dialogService, metadataService),
             new ImportGpxTrackCommand(applicationSession, messenger, dialogService, metadataService, gpxService),
-            new PrefixFilesByDateCommand(applicationSession, settings, dialogService, metadataService));
+            new PrefixFilesByDateCommand(applicationSession, dialogService, metadataService, messenger));
     }
 
     public IMetadataPanelModel CreateMetadataPanelModel(bool showTagPeopleOnPhotoButton)
