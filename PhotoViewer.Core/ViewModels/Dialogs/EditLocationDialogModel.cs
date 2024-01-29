@@ -1,14 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 
 namespace PhotoViewer.Core.ViewModels;
@@ -71,7 +65,7 @@ public partial class EditLocationDialogModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void RemoveLocation() 
+    public void RemoveLocation()
     {
         Location = null;
     }

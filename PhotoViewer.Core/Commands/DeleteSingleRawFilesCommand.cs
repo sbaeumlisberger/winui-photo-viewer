@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewer.App.Services;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels.Dialogs;
@@ -22,7 +21,7 @@ internal class DeleteSingleRawFilesCommand : AsyncCommandBase, IDeleteSingleRawF
 
     private readonly IDialogService dialogService;
 
-    public DeleteSingleRawFilesCommand(ApplicationSession session, IMessenger messenger, IDialogService dialogService) 
+    public DeleteSingleRawFilesCommand(ApplicationSession session, IMessenger messenger, IDialogService dialogService)
     {
         this.session = session;
         this.messenger = messenger;

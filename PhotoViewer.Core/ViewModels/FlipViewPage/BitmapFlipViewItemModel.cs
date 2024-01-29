@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
-using PhotoViewer.Core.ViewModels;
-using PhotoViewer.Core.Models;
 using PhotoViewer.Core;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.ViewModels;
 using System.ComponentModel;
 
 namespace PhotoViewer.App.ViewModels;
@@ -15,7 +15,7 @@ public interface IBitmapFlipViewItemModel : IMediaFlipViewItemModel
 
 public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewItemModel
 {
-    public IMediaFileInfo MediaItem { get; }
+    public IMediaFileInfo MediaFile { get; }
 
     public bool IsSelected { get; set; } = false;
 
@@ -38,7 +38,7 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
         IViewModelFactory viewModelFactory,
         IMessenger messenger) : base(messenger)
     {
-        MediaItem = bitmapFile;
+        MediaFile = bitmapFile;
         ContextMenuModel = viewModelFactory.CreateMediaFileContextMenuModel();
         ContextMenuModel.Files = new[] { bitmapFile };
 

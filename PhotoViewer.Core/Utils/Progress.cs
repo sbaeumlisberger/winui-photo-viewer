@@ -1,14 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using PhotoViewer.App.Utils;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Tocronx.SimpleAsync;
+﻿using Essentials.NET;
 
 namespace PhotoViewer.Core.Utils;
 
@@ -32,8 +22,12 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
 
     private readonly SynchronizationContext synchronizationContext;
 
-    private double progressPrivate;
-    private bool updateDispatched = false;
+    private readonly object lockObject = new object();
+
+    private readonly Throttle throttle = new Throttle(TimeSpan.FromMilliseconds(40));
+
+    private double value;
+    private TimeSpan? estimatedTimeRemaining;
 
     public Progress(CancellationTokenSource? cts = null, SynchronizationContext? synchronizationContext = null)
     {
@@ -44,44 +38,27 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
 
     public void Report(double progress)
     {
-        Report(progress, null);     
+        Report(progress, null);
     }
 
     public void Report(double progress, TimeSpan? estimatedTimeRemaining = null)
     {
-        if (progress < 0 || progress > 1) 
+        if (progress < 0 || progress > 1)
         {
             throw new ArgumentOutOfRangeException(nameof(progress));
         }
 
-        lock (this)
+        lock (lockObject)
         {
-            progressPrivate = progress;
-
-            if (updateDispatched) 
+            if (progress < value)
             {
                 return;
             }
 
-            updateDispatched = true;
-          
-            synchronizationContext.Post(_ =>
-            {
-                updateDispatched = false;
-                UpdateProgress(progressPrivate);
-                EstimatedTimeRemaining = estimatedTimeRemaining ?? EstimateTimeRemaining();
-            }, null);
-        }
-    }
+            this.value = progress;
+            this.estimatedTimeRemaining = estimatedTimeRemaining ?? EstimateTimeRemaining(progress);
 
-    private void UpdateProgress(double progress)
-    {
-        Value = progress;
-        IsCompleted = Value == 1.0;
-        if (IsCompleted)
-        {
-            IsActive = false;
-            CanCancel = false;
+            throttle.Invoke(UpdateAsync);
         }
     }
 
@@ -97,11 +74,27 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
         cts?.Cancel();
     }
 
-    private TimeSpan? EstimateTimeRemaining()
+    private async Task UpdateAsync()
     {
-        if (Value > 0)
+        await synchronizationContext.PostAsync(() =>
         {
-            return (DateTime.Now - startTime) / Value * (1 - Value);
+            Value = value;
+            EstimatedTimeRemaining = estimatedTimeRemaining;
+
+            if (Value == 1.0)
+            {
+                IsCompleted = true;
+                IsActive = false;
+                CanCancel = false;
+            }
+        });
+    }
+
+    private TimeSpan? EstimateTimeRemaining(double progress)
+    {
+        if (progress > 0)
+        {
+            return (DateTime.Now - startTime) / progress * (1 - progress);
         }
         return null;
     }

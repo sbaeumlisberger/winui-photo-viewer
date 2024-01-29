@@ -1,14 +1,13 @@
-﻿using System;
-using System.Globalization;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
+using Essentials.NET;
 using MetadataAPI;
 using MetadataAPI.Data;
-using Microsoft.VisualBasic;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
+using System.Globalization;
 using Windows.Storage;
 using Windows.System;
 

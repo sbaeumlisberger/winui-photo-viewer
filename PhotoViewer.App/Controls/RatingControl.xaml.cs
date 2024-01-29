@@ -7,7 +7,6 @@ using Microsoft.UI.Xaml.Media;
 using PhotoViewer.App.Utils;
 using System;
 using Windows.UI;
-using Windows.UI.Core;
 
 namespace PhotoViewer.App.Controls;
 

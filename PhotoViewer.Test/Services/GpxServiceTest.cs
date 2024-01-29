@@ -1,18 +1,10 @@
-﻿using MetadataAPI.Data;
-using MetadataAPI;
+﻿using MetadataAPI;
+using MetadataAPI.Data;
 using NSubstitute;
 using PhotoViewer.App.Services;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.Streams;
 using Xunit;
-using NSubstitute.Core;
 
 namespace PhotoViewer.Test.Services;
 
@@ -134,7 +126,7 @@ public class GpxServiceTest
         bool applied = await gpxService.TryApplyGpxTrackToFile(gpxTrack, file);
 
         Assert.True(applied);
-        await metadataService.Received().WriteMetadataAsync(file, MetadataProperties.GeoTag, 
+        await metadataService.Received().WriteMetadataAsync(file, MetadataProperties.GeoTag,
             Arg.Is<GeoTag>(geoTag => IsGeoTagEqualsGpxTrackPoint(geoTag, gpxTrackPoint)));
     }
 

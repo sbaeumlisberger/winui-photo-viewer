@@ -1,10 +1,4 @@
-﻿using PhotoViewer.Core.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.System;
+﻿using Essentials.NET;
 
 namespace PhotoViewer.Test
 {
@@ -20,7 +14,7 @@ namespace PhotoViewer.Test
         {
             var oldSyncContext = Current;
             SetSynchronizationContext(this);
-            return new DisposableAction(() => SetSynchronizationContext(oldSyncContext));
+            return new DelegatingDisposable(() => SetSynchronizationContext(oldSyncContext));
         }
     }
 }

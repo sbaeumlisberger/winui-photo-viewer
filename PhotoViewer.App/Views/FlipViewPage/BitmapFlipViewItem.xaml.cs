@@ -1,10 +1,6 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
-using PhotoViewer.Core.Utils;
-using PhotoViewer.Core.ViewModels;
-using System.ComponentModel;
 
 namespace PhotoViewer.App.Views;
 
@@ -45,7 +41,7 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
             if (ViewModel.PeopleTagToolModel != null)
             {
                 ViewModel.PeopleTagToolModel.UIScaleFactor = uiScaleFactor;
-            }            
+            }
         }
     }
 

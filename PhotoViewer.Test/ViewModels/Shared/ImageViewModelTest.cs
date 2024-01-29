@@ -2,20 +2,12 @@
 using NSubstitute;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils.Logging;
-using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.ViewModels;
-using PhotoViewer.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
 using PhotoViewer.Core.Services;
+using PhotoViewer.Core.ViewModels;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace PhotoViewer.Test.ViewModels.Shared;

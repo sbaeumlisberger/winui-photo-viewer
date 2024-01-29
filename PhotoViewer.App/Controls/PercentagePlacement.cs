@@ -31,7 +31,7 @@ internal class PercentagePlacement : ContentPresenter
     {
         Loaded += PercentagePlacement_Loaded;
         Unloaded += PercentagePlacement_Unloaded;
-        SizeChanged += PercentagePlacement_SizeChanged;        
+        SizeChanged += PercentagePlacement_SizeChanged;
     }
 
     private void PercentagePlacement_Loaded(object sender, RoutedEventArgs e)

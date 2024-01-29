@@ -1,15 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.Utils;
 using PropertyChanged;
 using System.Collections.Immutable;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace PhotoViewer.Core.ViewModels
 {
@@ -26,9 +25,9 @@ namespace PhotoViewer.Core.ViewModels
         private readonly IBackgroundTaskService backgroundTaskService;
         private readonly IDialogService dialogService;
 
-        private readonly AsyncLockFIFO writeLock = new AsyncLockFIFO();
+        private readonly AsyncLock writeLock = new AsyncLock();
 
-        private IList<MetadataView> metadata = Array.Empty<MetadataView>();
+        private IReadOnlyList<MetadataView> metadata = Array.Empty<MetadataView>();
 
         private CancellationTokenSource? cancellationTokenSource;
 
@@ -42,7 +41,7 @@ namespace PhotoViewer.Core.ViewModels
             this.dialogService = dialogService;
         }
 
-        public void UpdateFilesChanged(IImmutableList<IBitmapFileInfo> files, IList<MetadataView> metadata)
+        public void UpdateFilesChanged(IImmutableList<IBitmapFileInfo> files, IReadOnlyList<MetadataView> metadata)
         {
             BeforeFilesChanged();
             Files = files;
@@ -59,65 +58,86 @@ namespace PhotoViewer.Core.ViewModels
 
         protected virtual void BeforeFilesChanged() { }
 
-        protected abstract void OnFilesChanged(IList<MetadataView> metadata);
+        protected abstract void OnFilesChanged(IReadOnlyList<MetadataView> metadata);
 
-        protected abstract void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty);
+        protected abstract void OnMetadataModified(IReadOnlyList<MetadataView> metadata, IMetadataProperty metadataProperty);
 
-        protected async Task<ProcessingResult<IBitmapFileInfo>> WriteFilesAsync(Func<IBitmapFileInfo, Task> processFile, bool cancelPrevious = false)
+        protected async Task<bool> WriteFilesAsync(
+            Func<IBitmapFileInfo, Task> processFile,
+            Action<IReadOnlyList<IBitmapFileInfo>> onComplete)
         {
-            var task = WriteFilesAsync(Files, processFile, cancelPrevious);
+            return await WriteFilesAsync((element, cancellationToken) => processFile(element), onComplete);
+        }
+
+        protected async Task<bool> WriteFilesAndCancelPreviousAsync(
+            Func<IBitmapFileInfo, CancellationToken, Task> processFile,
+            Action<IReadOnlyList<IBitmapFileInfo>> onComplete)
+        {
+            cancellationTokenSource?.Cancel();
+            return await WriteFilesAsync(processFile, onComplete);
+        }
+
+        protected async Task<bool> WriteFilesAsync(
+             Func<IBitmapFileInfo, CancellationToken, Task> processFile,
+             Action<IReadOnlyList<IBitmapFileInfo>> onComplete)
+        {
+            var task = ExecuteWriteFilesAsync(Files, processFile, onComplete);
             LastWriteFilesTask = task;
             backgroundTaskService.RegisterBackgroundTask(task);
             return await task;
         }
 
-        private async Task<ProcessingResult<IBitmapFileInfo>> WriteFilesAsync(
-            IImmutableList<IBitmapFileInfo> files, Func<IBitmapFileInfo, Task> processFile, bool cancelPrevious = false)
+        private async Task<bool> ExecuteWriteFilesAsync(
+            IImmutableList<IBitmapFileInfo> files,
+            Func<IBitmapFileInfo, CancellationToken, Task> processFile,
+            Action<IReadOnlyList<IBitmapFileInfo>> onComplete)
         {
-            if (cancelPrevious)
-            {
-                cancellationTokenSource?.Cancel();
-            }
             cancellationTokenSource?.Dispose();
             cancellationTokenSource = new CancellationTokenSource();
             var cancellationToken = cancellationTokenSource.Token;
 
             using (await writeLock.AcquireAsync())
             {
-                return await ExecuteWriteFilesAsync(files, processFile, cancellationToken);
+                try
+                {
+                    if (ReferenceEquals(files, Files))
+                    {
+                        await RunInContextAsync(() => IsWriting = true);
+                    }
+
+                    var result = await files.TryProcessParallelAsync(processFile, cancellationToken);
+
+                    onComplete(result.ProcessedElements);
+
+                    if (result.HasFailures)
+                    {
+                        await ShowWriteMetadataFailedDialog(result);
+                    }
+
+                    return result.IsSuccessfully;
+                }
+                catch (OperationCanceledException)
+                {
+                    // canceled
+                    return false;
+                }
+                catch (Exception exception)
+                {
+                    Log.Error("Error while writing files", exception);
+                    // TODO
+                    return false;
+                }
+                finally
+                {
+                    if (ReferenceEquals(files, Files))
+                    {
+                        await RunInContextAsync(() => IsWriting = false);
+                    }
+                }
             }
         }
 
-        private async Task<ProcessingResult<IBitmapFileInfo>> ExecuteWriteFilesAsync(
-            IImmutableList<IBitmapFileInfo> files, Func<IBitmapFileInfo, Task> processFile, CancellationToken cancellationToken)
-        {
-            if (ReferenceEquals(files, Files))
-            {
-                await RunInContextAsync(() => IsWriting = true);
-            }
-
-            var task = ParallelizationUtil.ProcessParallelAsync(files, async file =>
-            {
-                await processFile(file).ConfigureAwait(false);
-            },
-            cancellationToken: cancellationToken);
-
-            var result = await task;
-
-            if (ReferenceEquals(files, Files))
-            {
-                await RunInContextAsync(() => IsWriting = false);
-            }
-
-            if (result.HasFailures && !cancellationToken.IsCancellationRequested)
-            {
-                await ShowWriteMetadataFailedDialog(result);
-            }
-
-            return result;
-        }
-
-        private async Task ShowWriteMetadataFailedDialog(ProcessingResult<IBitmapFileInfo> processingResult)
+        private async Task ShowWriteMetadataFailedDialog(ParallelResult<IBitmapFileInfo> processingResult)
         {
             await dialogService.ShowDialogAsync(new MessageDialogModel()
             {

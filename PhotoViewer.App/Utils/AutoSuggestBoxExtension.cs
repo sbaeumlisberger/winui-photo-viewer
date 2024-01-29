@@ -1,14 +1,9 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Windows.System;
 
 namespace PhotoViewer.App.Utils;
 

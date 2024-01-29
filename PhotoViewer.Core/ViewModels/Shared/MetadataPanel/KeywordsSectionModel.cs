@@ -1,16 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.Utils;
-using PropertyChanged;
 using System.Collections.Concurrent;
-using Tocronx.SimpleAsync;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -42,14 +39,14 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
         this.dialogService = dialogService;
     }
 
-    protected override void OnFilesChanged(IList<MetadataView> metadata)
+    protected override void OnFilesChanged(IReadOnlyList<MetadataView> metadata)
     {
         keywords.Clear();
         keywords.AddRange(CreateListItemModels(metadata));
         AutoSuggestBoxText = string.Empty;
     }
 
-    protected override void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty)
+    protected override void OnMetadataModified(IReadOnlyList<MetadataView> metadata, IMetadataProperty metadataProperty)
     {
         if (metadataProperty == MetadataProperties.Keywords)
         {
@@ -72,7 +69,7 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
         return suggestionsService.GetRecentSuggestions();
     }
 
-    private List<ItemWithCountModel> CreateListItemModels(IList<MetadataView> metadata)
+    private List<ItemWithCountModel> CreateListItemModels(IReadOnlyList<MetadataView> metadata)
     {
         return metadata
             .Select(m => m.Get(MetadataProperties.Keywords))
@@ -87,9 +84,7 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
     {
         string keyword = AutoSuggestBoxText.Trim();
 
-        var result = await AddKeywordToFiles(keyword);
-
-        if (result.IsSuccessful)
+        if (await AddKeywordToFiles(keyword))
         {
             if (AutoSuggestBoxText.Trim() == keyword)
             {
@@ -104,7 +99,7 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
     {
         var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
 
-        var result = await WriteFilesAsync(async file =>
+        await WriteFilesAsync(async file =>
         {
             var keywordsOfFile = await metadataService.GetMetadataAsync(file, MetadataProperties.Keywords).ConfigureAwait(false);
 
@@ -114,9 +109,8 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
                 await metadataService.WriteMetadataAsync(file, MetadataProperties.Keywords, keywords).ConfigureAwait(false);
                 modifiedFiles.Add(file);
             }
-        });
-
-        Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.Keywords));
+        },
+        _ => Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.Keywords)));
     }
 
     [RelayCommand]
@@ -125,11 +119,11 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
         await AddKeywordToFiles(keyword);
     }
 
-    private async Task<ProcessingResult<IBitmapFileInfo>> AddKeywordToFiles(string keyword)
+    private async Task<bool> AddKeywordToFiles(string keyword)
     {
         var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
 
-        var result = await WriteFilesAsync(async file =>
+        return await WriteFilesAsync(async file =>
         {
             var keywordsOfFile = await metadataService.GetMetadataAsync(file, MetadataProperties.Keywords).ConfigureAwait(false);
 
@@ -139,11 +133,8 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
                 await metadataService.WriteMetadataAsync(file, MetadataProperties.Keywords, keywords).ConfigureAwait(false);
                 modifiedFiles.Add(file);
             }
-        });
-
-        Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.Keywords));
-
-        return result;
+        },
+        _ => Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.Keywords)));
     }
 
     [RelayCommand]

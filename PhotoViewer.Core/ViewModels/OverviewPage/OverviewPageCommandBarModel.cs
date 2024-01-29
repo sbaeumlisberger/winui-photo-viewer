@@ -1,19 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
-using PhotoViewer.Core.Messages;
+using PhotoViewer.Core;
 using PhotoViewer.Core.Commands;
+using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
-using System.ComponentModel;
-using System.Windows.Input;
-using Windows.Storage;
 using PhotoViewer.Core.ViewModels.Shared;
-using PhotoViewer.Core;
+using Windows.Storage;
 
 namespace PhotoViewer.App.ViewModels;
 
@@ -35,7 +34,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
 
     private readonly IDialogService dialogService;
 
-    private readonly IMediaFilesLoaderService loadMediaItemsService;
+    private readonly IMediaFilesLoaderService mediaFilesLoaderService;
 
     private readonly IRotateBitmapService rotateBitmapService;
 
@@ -44,14 +43,14 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
     internal OverviewPageCommandBarModel(
         IMessenger messenger,
         IDialogService dialogService,
-        IMediaFilesLoaderService loadMediaItemsService,
+        IMediaFilesLoaderService mediaFilesLoaderService,
         IDeleteFilesCommand deleteFilesCommand,
         IRotateBitmapService rotateBitmapService,
         IViewModelFactory viewModelFactory,
         ApplicationSettings settings) : base(messenger)
     {
         this.dialogService = dialogService;
-        this.loadMediaItemsService = loadMediaItemsService;
+        this.mediaFilesLoaderService = mediaFilesLoaderService;
         this.rotateBitmapService = rotateBitmapService;
         this.settings = settings;
         DeleteCommand = deleteFilesCommand;
@@ -69,7 +68,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
     private async Task RotateAsync()
     {
         var files = SelectedItems.OfType<IBitmapFileInfo>().ToList();
-        var result = await ParallelizationUtil.ProcessParallelAsync(files, async (bitmapFile) =>
+        var result = await files.TryProcessParallelAsync(async (bitmapFile) =>
         {
             await rotateBitmapService.RotateClockwise90DegreesAsync(bitmapFile).ConfigureAwait(false);
         });
@@ -77,20 +76,20 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
     }
 
     [RelayCommand]
-    private void ChangeThumbnailSize(double newThumbnailSize) 
+    private void ChangeThumbnailSize(double newThumbnailSize)
     {
         Messenger.Send(new ChangeThumbnailSizeMessage(newThumbnailSize));
     }
 
     [RelayCommand]
-    private async void OpenFolder()
+    private async Task OpenFolderAsync()
     {
         var folderPickerModel = new FolderPickerModel();
         await dialogService.ShowDialogAsync(folderPickerModel);
         if (folderPickerModel.Folder is StorageFolder folder)
         {
             var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName, settings.IncludeVideos);
-            var loadMediaFilesTask = loadMediaItemsService.LoadFolder(folder, config);
+            var loadMediaFilesTask = mediaFilesLoaderService.LoadFolder(folder, config);
             Messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask));
         }
     }

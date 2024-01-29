@@ -1,13 +1,9 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
-using PhotoViewer.Core;
-using System;
-using System.Collections.Generic;
 
 namespace PhotoViewer.App.Views;
 

@@ -1,15 +1,6 @@
-﻿using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils;
-using PhotoViewer.App.Utils.Logging;
-using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Resources;
+﻿using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
-using PhotoViewer.Core.ViewModels;
 using PhotoViewer.Core.ViewModels.Dialogs;
-using System.Windows.Input;
-using Tocronx.SimpleAsync;
-using Windows.Storage;
 using Windows.System;
 
 namespace PhotoViewer.Core.Commands;
@@ -21,7 +12,6 @@ internal class MoveRawFilesToSubfolderCommand : AsyncCommandBase, IMoveRawFilesT
     public VirtualKey AcceleratorKey => VirtualKey.U;
 
     public VirtualKeyModifiers AcceleratorModifiers => VirtualKeyModifiers.Control;
-
 
     private readonly ApplicationSession session;
 

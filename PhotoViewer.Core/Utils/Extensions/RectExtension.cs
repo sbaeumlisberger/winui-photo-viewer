@@ -1,6 +1,4 @@
-﻿using Microsoft.UI.Xaml;
-using System.Runtime.CompilerServices;
-using Windows.Foundation;
+﻿using Windows.Foundation;
 
 namespace PhotoViewer.Core.Utils;
 
@@ -11,7 +9,7 @@ public static class RectExtension
         return !(otherRect.Left > rect.Right || otherRect.Right < rect.Left || otherRect.Top > rect.Bottom || otherRect.Bottom < rect.Top);
     }
 
-    public static double GetCenterX(this Rect rect) 
+    public static double GetCenterX(this Rect rect)
     {
         return rect.Left + rect.Width / 2;
     }

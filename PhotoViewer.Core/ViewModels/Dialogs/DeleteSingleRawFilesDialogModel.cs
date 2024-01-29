@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
-using Windows.Storage;
 
 namespace PhotoViewer.Core.ViewModels.Dialogs;
 
@@ -41,13 +41,26 @@ public partial class DeleteSingleRawFilesDialogModel : ViewModelBase
         ShowConfirmation = false;
         ShowProgress = true;
 
-        var result = await DeleteSingleRawFilesAsync(mediaFiles, Progress, cts.Token);
+        try
+        {
+            var result = await DeleteSingleRawFilesAsync(mediaFiles, Progress, cts.Token);
 
-        ShowSuccessMessage = result.IsSuccessful;
-        ShowErrorMessage = result.HasFailures;
-        Errors = result.Failures.Select(failure => failure.Element.DisplayName + ": " + failure.Exception.Message).ToList();
-
-        ShowProgress = false;
+            ShowProgress = false;
+            ShowSuccessMessage = result.IsSuccessfully;
+            ShowErrorMessage = result.HasFailures;
+            Errors = result.Failures.Select(failure => failure.Element.DisplayName + ": " + failure.Exception.Message).ToList();
+        }
+        catch (OperationCanceledException)
+        {
+            // canceld by user
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to delete single raw files", ex);
+            ShowProgress = false;
+            ShowErrorMessage = true;
+            Errors = new List<string> { ex.Message };
+        }
     }
 
     [RelayCommand]
@@ -56,14 +69,14 @@ public partial class DeleteSingleRawFilesDialogModel : ViewModelBase
         Progress?.Cancel();
     }
 
-    private async Task<ProcessingResult<IMediaFileInfo>> DeleteSingleRawFilesAsync(IReadOnlyCollection<IMediaFileInfo> mediaFiles, IProgress<double> progress, CancellationToken cancellationToken)
+    private async Task<ParallelResult<IMediaFileInfo>> DeleteSingleRawFilesAsync(IReadOnlyCollection<IMediaFileInfo> mediaFiles, IProgress<double> progress, CancellationToken cancellationToken)
     {
         var mediaFilesToDelete = mediaFiles
             .Where(mediaFile => BitmapFileInfo.RawFileExtensions.Contains(mediaFile.FileExtension.ToLower())
                                 && !ExistsFileWithSameName(mediaFiles, mediaFile))
             .ToList();
 
-        var result = await ParallelizationUtil.ProcessParallelAsync(mediaFilesToDelete, async mediaFile =>
+        var result = await mediaFilesToDelete.TryProcessParallelAsync(async mediaFile =>
         {
             foreach (var storageFile in mediaFile.StorageFiles)
             {
@@ -76,7 +89,7 @@ public partial class DeleteSingleRawFilesDialogModel : ViewModelBase
                     // files does no longer exist
                 }
             }
-        }, progress, cancellationToken);
+        }, cancellationToken, progress);
 
         Messenger.Send(new MediaFilesDeletedMessage(result.ProcessedElements));
 

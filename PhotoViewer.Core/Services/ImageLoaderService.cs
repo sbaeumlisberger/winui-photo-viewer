@@ -1,9 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using PhotoViewer.App.Exceptions;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Services;
 using System.Runtime.InteropServices;
 using System.Text;
 using WIC;

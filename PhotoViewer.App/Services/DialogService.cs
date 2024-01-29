@@ -1,7 +1,6 @@
-﻿using Microsoft.UI;
+﻿using Essentials.NET;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using PhotoViewer.App.Resources;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
@@ -170,7 +169,7 @@ public class DialogService
         await dialog.ShowAsync();
     }
 
-    private void InitializeContentDialog(ContentDialog dialog) 
+    private void InitializeContentDialog(ContentDialog dialog)
     {
         dialog.XamlRoot = window.Content.XamlRoot;
         dialog.RequestedTheme = ((FrameworkElement)window.Content).RequestedTheme;

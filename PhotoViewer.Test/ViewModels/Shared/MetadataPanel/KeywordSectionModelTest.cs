@@ -8,16 +8,8 @@ using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tocronx.SimpleAsync;
 using Xunit;
-using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
 
@@ -113,7 +105,7 @@ public class KeywordSectionModelTest
     public async Task AddKeywordCommandCanNotExecute_WhenIsWriting()
     {
         var file = MockBitmapFileInfo();
-        keywordsSectionModel.UpdateFilesChanged(ImmutableList.Create(file), Substitute.For<IList<MetadataView>>());
+        keywordsSectionModel.UpdateFilesChanged(ImmutableList.Create(file), Substitute.For<IReadOnlyList<MetadataView>>());
         keywordsSectionModel.AutoSuggestBoxText = "test";
         var tsc = new TaskCompletionSource();
         metadataService.WriteMetadataAsync(file, MetadataProperties.Keywords, Arg.Any<string[]>()).Returns(tsc.Task);
@@ -137,7 +129,7 @@ public class KeywordSectionModelTest
             MockBitmapFileInfo("Category A/Keyword 1"),
             MockBitmapFileInfo("Category B/Keyword 2"),
             MockBitmapFileInfo("Category C/Keyword 2"));
-        keywordsSectionModel.UpdateFilesChanged(files, Substitute.For<IList<MetadataView>>());
+        keywordsSectionModel.UpdateFilesChanged(files, Substitute.For<IReadOnlyList<MetadataView>>());
         string keyword = "Category B/Keyword 2";
         keywordsSectionModel.AutoSuggestBoxText = keyword;
         var messageCapture = TestUtils.CaptureMessage<MetadataModifiedMessage>(messenger);
@@ -162,7 +154,7 @@ public class KeywordSectionModelTest
             MockBitmapFileInfo("Category A/Keyword 1", "Category B/Keyword 2", "Category C/Keyword 1"),
             MockBitmapFileInfo("Category B/Keyword 2"),
             MockBitmapFileInfo("Category C/Keyword 2", "Category B/Keyword 2"));
-        keywordsSectionModel.UpdateFilesChanged(files, Substitute.For<IList<MetadataView>>());
+        keywordsSectionModel.UpdateFilesChanged(files, Substitute.For<IReadOnlyList<MetadataView>>());
         string keyword = "Category B/Keyword 2";
         var messageCapture = TestUtils.CaptureMessage<MetadataModifiedMessage>(messenger);
 

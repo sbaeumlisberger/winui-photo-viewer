@@ -1,7 +1,6 @@
 ﻿using MetadataAPI;
 using MetadataAPI.Data;
 using PhotoViewer.Core.Models;
-using System.Reflection.Metadata;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -83,11 +82,11 @@ internal class RotateBitmapService : IRotateBitmapService
 
         var people = await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People).ConfigureAwait(false);
 
-        if (people.Any()) 
+        if (people.Any())
         {
             foreach (var peopleTag in people)
             {
-                if (peopleTag.Rectangle == default || peopleTag.Rectangle.IsEmpty) 
+                if (peopleTag.Rectangle == default || peopleTag.Rectangle.IsEmpty)
                 {
                     continue;
                 }

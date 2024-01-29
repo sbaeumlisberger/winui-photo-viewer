@@ -1,17 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using MetadataAPI;
 using MetadataAPI.Data;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using System.Collections.Concurrent;
-using Tocronx.SimpleAsync;
-using Windows.Foundation.Collections;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -55,14 +53,14 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
         }
     }
 
-    protected override void OnFilesChanged(IList<MetadataView> metadata)
+    protected override void OnFilesChanged(IReadOnlyList<MetadataView> metadata)
     {
         people.Clear();
         people.AddRange(CreateItemModels(metadata));
         AutoSuggestBoxText = string.Empty;
     }
 
-    protected override void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty)
+    protected override void OnMetadataModified(IReadOnlyList<MetadataView> metadata, IMetadataProperty metadataProperty)
     {
         people.MatchTo(CreateItemModels(metadata));
     }
@@ -92,7 +90,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
         return suggestionsService.GetRecentSuggestions();
     }
 
-    private List<ItemWithCountModel> CreateItemModels(IList<MetadataView> metadata)
+    private List<ItemWithCountModel> CreateItemModels(IReadOnlyList<MetadataView> metadata)
     {
         return metadata
             .Select(m => m.Get(MetadataProperties.People))
@@ -110,7 +108,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 
         var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
 
-        var result = await WriteFilesAsync(async file =>
+        var success = await WriteFilesAsync(async file =>
         {
             var peopleTagsFromFile = await metadataService.GetMetadataAsync(file, MetadataProperties.People).ConfigureAwait(false);
 
@@ -120,11 +118,10 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
                 await metadataService.WriteMetadataAsync(file, MetadataProperties.People, peopleTagsFromFile).ConfigureAwait(false);
                 modifiedFiles.Add(file);
             }
-        });
+        },
+        _ => Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.People)));
 
-        Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.People));
-
-        if (result.IsSuccessful)
+        if (success)
         {
             if (AutoSuggestBoxText.Trim() == personName)
             {
@@ -139,7 +136,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
     {
         var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
 
-        var result = await WriteFilesAsync(async file =>
+        await WriteFilesAsync(async file =>
         {
             var peopleTags = await metadataService.GetMetadataAsync(file, MetadataProperties.People).ConfigureAwait(false);
 
@@ -148,9 +145,8 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
                 await metadataService.WriteMetadataAsync(file, MetadataProperties.People, peopleTags).ConfigureAwait(false);
                 modifiedFiles.Add(file);
             }
-        });
-
-        Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.People));
+        },
+        _ => Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.People)));
     }
 
     [RelayCommand]

@@ -3,7 +3,6 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Resources;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
-using PhotoViewer.Core.Utils;
 
 namespace PhotoViewer.App.Views;
 

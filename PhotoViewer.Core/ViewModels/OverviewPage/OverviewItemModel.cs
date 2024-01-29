@@ -9,7 +9,6 @@ using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Utils;
-using Tocronx.SimpleAsync;
 
 namespace PhotoViewer.Core.ViewModels;
 

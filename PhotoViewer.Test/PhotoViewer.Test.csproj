@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
+		<TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+    <UseRidGraph>true</UseRidGraph>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Platforms>x86;x64;arm64</Platforms>
@@ -13,6 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="8.1.0" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
 		<PackageReference Include="coverlet.collector" Version="6.0.0">
 			<PrivateAssets>all</PrivateAssets>
@@ -23,7 +26,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="xunit" Version="2.6.5" />
+		<PackageReference Include="xunit" Version="2.6.6" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

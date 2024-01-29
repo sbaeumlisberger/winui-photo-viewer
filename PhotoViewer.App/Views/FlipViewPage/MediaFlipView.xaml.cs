@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Essentials.NET;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using PhotoVieweApp.Utils;
@@ -15,17 +16,17 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
 {
     public MediaFlipView()
     {
-        this.InitializeComponentMVVM();
+        InitializeComponentMVVM();
     }
 
     partial void ConnectToViewModel(MediaFlipViewModel viewModel)
     {
-        viewModel.DeleteAnimationRequested += this.ViewModel_DeleteAnimationRequested;
+        viewModel.DeleteAnimationRequested += ViewModel_DeleteAnimationRequested;
     }
 
     partial void DisconnectFromViewModel(MediaFlipViewModel viewModel)
     {
-        viewModel.DeleteAnimationRequested -= this.ViewModel_DeleteAnimationRequested;
+        viewModel.DeleteAnimationRequested -= ViewModel_DeleteAnimationRequested;
     }
 
     private void ViewModel_DeleteAnimationRequested(object? sender, AsyncEventArgs e)

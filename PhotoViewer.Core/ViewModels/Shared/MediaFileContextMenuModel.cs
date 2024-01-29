@@ -12,7 +12,6 @@ using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels.Dialogs;
-using System.ComponentModel;
 using System.Diagnostics;
 
 namespace PhotoViewer.Core.ViewModels;
@@ -39,7 +38,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
     public bool IsRenameItemVisible => isRenameFilesEnabled && Files.Count == 1;
 
     public bool IsRotateItemVisible => Files.All(file => file is IBitmapFileInfo bitmapFile && rotateBitmapService.CanRotate(bitmapFile));
-    
+
     public bool IsShowPropertiesItemVisible => Files.Count == 1;
 
     public IAcceleratedCommand DeleteCommand { get; }

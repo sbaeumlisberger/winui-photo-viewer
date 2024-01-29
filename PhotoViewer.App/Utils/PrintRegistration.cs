@@ -1,12 +1,12 @@
-﻿using PhotoViewer.App.Utils.Logging;
-using System;
-using Windows.Graphics.Printing.OptionDetails;
-using Windows.Graphics.Printing;
-using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml.Printing;
+﻿using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Printing;
+using PhotoViewer.App.Utils.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Windows.Graphics.Printing;
+using Windows.Graphics.Printing.OptionDetails;
 
 namespace PhotoViewer.App.Utils;
 
@@ -21,43 +21,55 @@ internal class PrintRegistration
         this.printJobFactory = printJobFactory;
     }
 
-    public void OnPrintTaskRequested(PrintManager sender, PrintTaskRequestedEventArgs args)
+    public async void OnPrintTaskRequested(PrintManager sender, PrintTaskRequestedEventArgs args)
     {
         var deferral = args.Request.GetDeferral();
-        dispatcherQueue.TryEnqueueIfRequiredAsync(() =>
+        try
         {
-            var printJob = printJobFactory();
-
-            PrintTask printTask = null!;
-            printTask = args.Request.CreatePrintTask(printJob.Title, sourceRequestedArgs =>
+            await dispatcherQueue.TryEnqueueIfRequiredAsync(() =>
             {
-                CreatePrintSource(printTask, printJob, sourceRequestedArgs);
+                var printJob = printJobFactory();
+
+                PrintTask printTask = null!;
+                printTask = args.Request.CreatePrintTask(printJob.Title, sourceRequestedArgs =>
+                {
+                    CreatePrintSource(printTask, printJob, sourceRequestedArgs);
+                });
+
+                var printTaskOptionDetails = PrintTaskOptionDetails.GetFromPrintTaskOptions(printTask.Options);
+                printJob.SetupPrintOptions(printTaskOptionDetails);
+                printJob.UpdateDisplayedOptions(printTaskOptionDetails);
             });
-
-            var printTaskOptionDetails = PrintTaskOptionDetails.GetFromPrintTaskOptions(printTask.Options);
-            printJob.SetupPrintOptions(printTaskOptionDetails);
-            printJob.UpdateDisplayedOptions(printTaskOptionDetails);
-
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to create print task", ex);
+        }
+        finally
+        {
             deferral.Complete();
-        });
+        }
     }
 
-    void CreatePrintSource(PrintTask printTask, IPrintJob printJob, PrintTaskSourceRequestedArgs sourceRequestedArgs)
+    private async void CreatePrintSource(PrintTask printTask, IPrintJob printJob, PrintTaskSourceRequestedArgs sourceRequestedArgs)
     {
         var deferral = sourceRequestedArgs.GetDeferral();
-        dispatcherQueue.TryEnqueueIfRequiredAsync(() =>
+        try
         {
-            try
+            await dispatcherQueue.TryEnqueueIfRequiredAsync(() =>
             {
                 var printSource = new PrintSource(printTask, printJob);
                 sourceRequestedArgs.SetSource(printSource.PrintDocumentSource);
-                deferral.Complete();
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Failed to create print source", ex);
-            }
-        });
+            });
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to create print source", ex);
+        }
+        finally
+        {
+            deferral.Complete();
+        }
     }
 
     private class PrintSource
@@ -108,14 +120,14 @@ internal class PrintRegistration
             }
         }
 
-        private void PrintTaskOptionDetails_OptionChanged(PrintTaskOptionDetails printTaskOptionDetails, PrintTaskOptionChangedEventArgs args)
+        private async void PrintTaskOptionDetails_OptionChanged(PrintTaskOptionDetails printTaskOptionDetails, PrintTaskOptionChangedEventArgs args)
         {
             if (args.OptionId != null)
             {
                 printJob.UpdateDisplayedOptions(printTaskOptionDetails);
             }
 
-            printDocument.DispatcherQueue.TryEnqueueIfRequiredAsync(() =>
+            await printDocument.DispatcherQueue.TryEnqueueIfRequiredAsync(() =>
             {
                 try
                 {

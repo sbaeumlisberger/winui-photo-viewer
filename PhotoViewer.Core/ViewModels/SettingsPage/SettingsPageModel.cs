@@ -47,7 +47,7 @@ namespace PhotoViewer.Core.ViewModels
             Settings.PropertyChanged -= Settings_PropertyChanged;
         }
 
-        public void OnNavigatedTo() 
+        public void OnNavigatedTo()
         {
             Messenger.Send(new ChangeWindowTitleMessage(Strings.SettingsPage_Title));
         }
@@ -99,7 +99,7 @@ namespace PhotoViewer.Core.ViewModels
                     Settings.Apply(importedSettings);
                     Messenger.Send(new SettingsChangedMessage(null));
                 }
-                catch(Exception ex) 
+                catch (Exception ex)
                 {
                     Log.Error("Failed to import settings", ex);
                     await dialogService.ShowDialogAsync(new MessageDialogModel()

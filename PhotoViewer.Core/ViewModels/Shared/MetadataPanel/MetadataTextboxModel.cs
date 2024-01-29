@@ -1,13 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.Utils;
-using Timer = PhotoViewer.Core.Utils.Timer;
+using System;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -30,13 +30,15 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 
     public bool HasMultipleValues { get; private set; }
 
-    private bool IsDirty => timer.IsEnabled || IsWriting;
+    private bool IsDirty => timer != null && IsWriting;
 
     private readonly IMetadataService metadataService;
 
     private readonly IMetadataProperty metadataProperty;
 
-    private readonly ITimer timer;
+    private readonly TimeProvider timeProvider;
+
+    private ITimer? timer;
 
     internal MetadataTextboxModel(
         IMessenger messenger,
@@ -44,48 +46,45 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
         IDialogService dialogService,
         IBackgroundTaskService backgroundTaskService,
         IMetadataProperty<string> metadataProperty,
-        TimerFactory? timerFactory = null) : base(messenger, backgroundTaskService, dialogService)
+        TimeProvider timeProvider)
+        : base(messenger, backgroundTaskService, dialogService)
     {
         this.metadataService = metadataService;
-        this.metadataProperty = metadataProperty;
-        timer = (timerFactory ?? Timer.Create).Invoke(interval: WaitTime, autoRestart: false);
-        timer.Elapsed += async (_, _) => await WriteValueAsync();
+        this.metadataProperty = metadataProperty;      
+        this.timeProvider = timeProvider;
     }
 
     internal MetadataTextboxModel(
-          IMessenger messenger,
+        IMessenger messenger,
         IMetadataService metadataService,
         IDialogService dialogService,
         IBackgroundTaskService backgroundTaskService,
         IMetadataProperty<string[]> metadataProperty,
-        TimerFactory? timerFactory = null) : base(messenger, backgroundTaskService, dialogService)
+        TimeProvider timeProvider) 
+        : base(messenger, backgroundTaskService, dialogService)
     {
         this.metadataService = metadataService;
         this.metadataProperty = metadataProperty;
-        timer = (timerFactory ?? Timer.Create).Invoke(interval: WaitTime, autoRestart: false);
-        timer.Elapsed += async (_, _) => await WriteValueAsync();
+        this.timeProvider = timeProvider;
     }
 
     protected override void OnCleanup()
     {
-        timer.Dispose();
+        timer.DisposeSafely(() => timer = null);
     }
 
     protected async override void BeforeFilesChanged()
     {
-        if (timer.IsEnabled)
-        {
-            timer.Stop();
-            await WriteFilesAsync(Text);
-        }
+        timer.DisposeSafely(() => timer = null);
+        await WriteFilesAsync(Text);
     }
 
-    protected override void OnFilesChanged(IList<MetadataView> metadata)
+    protected override void OnFilesChanged(IReadOnlyList<MetadataView> metadata)
     {
         Update(metadata);
     }
 
-    protected override void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty)
+    protected override void OnMetadataModified(IReadOnlyList<MetadataView> metadata, IMetadataProperty metadataProperty)
     {
         if (metadataProperty == this.metadataProperty && !IsDirty)
         {
@@ -93,7 +92,7 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
         }
     }
 
-    public void Update(IList<MetadataView> metadata)
+    public void Update(IReadOnlyList<MetadataView> metadata)
     {
         IList<string> values;
 
@@ -131,16 +130,14 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
     private async Task ConfirmAsync()
     {
         Log.Debug("ConfirmAsync invoked");
-        if (timer.IsEnabled)
-        {
-            timer.Stop();
-            await WriteValueAsync();
-        }
+        timer.DisposeSafely(() => timer = null);
+        await WriteValueAsync();        
     }
 
     private void OnTextChangedExternal()
     {
-        timer.Restart();
+        timer.DisposeSafely(() => timer = null);
+        timer = timeProvider.CreateTimer(async _ => await WriteValueAsync(), WaitTime);
         HasMultipleValues = false;
     }
 
@@ -151,12 +148,13 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 
     private async Task WriteFilesAsync(string value)
     {
-        var result = await WriteFilesAsync(async file =>
+        await WriteFilesAndCancelPreviousAsync(async (file, cancellationToken) =>
         {
             if (metadataProperty is IMetadataProperty<string> stringProperty)
             {
                 if (!Equals(value, await metadataService.GetMetadataAsync(file, stringProperty)))
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     await metadataService.WriteMetadataAsync(file, stringProperty, value);
                 }
             }
@@ -165,6 +163,7 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
                 string[] arrayValue = value.Split(";", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToArray();
                 if (!Equals(arrayValue, await metadataService.GetMetadataAsync(file, stringArrayProperty)))
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     await metadataService.WriteMetadataAsync(file, stringArrayProperty, arrayValue);
                 }
             }
@@ -172,11 +171,10 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
             {
                 throw new Exception("metadataProperty is invalid");
             }
-        }, cancelPrevious: true);
-
-        if (!result.IsCanceld)
+        },
+        (processedFiles) =>
         {
-            Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, metadataProperty));
-        }
+            Messenger.Send(new MetadataModifiedMessage(processedFiles, metadataProperty));
+        });
     }
 }

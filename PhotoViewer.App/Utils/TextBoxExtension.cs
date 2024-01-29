@@ -1,11 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Utils.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PhotoViewer.App.Utils;
 
@@ -27,7 +22,7 @@ public class TextBoxExtension
         {
             var clearButton = textBox.FindChild("DeleteButton");
 
-            if(clearButton is null) 
+            if (clearButton is null)
             {
                 textBox.ApplyTemplate();
                 clearButton = textBox.FindChild("DeleteButton");

@@ -3,19 +3,14 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using PhotoVieweApp.Utils;
-using PhotoViewer.Core.ViewModels;
 using PhotoViewer.App.Controls;
 using PhotoViewer.App.Utils;
+using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels;
 using System;
-using System.ComponentModel;
+using System.Linq;
 using Windows.Foundation;
 using Windows.System;
-using System.Linq;
-using Windows.UI.Core;
-using Microsoft.UI.Xaml.Media;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using PhotoViewer.Core.Utils;
 
 namespace PhotoViewer.App.Views;
 public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleToolModel>
@@ -52,7 +47,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
             UpdateSelectionRectBounds(ViewModel.SelectionRectInPercent);
             selectionRect.Visibility = Visibility.Visible;
 
-            if (ViewModel.IsNameInputVisible) 
+            if (ViewModel.IsNameInputVisible)
             {
                 UpdateAutoSuggestBoxContainerPosition();
             }
@@ -88,7 +83,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void PeopleTag_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
-        if (!ViewModel!.IsSelectionEnabled)
+        if (ViewModel != null && !ViewModel.IsSelectionEnabled)
         {
             ((PeopleTagViewModel)((FrameworkElement)sender).DataContext).IsVisible = true;
         }
@@ -96,7 +91,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void PeopleTag_PointerExited(object sender, PointerRoutedEventArgs e)
     {
-        if (!ViewModel!.IsSelectionEnabled)
+        if (ViewModel != null && !ViewModel.IsSelectionEnabled)
         {
             ((PeopleTagViewModel)((FrameworkElement)sender).DataContext).IsVisible = false;
         }
@@ -130,7 +125,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
             var bounds = selectionRect.GetBounds();
 
-            if (bounds.Width <= 1 && bounds.Height <= 1 
+            if (bounds.Width <= 1 && bounds.Height <= 1
                 && DateTime.Now - selectionStartTime < DefaultSelectionTimeSpan)
             {
                 double x = Math.Max(0, point.Position.X - DefaultFaceBoxSize / 2);
@@ -169,15 +164,15 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
     {
         var bounds = selectionRect.GetBounds();
         return new Rect(
-            bounds.X / selectionCanvas.ActualWidth, 
+            bounds.X / selectionCanvas.ActualWidth,
             bounds.Y / selectionCanvas.ActualHeight,
-            bounds.Width / selectionCanvas.ActualWidth, 
+            bounds.Width / selectionCanvas.ActualWidth,
             bounds.Height / selectionCanvas.ActualHeight);
     }
 
     private void UpdateAutoSuggestBoxContainerPosition()
     {
-        if (ViewModel is null) 
+        if (ViewModel is null)
         {
             return;
         }

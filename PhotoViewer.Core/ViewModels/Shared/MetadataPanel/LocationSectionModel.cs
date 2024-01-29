@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using MetadataAPI;
-using MetadataAPI.Data;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils.Logging;
@@ -13,8 +13,7 @@ using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
-using Tocronx.SimpleAsync;
-using Windows.Storage;
+using System.Globalization;
 using Windows.System;
 
 namespace MetadataEditModule.ViewModel;
@@ -54,12 +53,12 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         this.gpxService = gpxService;
     }
 
-    protected override void OnFilesChanged(IList<MetadataView> metadata)
+    protected override void OnFilesChanged(IReadOnlyList<MetadataView> metadata)
     {
         updateRunner.RunAndCancelPrevious(cancellationToken => UpdateAsync(metadata, cancellationToken));
     }
 
-    protected override void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty)
+    protected override void OnMetadataModified(IReadOnlyList<MetadataView> metadata, IMetadataProperty metadataProperty)
     {
         if (metadataProperty == MetadataProperties.Address || metadataProperty == MetadataProperties.GeoTag)
         {
@@ -67,7 +66,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         }
     }
 
-    private async Task UpdateAsync(IList<MetadataView> metadata, CancellationToken cancellationToken)
+    private async Task UpdateAsync(IReadOnlyList<MetadataView> metadata, CancellationToken cancellationToken)
     {
         var addresses = metadata.Select(m => m.Get(MetadataProperties.Address));
         var geoPoints = metadata.Select(m => m.Get(MetadataProperties.GeoTag));
@@ -98,8 +97,8 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
     private async Task ShowLocationOnMapAsync()
     {
         var geopoint = completedLocation!.Geopoint!;
-        string latitude = geopoint.Position.Latitude.ToInvariantString();
-        string longitude = geopoint.Position.Longitude.ToInvariantString();
+        string latitude = geopoint.Position.Latitude.ToString(CultureInfo.InvariantCulture);
+        string longitude = geopoint.Position.Longitude.ToString(CultureInfo.InvariantCulture);
         string description = completedLocation?.Address?.ToString() ?? geopoint.ToDecimalString(); ;
         Uri uri = new Uri(@"bingmaps:?collection=point." + latitude + "_" + longitude + "_" + description + "&sty=a");
         await Launcher.LaunchUriAsync(uri, new LauncherOptions
@@ -145,28 +144,29 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
 
             var modifiedFiles = new List<IBitmapFileInfo>();
 
-            var result = await WriteFilesAsync(async file =>
+            await WriteFilesAndCancelPreviousAsync(async (file, _) =>
             {
                 if (await gpxService.TryApplyGpxTrackToFile(gpxTrack, file))
                 {
                     modifiedFiles.Add(file);
                 }
-            }, cancelPrevious: true);
-
-            Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.GeoTag));
+            },
+            _ => Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.GeoTag)));
         }
     }
 
     private async Task SaveLocation(Location? location)
     {
-        var result = await WriteFilesAsync(async file =>
+        await WriteFilesAsync(async file =>
         {
             await metadataService.WriteMetadataAsync(file, MetadataProperties.Address, location?.Address?.ToAddressTag()).ConfigureAwait(false);
             await metadataService.WriteMetadataAsync(file, MetadataProperties.GeoTag, location?.Geopoint?.ToGeoTag()).ConfigureAwait(false);
-        }, cancelPrevious: true);
-
-        Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.Address));
-        Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.GeoTag));
+        },
+        processedFiles =>
+        {
+            Messenger.Send(new MetadataModifiedMessage(processedFiles, MetadataProperties.Address));
+            Messenger.Send(new MetadataModifiedMessage(processedFiles, MetadataProperties.GeoTag));
+        });
     }
 
     private void UpdateForLocation(Location location)

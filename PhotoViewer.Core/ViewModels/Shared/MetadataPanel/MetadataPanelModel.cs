@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using MetadataAPI;
 using MetadataEditModule.ViewModel;
 using PhotoViewer.App.Messages;
@@ -10,10 +11,7 @@ using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.Utils;
 using System.Collections.Immutable;
-using System.ComponentModel;
-using Tocronx.SimpleAsync;
 
 namespace PhotoViewer.Core.ViewModels
 {
@@ -74,13 +72,13 @@ namespace PhotoViewer.Core.ViewModels
         {
             this.metadataService = metadataService;
 
-            TitleTextboxModel = new MetadataTextboxModel(messenger, metadataService, dialogService, backgroundTaskService, MetadataProperties.Title);
+            TitleTextboxModel = new MetadataTextboxModel(messenger, metadataService, dialogService, backgroundTaskService, MetadataProperties.Title, TimeProvider.System);
             LocationSectionModel = new LocationSectionModel(metadataService, locationService, dialogService, viewModelFactory, gpxService, messenger, backgroundTaskService);
             PeopleSectionModel = new PeopleSectionModel(messenger, metadataService, peopleSuggestionsService, dialogService, backgroundTaskService, tagPeopleOnPhotoButtonVisible);
             KeywordsSectionModel = new KeywordsSectionModel(messenger, metadataService, keywordSuggestionsService, dialogService, backgroundTaskService);
             RatingSectionModel = new RatingSectionModel(metadataService, dialogService, messenger, backgroundTaskService);
-            AuthorTextboxModel = new MetadataTextboxModel(messenger, metadataService, dialogService, backgroundTaskService, MetadataProperties.Author);
-            CopyrightTextboxModel = new MetadataTextboxModel(messenger, metadataService, dialogService, backgroundTaskService, MetadataProperties.Copyright);
+            AuthorTextboxModel = new MetadataTextboxModel(messenger, metadataService, dialogService, backgroundTaskService, MetadataProperties.Author, TimeProvider.System);
+            CopyrightTextboxModel = new MetadataTextboxModel(messenger, metadataService, dialogService, backgroundTaskService, MetadataProperties.Copyright, TimeProvider.System);
             DateTakenSectionModel = new DateTakenSectionModel(messenger, metadataService, dialogService, backgroundTaskService);
 
             IsVisible = applicationSettings.AutoOpenMetadataPanel;
@@ -130,14 +128,14 @@ namespace PhotoViewer.Core.ViewModels
             supportedFiles = Files.OfType<IBitmapFileInfo>().Where(file => file.IsMetadataSupported).ToImmutableList();
             bool allFilsSupported = supportedFiles.Count == Files.Count;
 
-            IsNoFilesSelectedMessageVisible = !Files.Any();         
+            IsNoFilesSelectedMessageVisible = !Files.Any();
             IsUnsupportedFilesMessageVisibile = Files.Any() && !allFilsSupported;
 
             if (Files.Any() && allFilsSupported)
             {
                 try
                 {
-                    var metadata = await supportedFiles.MapParallelAsync(metadataService.GetMetadataAsync, cancellationToken);
+                    var metadata = await supportedFiles.ProcessParallelAsync(metadataService.GetMetadataAsync, cancellationToken);
 
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -160,12 +158,12 @@ namespace PhotoViewer.Core.ViewModels
                     IsInputVisible = false;
                 }
             }
-            else 
+            else
             {
                 IsErrorOccured = false;
                 IsInputVisible = false;
             }
-           
+
             IsLoading = false;
         }
 

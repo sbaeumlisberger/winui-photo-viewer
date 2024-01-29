@@ -1,16 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewer.App.Services;
+using Essentials.NET;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PhotoViewer.Core.ViewModels;
 

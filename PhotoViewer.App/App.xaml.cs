@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
@@ -13,10 +14,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Globalization;
-using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 using StringsApp = PhotoViewer.App.Resources.Strings;
 using StringsCore = PhotoViewer.Core.Resources.Strings;
-using CommunityToolkit.Mvvm.Messaging;
+using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
 namespace PhotoViewer.App;
 
@@ -27,7 +27,7 @@ public partial class App : Application
     public ViewModelFactory ViewModelFactory { get; }
 
     public MainWindow Window { get; private set; } = null!;
-    
+
     private readonly AppModel appModel;
 
     private bool isUnhandeldExceptionDialogShown = false;
@@ -48,7 +48,7 @@ public partial class App : Application
         StringsCore.Culture = new CultureInfo(language);
 
         InitializeComponent();
-       
+
         ViewModelFactory = new ViewModelFactory(applicationSettings);
 
         appModel = ViewModelFactory.CreateAppModel();
@@ -69,7 +69,7 @@ public partial class App : Application
         var stopwatch = Stopwatch.StartNew();
         Window = new MainWindow(windowModel, messenger);
         var initialiationTask = ColorProfileProvider.Instance.InitializeAsync(Window);
-        Window.Activate();      
+        Window.Activate();
         await initialiationTask;
         stopwatch.Stop();
         Log.Info($"CreateWindowAsync took {stopwatch.ElapsedMilliseconds}ms");
@@ -145,7 +145,7 @@ public partial class App : Application
         }
     }
 
-    private async Task TrySendErrorReportAsync() 
+    private async Task TrySendErrorReportAsync()
     {
         Log.Info("Sending error report");
         try

@@ -42,7 +42,7 @@
                 IsActive="{x:Bind ViewModel.ImageViewModel.IsLoading, Mode=OneWay}"/>
             <TextBlock
                 Margin="0,8,0,0"
-                Text="{x:Bind x:String.Format(res:Strings.BitmapFlipViewItem_LoadingMessage, ViewModel.MediaItem.FileName)}"/>
+                Text="{x:Bind x:String.Format(res:Strings.BitmapFlipViewItem_LoadingMessage, ViewModel.MediaFile.FileName)}"/>
         </StackPanel>
     
         <StackPanel 

@@ -1,8 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml;
-using PhotoViewer.Core.Models;
 using System.Text;
-using Windows.Devices.Display.Core;
 
 namespace PhotoViewer.Core.Models;
 

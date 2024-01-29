@@ -86,7 +86,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             return LoadMediaFilesTask.Empty;
         }
 
-        var startFile = fileSystemService.TryGetFileAsync(filePaths.First()).Result;
+        var startFile = fileSystemService.TryGetFileAsync(filePaths.First()).GetAwaiter().GetResult();
 
         var startMediaFile = startFile != null ? GetStartMediaFile(startFile) : null;
 

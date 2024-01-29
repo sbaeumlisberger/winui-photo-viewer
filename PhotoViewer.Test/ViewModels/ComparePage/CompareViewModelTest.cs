@@ -1,18 +1,9 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using Essentials.NET;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace PhotoViewer.Test.ViewModels;
@@ -28,14 +19,14 @@ public class CompareViewModelTest
 
     private readonly IViewModelFactory viewModelFactory = Substitute.For<IViewModelFactory>();
 
-    public CompareViewModelTest() 
+    public CompareViewModelTest()
     {
         bitmapFiles.Add(TestUtils.MockBitmapFile("File 01.jpg"));
         bitmapFiles.Add(TestUtils.MockBitmapFile("File 02.jpg"));
         bitmapFiles.Add(TestUtils.MockBitmapFile("File 03.jpg"));
         bitmapFiles.Add(TestUtils.MockBitmapFile("File 04.jpg"));
         bitmapFiles.Add(TestUtils.MockBitmapFile("File 05.jpg"));
-           
+
         viewModelFactory.CreateImageViewModel(Arg.Any<IBitmapFileInfo>()).ReturnsForAnyArgs(_ => Substitute.For<IImageViewModel>());
 
         compareViewModel = new CompareViewModel(bitmapFiles, new ApplicationSettings(), deleteFilesCommand, viewModelFactory);
@@ -43,7 +34,7 @@ public class CompareViewModelTest
 
 
     [Fact]
-    public void SelectsNextFile_WhenSelectedFileRemoved() 
+    public void SelectsNextFile_WhenSelectedFileRemoved()
     {
         compareViewModel.SelectedBitmapFile = bitmapFiles[2];
 

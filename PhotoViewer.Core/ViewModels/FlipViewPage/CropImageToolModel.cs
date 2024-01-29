@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewer.App.Messages;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
@@ -10,8 +9,6 @@ using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
-using PropertyChanged;
-using Tocronx.SimpleAsync;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Storage;
@@ -78,16 +75,16 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
             {
                 double aspectRadio = AspectRadio.Width / AspectRadio.Height;
                 SelectionInPixels = new RectInt32(
-                    SelectionInPixels.X, 
-                    SelectionInPixels.Y, 
+                    SelectionInPixels.X,
+                    SelectionInPixels.Y,
                     (int)Math.Round(value * aspectRadio),
                     (int)value);
             }
             else
             {
                 SelectionInPixels = new RectInt32(
-                    SelectionInPixels.X, 
-                    SelectionInPixels.Y, 
+                    SelectionInPixels.X,
+                    SelectionInPixels.Y,
                     SelectionInPixels.Width,
                     (int)value);
             }
@@ -192,7 +189,7 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
             FileTypeChoices = new()
             {
                 {
-                    bitmapFile.FileExtension.StripStart(".").ToUpper(),
+                    bitmapFile.FileExtension.TrimStart('.').ToUpper(),
                     new[] { bitmapFile.FileExtension }
                 }
             }

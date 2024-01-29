@@ -7,14 +7,7 @@ using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tocronx.SimpleAsync;
 using Xunit;
 
 namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;

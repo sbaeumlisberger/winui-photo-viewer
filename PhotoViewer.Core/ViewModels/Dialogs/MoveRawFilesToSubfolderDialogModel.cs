@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using Essentials.NET;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
@@ -43,15 +44,21 @@ public partial class MoveRawFilesToSubfolderDialogModel : ViewModelBase
         {
             var result = await MoveRawFilesToSubfolderAsync(mediaFiles, Progress, cts.Token);
 
-            ShowSuccessMessage = result.IsSuccessful;
+            ShowProgress = false;
+            ShowSuccessMessage = result.IsSuccessfully;
             ShowErrorMessage = result.HasFailures;
             Errors = result.Failures.Select(failure => failure.Element.Name + ": " + failure.Exception.Message).ToList();
-
-            ShowProgress = false;
         }
         catch (OperationCanceledException)
         {
-            Log.Info("Moving RAW files to subfolder was canceled");
+            // canceld by user
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to move RAW files to subfolder", ex);
+            ShowProgress = false;
+            ShowErrorMessage = true;
+            Errors = new List<string> { ex.Message };
         }
     }
 
@@ -61,14 +68,14 @@ public partial class MoveRawFilesToSubfolderDialogModel : ViewModelBase
         Progress?.Cancel();
     }
 
-    private async Task<ProcessingResult<IStorageFile>> MoveRawFilesToSubfolderAsync(IReadOnlyCollection<IMediaFileInfo> files, IProgress<double> progress, CancellationToken cancellationToken)
+    private async Task<ParallelResult<IStorageFile>> MoveRawFilesToSubfolderAsync(IReadOnlyCollection<IMediaFileInfo> files, IProgress<double> progress, CancellationToken cancellationToken)
     {
         var filesToMove = new List<IStorageFile>();
         foreach (var mediaFile in files)
         {
             foreach (var storageFile in mediaFile.StorageFiles)
             {
-                if ((BitmapFileInfo.RawFileExtensions.Contains(storageFile.FileType.ToLower()) 
+                if ((BitmapFileInfo.RawFileExtensions.Contains(storageFile.FileType.ToLower())
                     || BitmapFileInfo.RawMetadataFileExtensions.Contains(storageFile.FileType.ToLower()))
                     && Path.GetDirectoryName(storageFile.Path) is string directoryPath
                     && !directoryPath.EndsWith("/" + settings.RawFilesFolderName))
@@ -80,18 +87,17 @@ public partial class MoveRawFilesToSubfolderDialogModel : ViewModelBase
 
         if (filesToMove.IsEmpty())
         {
-            return ProcessingResult<IStorageFile>.Completed;
+            return ParallelResult<IStorageFile>.Empty;
         }
 
         var folder = await filesToMove.First().GetParentAsync();
         var rawFilesFolder = await folder.CreateFolderAsync(settings.RawFilesFolderName, CreationCollisionOption.OpenIfExists);
         cancellationToken.ThrowIfCancellationRequested();
 
-        return await ParallelizationUtil.ProcessParallelAsync(filesToMove, async file =>
+        return await filesToMove.TryProcessParallelAsync(async file =>
         {
             await file.MoveAsync(rawFilesFolder);
-
-        }, progress, cancellationToken, throwOnCancellation: true);
-
+        },
+        cancellationToken, progress);
     }
 }

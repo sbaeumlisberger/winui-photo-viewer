@@ -1,6 +1,5 @@
-﻿using PhotoViewer.App.Utils.Logging;
-using PhotoViewer.Core.Utils;
-using Tocronx.SimpleAsync;
+﻿using Essentials.NET;
+using PhotoViewer.App.Utils.Logging;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -124,7 +123,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
             // MTP allows no paralled file operations. Therefore all operations are
             // synchronized. Due to many issues with passing the file streams to
             // native code like Win2D, the stream is copied to an in-memory stream.
-            using (await mtpLock.GetLookAsync().ConfigureAwait(false))
+            using (await mtpLock.AcquireAsync().ConfigureAwait(false))
             {
                 if (mtpBuffer == null)
                 {

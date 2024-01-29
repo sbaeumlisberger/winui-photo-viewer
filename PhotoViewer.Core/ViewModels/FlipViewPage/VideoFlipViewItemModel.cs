@@ -1,12 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
-using System.Threading.Tasks;
-using Tocronx.SimpleAsync;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
@@ -16,7 +15,7 @@ namespace PhotoViewer.App.ViewModels;
 
 public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemModel
 {
-    public IMediaFileInfo MediaItem { get; }
+    public IMediaFileInfo MediaFile { get; }
 
     public bool IsSelected { get; set; }
 
@@ -29,7 +28,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
     public bool IsContextMenuEnabeld => !IsDiashowActive;
 
     public IMediaFileContextMenuModel ContextMenuModel { get; }
-    
+
     private IRandomAccessStream? mediaStream;
 
     private MediaSource? mediaSource;
@@ -40,7 +39,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     public VideoFlipViewItemModel(IMediaFileInfo mediaFile, IViewModelFactory viewModelFactory, IMessenger messenger) : base(messenger)
     {
-        MediaItem = mediaFile;
+        MediaFile = mediaFile;
         ContextMenuModel = viewModelFactory.CreateMediaFileContextMenuModel();
         ContextMenuModel.Files = new[] { mediaFile };
     }
@@ -49,11 +48,11 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
     {
         await initRunner.RunAndCancelPrevious(async cancellationToken =>
         {
-            mediaStream = await MediaItem.OpenAsRandomAccessStreamAsync(FileAccessMode.Read);
+            mediaStream = await MediaFile.OpenAsRandomAccessStreamAsync(FileAccessMode.Read);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            mediaSource = MediaSource.CreateFromStream(mediaStream, MediaItem.ContentType);
+            mediaSource = MediaSource.CreateFromStream(mediaStream, MediaFile.ContentType);
             mediaSource.StateChanged += MediaSource_StateChanged;
             mediaSource.OpenOperationCompleted += MediaSource_OpenOperationCompleted;
 
@@ -85,7 +84,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
         if (this.mediaSource is { } mediaSource)
         {
-            this.mediaSource = null;            
+            this.mediaSource = null;
             mediaSource.StateChanged -= MediaSource_StateChanged;
             mediaSource.OpenOperationCompleted -= MediaSource_OpenOperationCompleted;
             mediaSource.Dispose();
@@ -140,7 +139,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
     {
         if (args.NewState == MediaSourceState.Failed)
         {
-            Log.Error($"Could not open \"{MediaItem.DisplayName}\"");
+            Log.Error($"Could not open \"{MediaFile.DisplayName}\"");
         }
     }
 
@@ -148,7 +147,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
     {
         if (args.Error?.ExtendedError is not null)
         {
-            Log.Error($"Could not open \"{MediaItem.DisplayName}\"", args.Error.ExtendedError);
+            Log.Error($"Could not open \"{MediaFile.DisplayName}\"", args.Error.ExtendedError);
         }
     }
 
@@ -159,7 +158,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     private void MediaPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
     {
-        Log.Error($"An error occured playing \"{MediaItem.DisplayName}\": {args.Error}: {args.ErrorMessage}", args.ExtendedErrorCode);
+        Log.Error($"An error occured playing \"{MediaFile.DisplayName}\": {args.Error}: {args.ErrorMessage}", args.ExtendedErrorCode);
         playbackCompletionSource.SetResult();
     }
 }

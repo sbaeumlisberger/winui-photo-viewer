@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Media.Imaging;
+﻿using Microsoft.UI.Xaml.Media.Imaging;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils.Logging;
 using System;
@@ -11,7 +10,7 @@ public class MediaFileInfoToThumbnailConverter
 {
     private const int DecodePixelWidth = 512;
 
-    public static BitmapImage Convert(IMediaFileInfo mediaFile) 
+    public static BitmapImage Convert(IMediaFileInfo mediaFile)
     {
         var bitmapImage = new BitmapImage();
         _ = TryLoadThumbnailAsync(mediaFile, bitmapImage);

@@ -1,17 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
-using PhotoViewer.Core.ViewModels;
-using System.Collections.ObjectModel;
-using PhotoViewer.Core.Utils;
-using PhotoViewer.Core.Models;
-using Microsoft.UI.Xaml.Controls;
-using PhotoViewer.Core;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
+using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels;
 
 namespace PhotoViewer.App.ViewModels;
 
@@ -62,14 +60,14 @@ public partial class OverviewPageModel : ViewModelBase
         itemModels.Clear();
     }
 
-    public void OnNavigatedTo() 
+    public void OnNavigatedTo()
     {
         Messenger.Send(new ChangeWindowTitleMessage(Strings.OverviewPage_Title));
     }
 
-    public void ShowItem(IMediaFileInfo mediaItem)
+    public void ShowItem(IMediaFileInfo mediaFile)
     {
-        Messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel), mediaItem));
+        Messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel), mediaFile));
     }
 
     public IOverviewItemModel GetItemModel(IMediaFileInfo mediaFile)
@@ -87,11 +85,11 @@ public partial class OverviewPageModel : ViewModelBase
         try
         {
             ShowLoadingUI = true;
-          
+
             SelectedItems = Array.Empty<IMediaFileInfo>();
             Items = new ObservableList<IMediaFileInfo>();
             itemModels.Values.ForEach(itemModel => itemModel.Cleanup());
-            itemModels.Clear();       
+            itemModels.Clear();
 
             Items = new ObservableList<IMediaFileInfo>((await msg.LoadMediaFilesTask.WaitForResultAsync()).MediaFiles);
         }
@@ -105,9 +103,9 @@ public partial class OverviewPageModel : ViewModelBase
                 Message = Strings.LoadFilesErrorDialog_Message,
             });
         }
-        finally 
-        { 
-            ShowLoadingUI = false; 
+        finally
+        {
+            ShowLoadingUI = false;
         }
     }
 

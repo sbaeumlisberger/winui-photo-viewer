@@ -4,12 +4,9 @@ using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.Core.Messages;
-using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels.Dialogs;
 using System.Diagnostics;
-using Tocronx.SimpleAsync;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -43,12 +40,12 @@ public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
         this.dialogService = dialogService;
     }
 
-    protected override void OnFilesChanged(IList<MetadataView> metadata)
+    protected override void OnFilesChanged(IReadOnlyList<MetadataView> metadata)
     {
         Update(metadata);
     }
 
-    protected override void OnMetadataModified(IList<MetadataView> metadata, IMetadataProperty metadataProperty)
+    protected override void OnMetadataModified(IReadOnlyList<MetadataView> metadata, IMetadataProperty metadataProperty)
     {
         if (metadataProperty == MetadataProperties.DateTaken)
         {
@@ -56,7 +53,7 @@ public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
         }
     }
 
-    private void Update(IList<MetadataView> metadata)
+    private void Update(IReadOnlyList<MetadataView> metadata)
     {
         isUpdating = true;
 
@@ -148,15 +145,15 @@ public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
 
     private async Task WriteFilesAsync(DateTime? dateTaken)
     {
-        var result = await WriteFilesAsync(async file =>
+        await WriteFilesAndCancelPreviousAsync(async (file, cancellationToken) =>
         {
             if (!Equals(dateTaken, await metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken).ConfigureAwait(false)))
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 await metadataService.WriteMetadataAsync(file, MetadataProperties.DateTaken, dateTaken).ConfigureAwait(false);
             }
-        }, cancelPrevious: true);
-
-        Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.DateTaken));
+        },
+        processedFiles => Messenger.Send(new MetadataModifiedMessage(processedFiles, MetadataProperties.DateTaken)));
     }
 
 }

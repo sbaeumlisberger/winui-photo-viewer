@@ -1,13 +1,10 @@
-﻿using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Utils;
+﻿using Essentials.NET;
+using PhotoViewer.Core.Models;
 using System.Globalization;
-using System.Net;
 using System.Text.Json;
 using System.Web;
 using Windows.Devices.Geolocation;
-using Windows.Globalization;
 using Windows.Services.Maps;
-using static System.Net.WebRequestMethods;
 
 namespace PhotoViewer.Core.Services
 {
@@ -51,12 +48,10 @@ namespace PhotoViewer.Core.Services
             {
                 throw new ArgumentNullException(nameof(geopoint));
             }
-            string point = geopoint.Position.Latitude.ToInvariantString()
-                + "," + geopoint.Position.Longitude.ToInvariantString();
-            var uri = new Uri(BaseURL + "/Locations/" + point + ToQueryString(
+            var uri = new Uri(BaseURL + "/Locations/" + ToPointString(geopoint) + ToQueryString(
                 ("key", mapServiceToken),
                 ("culture", BingCultureCode),
-                ("verboseplacenames", "true")                         
+                ("verboseplacenames", "true")
             ));
             var httpClient = new HttpClient();
             var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
@@ -77,8 +72,8 @@ namespace PhotoViewer.Core.Services
                 ("key", mapServiceToken),
                 ("culture", BingCultureCode),
                 ("verboseplacenames", "true"),
-                ("query", query),                
-                ("maxResults", maxResults.ToString())                         
+                ("query", query),
+                ("maxResults", maxResults.ToString())
             ));
             var httpClient = new HttpClient();
             var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
@@ -131,18 +126,18 @@ namespace PhotoViewer.Core.Services
         {
             var addressProperty = entry.GetProperty("address");
 
-            string? addressLine = GetStringProperty(addressProperty, "addressLine");
-            string? postalCode = GetStringProperty(addressProperty, "postalCode");
-            string? locality = GetStringProperty(addressProperty, "locality");
-            string? adminDistrict = GetStringProperty(addressProperty, "adminDistrict");
-            string? countryRegion = GetStringProperty(addressProperty, "countryRegion");
+            string addressLine = GetStringProperty(addressProperty, "addressLine");
+            string postalCode = GetStringProperty(addressProperty, "postalCode");
+            string locality = GetStringProperty(addressProperty, "locality");
+            string adminDistrict = GetStringProperty(addressProperty, "adminDistrict");
+            string countryRegion = GetStringProperty(addressProperty, "countryRegion");
 
             var address = new Address()
             {
-                Street = addressLine ?? "",
+                Street = addressLine,
                 City = StringUtils.JoinNonEmpty(" ", postalCode, locality),
-                Region = adminDistrict ?? "",
-                Country = countryRegion ?? "",
+                Region = adminDistrict,
+                Country = countryRegion,
             };
 
             if (address.ToString() == string.Empty)
@@ -190,10 +185,8 @@ namespace PhotoViewer.Core.Services
             var locations = new List<Location>();
             var uri = new Uri(BaseURL + "/Elevation/List" + ToQueryString(
                 ("key", mapServiceToken),
-                ("points", string.Join(",", geopoints.Select(geopoint =>
-                    geopoint.Position.Latitude.ToInvariantString()
-                    + "," + geopoint.Position.Longitude.ToInvariantString()))),
-                ("heights", "ellipsoid")               
+                ("points", string.Join(",", geopoints.Select(ToPointString))),
+                ("heights", "ellipsoid")
             ));
             var httpClient = new HttpClient();
             var reponseStream = await httpClient.GetStreamAsync(uri).ConfigureAwait(false);
@@ -206,21 +199,27 @@ namespace PhotoViewer.Core.Services
 
         private static string ToQueryString(params (string Key, string Value)[] parameters)
         {
-            var array = parameters.Select(parameter => string.Format(
+            return "?" + string.Join("&", parameters.Select(parameter => string.Format(
                 "{0}={1}",
                 HttpUtility.UrlEncode(parameter.Key),
                 HttpUtility.UrlEncode(parameter.Value)
-            )).ToArray();
-            return "?" + string.Join("&", array);
+            )));
         }
 
-        private static string? GetStringProperty(JsonElement jsonElement, string propertyName)
+        private static string GetStringProperty(JsonElement jsonElement, string propertyName)
         {
             if (jsonElement.TryGetProperty(propertyName, out var property))
             {
-                return property.GetString();
+                return property.GetString() ?? string.Empty;
             }
-            return null;
+            return string.Empty;
+        }
+
+        private string ToPointString(Geopoint geopoint)
+        {
+            string latitude = geopoint.Position.Latitude.ToString(CultureInfo.InvariantCulture);
+            string longitude = geopoint.Position.Longitude.ToString(CultureInfo.InvariantCulture);
+            return latitude + "," + longitude;
         }
     }
 

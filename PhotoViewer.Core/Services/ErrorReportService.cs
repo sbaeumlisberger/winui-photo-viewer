@@ -1,14 +1,8 @@
 ﻿using PhotoViewer.App.Utils.Logging;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
-using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Email;
 using Windows.Storage;
 
 namespace PhotoViewer.Core.Services;

@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using PhotoViewer.App.Resources;
+﻿using PhotoViewer.App.Resources;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Views.Dialogs;
 using PhotoViewer.Core.ViewModels.Dialogs;
@@ -19,7 +18,7 @@ public sealed partial class ImportGpxTrackDialog : MultiViewDialogBase, IMVVMCon
         return string.Format(Strings.ImportGpxTrackDialog_ErrorMessage, updatedFilesCount);
     }
 
-    private string FormatSuccessMessage(int updatedFilesCount) 
+    private string FormatSuccessMessage(int updatedFilesCount)
     {
         return string.Format(Strings.ImportGpxTrackDialog_SuccessMessage, updatedFilesCount);
     }

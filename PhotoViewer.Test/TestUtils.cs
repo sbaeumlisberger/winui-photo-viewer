@@ -6,7 +6,6 @@ using PhotoViewer.Core.Models;
 using System.ComponentModel;
 using Windows.Storage;
 using Xunit;
-using Xunit.Sdk;
 
 namespace PhotoViewer.Test;
 

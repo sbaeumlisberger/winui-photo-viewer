@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using MetadataAPI;
 using MetadataAPI.Data;
 using NSubstitute;
@@ -12,7 +13,6 @@ using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
-using Windows.Media.FaceAnalysis;
 using Xunit;
 
 namespace PhotoViewer.Test.ViewModels.FlipViewPage;
@@ -109,6 +109,7 @@ public class TagPeopleToolModelTest
         tagPeopleToolModel.IsEnabled = true;
 
         messenger.Send(new SetTagPeopleToolActiveMessage(true));
+        await tagPeopleToolModel.LastDispatchTask;
 
         Assert.All(tagPeopleToolModel.TaggedPeople, peopleTagVM => Assert.True(peopleTagVM.IsVisible));
     }
@@ -300,7 +301,7 @@ public class TagPeopleToolModelTest
     }
 
     [Fact]
-    public async Task OnUserStartedSelection_SetsIsNameInputVisibleFalseAndClearsSuggestedFaces() 
+    public async Task OnUserStartedSelection_SetsIsNameInputVisibleFalseAndClearsSuggestedFaces()
     {
         await InitializeTagPeopleToolModel(active: true, enbaled: true);
 

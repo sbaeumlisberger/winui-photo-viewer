@@ -1,13 +1,5 @@
-﻿using PhotoViewer.App.Utils.Logging;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.Eventing.Reader;
 using Windows.Foundation.Collections;
-using Windows.Storage;
 
 namespace PhotoViewer.Core.Services;
 

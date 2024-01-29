@@ -1,3 +1,4 @@
+using Essentials.NET;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -5,9 +6,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using PhotoVieweApp.Utils;
 using PhotoViewer.App.Utils;
-using PhotoViewer.Core.Utils;
 using System;
-using System.Diagnostics;
 using Windows.Foundation;
 using Windows.System;
 
@@ -231,7 +230,7 @@ public sealed partial class SelectionRect : UserControl
             else if (activeElement.Name == nameof(borderTop))
             {
                 double maxHeight = aspectRadio is null ? canvas.ActualHeight : canvas.ActualWidth / (double)aspectRadio;
-                double height = Math.Min(MathUtil.Diff(startBounds.Bottom, currentPointerPosition.Y), maxHeight);
+                double height = Math.Min(MathUtils.Diff(startBounds.Bottom, currentPointerPosition.Y), maxHeight);
                 double width = aspectRadio is null ? startBounds.Width : height * (double)aspectRadio;
                 double y = currentPointerPosition.Y < startBounds.Bottom ? startBounds.Bottom - height : startBounds.Bottom;
                 double x = Math.Max((startBounds.X + startBounds.Width / 2) - width / 2, 0);
@@ -246,7 +245,7 @@ public sealed partial class SelectionRect : UserControl
             else if (activeElement.Name == nameof(borderRight))
             {
                 double maxWidth = aspectRadio is null ? canvas.ActualWidth : canvas.ActualHeight * (double)aspectRadio;
-                double width = Math.Min(MathUtil.Diff(startBounds.Left, currentPointerPosition.X), maxWidth);
+                double width = Math.Min(MathUtils.Diff(startBounds.Left, currentPointerPosition.X), maxWidth);
                 double height = aspectRadio is null ? startBounds.Height : width / (double)aspectRadio;
                 double x = currentPointerPosition.X < startBounds.Left ? startBounds.Left - width : startBounds.Left;
                 double y = Math.Max((startBounds.Y + startBounds.Height / 2) - height / 2, 0);
@@ -261,7 +260,7 @@ public sealed partial class SelectionRect : UserControl
             else if (activeElement.Name == nameof(borderBottom))
             {
                 double maxHeight = aspectRadio is null ? canvas.ActualHeight : canvas.ActualWidth / (double)aspectRadio;
-                double height = Math.Min(MathUtil.Diff(startBounds.Top, currentPointerPosition.Y), maxHeight);
+                double height = Math.Min(MathUtils.Diff(startBounds.Top, currentPointerPosition.Y), maxHeight);
                 double width = aspectRadio is null ? startBounds.Width : height * (double)aspectRadio;
                 double y = currentPointerPosition.Y < startBounds.Top ? startBounds.Top - height : startBounds.Top;
                 double x = Math.Max((startBounds.X + startBounds.Width / 2) - width / 2, 0);
@@ -276,7 +275,7 @@ public sealed partial class SelectionRect : UserControl
             else if (activeElement.Name == nameof(borderLeft))
             {
                 double maxWidth = aspectRadio is null ? canvas.ActualWidth : canvas.ActualHeight * (double)aspectRadio;
-                double width = Math.Min(MathUtil.Diff(startBounds.Right, currentPointerPosition.X), maxWidth);
+                double width = Math.Min(MathUtils.Diff(startBounds.Right, currentPointerPosition.X), maxWidth);
                 double height = aspectRadio is null ? startBounds.Height : width / (double)aspectRadio;
                 double x = currentPointerPosition.X < startBounds.Right ? startBounds.Right - width : startBounds.Right;
                 double y = Math.Max((startBounds.Y + startBounds.Height / 2) - height / 2, 0);

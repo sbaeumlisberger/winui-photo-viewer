@@ -1,8 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
+using PhotoViewer.App.Utils;
 using System;
 using Windows.Graphics.Printing;
 using WinUIEx;
-using PhotoViewer.App.Utils;
 
 namespace PhotoViewer.App.Services;
 

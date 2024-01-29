@@ -1,9 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using PhotoViewer.App.Utils;
-using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.Utils;
 using System.ComponentModel;
 using System.Globalization;
 using Windows.Devices.Geolocation;
@@ -62,17 +60,25 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
         {
             return;
         }
+
         isUpdating = true;
+
         this.location = location;
-        Street = location?.Address?.Street ?? string.Empty;
-        City = location?.Address?.City ?? string.Empty;
-        Region = location?.Address?.Region ?? string.Empty;
-        Country = location?.Address?.Country ?? string.Empty;
-        Latitude = location?.Geopoint?.Position.Latitude.ToInvariantString() ?? string.Empty;
-        Longitude = location?.Geopoint?.Position.Longitude.ToInvariantString() ?? string.Empty;
-        Altitude = location?.Geopoint?.Position.Altitude.ToString() ?? string.Empty;
-        AltitudeReferenceSystem = location?.Geopoint?.AltitudeReferenceSystem ?? AltitudeReferenceSystem.Unspecified;
+
+        var address = location?.Address;
+        Street = address?.Street ?? string.Empty;
+        City = address?.City ?? string.Empty;
+        Region = address?.Region ?? string.Empty;
+        Country = address?.Country ?? string.Empty;
+
+        var geopoint = location?.Geopoint;
+        Latitude = geopoint?.Position.Latitude.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+        Longitude = geopoint?.Position.Longitude.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+        Altitude = geopoint?.Position.Altitude.ToString() ?? string.Empty;
+        AltitudeReferenceSystem = geopoint?.AltitudeReferenceSystem ?? AltitudeReferenceSystem.Unspecified;
+
         CanSave = true;
+
         isUpdating = false;
     }
 

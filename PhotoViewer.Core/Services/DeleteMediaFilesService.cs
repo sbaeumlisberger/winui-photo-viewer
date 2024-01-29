@@ -14,7 +14,7 @@ internal class DeleteMediaFilesService : IDeleteMediaFilesService
     {
         if (deleteLinkedFiles)
         {
-            foreach(var linkedFile in media.LinkedStorageFiles)
+            foreach (var linkedFile in media.LinkedStorageFiles)
             {
                 await DeleteFileAsync(linkedFile).ConfigureAwait(false);
             }

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
@@ -48,15 +49,21 @@ public partial class PrefixFilesByDateDialogModel : ViewModelBase
 
             Messenger.Send(new MediaFilesRenamedMessage(result.ProcessedElements.Select(x => x.File).ToList()));
 
-            ShowSuccessMessage = result.IsSuccessful;
+            ShowSuccessMessage = result.IsSuccessfully;
             ShowErrorMessage = result.HasFailures;
             Errors = result.Failures.Select(failure => failure.Element.File.FileName + ": " + failure.Exception.Message).ToList();
-
             ShowProgress = false;
         }
         catch (OperationCanceledException)
         {
-            Log.Info("Prefix files by date was canceled");
+            Log.Info("Numbering files by date was canceled");
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Error while numbering files by date", ex);
+            ShowErrorMessage = true;
+            Errors = new List<string> { ex.Message };
+            ShowProgress = false;
         }
     }
 
@@ -66,10 +73,8 @@ public partial class PrefixFilesByDateDialogModel : ViewModelBase
         Progress?.Cancel();
     }
 
-    private async Task<ProcessingResult<(IMediaFileInfo File, string NewName)>> NumberFilesByDateAsync(IReadOnlyCollection<IMediaFileInfo> files, IProgress<double> progress, CancellationToken cancellationToken)
+    private async Task<ParallelResult<(IMediaFileInfo File, string NewName)>> NumberFilesByDateAsync(IReadOnlyCollection<IMediaFileInfo> files, IProgress<double> progress, CancellationToken cancellationToken)
     {
-        int counter = 0;
-        int digits = files.Count.ToString().Length;
         Dictionary<IMediaFileInfo, DateTime> dateTakenDict = new();
         foreach (IMediaFileInfo file in files)
         {
@@ -78,18 +83,25 @@ public partial class PrefixFilesByDateDialogModel : ViewModelBase
                 && await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.DateTaken) is { } dateTaken)
             {
                 dateTakenDict.Add(file, dateTaken);
-                continue;
             }
-            dateTakenDict.Add(file, File.GetLastWriteTime(file.FilePath));
+            else
+            {
+                dateTakenDict.Add(file, File.GetLastWriteTime(file.FilePath));
+            }
             cancellationToken.ThrowIfCancellationRequested();
         }
-        var filesToRename = files.OrderBy(file => dateTakenDict[file])
-            .Select((file, index) => (File: file, NewName: (++counter).ToString().PadLeft(digits, '0') + "_" + file.FileNameWithoutExtension))
+
+        int digits = files.Count.ToString().Length;
+        var filesToRename = files
+            .OrderBy(file => dateTakenDict[file])
+            .Select((file, index) => (File: file, NewName: (index + 1).ToString().PadLeft(digits, '0') + "_" + file.FileNameWithoutExtension))
             .ToList();
         cancellationToken.ThrowIfCancellationRequested();
-        return await ParallelizationUtil.ProcessParallelAsync(filesToRename, async item =>
+
+        return await filesToRename.TryProcessParallelAsync(async item =>
         {
             await item.File.RenameAsync(item.NewName);
-        }, progress, cancellationToken, throwOnCancellation: true);
+        },
+        cancellationToken, progress);
     }
 }

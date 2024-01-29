@@ -1,19 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Essentials.NET;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
-using System.Text;
-using Tocronx.SimpleAsync;
 using Windows.Storage;
 
 namespace PhotoViewer.App.ViewModels;
 
 public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipViewItemModel
 {
-    public IMediaFileInfo MediaItem { get; }
+    public IMediaFileInfo MediaFile { get; }
 
     public bool IsSelected { get; set; } = false;
 
@@ -31,7 +29,7 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
 
     public VectorGraphicFlipViewItemModel(IMediaFileInfo mediaFile, IViewModelFactory viewModelFactory) : base(null!)
     {
-        MediaItem = mediaFile;
+        MediaFile = mediaFile;
         ContextMenuModel = viewModelFactory.CreateMediaFileContextMenuModel();
         ContextMenuModel.Files = new[] { mediaFile };
     }
@@ -43,7 +41,7 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
             try
             {
                 IsLoadingFailed = false;
-                using var fileStream = await MediaItem.OpenAsync(FileAccessMode.Read);
+                using var fileStream = await MediaFile.OpenAsync(FileAccessMode.Read);
                 cancellationToken.ThrowIfCancellationRequested();
                 string svgString = await new StreamReader(fileStream).ReadToEndAsync();
                 cancellationToken.ThrowIfCancellationRequested();
@@ -51,7 +49,7 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                Log.Error($"Could not load vector graphic {MediaItem.DisplayName}", ex);
+                Log.Error($"Could not load vector graphic {MediaFile.DisplayName}", ex);
                 IsLoadingFailed = true;
             }
         });

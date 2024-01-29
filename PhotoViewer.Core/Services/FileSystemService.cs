@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Storage;
+﻿using Windows.Storage;
 using Windows.Storage.Search;
 
 namespace PhotoViewer.Core.Services;
@@ -18,7 +12,7 @@ public interface IFileSystemService
     Task<IStorageFolder?> TryGetFolderAsync(string path);
 
     Task<IStorageFile?> TryGetFileAsync(string path);
-    
+
     bool Exists(string path);
 }
 

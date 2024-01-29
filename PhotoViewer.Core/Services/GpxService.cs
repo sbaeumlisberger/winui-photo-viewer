@@ -1,14 +1,10 @@
-﻿using MetadataAPI.Data;
-using MetadataAPI;
-using PhotoViewer.App.Models;
+﻿using MetadataAPI;
+using MetadataAPI.Data;
 using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils.Logging;
-using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using System.Globalization;
 using System.Xml.Linq;
 using Windows.Storage;
-using Windows.Devices.Geolocation;
 
 namespace PhotoViewer.Core.Services;
 

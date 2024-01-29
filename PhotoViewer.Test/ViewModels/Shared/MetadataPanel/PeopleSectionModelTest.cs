@@ -9,13 +9,7 @@ using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tocronx.SimpleAsync;
 using Xunit;
 
 namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
@@ -121,7 +115,7 @@ public class PeopleSectionModelTest
             MockBitmapFileInfo(Name1),
             MockBitmapFileInfo(Name2),
             MockBitmapFileInfo(Name3));
-        peopleSectionModel.UpdateFilesChanged(files, Substitute.For<IList<MetadataView>>());
+        peopleSectionModel.UpdateFilesChanged(files, Substitute.For<IReadOnlyList<MetadataView>>());
         peopleSectionModel.AutoSuggestBoxText = Name1;
         var messageCapture = TestUtils.CaptureMessage<MetadataModifiedMessage>(messenger);
 
@@ -140,12 +134,12 @@ public class PeopleSectionModelTest
     [Fact]
     public async Task RemovePeopleTagCommandRemovesPeopleTagFromFiles()
     {
-        var files = ImmutableList.Create(        
+        var files = ImmutableList.Create(
             MockBitmapFileInfo(),
             MockBitmapFileInfo(Name1),
             MockBitmapFileInfo(Name2),
             MockBitmapFileInfo(Name1, Name3));
-        peopleSectionModel.UpdateFilesChanged(files, Substitute.For<IList<MetadataView>>());
+        peopleSectionModel.UpdateFilesChanged(files, Substitute.For<IReadOnlyList<MetadataView>>());
         var messageCapture = TestUtils.CaptureMessage<MetadataModifiedMessage>(messenger);
 
         await peopleSectionModel.RemovePeopleTagCommand.ExecuteAsync(Name1);

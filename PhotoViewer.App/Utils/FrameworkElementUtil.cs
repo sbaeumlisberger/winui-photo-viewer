@@ -32,11 +32,11 @@ public static class FrameworkElementUtil
         typeof(UIElement).InvokeMember("ProtectedCursor", bindingFlags, null, frameworkElement, new object[] { cursor });
     }
 
-    public static async Task<bool> TryFocusAsync(this FrameworkElement frameworkElement) 
+    public static async Task<bool> TryFocusAsync(this FrameworkElement frameworkElement)
     {
         for (int i = 0; i < 10; i++)
         {
-            if (frameworkElement.Focus(FocusState.Programmatic)) 
+            if (frameworkElement.Focus(FocusState.Programmatic))
             {
                 return true;
             }

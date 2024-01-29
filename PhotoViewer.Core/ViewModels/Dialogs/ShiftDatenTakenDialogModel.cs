@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
@@ -7,13 +8,7 @@ using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PhotoViewer.Core.ViewModels.Dialogs;
 
@@ -29,7 +24,7 @@ public partial class ShiftDatenTakenDialogModel : ViewModelBase
     public int Seconds { get; set; }
 
     public Progress? Progress { get; private set; }
-    
+
     public IReadOnlyList<string> Errors { get; private set; } = new List<string>();
 
     public bool IsCompletedSuccessfully { get; private set; } = false;
@@ -63,14 +58,28 @@ public partial class ShiftDatenTakenDialogModel : ViewModelBase
             + TimeSpan.FromMinutes(Minutes)
             + TimeSpan.FromSeconds(Seconds);
 
-        var result = await ShiftDateTakenAsync(mediaFiles, timeSpan, Progress, cts.Token);
+        try
+        {
+            var result = await ShiftDateTakenAsync(mediaFiles, timeSpan, Progress, cts.Token);
 
-        IsCompletedSuccessfully = result.IsSuccessful;
-        IsCompletedWithErrors = result.HasFailures;
-        Errors = result.Failures.Select(failure => failure.Element.FileName + ": " + failure.Exception.Message).ToList();
-
-        ShowProgress = false;
-        ShowResult = true;
+            IsCompletedSuccessfully = result.IsSuccessfully;
+            IsCompletedWithErrors = result.HasFailures;
+            Errors = result.Failures.Select(failure => failure.Element.FileName + ": " + failure.Exception.Message).ToList();
+            ShowProgress = false;
+            ShowResult = true;
+        }
+        catch (OperationCanceledException)
+        {
+            // canceld by user
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to shift date taken", ex);
+            IsCompletedWithErrors = true;
+            Errors = new List<string> { ex.Message };
+            ShowProgress = false;
+            ShowResult = true;
+        }
     }
 
     [RelayCommand]
@@ -79,18 +88,19 @@ public partial class ShiftDatenTakenDialogModel : ViewModelBase
         Progress?.Cancel();
     }
 
-    private async Task<ProcessingResult<IBitmapFileInfo>> ShiftDateTakenAsync(IReadOnlyCollection<IMediaFileInfo> mediaFiles, TimeSpan timeSpan, IProgress<double> progress, CancellationToken cancellationToken)
+    private async Task<ParallelResult<IBitmapFileInfo>> ShiftDateTakenAsync(IReadOnlyCollection<IMediaFileInfo> mediaFiles, TimeSpan timeSpan, IProgress<double> progress, CancellationToken cancellationToken)
     {
         var filesToShift = mediaFiles.OfType<IBitmapFileInfo>().Where(bitmap => bitmap.IsMetadataSupported).ToList();
 
-        var result = await ParallelizationUtil.ProcessParallelAsync(filesToShift, async file =>
+        var result = await filesToShift.TryProcessParallelAsync(async file =>
         {
             if (await metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken) is { } dateTaken)
             {
                 var shiftedDateTaken = dateTaken.Add(timeSpan);
                 await metadataService.WriteMetadataAsync(file, MetadataProperties.DateTaken, shiftedDateTaken);
             }
-        }, progress, cancellationToken);
+        },
+        cancellationToken, progress);
 
         messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.DateTaken));
 

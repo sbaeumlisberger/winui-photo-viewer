@@ -1,10 +1,7 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using PhotoViewer.Core.ViewModels;
+﻿using Microsoft.UI.Xaml;
 using PhotoViewer.App.Utils;
-using PhotoViewer.Core.Utils;
-using PhotoViewer.Core.ViewModels.Dialogs;
-using Microsoft.UI.Xaml;
 using PhotoViewer.App.Views.Dialogs;
+using PhotoViewer.Core.ViewModels.Dialogs;
 
 namespace PhotoViewer.App.Views;
 

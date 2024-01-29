@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using PhotoViewer.App.Messages;
-using PhotoViewer.Core.Utils;
-using PhotoViewer.App.Utils;
 using PhotoViewer.App.Models;
+using PhotoViewer.Core.Utils;
 
 namespace PhotoViewer.Core.Models;
 

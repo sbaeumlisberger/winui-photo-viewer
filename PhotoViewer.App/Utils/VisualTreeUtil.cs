@@ -1,10 +1,5 @@
-﻿using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 
 namespace PhotoViewer.App.Utils;
 internal static class VisualTreeUtil
@@ -33,7 +28,7 @@ internal static class VisualTreeUtil
     public static T? FindParent<T>(this FrameworkElement element) where T : FrameworkElement
     {
         var parent = VisualTreeHelper.GetParent(element);
-        
+
         while (parent is not null && parent is not T)
         {
             parent = VisualTreeHelper.GetParent(parent);

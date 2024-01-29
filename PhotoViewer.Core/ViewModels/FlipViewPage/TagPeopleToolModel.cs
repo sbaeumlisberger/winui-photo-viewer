@@ -1,23 +1,19 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using MetadataAPI;
 using MetadataAPI.Data;
-using PhotoViewer.Core.Resources;
-using PhotoViewer.Core.ViewModels;
+using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using Windows.Foundation;
-using Windows.Graphics.Imaging;
-using Windows.Media.FaceAnalysis;
-using PhotoViewer.Core.Models;
-using System.Diagnostics;
-using PhotoViewer.App.Messages;
-using Microsoft.UI.Xaml.Media;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -38,8 +34,8 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     public bool IsTagPeopleToolActive { get; private set; } = false;
 
-    public bool IsSelectionEnabled => IsTagPeopleToolActive && IsEnabled; 
-    
+    public bool IsSelectionEnabled => IsTagPeopleToolActive && IsEnabled;
+
     public bool IsUserSelecting { get; private set; } = false;
 
     public bool IsNameInputVisible => !IsUserSelecting && !SelectionRectInPercent.IsEmpty;
@@ -108,7 +104,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     }
 
     private async void Receive(BitmapModifiedMesssage msg)
-    {  
+    {
         AutoSuggestBoxText = string.Empty;
         SelectionRectInPercent = Rect.Empty;
         HideSuggestedFaces();
@@ -150,7 +146,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         suggestedFacesInPercent.Clear();
     }
 
-    private void ShowSuggestedFaces() 
+    private void ShowSuggestedFaces()
     {
         if (TaggedPeople.IsEmpty())
         {
@@ -276,8 +272,8 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     private async Task DetectFacesAsync()
     {
-        if (TaggedPeople.Any()) 
-        { 
+        if (TaggedPeople.Any())
+        {
             return;
         }
 

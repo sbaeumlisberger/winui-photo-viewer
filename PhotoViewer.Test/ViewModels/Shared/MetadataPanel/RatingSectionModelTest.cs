@@ -1,22 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using MetadataAPI.Data;
 using MetadataAPI;
 using NSubstitute;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
-using PhotoViewer.Core.Models;
-using PhotoViewer.Core.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Tocronx.SimpleAsync;
-using Xunit;
-using PhotoViewer.Core.Services;
 using PhotoViewer.Core;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
+using PhotoViewer.Core.ViewModels;
 using System.Collections.Immutable;
+using Xunit;
 
 namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
 

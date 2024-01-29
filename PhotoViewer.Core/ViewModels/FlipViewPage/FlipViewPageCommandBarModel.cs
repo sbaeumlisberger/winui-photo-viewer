@@ -27,7 +27,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     public IMediaFlipViewItemModel? SelectedItemModel { get; set; }
 
-    public IAcceleratedCommand DeleteCommand { get; }
+    public IDeleteFilesCommand DeleteCommand { get; }
 
     public ICommand SelectPreviousCommand { get; }
 
@@ -41,17 +41,17 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     public bool CanStartDiashow => SelectedItemModel != null;
 
-    public bool CanCropImage => SelectedItemModel?.MediaItem is IBitmapFileInfo;
+    public bool CanCropImage => SelectedItemModel?.MediaFile is IBitmapFileInfo;
 
-    public bool CanRotate => SelectedItemModel?.MediaItem is IBitmapFileInfo bitmap && rotateBitmapService.CanRotate(bitmap);
+    public bool CanRotate => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmap && rotateBitmapService.CanRotate(bitmap);
 
-    private bool CanNavigateToComparePage => SelectedItemModel?.MediaItem is IBitmapFileInfo;
+    private bool CanNavigateToComparePage => SelectedItemModel?.MediaFile is IBitmapFileInfo;
 
     public BackgroundTasksViewModel BackgroundTasks { get; }
 
     private readonly IDialogService dialogService;
 
-    private readonly IMediaFilesLoaderService loadMediaItemsService;
+    private readonly IMediaFilesLoaderService mediaFilesLoaderService;
 
     private readonly IRotateBitmapService rotateBitmapService;
 
@@ -60,7 +60,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     internal FlipViewPageCommandBarModel(
         IMessenger messenger,
         IDialogService dialogService,
-        IMediaFilesLoaderService loadMediaItemsService,
+        IMediaFilesLoaderService mediaFilesLoaderService,
         IRotateBitmapService rotatePhotoService,
         IViewModelFactory viewModelFactory,
         ICommand selectPreviousCommand,
@@ -74,7 +74,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         IPrefixFilesByDateCommand prefixFilesByDateCommand) : base(messenger)
     {
         this.dialogService = dialogService;
-        this.loadMediaItemsService = loadMediaItemsService;
+        this.mediaFilesLoaderService = mediaFilesLoaderService;
         this.rotateBitmapService = rotatePhotoService;
         this.settings = settings;
 
@@ -99,7 +99,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     [RelayCommand(CanExecute = nameof(CanNavigateToComparePage))]
     private void NavigateToComparePage()
     {
-        Messenger.Send(new NavigateToPageMessage(typeof(ComparePageModel), SelectedItemModel!.MediaItem));
+        Messenger.Send(new NavigateToPageMessage(typeof(ComparePageModel), SelectedItemModel!.MediaFile));
     }
 
     [RelayCommand(CanExecute = nameof(CanStartDiashow))]
@@ -123,7 +123,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     [RelayCommand(CanExecute = nameof(CanRotate))]
     private async Task RotateAsync()
     {
-        var bitmap = (IBitmapFileInfo)SelectedItemModel!.MediaItem;
+        var bitmap = (IBitmapFileInfo)SelectedItemModel!.MediaFile;
         Log.Debug($"Execute rotate command for: {bitmap.DisplayName}");
         try
         {
@@ -144,7 +144,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         if (folderPickerModel.Folder is StorageFolder folder)
         {
             var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName, settings.IncludeVideos);
-            var loadMediaFilesTask = loadMediaItemsService.LoadFolder(folder, config);
+            var loadMediaFilesTask = mediaFilesLoaderService.LoadFolder(folder, config);
             Messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask));
         }
     }

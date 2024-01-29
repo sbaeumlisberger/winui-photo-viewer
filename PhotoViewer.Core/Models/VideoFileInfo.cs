@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Windows.Foundation;
+﻿using Windows.Foundation;
 using Windows.Storage;
 
 namespace PhotoViewer.App.Models;
@@ -13,7 +12,7 @@ internal class VideoFileInfo : MediaFileInfoBase, IVideoFileInfo
 
     public static readonly IReadOnlySet<string> SupportedFileExtensions = new HashSet<string>()
     {
-        ".mp4", ".m4v", ".avi", ".webm", ".mkv", ".ts", ".mov", 
+        ".mp4", ".m4v", ".avi", ".webm", ".mkv", ".ts", ".mov",
     };
 
     public VideoFileInfo(IStorageFile file) : base(file)

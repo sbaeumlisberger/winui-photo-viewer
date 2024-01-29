@@ -1,22 +1,21 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using PhotoViewer.Core.ViewModels;
-using PhotoViewer.App.Utils;
-using PhotoViewer.Core.Utils;
-using System.Text.Encodings.Web;
-using Windows.UI.WebUI;
-using System;
+﻿using Essentials.NET;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
+using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using Windows.Devices.Geolocation;
+using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using System.Threading.Tasks;
+using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels;
+using System;
 using System.ComponentModel;
-using Tocronx.SimpleAsync;
+using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using PhotoViewer.Core;
+using Windows.Devices.Geolocation;
 
 namespace PhotoViewer.App.Views;
 
@@ -49,7 +48,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
         </html>
         """;
 
-    private readonly SequentialTaskRunner updateSuggestionsRunner = new SequentialTaskRunner();
+    private readonly Throttle updateSuggestionsThrottle = new Throttle(TimeSpan.FromMilliseconds(40));
 
     private Location? locationShowedOnMap;
 
@@ -134,9 +133,12 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
 
         string title = location?.Address?.ToString() ?? geopoint.ToDecimalString();
 
+        string latitudeString = latitude.ToString(CultureInfo.InvariantCulture);
+        string longitudeString = longitude.ToString(CultureInfo.InvariantCulture);
+
         var script = $$"""
             map.entities.clear();
-            var mapLocation = new Microsoft.Maps.Location({{latitude.ToInvariantString()}}, {{longitude.ToInvariantString()}});
+            var mapLocation = new Microsoft.Maps.Location({{latitudeString}}, {{longitudeString}});
             var pushpin = new Microsoft.Maps.Pushpin(mapLocation, { title: '{{title}}'});
             map.entities.push(pushpin);
             """;
@@ -163,7 +165,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
 
     private void LocationSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
-        updateSuggestionsRunner.EnqueueIfEmpty(async () =>
+        updateSuggestionsThrottle.Invoke(async () =>
         {
             locationSearchBox.ItemsSource = await ViewModel!.FindLocationsAsync(sender.Text);
         });

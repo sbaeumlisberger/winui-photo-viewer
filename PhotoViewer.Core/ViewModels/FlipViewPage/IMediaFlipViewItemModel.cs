@@ -1,12 +1,11 @@
 ﻿using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
-using System.ComponentModel;
 
 namespace PhotoViewer.Core.ViewModels;
 
 public interface IMediaFlipViewItemModel : IViewModel
 {
-    IMediaFileInfo MediaItem { get; }
+    IMediaFileInfo MediaFile { get; }
 
     bool IsSelected { get; set; }
 

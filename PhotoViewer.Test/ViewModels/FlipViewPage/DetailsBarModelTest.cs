@@ -56,7 +56,7 @@ public class DetailsBarModelTest
         });
         metadataService.GetMetadataAsync(bitmapFile).Returns(metadata);
         bitmapItemModel = Substitute.For<IBitmapFlipViewItemModel>();
-        bitmapItemModel.MediaItem.Returns(bitmapFile);
+        bitmapItemModel.MediaFile.Returns(bitmapFile);
         bitmapItemModel.ImageViewModel.Image.Returns((IBitmapImageModel?)null);
 
         var vectorGraphicFile = Substitute.For<IVectorGraphicFileInfo>();
@@ -65,7 +65,7 @@ public class DetailsBarModelTest
         vectorGraphicFile.GetSizeInPixelsAsync().Returns(Size.Empty);
         vectorGraphicFile.GetDateModifiedAsync().Returns(new DateTime(2020, 08, 13, 11, 22, 39));
         vectorGraphicItemModel = Substitute.For<IMediaFlipViewItemModel>();
-        vectorGraphicItemModel.MediaItem.Returns(vectorGraphicFile);
+        vectorGraphicItemModel.MediaFile.Returns(vectorGraphicFile);
 
         detailsBarModel = new DetailsBarModel(messenger, metadataService, settings);
     }
@@ -100,7 +100,7 @@ public class DetailsBarModelTest
         Assert.False(detailsBarModel.ShowNoInformationAvailableMessage);
         Assert.Equal("Test File.jpg", detailsBarModel.FileName);
         Assert.Equal("07.10.2020 15:44", detailsBarModel.DateFormatted);
-        Assert.Equal("3,37 MB", detailsBarModel.FileSize);
+        Assert.Equal("3,53 MB", detailsBarModel.FileSize);
         Assert.Equal("1/200s F5,2 ISO400 18(27)mm", detailsBarModel.CameraDetails);
         Assert.Equal("4912x3264px", detailsBarModel.SizeInPixels);
         Assert.Equal(ColorSpaceType.NotSpecified, detailsBarModel.ColorSpaceType);
@@ -117,7 +117,7 @@ public class DetailsBarModelTest
         Assert.False(detailsBarModel.ShowNoInformationAvailableMessage);
         Assert.Equal("Test File.svg", detailsBarModel.FileName);
         Assert.Equal("13.08.2020 11:22", detailsBarModel.DateFormatted);
-        Assert.Equal("3,37 MB", detailsBarModel.FileSize);
+        Assert.Equal("3,53 MB", detailsBarModel.FileSize);
         Assert.Empty(detailsBarModel.CameraDetails);
         Assert.Empty(detailsBarModel.SizeInPixels);
         Assert.Equal(ColorSpaceType.NotSpecified, detailsBarModel.ColorSpaceType);

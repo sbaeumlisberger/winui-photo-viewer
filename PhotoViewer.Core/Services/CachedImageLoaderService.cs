@@ -1,13 +1,8 @@
-﻿using PhotoViewer.App.Models;
+﻿using Essentials.NET;
+using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace PhotoViewer.Core.Services;
 
@@ -32,9 +27,9 @@ internal class CachedImageLoaderService : ICachedImageLoaderService
         this.cache = new AsyncCache<IBitmapFileInfo, IBitmapImageModel>(CacheSize, image => image.Dispose());
     }
 
-    public void Preload(IBitmapFileInfo file) 
+    public void Preload(IBitmapFileInfo file)
     {
-        Task.Run(() => cache.GetAsync(file, imageLoaderService.LoadFromFileAsync));
+        Task.Run(() => cache.GetOrCreateAsync(file, imageLoaderService.LoadFromFileAsync));
     }
 
     public async Task<IBitmapImageModel> LoadFromFileAsync(IBitmapFileInfo file, CancellationToken cancellationToken, bool reload = false)
@@ -43,8 +38,7 @@ internal class CachedImageLoaderService : ICachedImageLoaderService
         {
             cache.Remove(file);
         }
-        var image = await cache.GetAsync(file, imageLoaderService.LoadFromFileAsync, cancellationToken);
-        image.RequestUsage();
-        return image;
+        var image = await cache.GetOrCreateAsync(file, imageLoaderService.LoadFromFileAsync, cancellationToken);
+        return image.RequestUsage();
     }
 }

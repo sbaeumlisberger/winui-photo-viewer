@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using MetadataAPI;
 using MetadataAPI.Data;
 using PhotoViewer.App.Messages;
@@ -8,10 +9,7 @@ using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
-using System.ComponentModel;
-using Tocronx.SimpleAsync;
 using Windows.Foundation;
 
 namespace PhotoViewer.App.ViewModels;
@@ -64,7 +62,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
     {
         if (IsVisible
             && msg.MetadataProperty == MetadataProperties.DateTaken
-            && SelectedItemModel?.MediaItem is IBitmapFileInfo selectedFile
+            && SelectedItemModel?.MediaFile is IBitmapFileInfo selectedFile
             && msg.Files.Contains(selectedFile))
         {
             updateRunner.RunAndCancelPrevious(async (cancellationToken) =>
@@ -72,7 +70,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
                 var metadata = await metadataService.GetMetadataAsync(selectedFile);
                 var date = metadata.Get(MetadataProperties.DateTaken) ?? (await selectedFile.GetDateModifiedAsync());
                 cancellationToken.ThrowIfCancellationRequested();
-                DateFormatted = date.ToString("g");               
+                DateFormatted = date.ToString("g");
             });
         }
     }
@@ -80,7 +78,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
     private void OnReceive(BitmapModifiedMesssage msg)
     {
         if (IsVisible
-            && SelectedItemModel?.MediaItem is IBitmapFileInfo selectedFile
+            && SelectedItemModel?.MediaFile is IBitmapFileInfo selectedFile
             && msg.BitmapFile.Equals(selectedFile))
         {
             updateRunner.RunAndCancelPrevious(async (cancellationToken) =>
@@ -92,7 +90,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 
     private void OnReceive(BitmapImageLoadedMessage msg)
     {
-        if (IsVisible && msg.BitmapFile == SelectedItemModel?.MediaItem)
+        if (IsVisible && msg.BitmapFile == SelectedItemModel?.MediaFile)
         {
             UpdateFromBitmapImage(msg.BitmapImage);
         }
@@ -106,17 +104,17 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
             if (SelectedItemModel != null)
             {
                 // linked files may have been changed
-                FileName = SelectedItemModel.MediaItem.DisplayName;
+                FileName = SelectedItemModel.MediaFile.DisplayName;
             }
         }
     }
 
     private void OnReceive(MediaFilesRenamedMessage message)
     {
-        if(SelectedItemModel is not null && message.MediaFiles.Contains(SelectedItemModel.MediaItem))
+        if (SelectedItemModel is not null && message.MediaFiles.Contains(SelectedItemModel.MediaFile))
         {
-            FileName = SelectedItemModel.MediaItem.DisplayName;
-        }   
+            FileName = SelectedItemModel.MediaFile.DisplayName;
+        }
     }
 
     partial void OnSelectedItemModelChanged()
@@ -164,26 +162,26 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         {
             try
             {
-                Log.Debug($"Update details bar for {itemModel.MediaItem.DisplayName}");
+                Log.Debug($"Update details bar for {itemModel.MediaFile.DisplayName}");
 
-                FileName = itemModel.MediaItem.DisplayName;
+                FileName = itemModel.MediaFile.DisplayName;
 
-                if (itemModel.MediaItem is IBitmapFileInfo bitmapFile && bitmapFile.IsMetadataSupported)
+                if (itemModel.MediaFile is IBitmapFileInfo bitmapFile && bitmapFile.IsMetadataSupported)
                 {
                     await UpdateFromMetadataAsync(bitmapFile, cancellationToken);
                 }
                 else
                 {
-                    var date = await itemModel.MediaItem.GetDateModifiedAsync();
+                    var date = await itemModel.MediaFile.GetDateModifiedAsync();
                     cancellationToken.ThrowIfCancellationRequested();
                     DateFormatted = date.ToString("g");
                 }
 
-                ulong fileSize = await itemModel.MediaItem.GetFileSizeAsync();
+                ulong fileSize = await itemModel.MediaFile.GetFileSizeAsync();
                 cancellationToken.ThrowIfCancellationRequested();
                 FileSize = ByteSizeFormatter.Format(fileSize);
 
-                var sizeInPixels = await itemModel.MediaItem.GetSizeInPixelsAsync();
+                var sizeInPixels = await itemModel.MediaFile.GetSizeInPixelsAsync();
                 cancellationToken.ThrowIfCancellationRequested();
                 SizeInPixels = sizeInPixels != Size.Empty ? sizeInPixels.Width + "x" + sizeInPixels.Height + "px" : string.Empty;
 
@@ -195,18 +193,18 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
             }
             catch (OperationCanceledException)
             {
-                Log.Info($"Update details bar for {itemModel.MediaItem.DisplayName} canceled");
+                Log.Info($"Update details bar for {itemModel.MediaFile.DisplayName} canceled");
             }
             catch (Exception ex)
             {
-                Log.Error($"Error on update details bar for {itemModel.MediaItem.DisplayName}", ex);
+                Log.Error($"Error on update details bar for {itemModel.MediaFile.DisplayName}", ex);
             }
         });
     }
 
     private void UpdateFromBitmapImage(IBitmapImageModel bitmapImage)
     {
-        Log.Debug($"Update details bar for {SelectedItemModel!.MediaItem.DisplayName} with information from loaded image");
+        Log.Debug($"Update details bar for {SelectedItemModel!.MediaFile.DisplayName} with information from loaded image");
         ShowColorProfileIndicator = bitmapImage.ColorSpace.Profile is not null;
         ColorSpaceType = ShowColorProfileIndicator ? bitmapImage.ColorSpace.Type : ColorSpaceType.NotSpecified;
     }

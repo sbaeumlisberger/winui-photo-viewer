@@ -1,15 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewer.Core.Models;
+using Essentials.NET;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core;
+using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System.ComponentModel;
-using PhotoViewer.Core.Messages;
-using PhotoViewer.Core;
 
 namespace PhotoViewer.App.ViewModels;
 
@@ -54,8 +55,8 @@ public partial class FlipViewPageModel : ViewModelBase
     protected override void OnCleanup()
     {
         FlipViewModel.PropertyChanged -= FlipViewModel_PropertyChanged;
-        DisposeUtil.DisposeSafely(ref displayRequest);
-
+        displayRequest.DisposeSafely(() => displayRequest = null);
+    
         FlipViewModel.Cleanup();
         DetailsBarModel.Cleanup();
         CommandBarModel.Cleanup();
@@ -81,7 +82,7 @@ public partial class FlipViewPageModel : ViewModelBase
                 selectedItem = (IMediaFileInfo?)navigationParameter;
             }
 
-            FlipViewModel.SetItems(session.Files, selectedItem);
+            FlipViewModel.SetFiles(session.Files, selectedItem);
         }
     }
 
@@ -110,7 +111,7 @@ public partial class FlipViewPageModel : ViewModelBase
     {
         ShowUI = true;
         Messenger.Send(new ExitFullscreenMessage());
-        DisposeUtil.DisposeSafely(ref displayRequest);
+        displayRequest.DisposeSafely(() => displayRequest = null);
     }
 
     private void FlipViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -119,8 +120,8 @@ public partial class FlipViewPageModel : ViewModelBase
         {
             var selectedItemModel = FlipViewModel.SelectedItemModel;
             DetailsBarModel.SelectedItemModel = selectedItemModel;
-            CommandBarModel.SelectedItemModel = selectedItemModel;
-            MetadataPanelModel.Files = CollectionsUtil.ListOf(selectedItemModel?.MediaItem);
+            CommandBarModel.SelectedItemModel = selectedItemModel;        
+            MetadataPanelModel.Files = selectedItemModel is not null ? new [] { selectedItemModel.MediaFile } : Array.Empty<IMediaFileInfo>();
         }
     }
 

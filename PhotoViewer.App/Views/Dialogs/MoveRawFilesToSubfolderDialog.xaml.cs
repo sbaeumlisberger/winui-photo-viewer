@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using PhotoViewer.App.Utils;
+﻿using PhotoViewer.App.Utils;
 using PhotoViewer.App.Views.Dialogs;
 using PhotoViewer.Core.ViewModels.Dialogs;
 

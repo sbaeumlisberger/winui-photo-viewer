@@ -1,11 +1,12 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Essentials.NET;
+using Microsoft.Graphics.Canvas;
 using PhotoViewer.Core.Utils;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 
 namespace PhotoViewer.App.Models;
 
-public interface IBitmapImageModel : ICacheableDisposable
+public interface IBitmapImageModel : IShareableDisposable
 {
     string ID { get; }
 

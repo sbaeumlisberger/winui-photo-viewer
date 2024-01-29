@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Storage;
-using WinRT;
+﻿using Windows.Storage;
 
 namespace PhotoViewer.Core.Utils;
 
-public static class StorageItemUtil
+public static class StorageItemExtension
 {
 
     public static bool IsSameFile(this IStorageItem storageItemA, IStorageItem storageItemB)

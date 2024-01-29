@@ -1,23 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml.Media.Imaging;
 using NSubstitute;
-using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core;
-using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace PhotoViewer.Test.ViewModels.FlipViewPage;

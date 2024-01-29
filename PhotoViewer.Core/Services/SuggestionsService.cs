@@ -1,11 +1,6 @@
-﻿using PhotoViewer.App.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Essentials.NET;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace PhotoViewer.Core.Services
@@ -67,7 +62,7 @@ namespace PhotoViewer.Core.Services
 
         public IReadOnlyList<string> FindMatches(string query, int max)
         {
-            if (string.IsNullOrWhiteSpace(query)) 
+            if (string.IsNullOrWhiteSpace(query))
             {
                 return recent.Take(max).ToList();
             }

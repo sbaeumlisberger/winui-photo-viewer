@@ -1,4 +1,5 @@
-﻿using PhotoViewer.Core;
+﻿using Essentials.NET;
+using PhotoViewer.Core;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Windows.Storage;
@@ -10,7 +11,7 @@ public class LoggerImpl : ILogger
     private static readonly string LogFolderPath = Path.Combine(AppData.PublicFolder, "logs");
 
     private static readonly string LogFilePath = Path.Combine(LogFolderPath, "log-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt");
-    
+
     private readonly bool isDebugLogEnabled = false;
 
     private StreamWriter? logFileWriter;

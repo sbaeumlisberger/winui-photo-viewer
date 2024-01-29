@@ -5,15 +5,12 @@ using Microsoft.UI.Xaml.Navigation;
 using PhotoVieweApp.Utils;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Resources;
+using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.ViewModels;
-using PhotoViewer.Core;
-using PhotoViewer.Core.Utils;
 using System.Collections.Generic;
 using System.Linq;
-using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils.Logging;
 
 namespace PhotoViewer.App.Views;
 

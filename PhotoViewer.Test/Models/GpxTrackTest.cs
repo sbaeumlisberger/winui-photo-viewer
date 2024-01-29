@@ -1,13 +1,4 @@
-﻿using NSubstitute;
-using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.Streams;
+﻿using PhotoViewer.Core.Models;
 using Xunit;
 
 namespace PhotoViewer.Test.Models;

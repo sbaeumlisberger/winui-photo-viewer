@@ -1,5 +1,5 @@
-﻿using Microsoft.UI.Xaml;
-using PhotoViewer.Core.Utils;
+﻿using Essentials.NET;
+using Microsoft.UI.Xaml;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -20,12 +20,12 @@ public class DependencyPropertyHelper<TDependencyObject>
 
     public static DependencyProperty RegisterAttached<TProperty>(TProperty defaultValue, [CallerMemberName] string propertyName = "")
     {
-        return DependencyProperty.RegisterAttached(propertyName.StripEnd("Property"), typeof(TDependencyObject), typeof(TProperty), new PropertyMetadata(defaultValue));
+        return DependencyProperty.RegisterAttached(propertyName.RemoveEnd("Property"), typeof(TDependencyObject), typeof(TProperty), new PropertyMetadata(defaultValue));
     }
 
     public static DependencyProperty RegisterAttached<TProperty>(TProperty defaultValue, Action<DependencyObject, DependencyPropertyChangedEventArgs> propertyChangedCallback, [CallerMemberName] string propertyName = "")
     {
         var metadata = new PropertyMetadata(defaultValue, (obj, args) => propertyChangedCallback(obj, args));
-        return DependencyProperty.RegisterAttached(propertyName.StripEnd("Property"), typeof(TDependencyObject), typeof(TProperty), metadata);
+        return DependencyProperty.RegisterAttached(propertyName.RemoveEnd("Property"), typeof(TDependencyObject), typeof(TProperty), metadata);
     }
 }

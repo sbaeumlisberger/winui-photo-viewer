@@ -5,15 +5,8 @@ using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using WinRT;
 using Xunit;
 
 namespace PhotoViewer.Test.ViewModels.FlipViewPage;
@@ -37,7 +30,7 @@ public class CropImageToolModelTest
     }
 
     [Fact]
-    public async Task SaveCopyCommandWritesToPickedFile() 
+    public async Task SaveCopyCommandWritesToPickedFile()
     {
         var pickedfile = Substitute.For<IStorageFile>();
         dialogService.ShowDialogAsync(Arg.Any<FileSavePickerModel>())
@@ -48,7 +41,7 @@ public class CropImageToolModelTest
         pickedfile.OpenAsync(FileAccessMode.ReadWrite).ReturnsAsyncOperation<IRandomAccessStream>(fileStream);
 
         await cropImageToolModel.SaveCopyCommand.ExecuteAsync(null);
-        
+
         await cropImageService.Received().CropImageAsync(bitmapFile, cropImageToolModel.SelectionInPixels, fileStream.AsStream());
     }
 

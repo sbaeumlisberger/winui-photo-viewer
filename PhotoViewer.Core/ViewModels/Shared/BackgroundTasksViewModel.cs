@@ -1,13 +1,7 @@
 ﻿using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.Utils;
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PhotoViewer.Core.ViewModels.Shared;
 
@@ -30,8 +24,8 @@ public partial class BackgroundTasksViewModel : ViewModelBase
         RunInContextAsync(() =>
         {
             var backgroundTasks = backgroundTaskService.BackgroundTasks;
-            ShowProgressIndicator = backgroundTasks.Count > 0;          
-            StatusText = backgroundTasks.Count == 0 ? "" : backgroundTasks.Count == 1 
+            ShowProgressIndicator = backgroundTasks.Count > 0;
+            StatusText = backgroundTasks.Count == 0 ? "" : backgroundTasks.Count == 1
                 ? Strings.BackgroundTasksRunningMessage_Single
                 : string.Format(Strings.BackgroundTasksRunningMessage_Multiple, backgroundTasks.Count);
         });

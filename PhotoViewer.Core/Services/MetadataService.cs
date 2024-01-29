@@ -1,10 +1,7 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using MetadataAPI;
+﻿using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils.Logging;
-using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Utils;
 using System.Runtime.CompilerServices;
 using WIC;
 using Windows.Storage;
@@ -87,7 +84,7 @@ internal class MetadataService : IMetadataService
 
     public void UpdateCache<T>(IBitmapFileInfo bitmap, IMetadataProperty<T> property, T value)
     {
-        if (cacheTable.TryGetValue(bitmap, out var metadataViewTask) && metadataViewTask.IsCompleted)
+        if (cacheTable.TryGetValue(bitmap, out var metadataViewTask) && metadataViewTask.IsCompletedSuccessfully)
         {
             metadataViewTask.Result.Source[property.Identifier] = value;
         }
@@ -120,7 +117,7 @@ internal class MetadataService : IMetadataService
 
     private void UpdateMetadataCache(IBitmapFileInfo bitmap, MetadataPropertySet metadataPropertySet)
     {
-        if (cacheTable.TryGetValue(bitmap, out var metadataViewTask) && metadataViewTask.IsCompleted)
+        if (cacheTable.TryGetValue(bitmap, out var metadataViewTask) && metadataViewTask.IsCompletedSuccessfully)
         {
             foreach (var (property, value) in metadataPropertySet)
             {

@@ -1,34 +1,38 @@
-﻿using Microsoft.UI.Xaml.Controls.Primitives;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils;
-using PhotoViewer.App.Utils.Logging;
+﻿using Essentials.NET;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Specialized;
 
 namespace PhotoViewer.Core.Utils;
 
+internal static class VirtualizedCollection
+{
+    public static VirtualizedCollection<TKey, TValue> Create<TKey, TValue>(
+        int cacheSizePerSide, Func<TKey, TValue> load, Action<TValue> cleanup, IObservableReadOnlyList<TKey> keys) where TKey : notnull
+    {
+        return new VirtualizedCollection<TKey, TValue>(cacheSizePerSide, load, cleanup, keys);
+    }
+}
+
 internal class VirtualizedCollection<TKey, TValue> where TKey : notnull
 {
-    public IReadOnlyList<TValue> RealizedValues => cache.Values.ToList();
+    public IReadOnlyList<TValue> Values => cache.Values.ToList();
 
     private readonly Dictionary<TKey, TValue> cache = new();
 
-    private IReadOnlyList<TKey> keys;
+    private IObservableReadOnlyList<TKey> keys;
 
     private readonly int cacheSizePerSide;
 
     private readonly Func<TKey, TValue> load;
     private readonly Action<TValue> cleanup;
 
-    public VirtualizedCollection(IReadOnlyList<TKey> keys, int cacheSizePerSide, Func<TKey, TValue> load, Action<TValue> cleanup)
+    public VirtualizedCollection(int cacheSizePerSide, Func<TKey, TValue> load, Action<TValue> cleanup, IObservableReadOnlyList<TKey> keys)
     {
-        this.keys = keys;
         this.cacheSizePerSide = cacheSizePerSide;
         this.load = load;
         this.cleanup = cleanup;
+        this.keys = keys;
+        this.keys.CollectionChanged += Keys_CollectionChanged;
     }
 
     public void Clear()
@@ -37,37 +41,74 @@ internal class VirtualizedCollection<TKey, TValue> where TKey : notnull
         cache.Clear();
     }
 
-    public void SetKeys(IReadOnlyList<TKey> keys) 
+    public void SetKeys(IObservableReadOnlyList<TKey> keys)
     {
+        this.keys.CollectionChanged -= Keys_CollectionChanged;
         this.keys = keys;
+        this.keys.CollectionChanged += Keys_CollectionChanged;
+        CleanupCachedValuesWithoutKey();
     }
 
     public TValue? SetSelectedItem(TKey? selectedItem)
     {
-        var keysThatShouldBeCached = selectedItem is not null
-           ? keys.GetNeighbours(selectedItem, cacheSizePerSide).Prepend(selectedItem).ToList()
-           : new List<TKey>();
-
-        var keysToCache = keysThatShouldBeCached.Except(cache.Keys).ToList();
-        var keysToCleanup = cache.Keys.Except(keysThatShouldBeCached);
-
-        foreach (var key in keysToCache)
+        if (selectedItem is null)
         {
-            var value = load(key);
-            cache.Add(key, value);
+            Clear();
+            return default;
         }
-
-        foreach (var key in keysToCleanup)
+        else
         {
-            cleanup(cache[key]);
-            cache.Remove(key);
+            if (!cache.ContainsKey(selectedItem))
+            {
+                cache.Add(selectedItem, load(selectedItem));
+            }
+
+            var keysToCache = GetKeysToCache(selectedItem);
+
+            foreach (var key in keysToCache)
+            {
+                if (!cache.ContainsKey(key))
+                {
+                    cache.Add(key, load(key));
+                }
+            }
+
+            foreach (var key in cache.Keys.Except(keysToCache).ToList())
+            {
+                cleanup(cache[key]);
+                cache.Remove(key);
+            }
+
+            return cache[selectedItem];
         }
- 
-        return selectedItem is not null ? cache[selectedItem] : default;
     }
 
     public TValue GetValue(TKey key)
     {
         return cache[key];
+    }
+
+    private void Keys_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        CleanupCachedValuesWithoutKey();
+    }
+
+    private List<TKey> GetKeysToCache(TKey selectedItem)
+    {
+        int index = keys.IndexOf(selectedItem);
+        int skipCount = Math.Max(index - cacheSizePerSide, 0);
+        int takeCount = Math.Min(cacheSizePerSide, index) + 1 + cacheSizePerSide;
+        return keys.Skip(skipCount).Take(takeCount).ToList();
+    }
+
+    private void CleanupCachedValuesWithoutKey() 
+    {
+        var keysToCleanup = cache.Keys.Except(keys).ToList();
+
+        foreach (var key in keysToCleanup)
+        {
+            cleanup(cache[key]);
+            cache.Remove(key);
+        };
     }
 }

@@ -1,11 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using PhotoViewer.App.Utils;
-using System;
-using System.Collections.Generic;
+using Essentials.NET;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PhotoViewer.Core.Utils;
 

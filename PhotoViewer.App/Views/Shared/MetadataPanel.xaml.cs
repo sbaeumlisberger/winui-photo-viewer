@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Resources;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.ViewModels;
-using System;
 
 namespace PhotoViewer.App.Views;
 public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPanelModel>
@@ -34,7 +33,7 @@ public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPa
             autoSuggestBox.ItemsSource = ViewModel!.PeopleSectionModel.GetRecentSuggestions();
             autoSuggestBox.IsSuggestionListOpen = true;
         }
-        else 
+        else
         {
             autoSuggestBox.ItemsSource = ViewModel!.PeopleSectionModel.FindSuggestions(autoSuggestBox.Text);
         }

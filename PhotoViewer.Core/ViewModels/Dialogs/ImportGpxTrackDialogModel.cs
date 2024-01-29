@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using MetadataAPI;
-using MetadataAPI.Data;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
@@ -80,19 +80,23 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
         {
             var result = await ImportGpxFileAsync(SelectedFile!, mediaFiles, Progress, cts.Token);
 
-            ShowSuccessMessage = result.IsSuccessful;
+            ShowProgress = false;
+            ShowSuccessMessage = result.IsSuccessfully;
             UpdatedFilesCount = result.ProcessedElements.Count;
             ShowErrorMessage = result.HasFailures;
             Errors = result.Failures.Select(failure => failure.Element.FileName + ": " + failure.Exception.Message).ToList();
         }
-        catch (Exception ex) 
+        catch (OperationCanceledException)
         {
-            Log.Error("Failed to read GPX file", ex);
-            ShowErrorMessage = true;
-            Errors = new[] { "Failed to read GPX file: " +  ex.Message };
+            // canceld by user
         }
-
-        ShowProgress = false;
+        catch (Exception ex)
+        {
+            Log.Error("Failed to import GPX file", ex);
+            ShowProgress = false;
+            ShowErrorMessage = true;
+            Errors = new[] { ex.Message };
+        }
     }
 
     [RelayCommand]
@@ -101,17 +105,17 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
         Progress?.Cancel();
     }
 
-    private async Task<ProcessingResult<IBitmapFileInfo>> ImportGpxFileAsync(IStorageFile gpxFile, IReadOnlyList<IMediaFileInfo> mediaFiles, Progress progress, CancellationToken cancellationToken)
+    private async Task<ParallelResult<IBitmapFileInfo>> ImportGpxFileAsync(IStorageFile gpxFile, IReadOnlyList<IMediaFileInfo> mediaFiles, Progress progress, CancellationToken cancellationToken)
     {
         var gpxTrack = await gpxService.ReadTrackFromGpxFileAsync(gpxFile);
 
         var mediaFilesToProcess = mediaFiles.OfType<IBitmapFileInfo>().Where(bitmap => bitmap.IsMetadataSupported).ToList();
 
-        var result = await ParallelizationUtil.ProcessParallelAsync(mediaFilesToProcess, async mediaFile => 
+        var result = await mediaFilesToProcess.TryProcessParallelAsync(async mediaFile =>
         {
             await gpxService.TryApplyGpxTrackToFile(gpxTrack, mediaFile);
-            
-        }, progress, cancellationToken);
+        },
+        cancellationToken, progress);
 
         Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.GeoTag));
 

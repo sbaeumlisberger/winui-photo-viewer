@@ -1,17 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using NSubstitute;
-using PhotoViewer.App.Models;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
-using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace PhotoViewer.Test.ViewModels;
@@ -22,8 +16,8 @@ public class ComparePageModelTest
     private readonly IMessenger messenger = new StrongReferenceMessenger();
 
     private readonly IReadOnlyList<IBitmapFileInfo> bitmapFiles;
-    
-    private readonly ICompareViewModel left =  Substitute.For<ICompareViewModel>();
+
+    private readonly ICompareViewModel left = Substitute.For<ICompareViewModel>();
 
     private readonly ICompareViewModel right = Substitute.For<ICompareViewModel>();
 

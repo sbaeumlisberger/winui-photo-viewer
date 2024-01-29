@@ -5,7 +5,7 @@ public class MultiViewDialogBase : ContentDialog
 {
     private bool closeRequested;
 
-    public MultiViewDialogBase() 
+    public MultiViewDialogBase()
     {
         Closing += DialogBase_Closing;
     }

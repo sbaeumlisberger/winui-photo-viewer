@@ -6,11 +6,6 @@ using PhotoViewer.App.Services;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace PhotoViewer.Test.ViewModels.OverviewPage;
@@ -37,7 +32,7 @@ public class OverviewItemModelTest
     }
 
     [Fact]
-    public void ResetsNewNameWhenCancelRenaming() 
+    public void ResetsNewNameWhenCancelRenaming()
     {
         messenger.Send(new ActivateRenameFileMessage(mediaFile));
         overviewItemModel.NewName = "NewName";
@@ -59,7 +54,7 @@ public class OverviewItemModelTest
             .AndDoes(_ => mediaFile.DisplayName.Returns("NewName.jpg"));
 
         await overviewItemModel.ConfirmRenaming();
-       
+
         await mediaFile.Received().RenameAsync("NewName");
         Assert.False(overviewItemModel.IsRenaming);
         Assert.Equal("NewName.jpg", overviewItemModel.DisplayName);
@@ -76,7 +71,7 @@ public class OverviewItemModelTest
 
         await mediaFile.DidNotReceive().RenameAsync(Arg.Any<string>());
         Assert.False(overviewItemModel.IsRenaming);
-        Assert.Equal("TestFile", overviewItemModel.NewName);    
+        Assert.Equal("TestFile", overviewItemModel.NewName);
         Assert.Equal("TestFile.jpg", overviewItemModel.DisplayName);
     }
 
@@ -99,11 +94,12 @@ public class OverviewItemModelTest
     public async Task ShowErrorDialogWhenRenamingFails()
     {
         messenger.Send(new ActivateRenameFileMessage(mediaFile));
+        await overviewItemModel.LastDispatchTask;
         overviewItemModel.NewName = "NewName";
         mediaFile.RenameAsync("NewName").ThrowsAsync(new Exception("Some Error Message"));
 
         await overviewItemModel.ConfirmRenaming();
-       
+
         Assert.False(overviewItemModel.IsRenaming);
         await dialogService.Received().ShowDialogAsync(Arg.Any<MessageDialogModel>());
         Assert.Equal("TestFile", overviewItemModel.NewName);

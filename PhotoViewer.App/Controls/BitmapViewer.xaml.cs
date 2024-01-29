@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Essentials.NET;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.UI;
@@ -9,7 +10,6 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.Views;
-using PhotoViewer.Core.Utils;
 using System;
 using Windows.Foundation;
 
@@ -55,7 +55,7 @@ public sealed partial class BitmapViewer : UserControl
 
     private void BitmapViewer_Unloaded(object sender, RoutedEventArgs e)
     {
-        DisposeUtil.DisposeSafely(ref animatedBitmapRenderer);
+        animatedBitmapRenderer.DisposeSafely(() => animatedBitmapRenderer = null);
 
         canvasControl.RemoveFromVisualTree();
         canvasControl = null;
@@ -70,7 +70,7 @@ public sealed partial class BitmapViewer : UserControl
 
     private void OnBitmapImageChanged(DependencyObject sender, DependencyProperty dp)
     {
-        DisposeUtil.DisposeSafely(ref animatedBitmapRenderer);
+        animatedBitmapRenderer.DisposeSafely(() => animatedBitmapRenderer = null);
 
         scrollViewer.ChangeView(0, 0, 1);
 
@@ -233,7 +233,7 @@ public sealed partial class BitmapViewer : UserControl
         double dummyWidthInDIPs = dummy.ActualWidth * dummy.XamlRoot.RasterizationScale;
         double orginalSizeZoomFactor = BitmapImage.SizeInDIPs.Width / dummyWidthInDIPs;
 
-        if (MathUtil.ApproximateEquals(scrollViewer.ZoomFactor, 1))
+        if (MathUtils.ApproximateEquals(scrollViewer.ZoomFactor, 1))
         {
             scrollViewer.Zoom((float)orginalSizeZoomFactor);
         }

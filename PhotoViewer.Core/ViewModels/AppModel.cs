@@ -5,12 +5,7 @@ using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Models;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 
@@ -28,8 +23,8 @@ public class AppModel
 
     public AppModel(
         ApplicationSettings settings,
-        IMessenger messenger, 
-        IViewModelFactory viewModelFactory, 
+        IMessenger messenger,
+        IViewModelFactory viewModelFactory,
         IMediaFilesLoaderService mediaFilesLoaderService)
     {
         this.settings = settings;
@@ -38,7 +33,7 @@ public class AppModel
         this.mediaFilesLoaderService = mediaFilesLoaderService;
     }
 
-    public async Task OnLaunchedAsync(IActivatedEventArgs activatedEventArgs, Func<MainWindowModel, IMessenger, Task> showWindow) 
+    public async Task OnLaunchedAsync(IActivatedEventArgs activatedEventArgs, Func<MainWindowModel, IMessenger, Task> showWindow)
     {
         Log.Info("Application launched");
         var stopwatch = Stopwatch.StartNew();

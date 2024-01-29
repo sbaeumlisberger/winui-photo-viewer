@@ -1,21 +1,21 @@
-﻿using Microsoft.UI;
+﻿using Essentials.NET;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using PhotoViewer.App.Models;
 using PhotoViewer.App.Resources;
+using PhotoViewer.App.Utils.Logging;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Graphics.Printing;
 using Windows.Graphics.Printing.OptionDetails;
-using Windows.Foundation;
-using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using Windows.Storage;
-using System.Linq;
-using Microsoft.UI.Xaml.Media.Imaging;
-using PhotoViewer.App.Utils.Logging;
 using Windows.UI;
-using PhotoViewer.App.Models;
 
 namespace PhotoViewer.App.Utils;
 
@@ -265,8 +265,8 @@ internal class PhotoPrintJob : IPrintJob
             };
             for (double y = 0; y < rows && i < copies * images.Length; y++)
             {
-                StackPanel row = new StackPanel() 
-                { 
+                StackPanel row = new StackPanel()
+                {
                     Orientation = Orientation.Horizontal,
                     HorizontalAlignment = horizontalAlignment
                 };

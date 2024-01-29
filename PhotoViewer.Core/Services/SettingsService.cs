@@ -1,9 +1,4 @@
-﻿using PhotoViewer.App.Utils.Logging;
-using PhotoViewer.Core.Models;
-using System.Diagnostics;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Xml.Serialization;
+﻿using PhotoViewer.Core.Models;
 using Windows.Storage;
 
 namespace PhotoViewer.Core.Services;
@@ -25,7 +20,7 @@ public class SettingsService : ISettingsService
 
     private readonly string settingsFilePath;
 
-    public SettingsService(string? folder = null) 
+    public SettingsService(string? folder = null)
     {
         settingsFilePath = Path.Combine(folder ?? AppData.PublicFolder, "settings.ini");
     }

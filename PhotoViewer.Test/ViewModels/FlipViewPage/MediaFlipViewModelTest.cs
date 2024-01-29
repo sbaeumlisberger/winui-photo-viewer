@@ -7,8 +7,6 @@ using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.ViewModels;
-using System.Diagnostics;
-using Windows.Storage;
 using Xunit;
 
 namespace PhotoViewer.Test.ViewModels.FlipViewPage;
@@ -28,7 +26,7 @@ public class MediaFlipViewModelTest
         itemModelFactory = (mediaFile) =>
         {
             var mock = Substitute.For<IMediaFlipViewItemModel>();
-            mock.MediaItem.Returns(mediaFile);
+            mock.MediaFile.Returns(mediaFile);
             return mock;
         };
 
@@ -36,7 +34,7 @@ public class MediaFlipViewModelTest
     }
 
     [Fact]
-    public void Receive_MediaFilesLoadedMessage()
+    public async void Receive_MediaFilesLoadedMessage()
     {
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[17];
@@ -44,9 +42,10 @@ public class MediaFlipViewModelTest
         var tsc = new TaskCompletionSource<LoadMediaFilesResult>();
 
         messenger.Send(new MediaFilesLoadingMessage(new LoadMediaFilesTask(startFile, tsc.Task)));
+        await mediaFlipViewModel.LastDispatchTask;
 
         Assert.NotNull(mediaFlipViewModel.SelectedItemModel);
-        Assert.Equal(startFile, mediaFlipViewModel.SelectedItemModel.MediaItem);
+        Assert.Equal(startFile, mediaFlipViewModel.SelectedItemModel.MediaFile);
         Assert.Single(mediaFlipViewModel.Items);
         Assert.Single(mediaFlipViewModel.ItemModels);
         Assert.True(mediaFlipViewModel.IsLoadingMoreFiles);
@@ -54,7 +53,7 @@ public class MediaFlipViewModelTest
         tsc.SetResult(new LoadMediaFilesResult(files, startFile));
 
         Assert.NotNull(mediaFlipViewModel.SelectedItemModel);
-        Assert.Equal(startFile, mediaFlipViewModel.SelectedItemModel.MediaItem);
+        Assert.Equal(startFile, mediaFlipViewModel.SelectedItemModel.MediaFile);
         Assert.Equal(files.Count, mediaFlipViewModel.Items.Count);
         Assert.Equal(5, mediaFlipViewModel.ItemModels.Count);
         Assert.NotNull(mediaFlipViewModel.TryGetItemModel(startFile));
@@ -62,7 +61,7 @@ public class MediaFlipViewModelTest
     }
 
     [Fact]
-    public void PreloadedItemModelIsResused_WhenLoadingMediaFilesCompleted()
+    public async void PreloadedItemModelIsResused_WhenLoadingMediaFilesCompleted()
     {
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[17];
@@ -70,6 +69,7 @@ public class MediaFlipViewModelTest
         var tsc = new TaskCompletionSource<LoadMediaFilesResult>();
 
         messenger.Send(new MediaFilesLoadingMessage(new LoadMediaFilesTask(startFile, tsc.Task)));
+        await mediaFlipViewModel.LastDispatchTask;
 
         Assert.NotNull(mediaFlipViewModel.SelectedItemModel);
         var preloadItemModel = mediaFlipViewModel.SelectedItemModel;
@@ -92,7 +92,7 @@ public class MediaFlipViewModelTest
         await mediaFlipViewModel.LastDispatchTask;
 
         Assert.NotNull(mediaFlipViewModel.SelectedItemModel);
-        Assert.Equal(startFile, mediaFlipViewModel.SelectedItemModel.MediaItem);
+        Assert.Equal(startFile, mediaFlipViewModel.SelectedItemModel.MediaFile);
         Assert.Single(mediaFlipViewModel.Items);
         Assert.Single(mediaFlipViewModel.ItemModels);
         Assert.True(mediaFlipViewModel.IsLoadingMoreFiles);
@@ -106,7 +106,7 @@ public class MediaFlipViewModelTest
         tsc.SetResult(new LoadMediaFilesResult(files, startFile));
 
         Assert.NotNull(mediaFlipViewModel.SelectedItemModel);
-        Assert.Equal(startFile, mediaFlipViewModel.SelectedItemModel.MediaItem);
+        Assert.Equal(startFile, mediaFlipViewModel.SelectedItemModel.MediaFile);
         Assert.Equal(files.Count, mediaFlipViewModel.Items.Count);
         Assert.Equal(5, mediaFlipViewModel.ItemModels.Count);
         Assert.NotNull(mediaFlipViewModel.TryGetItemModel(startFile));
@@ -118,7 +118,7 @@ public class MediaFlipViewModelTest
     {
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[17];
-        mediaFlipViewModel.SetItems(files, startFile);
+        mediaFlipViewModel.SetFiles(files, startFile);
 
         messenger.Send(new MediaFilesDeletedMessage(new[] { startFile }));
         await mediaFlipViewModel.LastDispatchTask;
@@ -137,7 +137,7 @@ public class MediaFlipViewModelTest
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[199];
 
-        mediaFlipViewModel.SetItems(files, startFile);
+        mediaFlipViewModel.SetFiles(files, startFile);
 
         messenger.Send(new MediaFilesDeletedMessage(new[] { startFile }));
         await mediaFlipViewModel.LastDispatchTask;
@@ -156,7 +156,7 @@ public class MediaFlipViewModelTest
         var files = Enumerable.Range(0, 1).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[0];
 
-        mediaFlipViewModel.SetItems(files, startFile);
+        mediaFlipViewModel.SetFiles(files, startFile);
 
         messenger.Send(new MediaFilesDeletedMessage(new[] { startFile }));
         await mediaFlipViewModel.LastDispatchTask;

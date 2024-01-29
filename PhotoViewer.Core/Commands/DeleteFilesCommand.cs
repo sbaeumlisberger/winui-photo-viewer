@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
@@ -13,9 +14,9 @@ using Windows.System;
 
 namespace PhotoViewer.Core.Commands;
 
-public interface IDeleteFilesCommand : IAsyncCommand<IReadOnlyCollection<IMediaFileInfo>>, IAcceleratedCommand, ICommand { }
+public interface IDeleteFilesCommand : IAsyncCommand<IReadOnlyList<IMediaFileInfo>>, IAcceleratedCommand, ICommand { }
 
-public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFileInfo>>, IDeleteFilesCommand
+public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyList<IMediaFileInfo>>, IDeleteFilesCommand
 {
     public VirtualKey AcceleratorKey => VirtualKey.Delete;
 
@@ -36,12 +37,12 @@ public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFil
         this.settings = settings;
     }
 
-    protected override bool CanExecute(IReadOnlyCollection<IMediaFileInfo> parameter)
+    protected override bool CanExecute(IReadOnlyList<IMediaFileInfo> parameter)
     {
         return parameter.Any();
     }
 
-    protected override async Task OnExecuteAsync(IReadOnlyCollection<IMediaFileInfo> files)
+    protected override async Task OnExecuteAsync(IReadOnlyList<IMediaFileInfo> files)
     {
         Log.Info($"Execute delete files command for: {string.Join(", ", files.Select(file => file.DisplayName))}");
 
@@ -57,7 +58,7 @@ public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFil
             };
         }
 
-        var task = ParallelizationUtil.ProcessParallelAsync(files, async file =>
+        var task = files.TryProcessParallelAsync(async file =>
         {
             await deleteMediaFilesService.DeleteMediaFileAsync(file, deleteLinkedFiles);
         });
@@ -89,7 +90,7 @@ public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyCollection<IMediaFil
         return askDialogModel.IsYes;
     }
 
-    private async Task ShowErrorDialogAsync(ProcessingResult<IMediaFileInfo> result)
+    private async Task ShowErrorDialogAsync(ParallelResult<IMediaFileInfo> result)
     {
         string message = Strings.DeleteFilesErrorDialog_Message + "\n";
         message += string.Join("\n", result.Failures

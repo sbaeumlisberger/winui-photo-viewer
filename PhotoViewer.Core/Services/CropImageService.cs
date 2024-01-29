@@ -6,14 +6,9 @@ using PhotoViewer.App.Services;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
-using System;
-using System.IO;
-using System.Net.Security;
-using System.Text;
 using WIC;
 using Windows.Foundation;
 using Windows.Graphics;
-using Windows.Storage;
 
 namespace PhotoViewer.Core.Services;
 

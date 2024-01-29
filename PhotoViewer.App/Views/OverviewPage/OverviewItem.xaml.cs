@@ -1,21 +1,21 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using PhotoViewer.Core.ViewModels;
-using PhotoViewer.App.Utils;
-using PhotoViewer.App.Utils.Logging;
-using PhotoViewer.Core.Utils;
-using System;
-using System.Linq;
-using Windows.Storage;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using PhotoViewer.App.Converters;
-using PhotoViewer.Core.Models;
-using Microsoft.UI.Xaml.Input;
-using Windows.System;
 using PhotoViewer.App.Models;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels;
+using System;
 using System.IO;
+using System.Linq;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.Storage;
+using Windows.System;
 
 namespace PhotoViewer.App.Views;
 

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils.Logging;
@@ -6,7 +7,6 @@ using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using PhotoViewer.Core.ViewModels.Shared;
 using System.Diagnostics;

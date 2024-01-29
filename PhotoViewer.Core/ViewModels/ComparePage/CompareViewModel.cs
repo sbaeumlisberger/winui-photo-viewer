@@ -1,15 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
+using Essentials.NET;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Threading;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -52,12 +47,12 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
 
     private int selectedIndex = -1;
 
-    private readonly VirtualizedCollection<IBitmapFileInfo, IImageViewModel> imageViewModels;
+    private readonly VirtualizedCollection<IBitmapFileInfo, IImageViewModel> imageViewModelsCache;
 
     public CompareViewModel(
-        IObservableReadOnlyList<IBitmapFileInfo> bitmapFiles, 
-        ApplicationSettings settings, 
-        IDeleteFilesCommand deleteFilesCommand, 
+        IObservableReadOnlyList<IBitmapFileInfo> bitmapFiles,
+        ApplicationSettings settings,
+        IDeleteFilesCommand deleteFilesCommand,
         IViewModelFactory viewModelFactory)
     {
         BitmapFiles = bitmapFiles;
@@ -65,7 +60,7 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
         this.deleteFilesCommand = deleteFilesCommand;
         this.viewModelFactory = viewModelFactory;
 
-        imageViewModels = new(bitmapFiles, CacheSize, CreateImageViewModel, viewModel => viewModel.Cleanup());
+        imageViewModelsCache = VirtualizedCollection.Create(CacheSize, CreateImageViewModel, viewModel => viewModel.Cleanup(), bitmapFiles);
 
         BitmapFiles.CollectionChanged += BitmapFiles_CollectionChanged;
     }
@@ -73,10 +68,10 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
     protected override void OnCleanup()
     {
         BitmapFiles.CollectionChanged -= BitmapFiles_CollectionChanged;
-        imageViewModels.Clear();
+        imageViewModelsCache.Clear();
     }
 
-    private IImageViewModel CreateImageViewModel(IBitmapFileInfo bitmapFile) 
+    private IImageViewModel CreateImageViewModel(IBitmapFileInfo bitmapFile)
     {
         var imageViewModel = viewModelFactory.CreateImageViewModel(bitmapFile);
         imageViewModel.InitializeAsync().LogOnException();
@@ -101,7 +96,7 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
     partial void OnSelectedBitmapFileChanged()
     {
         selectedIndex = SelectedBitmapFile != null ? BitmapFiles.IndexOf(SelectedBitmapFile) : -1;
-        ImageViewModel = imageViewModels.SetSelectedItem(SelectedBitmapFile); ;
+        ImageViewModel = imageViewModelsCache.SetSelectedItem(SelectedBitmapFile);
     }
 
     [RelayCommand(CanExecute = nameof(CanSelectPrevious))]

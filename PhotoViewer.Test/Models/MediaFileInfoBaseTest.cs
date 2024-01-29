@@ -1,10 +1,5 @@
 ﻿using NSubstitute;
 using PhotoViewer.App.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using Windows.Foundation;
 using Windows.Storage;
 using Xunit;

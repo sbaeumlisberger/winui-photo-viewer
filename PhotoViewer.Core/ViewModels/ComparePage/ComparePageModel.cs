@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Messages;
@@ -62,7 +63,7 @@ public partial class ComparePageModel : ViewModelBase
 
     private void OnReceive(MediaFilesDeletedMessage msg)
     {
-        msg.Files.OfType<IBitmapFileInfo>().ForEach(mediaItem => bitmapFiles.Remove(mediaItem));
+        msg.Files.OfType<IBitmapFileInfo>().ForEach(bitmapFile => bitmapFiles.Remove(bitmapFile));
     }
 
 

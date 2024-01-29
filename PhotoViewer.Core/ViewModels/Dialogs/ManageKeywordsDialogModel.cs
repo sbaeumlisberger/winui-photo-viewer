@@ -1,13 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -27,7 +21,7 @@ public partial class ManageKeywordsDialogModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task ImportAsync() 
+    private async Task ImportAsync()
     {
         var filePickerModel = new FileOpenPickerModel()
         {
@@ -36,7 +30,7 @@ public partial class ManageKeywordsDialogModel : ViewModelBase
 
         await dialogService.ShowDialogAsync(filePickerModel);
 
-        if (filePickerModel.File is { } file) 
+        if (filePickerModel.File is { } file)
         {
             await suggestionsService.ImportFromFileAsync(file);
         }

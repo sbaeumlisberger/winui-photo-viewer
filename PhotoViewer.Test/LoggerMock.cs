@@ -1,12 +1,7 @@
 ﻿using PhotoViewer.App.Utils.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit.Abstractions;
 using System.Runtime.CompilerServices;
 using Windows.Storage;
+using Xunit.Abstractions;
 
 namespace PhotoViewer.Test;
 

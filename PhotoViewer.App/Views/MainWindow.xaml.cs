@@ -1,20 +1,19 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Navigation;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Services;
-using PhotoViewer.Core.Utils;
 using PhotoViewer.App.Utils.Logging;
-using System;
-using WinUIEx;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Messages;
-using Windows.System;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Controls;
+using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
-using Microsoft.UI.Xaml.Navigation;
+using System;
+using Windows.System;
+using WinUIEx;
 
 namespace PhotoViewer.App;
 
@@ -49,7 +48,7 @@ public sealed partial class MainWindow : WindowEx
         messenger.Register<ExitFullscreenMessage>(this, _ => ExitFullscreen());
         messenger.Register<NavigateToPageMessage>(this, msg => NavigateToPage(msg.PageType, msg.Parameter));
         messenger.Register<NavigateBackMessage>(this, _ => NavigateBack());
-           
+
         FocusManager.LosingFocus += FocusManager_LosingFocus;
     }
 

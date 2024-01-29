@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 namespace PhotoViewer.Core.Utils;
 
@@ -23,7 +22,7 @@ public abstract class AsyncCommandBase : IAsyncCommand, ICommand
 
     public async void Execute(object? parameter)
     {
-        await ExecuteAsync();        
+        await ExecuteAsync();
     }
 
     public async Task ExecuteAsync()
@@ -58,7 +57,7 @@ public abstract class AsyncCommandBase<T> : IAsyncCommand<T>, ICommand
     protected virtual bool CanExecute(T parameter) => true;
 
 
-    private bool isExecuting  = false;
+    private bool isExecuting = false;
 
     public bool CanExecute(object? parameter)
     {
@@ -82,7 +81,7 @@ public abstract class AsyncCommandBase<T> : IAsyncCommand<T>, ICommand
         }
     }
 
-    protected void RaiseCanExecuteChanged() 
+    protected void RaiseCanExecuteChanged()
     {
         CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }

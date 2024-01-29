@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
@@ -8,9 +9,6 @@ using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
-using System.Threading;
-using Tocronx.SimpleAsync;
-using Windows.UI.WebUI;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -41,7 +39,7 @@ public partial class ImageViewModel : ViewModelBase, IImageViewModel
 
     private readonly ICachedImageLoaderService imageService;
 
-    private CancelableTaskRunner loadImageRunner = new CancelableTaskRunner();
+    private readonly CancelableTaskRunner loadImageRunner = new CancelableTaskRunner();
 
     private readonly IBitmapFileInfo bitmapFile;
 
@@ -59,8 +57,8 @@ public partial class ImageViewModel : ViewModelBase, IImageViewModel
 
     protected override void OnCleanup()
     {
-        loadImageRunner.Cancel(); 
-        Image.DisposeSafely(() => Image = null);  
+        loadImageRunner.Cancel();
+        Image.DisposeSafely(() => Image = null);
     }
 
     private async Task LoadAsync(bool reload = false)

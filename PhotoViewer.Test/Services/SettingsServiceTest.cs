@@ -1,9 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml.Media;
-using PhotoViewer.Core;
-using PhotoViewer.Core.Models;
+﻿using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using System;
 using System.Diagnostics;
 using Windows.Storage;
 using Xunit;

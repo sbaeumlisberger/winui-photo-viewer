@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PhotoViewer.Core.ViewModels
+﻿namespace PhotoViewer.Core.ViewModels
 {
     public class MessageDialogModel
     {
