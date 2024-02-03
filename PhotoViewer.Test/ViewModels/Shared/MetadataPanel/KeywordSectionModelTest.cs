@@ -114,7 +114,7 @@ public class KeywordSectionModelTest
 
         _ = keywordsSectionModel.AddKeywordCommand.ExecuteAsync(null);
         await keywordsSectionModel.LastDispatchTask;
-
+    
         Assert.False(keywordsSectionModel.AddKeywordCommand.CanExecute(null));
         Assert.True(canExecuteChanged);
 

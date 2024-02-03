@@ -1,4 +1,5 @@
 ﻿using Essentials.NET;
+using System;
 
 namespace PhotoViewer.Core.Utils;
 
@@ -24,15 +25,16 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
 
     private readonly object lockObject = new object();
 
-    private readonly Throttle throttle = new Throttle(TimeSpan.FromMilliseconds(40));
+    private readonly Throttle throttle;
 
     private double value;
     private TimeSpan? estimatedTimeRemaining;
 
-    public Progress(CancellationTokenSource? cts = null, SynchronizationContext? synchronizationContext = null)
+    public Progress(CancellationTokenSource? cts = null, SynchronizationContext? synchronizationContext = null, TimeProvider? timeProvider = null)
     {
         this.cts = cts;
         this.synchronizationContext = synchronizationContext ?? SynchronizationContext.Current!;
+        throttle = new Throttle(TimeSpan.FromMilliseconds(40), timeProvider);
         CanCancel = cts != null;
     }
 
@@ -76,7 +78,7 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
 
     private async Task UpdateAsync()
     {
-        await synchronizationContext.PostAsync(() =>
+        await synchronizationContext.DispatchAsync(() =>
         {
             Value = value;
             EstimatedTimeRemaining = estimatedTimeRemaining;

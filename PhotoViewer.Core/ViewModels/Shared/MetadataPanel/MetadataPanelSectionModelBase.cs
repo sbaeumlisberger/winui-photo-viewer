@@ -102,7 +102,7 @@ namespace PhotoViewer.Core.ViewModels
                 {
                     if (ReferenceEquals(files, Files))
                     {
-                        await RunInContextAsync(() => IsWriting = true);
+                        await DispatchAsync(() => IsWriting = true);
                     }
 
                     var result = await files.TryProcessParallelAsync(processFile, cancellationToken);
@@ -131,7 +131,7 @@ namespace PhotoViewer.Core.ViewModels
                 {
                     if (ReferenceEquals(files, Files))
                     {
-                        await RunInContextAsync(() => IsWriting = false);
+                        await DispatchAsync(() => IsWriting = false);
                     }
                 }
             }

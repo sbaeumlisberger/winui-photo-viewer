@@ -26,7 +26,7 @@ internal class PrintRegistration
         var deferral = args.Request.GetDeferral();
         try
         {
-            await dispatcherQueue.TryEnqueueIfRequiredAsync(() =>
+            await dispatcherQueue.DispatchAsync(() =>
             {
                 var printJob = printJobFactory();
 
@@ -56,7 +56,7 @@ internal class PrintRegistration
         var deferral = sourceRequestedArgs.GetDeferral();
         try
         {
-            await dispatcherQueue.TryEnqueueIfRequiredAsync(() =>
+            await dispatcherQueue.DispatchAsync(() =>
             {
                 var printSource = new PrintSource(printTask, printJob);
                 sourceRequestedArgs.SetSource(printSource.PrintDocumentSource);
@@ -127,7 +127,7 @@ internal class PrintRegistration
                 printJob.UpdateDisplayedOptions(printTaskOptionDetails);
             }
 
-            await printDocument.DispatcherQueue.TryEnqueueIfRequiredAsync(() =>
+            await printDocument.DispatcherQueue.DispatchAsync(() =>
             {
                 try
                 {
@@ -146,7 +146,7 @@ internal class PrintRegistration
             {
                 printTask.Completed -= PrintTask_Completed;
 
-                await printDocument.DispatcherQueue.TryEnqueueIfRequiredAsync(() =>
+                await printDocument.DispatcherQueue.DispatchAsync(() =>
                 {
                     printDocument.Paginate -= PrintDocument_Paginate;
                     printDocument.GetPreviewPage -= PrintDocument_GetPreviewPage;

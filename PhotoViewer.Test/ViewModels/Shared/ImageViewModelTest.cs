@@ -139,6 +139,8 @@ public class ImageViewModelTest : IDisposable
         var bitmapImage2 = Substitute.For<IBitmapImageModel>();
         loadFromFileAsyncTSC2.SetResult(bitmapImage2);
 
+        await Task.Yield();
+
         Assert.False(imageViewModel.IsLoading);
         Assert.Equal(bitmapImage2, imageViewModel.Image);
     }

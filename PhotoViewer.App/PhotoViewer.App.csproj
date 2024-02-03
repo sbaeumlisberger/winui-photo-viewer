@@ -70,7 +70,7 @@
   
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="MetadataAPI" Version="1.4.6" />
+    <PackageReference Include="MetadataAPI" Version="1.4.7" />
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.1.1" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428" />

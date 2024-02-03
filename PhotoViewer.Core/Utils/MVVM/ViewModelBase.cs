@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using PhotoViewer.Core.Utils;
 using PropertyChanged;
 using System.ComponentModel;
@@ -48,49 +49,20 @@ public class ViewModelBase : ObservableObjectBase, IViewModel
 
     protected void Register<TMessage>(Action<TMessage> messageHandler) where TMessage : class
     {
-        Messenger.Register<TMessage>(this, (_, msg) => RunInContextAsync(() => messageHandler(msg)));
+        Messenger.Register<TMessage>(this, (_, msg) => DispatchAsync(() => messageHandler(msg)));
     }
 
     /// <summary>
-    /// Runs code in the view models synchronization context.
+    /// Runs the specified action in the view models synchronization context.
     /// </summary>
-    protected Task RunInContextAsync(Action action)
+    protected Task DispatchAsync(Action action)
     {
         if (synchronizationContext is null)
         {
             throw new InvalidOperationException();
         }
-
-        if (SynchronizationContext.Current != synchronizationContext)
-        {
-            var tsc = new TaskCompletionSource();
-            try
-            {
-                LastDispatchTask = tsc.Task;
-                synchronizationContext.Post(_ =>
-                {
-                    try
-                    {
-                        action();
-                        tsc.SetResult();
-                    }
-                    catch (Exception e)
-                    {
-                        tsc.SetException(e);
-                    }
-                }, null);
-            }
-            catch (Exception e)
-            {
-                tsc.SetException(e);
-            }
-            return tsc.Task;
-        }
-        else
-        {
-            action();
-            return Task.CompletedTask;
-        }
+        LastDispatchTask = synchronizationContext.DispatchAsync(action);
+        return LastDispatchTask;       
     }
 
 }

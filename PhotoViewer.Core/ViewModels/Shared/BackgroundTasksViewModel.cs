@@ -21,7 +21,7 @@ public partial class BackgroundTasksViewModel : ViewModelBase
 
     private void BackgroundTasks_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        RunInContextAsync(() =>
+        DispatchAsync(() =>
         {
             var backgroundTasks = backgroundTaskService.BackgroundTasks;
             ShowProgressIndicator = backgroundTasks.Count > 0;

@@ -115,7 +115,7 @@ public partial class App : Application
         {
             isUnhandeldExceptionDialogShown = true;
 
-            await Window.DispatcherQueue.TryEnqueueIfRequiredAsync(async () =>
+            await Window.DispatcherQueue.DispatchAsync(async () =>
             {
                 var dialog = new UnhandledExceptionDialog(Window, args.Message);
 

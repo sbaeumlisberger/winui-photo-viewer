@@ -6,54 +6,48 @@ namespace PhotoViewer.App.Utils;
 
 internal static class DispatcherQueueUtil
 {
-
-    public static async Task TryEnqueueIfRequiredAsync(this DispatcherQueue dispatcherQueue, Action action)
+    public static Task DispatchAsync(this DispatcherQueue dispatcherQueue, Action action)
     {
-        if (!dispatcherQueue.HasThreadAccess)
-        {
-            var tsc = new TaskCompletionSource();
-            dispatcherQueue.TryEnqueue(() =>
-            {
-                try
-                {
-                    action();
-                    tsc.SetResult();
-                }
-                catch (Exception ex)
-                {
-                    tsc.SetException(ex);
-                }
-            });
-            await tsc.Task;
-        }
-        else
+        if (dispatcherQueue.HasThreadAccess)
         {
             action();
+            return Task.CompletedTask;
         }
+        var tsc = new TaskCompletionSource();
+        dispatcherQueue.TryEnqueue(() =>
+        {
+            try
+            {
+                action();
+                tsc.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tsc.SetException(ex);
+            }
+        });
+        return tsc.Task;
     }
 
-    public static async Task TryEnqueueIfRequiredAsync(this DispatcherQueue dispatcherQueue, Func<Task> action)
+    public static Task DispatchAsync(this DispatcherQueue dispatcherQueue, Func<Task> function)
     {
-        if (!dispatcherQueue.HasThreadAccess)
+        if (dispatcherQueue.HasThreadAccess)
         {
-            var tsc = new TaskCompletionSource();
-            dispatcherQueue.TryEnqueue(async () =>
+            return function();
+        }
+        var tsc = new TaskCompletionSource();
+        dispatcherQueue.TryEnqueue(async () =>
+        {
+            try
             {
-                try
-                {
-                    await action();
-                    tsc.SetResult();
-                }
-                catch (Exception ex)
-                {
-                    tsc.SetException(ex);
-                }
-            });
-            await tsc.Task;
-        }
-        else
-        {
-            await action();
-        }
+                await function();
+                tsc.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tsc.SetException(ex);
+            }
+        });
+        return tsc.Task;
     }
 }

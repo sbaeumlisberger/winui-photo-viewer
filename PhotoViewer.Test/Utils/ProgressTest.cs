@@ -1,4 +1,5 @@
-﻿using PhotoViewer.Core.Utils;
+﻿using Microsoft.Extensions.Time.Testing;
+using PhotoViewer.Core.Utils;
 using Xunit;
 
 namespace PhotoViewer.Test.Utils;
@@ -10,7 +11,9 @@ public class ProgressTest
     [Fact]
     public async Task Report_ParallelAndOutOfOrder()
     {
-        var progress = new Progress(null, new SynchronizationContextMock());
+        var timeProvider = new FakeTimeProvider();
+
+        var progress = new Progress(null, new SynchronizationContextMock(), timeProvider);
 
         var reportTasks = Enumerable.Range(1, 100)
             .Select(i => new Task(() => progress.Report(i / 100.0)))
@@ -20,7 +23,8 @@ public class ProgressTest
 
         await Task.WhenAll(reportTasks);
 
-        await Task.Delay(100);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+        await Task.Yield();
 
         Assert.Equal(1, progress.Value);
     }
