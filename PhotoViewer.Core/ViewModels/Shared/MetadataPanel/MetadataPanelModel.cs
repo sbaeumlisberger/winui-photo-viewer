@@ -135,7 +135,7 @@ namespace PhotoViewer.Core.ViewModels
             {
                 try
                 {
-                    var metadata = await supportedFiles.ProcessParallelAsync(metadataService.GetMetadataAsync, cancellationToken);
+                    var metadata = await supportedFiles.Parallel(cancellationToken).ProcessAsync(metadataService.GetMetadataAsync);
 
                     cancellationToken.ThrowIfCancellationRequested();
 

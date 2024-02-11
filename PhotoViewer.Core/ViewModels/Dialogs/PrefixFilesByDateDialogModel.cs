@@ -98,10 +98,9 @@ public partial class PrefixFilesByDateDialogModel : ViewModelBase
             .ToList();
         cancellationToken.ThrowIfCancellationRequested();
 
-        return await filesToRename.TryProcessParallelAsync(async item =>
+        return await filesToRename.Parallel(cancellationToken, progress).TryProcessAsync(async item =>
         {
             await item.File.RenameAsync(item.NewName);
-        },
-        cancellationToken, progress);
+        });
     }
 }

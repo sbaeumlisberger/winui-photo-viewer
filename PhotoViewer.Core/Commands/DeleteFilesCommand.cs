@@ -58,7 +58,7 @@ public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyList<IMediaFileInfo>
             };
         }
 
-        var task = files.TryProcessParallelAsync(async file =>
+        var task = files.Parallel().TryProcessAsync(async file =>
         {
             await deleteMediaFilesService.DeleteMediaFileAsync(file, deleteLinkedFiles);
         });

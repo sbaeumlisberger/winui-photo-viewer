@@ -7,6 +7,7 @@ using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
+using System.Linq;
 
 namespace PhotoViewer.Core.ViewModels.Dialogs;
 
@@ -73,10 +74,10 @@ public partial class DeleteSingleRawFilesDialogModel : ViewModelBase
     {
         var mediaFilesToDelete = mediaFiles
             .Where(mediaFile => BitmapFileInfo.RawFileExtensions.Contains(mediaFile.FileExtension.ToLower())
-                                && !ExistsFileWithSameName(mediaFiles, mediaFile))
+                && !ExistsFileWithSameName(mediaFiles, mediaFile))
             .ToList();
 
-        var result = await mediaFilesToDelete.TryProcessParallelAsync(async mediaFile =>
+        var result = await mediaFilesToDelete.Parallel(cancellationToken, progress).TryProcessAsync(async mediaFile =>
         {
             foreach (var storageFile in mediaFile.StorageFiles)
             {
@@ -89,7 +90,7 @@ public partial class DeleteSingleRawFilesDialogModel : ViewModelBase
                     // files does no longer exist
                 }
             }
-        }, cancellationToken, progress);
+        });
 
         Messenger.Send(new MediaFilesDeletedMessage(result.ProcessedElements));
 

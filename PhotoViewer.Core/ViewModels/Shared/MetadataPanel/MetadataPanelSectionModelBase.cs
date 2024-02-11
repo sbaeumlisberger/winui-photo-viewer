@@ -105,7 +105,7 @@ namespace PhotoViewer.Core.ViewModels
                         await DispatchAsync(() => IsWriting = true);
                     }
 
-                    var result = await files.TryProcessParallelAsync(processFile, cancellationToken);
+                    var result = await files.Parallel(cancellationToken).TryProcessAsync(processFile);
 
                     onComplete(result.ProcessedElements);
 

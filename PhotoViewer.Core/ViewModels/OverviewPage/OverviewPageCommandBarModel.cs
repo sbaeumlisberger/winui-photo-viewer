@@ -68,7 +68,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
     private async Task RotateAsync()
     {
         var files = SelectedItems.OfType<IBitmapFileInfo>().ToList();
-        var result = await files.TryProcessParallelAsync(async (bitmapFile) =>
+        var result = await files.Parallel().TryProcessAsync(async (bitmapFile) =>
         {
             await rotateBitmapService.RotateClockwise90DegreesAsync(bitmapFile).ConfigureAwait(false);
         });

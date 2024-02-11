@@ -92,15 +92,14 @@ public partial class ShiftDatenTakenDialogModel : ViewModelBase
     {
         var filesToShift = mediaFiles.OfType<IBitmapFileInfo>().Where(bitmap => bitmap.IsMetadataSupported).ToList();
 
-        var result = await filesToShift.TryProcessParallelAsync(async file =>
+        var result = await filesToShift.Parallel(cancellationToken, progress).TryProcessAsync(async file =>
         {
             if (await metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken) is { } dateTaken)
             {
                 var shiftedDateTaken = dateTaken.Add(timeSpan);
                 await metadataService.WriteMetadataAsync(file, MetadataProperties.DateTaken, shiftedDateTaken);
             }
-        },
-        cancellationToken, progress);
+        });
 
         messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.DateTaken));
 

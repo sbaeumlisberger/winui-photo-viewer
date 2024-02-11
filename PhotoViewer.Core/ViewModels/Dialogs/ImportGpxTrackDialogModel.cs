@@ -11,6 +11,7 @@ using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
+using System.Linq;
 using Windows.Storage;
 
 namespace PhotoViewer.Core.ViewModels.Dialogs;
@@ -111,11 +112,10 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
 
         var mediaFilesToProcess = mediaFiles.OfType<IBitmapFileInfo>().Where(bitmap => bitmap.IsMetadataSupported).ToList();
 
-        var result = await mediaFilesToProcess.TryProcessParallelAsync(async mediaFile =>
+        var result = await mediaFilesToProcess.Parallel(cancellationToken, progress).TryProcessAsync(async mediaFile =>
         {
             await gpxService.TryApplyGpxTrackToFile(gpxTrack, mediaFile);
-        },
-        cancellationToken, progress);
+        });
 
         Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.GeoTag));
 
