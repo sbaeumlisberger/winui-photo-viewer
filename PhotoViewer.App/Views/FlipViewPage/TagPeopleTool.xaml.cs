@@ -201,11 +201,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void AutoSuggestBox_TextChanged(AutoSuggestBox autoSuggestBox, AutoSuggestBoxTextChangedEventArgs args)
     {
-        if (args.Reason == AutoSuggestionBoxTextChangeReason.SuggestionChosen)
-        {
-            FocusAutoSuggestBox(); // set focus back to text box when suggestion chosen via mouse            
-        }
-        else
+        if (args.Reason != AutoSuggestionBoxTextChangeReason.SuggestionChosen)
         {
             autoSuggestBox.ItemsSource = ViewModel!.FindSuggestions(autoSuggestBox.Text);
         }
@@ -255,10 +251,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        if (args.ChosenSuggestion is null) // user pressed enter or clicked query button
-        {
-            ViewModel!.AddPersonCommand.Execute(null);
-        }
+        sender.RunWhenTextChanged(args.QueryText, () => ViewModel!.AddPersonCommand.TryExecute());         
     }
 
     private void FocusAutoSuggestBox()

@@ -165,7 +165,7 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    <Grid Margin="0,4,0,0">
+                    <Grid Margin="0,4,0,0" ColumnSpacing="4">
                         <!--ColumnDefinitions="*,Auto"-->
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -177,25 +177,21 @@
                             GotFocus="PeopleAutoSuggestBox_GotFocus"
                             PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddPersonPlaceholder}"
                             utils:AutoSuggestBoxExtension.IsSuggestionListOverflowEnabled="True"
-                            utils:EnterKeyExtension.Command="{x:Bind ViewModel.PeopleSectionModel.AddPersonCommand}">
-                            <AutoSuggestBox.QueryIcon>
-                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#x0020;" />
-                            </AutoSuggestBox.QueryIcon>
+                            QuerySubmitted="PeopleAutoSuggestBox_QuerySubmitted"
+                            QueryIcon="Accept">
                         </AutoSuggestBox>
+                        <ProgressBar 
+                            IsIndeterminate="{x:Bind ViewModel.PeopleSectionModel.IsWriting, Mode=OneWay}"
+                            VerticalAlignment="Bottom"
+                            Background="Transparent"/>
                         <HyperlinkButton
-                            HorizontalAlignment="Right"
+                            Grid.Column="1"
+                            Padding="4"
+                            VerticalAlignment="Stretch"                            
                             Command="{x:Bind ViewModel.PeopleSectionModel.ManagePeopleSuggestionsCommand}"
                             ToolTipService.ToolTip="{x:Bind res:Strings.MetadataPanel_ManagePeopleSuggestionsButtonTooltip}">
-                            <FontIcon FontSize="14" FontFamily="Segoe Fluent Icons" Glyph="&#xE115;" />
+                            <FontIcon FontSize="14" FontFamily="Segoe Fluent Icons" Glyph="&#xE115;" /> 
                         </HyperlinkButton>
-                        <Button
-                            Grid.Column="1" Margin="4,0,0,0" Width="32" Height="32" Padding="0"
-                            Command="{x:Bind ViewModel.PeopleSectionModel.AddPersonCommand}">
-                            <SymbolIcon Symbol="Add" />
-                        </Button>
-                        <ProgressRing
-                            Grid.Column="1" Width="32" Height="32"
-                            IsActive="{x:Bind ViewModel.PeopleSectionModel.IsWriting, Mode=OneWay}" />
                     </Grid>
                     <ToggleButton 
                         Margin="0,4,0,0"
@@ -229,7 +225,7 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    <Grid Margin="0,4,0,0">
+                    <Grid Margin="0,4,0,0" ColumnSpacing="4">
                         <!--ColumnDefinitions="*,Auto"-->
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -241,25 +237,21 @@
                             GotFocus="KeywordAutoSuggestBox_GotFocus"
                             PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddKeywordPlaceholder}"   
                             utils:AutoSuggestBoxExtension.IsSuggestionListOverflowEnabled="True"
-                            utils:EnterKeyExtension.Command="{x:Bind ViewModel.KeywordsSectionModel.AddKeywordCommand}">
-                            <AutoSuggestBox.QueryIcon>
-                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#x0020;" />
-                            </AutoSuggestBox.QueryIcon>                            
+                            QuerySubmitted="KeywordAutoSuggestBox_QuerySubmitted"
+                            QueryIcon="Accept">                          
                         </AutoSuggestBox>
-                        <HyperlinkButton                           
-                            HorizontalAlignment="Right"
+                        <ProgressBar 
+                            IsIndeterminate="{x:Bind ViewModel.KeywordsSectionModel.IsWriting, Mode=OneWay}"
+                            VerticalAlignment="Bottom"
+                            Background="Transparent"/>
+                        <HyperlinkButton
+                            Grid.Column="1"
+                            Padding="4"
+                            VerticalAlignment="Stretch"                          
                             Command="{x:Bind ViewModel.KeywordsSectionModel.ManageKeywordsSuggestionsCommand}"
                             ToolTipService.ToolTip="{x:Bind res:Strings.MetadataPanel_ManageKeywordSuggestionsButtonTooltip}">
                             <FontIcon FontSize="14" FontFamily="Segoe Fluent Icons" Glyph="&#xE115;" />
                         </HyperlinkButton>
-                        <Button
-                            Grid.Column="1" Margin="4,0,0,0" Width="32" Height="32" Padding="0"
-                            Command="{x:Bind ViewModel.KeywordsSectionModel.AddKeywordCommand}">
-                            <SymbolIcon Symbol="Add" />
-                        </Button>
-                        <ProgressRing
-                            Grid.Column="1" Width="32" Height="32"
-                            IsActive="{x:Bind ViewModel.KeywordsSectionModel.IsWriting, Mode=OneWay}" />
                     </Grid>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_RatingHeader}" Style="{StaticResource HeaderStyle}"/>

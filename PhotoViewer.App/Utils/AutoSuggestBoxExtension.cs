@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using PhotoViewer.App.Utils.Logging;
 using System;
 using System.Collections;
 using System.Linq;
@@ -156,5 +157,31 @@ public class AutoSuggestBoxExtension
     {
         return (Popup)autoSuggestBox.FindChild("SuggestionsPopup")!;
     }
+}
 
+public static class AutoSuggestBoxExtensions
+{
+    public static void RunWhenTextChanged(this AutoSuggestBox autoSuggestBox, string text, Action callback)
+    {
+        if (autoSuggestBox.Text == text)
+        {
+            callback();
+        }
+        else
+        {
+            autoSuggestBox.TextChanged += AutoSuggestBox_TextChanged;
+            void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+            {
+                autoSuggestBox.TextChanged -= AutoSuggestBox_TextChanged;
+                if (autoSuggestBox.Text == text)
+                {
+                    callback();
+                }
+                else
+                {
+                    Log.Warn("Text has not changed to expected value");
+                }
+            }
+        }
+    }
 }

@@ -141,7 +141,6 @@
                         GettingFocus="AutoSuggestBox_GettingFocus"
                         LosingFocus="AutoSuggestBox_LosingFocus"
                         PlaceholderText="{x:Bind res:Strings.TagPeopleTool_NamePlaceholder}"
-                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.AddPersonCommand}"
                         QuerySubmitted="AutoSuggestBox_QuerySubmitted"
                         utils:AutoSuggestBoxExtension.IsSuggestionListOverflowEnabled="True"                      
                         PreviewKeyDown="AutoSuggestBox_PreviewKeyDown" 

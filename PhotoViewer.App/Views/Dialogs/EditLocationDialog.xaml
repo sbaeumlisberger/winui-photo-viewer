@@ -27,7 +27,7 @@
                     x:Name="locationSearchBox"
                     PlaceholderText="{x:Bind res:Strings.EditLocationDialog_SearchPlaceholder}"
                     TextChanged="LocationSearchBox_TextChanged"
-                    SuggestionChosen="LocationSearchBox_SuggestionChosen"
+                    QuerySubmitted="LocationSearchBox_QuerySubmitted"
                     UpdateTextOnSelect="False">
                     <AutoSuggestBox.ItemTemplate>
                         <DataTemplate x:DataType="models:Location">

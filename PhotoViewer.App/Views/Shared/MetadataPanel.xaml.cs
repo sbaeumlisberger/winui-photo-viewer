@@ -21,44 +21,53 @@ public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPa
     {
         if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
         {
-            sender.ItemsSource = ViewModel!.PeopleSectionModel.FindSuggestions(sender.Text);
+            sender.ItemsSource = ViewModel!.PeopleSectionModel.FindSuggestions(sender.Text.Trim());
         }
     }
 
     private void PeopleAutoSuggestBox_GotFocus(object sender, RoutedEventArgs e)
     {
         var autoSuggestBox = (AutoSuggestBox)sender;
-        if (autoSuggestBox.Text == string.Empty)
+        if (autoSuggestBox.Text.Trim() == string.Empty)
         {
             autoSuggestBox.ItemsSource = ViewModel!.PeopleSectionModel.GetRecentSuggestions();
             autoSuggestBox.IsSuggestionListOpen = true;
         }
         else
         {
-            autoSuggestBox.ItemsSource = ViewModel!.PeopleSectionModel.FindSuggestions(autoSuggestBox.Text);
+            autoSuggestBox.ItemsSource = ViewModel!.PeopleSectionModel.FindSuggestions(autoSuggestBox.Text.Trim());
         }
+    }
+
+    private void PeopleAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        sender.RunWhenTextChanged(args.QueryText, () => ViewModel!.PeopleSectionModel.AddPersonCommand.TryExecute());
     }
 
     private void KeywordAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
         if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
         {
-            sender.ItemsSource = ViewModel!.KeywordsSectionModel.FindSuggestions(sender.Text);
+            sender.ItemsSource = ViewModel!.KeywordsSectionModel.FindSuggestions(sender.Text.Trim());
         }
     }
 
     private void KeywordAutoSuggestBox_GotFocus(object sender, RoutedEventArgs e)
     {
         var autoSuggestBox = (AutoSuggestBox)sender;
-        if (autoSuggestBox.Text == string.Empty)
+        if (autoSuggestBox.Text.Trim() == string.Empty)
         {
             autoSuggestBox.ItemsSource = ViewModel!.KeywordsSectionModel.GetRecentSuggestions();
             autoSuggestBox.IsSuggestionListOpen = true;
         }
         else
         {
-            autoSuggestBox.ItemsSource = ViewModel!.KeywordsSectionModel.FindSuggestions(autoSuggestBox.Text);
+            autoSuggestBox.ItemsSource = ViewModel!.KeywordsSectionModel.FindSuggestions(autoSuggestBox.Text.Trim());
         }
     }
 
+    private void KeywordAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        sender.RunWhenTextChanged(args.QueryText, () => ViewModel!.KeywordsSectionModel.AddKeywordCommand.TryExecute());  
+    }
 }

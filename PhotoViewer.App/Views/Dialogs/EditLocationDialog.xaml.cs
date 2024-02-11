@@ -157,10 +157,14 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
         return geopoint != null ? geopoint.ToDecimalString() : "";
     }
 
-    private void LocationSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+    private void LocationSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        ViewModel!.Location = (Location)args.SelectedItem;
-        locationSearchBox.Text = string.Empty;
+        if (args.ChosenSuggestion is Location location)
+        {
+            _ = ShowLocationOnMapAsync(location, centerAndZoomLocation: true);
+            ViewModel!.Location = location;
+            locationSearchBox.Text = string.Empty;
+        }        
     }
 
     private void LocationSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -202,5 +206,4 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
             }
         }
     }
-
 }
