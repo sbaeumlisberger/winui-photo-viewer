@@ -13,7 +13,7 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 {
-    public static readonly TimeSpan WaitTime = TimeSpan.FromSeconds(1);
+    public static readonly TimeSpan DebounceTime = TimeSpan.FromMilliseconds(500);
 
     public string Text
     {
@@ -30,15 +30,13 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 
     public bool HasMultipleValues { get; private set; }
 
-    private bool IsDirty => timer != null && IsWriting;
+    private bool dirty = false;
 
     private readonly IMetadataService metadataService;
 
     private readonly IMetadataProperty metadataProperty;
 
-    private readonly TimeProvider timeProvider;
-
-    private ITimer? timer;
+    private readonly Debouncer<string> writeDebouncer;
 
     internal MetadataTextboxModel(
         IMessenger messenger,
@@ -50,8 +48,8 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
         : base(messenger, backgroundTaskService, dialogService)
     {
         this.metadataService = metadataService;
-        this.metadataProperty = metadataProperty;      
-        this.timeProvider = timeProvider;
+        this.metadataProperty = metadataProperty;
+        writeDebouncer = new Debouncer<string>(DebounceTime, WriteFilesAsync, true, timeProvider);
     }
 
     internal MetadataTextboxModel(
@@ -60,23 +58,23 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
         IDialogService dialogService,
         IBackgroundTaskService backgroundTaskService,
         IMetadataProperty<string[]> metadataProperty,
-        TimeProvider timeProvider) 
+        TimeProvider timeProvider)
         : base(messenger, backgroundTaskService, dialogService)
     {
         this.metadataService = metadataService;
         this.metadataProperty = metadataProperty;
-        this.timeProvider = timeProvider;
+        writeDebouncer = new Debouncer<string>(DebounceTime, WriteFilesAsync, true, timeProvider);
     }
 
-    protected override void OnCleanup()
+    protected async override void OnCleanup()
     {
-        timer.DisposeSafely(() => timer = null);
+        await writeDebouncer.FlushAsync();
+        writeDebouncer.Dispose();
     }
 
-    protected async override void BeforeFilesChanged()
+    protected override void BeforeFilesChanged()
     {
-        timer.DisposeSafely(() => timer = null);
-        await WriteFilesAsync(Text);
+        writeDebouncer.FlushAsync().Wait(); // TODO
     }
 
     protected override void OnFilesChanged(IReadOnlyList<MetadataView> metadata)
@@ -86,7 +84,7 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 
     protected override void OnMetadataModified(IReadOnlyList<MetadataView> metadata, IMetadataProperty metadataProperty)
     {
-        if (metadataProperty == this.metadataProperty && !IsDirty)
+        if (metadataProperty == this.metadataProperty && !dirty)
         {
             Update(metadata);
         }
@@ -130,20 +128,13 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
     private async Task ConfirmAsync()
     {
         Log.Debug("ConfirmAsync invoked");
-        timer.DisposeSafely(() => timer = null);
-        await WriteValueAsync();        
+        await writeDebouncer.FlushAsync();
     }
 
     private void OnTextChangedExternal()
     {
-        timer.DisposeSafely(() => timer = null);
-        timer = timeProvider.CreateTimer(async _ => await WriteValueAsync(), WaitTime);
+        writeDebouncer.Invoke(Text);
         HasMultipleValues = false;
-    }
-
-    private async Task WriteValueAsync()
-    {
-        await WriteFilesAsync(Text).ConfigureAwait(false);
     }
 
     private async Task WriteFilesAsync(string value)

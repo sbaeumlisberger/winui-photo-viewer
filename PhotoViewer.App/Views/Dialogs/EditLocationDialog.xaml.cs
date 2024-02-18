@@ -48,13 +48,14 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
         </html>
         """;
 
-    private readonly Throttle updateSuggestionsThrottle = new Throttle(TimeSpan.FromMilliseconds(40));
+    private readonly Throttle<string> updateSuggestionsThrottle;
 
     private Location? locationShowedOnMap;
 
     public EditLocationDialog()
     {
         this.InitializeComponentMVVM();
+        updateSuggestionsThrottle = new Throttle<string>(TimeSpan.FromMilliseconds(30), UpdateSuggestionsAsync);
     }
 
     async partial void ConnectToViewModel(EditLocationDialogModel viewModel)
@@ -169,10 +170,12 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
 
     private void LocationSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
-        updateSuggestionsThrottle.Invoke(async () =>
-        {
-            locationSearchBox.ItemsSource = await ViewModel!.FindLocationsAsync(sender.Text);
-        });
+        updateSuggestionsThrottle.Invoke(sender.Text);
+    }
+
+    private async Task UpdateSuggestionsAsync(string query) 
+    {
+        locationSearchBox.ItemsSource = await ViewModel!.FindLocationsAsync(query);
     }
 
     private async void LatitudeTextBox_Paste(object sender, TextControlPasteEventArgs e)

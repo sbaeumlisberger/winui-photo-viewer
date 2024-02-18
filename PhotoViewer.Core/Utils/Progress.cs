@@ -25,7 +25,7 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
 
     private readonly object lockObject = new object();
 
-    private readonly Throttle throttle;
+    private readonly Throttle updateThrottle;
 
     private double value;
     private TimeSpan? estimatedTimeRemaining;
@@ -34,7 +34,7 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
     {
         this.cts = cts;
         this.synchronizationContext = synchronizationContext ?? SynchronizationContext.Current!;
-        throttle = new Throttle(TimeSpan.FromMilliseconds(40), timeProvider);
+        updateThrottle = new Throttle(TimeSpan.FromMilliseconds(30), Update, timeProvider);
         CanCancel = cts != null;
     }
 
@@ -60,7 +60,7 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
             this.value = progress;
             this.estimatedTimeRemaining = estimatedTimeRemaining ?? EstimateTimeRemaining(progress);
 
-            throttle.Invoke(UpdateAsync);
+            updateThrottle.Invoke();
         }
     }
 
@@ -76,20 +76,17 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
         cts?.Cancel();
     }
 
-    private async Task UpdateAsync()
+    private void Update()
     {
-        await synchronizationContext.DispatchAsync(() =>
+        Value = value;
+        EstimatedTimeRemaining = estimatedTimeRemaining;
+        
+        if (Value == 1.0)
         {
-            Value = value;
-            EstimatedTimeRemaining = estimatedTimeRemaining;
-
-            if (Value == 1.0)
-            {
-                IsCompleted = true;
-                IsActive = false;
-                CanCancel = false;
-            }
-        });
+            IsCompleted = true;
+            IsActive = false;
+            CanCancel = false;
+        }        
     }
 
     private TimeSpan? EstimateTimeRemaining(double progress)
