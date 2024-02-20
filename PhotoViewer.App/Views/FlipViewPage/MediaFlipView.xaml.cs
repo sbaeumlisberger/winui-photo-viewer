@@ -71,9 +71,7 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         }
         else if (ViewModel!.SelectedItem != null && flipView.SelectedItem != ViewModel.SelectedItem)
         {
-            Log.Error("Invalid FlipView Selection"); // that should not more happen
-            Log.Error("ViewModel.SelectedIndex=" + ViewModel!.Items.IndexOf(ViewModel.SelectedItem!));
-            Log.Error("ViewModel.SelectedItem=" + ViewModel!.SelectedItem);
+            Log.Debug("invalid selection change detected: flipView.SelectedItem=" + flipView.SelectedItem + ", ViewModel.SelectedItem=" + ViewModel!.SelectedItem);
             DispatcherQueue.TryEnqueue(() => flipView.SelectedItem = ViewModel.SelectedItem);
         }
 

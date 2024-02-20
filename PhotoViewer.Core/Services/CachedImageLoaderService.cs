@@ -24,7 +24,7 @@ internal class CachedImageLoaderService : ICachedImageLoaderService
     public CachedImageLoaderService(IImageLoaderService imageLoaderService)
     {
         this.imageLoaderService = imageLoaderService;
-        this.cache = new AsyncCache<IBitmapFileInfo, IBitmapImageModel>(CacheSize, image => image.Dispose());
+        this.cache = new AsyncCache<IBitmapFileInfo, IBitmapImageModel>(CacheSize, image => image.Dispose(), image => image.RequestUsage());
     }
 
     public void Preload(IBitmapFileInfo file)
@@ -38,7 +38,6 @@ internal class CachedImageLoaderService : ICachedImageLoaderService
         {
             cache.Remove(file);
         }
-        var image = await cache.GetOrCreateAsync(file, imageLoaderService.LoadFromFileAsync, cancellationToken);
-        return image.RequestUsage();
+        return await cache.GetOrCreateAsync(file, imageLoaderService.LoadFromFileAsync, cancellationToken);
     }
 }

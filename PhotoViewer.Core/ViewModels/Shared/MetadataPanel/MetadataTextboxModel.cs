@@ -66,15 +66,15 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
         writeDebouncer = new Debouncer<string>(DebounceTime, WriteFilesAsync, true, timeProvider);
     }
 
-    protected async override void OnCleanup()
+    protected override void OnCleanup()
     {
-        await writeDebouncer.FlushAsync();
+        writeDebouncer.Flush();
         writeDebouncer.Dispose();
     }
 
     protected override void BeforeFilesChanged()
     {
-        writeDebouncer.FlushAsync().Wait(); // TODO
+        writeDebouncer.Flush();
     }
 
     protected override void OnFilesChanged(IReadOnlyList<MetadataView> metadata)
@@ -128,7 +128,7 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
     private async Task ConfirmAsync()
     {
         Log.Debug("ConfirmAsync invoked");
-        await writeDebouncer.FlushAsync();
+        await writeDebouncer.Flush();
     }
 
     private void OnTextChangedExternal()

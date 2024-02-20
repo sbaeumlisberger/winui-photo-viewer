@@ -41,6 +41,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     public IMediaFlipViewItemModel? SelectedItemModel { get; private set; }
 
+    public int SelectedIndex { get; private set; } = -1;
+
     public bool ShowNoItemsUI => !ShowLoadingUI && SelectedIndex == -1;
 
     public bool CanSelectPrevious => SelectedIndex > 0;
@@ -60,8 +62,6 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     public bool IsLoadingMoreFiles { get; private set; }
 
     public bool IsNotLoadingMoreFiles => !IsLoadingMoreFiles;
-
-    private int SelectedIndex { get; set; } = -1;
 
     private readonly IDialogService dialogService;
 
@@ -143,10 +143,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
             if (preview)
             {
                 // update window title because linked files may have changed
-                Messenger.Send(new ChangeWindowTitleMessage(SelectedItem?.DisplayName ?? ""));
-
-                // trigger creation of the item models of the loaded files
-                UpdateFlipViewItemModels();
+                Messenger.Send(new ChangeWindowTitleMessage(SelectedItem?.DisplayName ?? ""));       
             }
         }
         catch (Exception ex)
@@ -203,6 +200,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         Items = items;
         Items.CollectionChanged += Items_CollectionChanged;
         SelectedItem = selectedItem;
+        UpdateSelectedIndex();
+        UpdateFlipViewItemModels();
     }
 
     private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

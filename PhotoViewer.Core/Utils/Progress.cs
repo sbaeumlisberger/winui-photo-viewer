@@ -34,7 +34,7 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
     {
         this.cts = cts;
         this.synchronizationContext = synchronizationContext ?? SynchronizationContext.Current!;
-        updateThrottle = new Throttle(TimeSpan.FromMilliseconds(30), Update, timeProvider);
+        updateThrottle = new Throttle(TimeSpan.FromMilliseconds(30), Update, true, timeProvider);
         CanCancel = cts != null;
     }
 
