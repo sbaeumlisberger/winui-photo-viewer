@@ -12,6 +12,7 @@ using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using Windows.Storage;
 
@@ -40,25 +41,27 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     public IMediaFlipViewItemModel? SelectedItemModel { get; private set; }
 
-    public bool ShowNoItemsUI => !ShowLoadingUI && !Items.Any();
+    public bool ShowNoItemsUI => !ShowLoadingUI && SelectedIndex == -1;
 
-    public bool CanSelectPrevious => SelectedItem != null && Items.IndexOf(SelectedItem) > 0;
+    public bool CanSelectPrevious => SelectedIndex > 0;
 
-    public bool CanSelectNext => SelectedItem != null && Items.IndexOf(SelectedItem) < Items.Count - 1;
+    public bool CanSelectNext => SelectedIndex < Items.Count - 1;
 
     public bool IsDiashowActive { get; private set; } = false;
 
     public bool IsDiashowLoopActive { get; private set; } = false;
 
-    public int SelectedItemNumber => SelectedItem is null ? 0 : Items.IndexOf(SelectedItem) + 1;
+    public int SelectedItemNumber => SelectedIndex + 1;
 
-    public bool ShowSelectedItemIndicator => Items.Any() && !IsDiashowActive;
+    public bool ShowSelectedItemIndicator => SelectedIndex != -1 && !IsDiashowActive;
 
     public bool ShowLoadingUI { get; private set; }
 
     public bool IsLoadingMoreFiles { get; private set; }
 
     public bool IsNotLoadingMoreFiles => !IsLoadingMoreFiles;
+
+    private int SelectedIndex { get; set; } = -1;
 
     private readonly IDialogService dialogService;
 
@@ -172,8 +175,12 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
             await asyncEventArgs.CompletionTask;
         }
         var selectedIndex = Items.IndexOf(SelectedItem!);
-        msg.Files.ForEach(file => Items.Remove(file));
-        SelectedItem = Items.ElementAtOrDefault(Math.Min(selectedIndex, Items.Count - 1));
+        var newItems = Items.Except(msg.Files).ToList();
+        // change selection first to avoid reset of flip view control
+        Log.Debug("MediaFilesDeletedMessage -> Set SelectedItem");
+        SelectedItem = newItems.ElementAtOrDefault(Math.Min(selectedIndex, newItems.Count - 1));
+        Log.Debug("MediaFilesDeletedMessage -> Update Items");
+        Items.RemoveRange(msg.Files);
         UpdateFlipViewItemModels();
     }
 
@@ -192,8 +199,15 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         var selectedItem = startFile ?? items.FirstOrDefault();
         itemModelsCache.SetKeys(items);
         itemModelsCache.SetSelectedItem(selectedItem);
+        Items.CollectionChanged -= Items_CollectionChanged;
         Items = items;
+        Items.CollectionChanged += Items_CollectionChanged;
         SelectedItem = selectedItem;
+    }
+
+    private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        UpdateSelectedIndex();
     }
 
     public IMediaFlipViewItemModel? TryGetItemModel(IMediaFileInfo mediaFile)
@@ -214,6 +228,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     partial void OnSelectedItemChanged()
     {
         Log.Info($"Selection changed to {SelectedItem?.DisplayName}");
+        
+        UpdateSelectedIndex();
 
         Messenger.Send(new ChangeWindowTitleMessage(SelectedItem?.DisplayName ?? ""));
 
@@ -223,6 +239,11 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         {
             IsDiashowLoopActive = false;
         }
+    }
+
+    private void UpdateSelectedIndex()
+    {
+        SelectedIndex = SelectedItem != null ? Items.IndexOf(SelectedItem) : -1;
     }
 
     partial void OnIsDiashowLoopActiveChanged()

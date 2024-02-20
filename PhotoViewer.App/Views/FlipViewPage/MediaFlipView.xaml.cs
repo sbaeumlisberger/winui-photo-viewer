@@ -62,8 +62,8 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
 
     private void FlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        Log.Debug("FlipView_SelectionChanged " + flipView.SelectedIndex);
-
+        Log.Debug("FlipView_SelectionChanged: SelectedIndex=" + flipView.SelectedIndex + ", SelectedItem=" + flipView.SelectedItem);
+       
         if (e.AddedItems.Count == 1 && e.RemovedItems.Count == 1)
         {
             // update view model when selection was changed by the user
@@ -71,6 +71,9 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         }
         else if (ViewModel!.SelectedItem != null && flipView.SelectedItem != ViewModel.SelectedItem)
         {
+            Log.Error("Invalid FlipView Selection"); // that should not more happen
+            Log.Error("ViewModel.SelectedIndex=" + ViewModel!.Items.IndexOf(ViewModel.SelectedItem!));
+            Log.Error("ViewModel.SelectedItem=" + ViewModel!.SelectedItem);
             DispatcherQueue.TryEnqueue(() => flipView.SelectedItem = ViewModel.SelectedItem);
         }
 
@@ -78,6 +81,11 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
     }
 
     private void FlipViewItemBorder_Loaded(object sender, RoutedEventArgs e)
+    {
+        FocusSelectedItem();
+    }
+
+    private void FocusSelectedItem()
     {
         if (flipView.ContainerFromItem(flipView.SelectedItem) is FrameworkElement container)
         {
@@ -109,5 +117,10 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         {
             ViewModel!.ExitDiashowCommand.TryExecute();
         }
+    }
+
+    private void FlipView_LosingFocus(UIElement sender, LosingFocusEventArgs args)
+    {
+        Log.Debug("FlipView_LosingFocus " + args.FocusState + ", " + args.InputDevice + ", " + args.NewFocusedElement);
     }
 }

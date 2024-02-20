@@ -54,7 +54,8 @@
             ContextRequested="FlipView_ContextRequested"
             Background="{x:Bind ViewModel.IsDiashowActive, Mode=OneWay, Converter={StaticResource FlipViewBackgroundConverter}}"
             Tapped="FlipView_Tapped"
-            KeyDown="FlipView_KeyDown">
+            KeyDown="FlipView_KeyDown"
+            LosingFocus="FlipView_LosingFocus">
             <FlipView.ItemTemplateSelector>
                 <local:MediaFlipViewItemTemplateSelector>
                     <local:MediaFlipViewItemTemplateSelector.BitmapFileInfoTemplate>
