@@ -29,7 +29,7 @@ public class MetadataTextboxModelTest
 
     private readonly IBackgroundTaskService backgroundTaskService = Substitute.For<IBackgroundTaskService>();
 
-    private readonly SynchronizationContextMock synchronizationContextMock = new SynchronizationContextMock();
+    private readonly FakeSynchronizationContext synchronizationContextMock = new FakeSynchronizationContext();
 
     private MetadataTextboxModel metadataTextboxModel;
 

@@ -19,22 +19,22 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
 
     private readonly CancellationTokenSource? cts;
 
-    private readonly DateTime startTime = DateTime.Now;
+    private readonly Throttle updateThrottle;
 
-    private readonly SynchronizationContext synchronizationContext;
+    private readonly DateTime startTime = DateTime.Now;
 
     private readonly object lockObject = new object();
 
-    private readonly Throttle updateThrottle;
+    private readonly SynchronizationContext? synchronizationContext = SynchronizationContext.Current;
 
     private double value;
+
     private TimeSpan? estimatedTimeRemaining;
 
-    public Progress(CancellationTokenSource? cts = null, SynchronizationContext? synchronizationContext = null, TimeProvider? timeProvider = null)
+    public Progress(CancellationTokenSource? cts = null, TimeProvider? timeProvider = null)
     {
         this.cts = cts;
-        this.synchronizationContext = synchronizationContext ?? SynchronizationContext.Current!;
-        updateThrottle = new Throttle(TimeSpan.FromMilliseconds(30), Update, true, timeProvider);
+        updateThrottle = new Throttle(TimeSpan.FromMilliseconds(30), UpdateAsync, true, timeProvider);
         CanCancel = cts != null;
     }
 
@@ -76,17 +76,20 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
         cts?.Cancel();
     }
 
-    private void Update()
+    private async Task UpdateAsync()
     {
-        Value = value;
-        EstimatedTimeRemaining = estimatedTimeRemaining;
-        
-        if (Value == 1.0)
+        await synchronizationContext.DispatchAsync(() =>
         {
-            IsCompleted = true;
-            IsActive = false;
-            CanCancel = false;
-        }        
+            Value = value;
+            EstimatedTimeRemaining = estimatedTimeRemaining;
+
+            if (Value == 1.0)
+            {
+                IsCompleted = true;
+                IsActive = false;
+                CanCancel = false;
+            }
+        });
     }
 
     private TimeSpan? EstimateTimeRemaining(double progress)

@@ -119,6 +119,14 @@ public class MediaFlipViewModelTest
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[17];
         mediaFlipViewModel.SetFiles(files, startFile);
+        bool selectionValid = true;
+        mediaFlipViewModel.PropertyChanged += (_, _) => 
+        {
+            if (!mediaFlipViewModel.Items.Contains(mediaFlipViewModel.SelectedItem!))
+            {
+                selectionValid = false;
+            }
+        };
 
         messenger.Send(new MediaFilesDeletedMessage(new[] { startFile }));
         await mediaFlipViewModel.LastDispatchTask;
@@ -129,6 +137,7 @@ public class MediaFlipViewModelTest
         Assert.NotNull(mediaFlipViewModel.SelectedItemModel);
         Assert.Equal(5, mediaFlipViewModel.ItemModels.Count);
         Assert.NotNull(mediaFlipViewModel.TryGetItemModel(expectedSelectedFile));
+        Assert.True(selectionValid);
     }
 
     [Fact]

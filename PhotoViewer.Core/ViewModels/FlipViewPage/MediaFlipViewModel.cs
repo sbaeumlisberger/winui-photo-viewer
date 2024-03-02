@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
@@ -178,7 +179,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         SelectedItem = newItems.ElementAtOrDefault(Math.Min(selectedIndex, newItems.Count - 1));
         Log.Debug("MediaFilesDeletedMessage -> Update Items");
         Items.RemoveRange(msg.Files);
-        UpdateFlipViewItemModels();
+        UpdateFlipViewItemModels(SelectedItem);
     }
 
     private void OnReceive(MediaFilesRenamedMessage message)
@@ -195,13 +196,12 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         var items = new ObservableList<IMediaFileInfo>(files);
         var selectedItem = startFile ?? items.FirstOrDefault();
         itemModelsCache.SetKeys(items);
-        itemModelsCache.SetSelectedItem(selectedItem);
+        UpdateFlipViewItemModels(selectedItem);
         Items.CollectionChanged -= Items_CollectionChanged;
         Items = items;
         Items.CollectionChanged += Items_CollectionChanged;
         SelectedItem = selectedItem;
-        UpdateSelectedIndex();
-        UpdateFlipViewItemModels();
+        UpdateSelectedIndex();     
     }
 
     private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -232,7 +232,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
         Messenger.Send(new ChangeWindowTitleMessage(SelectedItem?.DisplayName ?? ""));
 
-        UpdateFlipViewItemModels();
+        UpdateFlipViewItemModels(SelectedItem);
 
         if (!isSelectionChangedByDiashowLoop)
         {
@@ -286,10 +286,10 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         diashowLoopCancellationTokenSource = null;
     }
 
-    private void UpdateFlipViewItemModels()
+    private void UpdateFlipViewItemModels(IMediaFileInfo? selectedItem)
     {
         Stopwatch sw = Stopwatch.StartNew();
-        SelectedItemModel = itemModelsCache.SetSelectedItem(SelectedItem);
+        SelectedItemModel = itemModelsCache.SetSelectedItem(selectedItem);
         ItemModels.ForEach(itemModel => itemModel.IsSelected = itemModel == SelectedItemModel);
         sw.Stop();
         Log.Info($"UpdateFlipViewItemModels took {sw.ElapsedMilliseconds} ms"); ;
