@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PhotoViewer.App.Views"
-    xmlns:converters="using:PhotoViewer.App.Converters"
     xmlns:viewModels="using:PhotoViewer.Core.ViewModels"    
     xmlns:foundation="using:Windows.Foundation"
     xmlns:res="using:PhotoViewer.App.Resources"
@@ -12,7 +11,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    x:Name="control">
+    x:Name="control"
+    KeyboardAcceleratorPlacementMode="Hidden">
 
     <UserControl.Resources>
         <ScaleTransform
@@ -22,7 +22,7 @@
     </UserControl.Resources>
 
     <UserControl.KeyboardAccelerators>
-        <KeyboardAccelerator Key="Escape" Invoked="{x:Bind ViewModel.ExitPeopleTagging}"  />
+        <KeyboardAccelerator Key="Escape" Invoked="{x:Bind ViewModel.ExitPeopleTagging}" />
     </UserControl.KeyboardAccelerators>
 
     <Grid>

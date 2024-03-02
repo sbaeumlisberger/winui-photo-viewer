@@ -112,6 +112,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
                 selectionStartTime = DateTime.Now;
                 ViewModel.OnUserStartedSelection();
                 selectionRect.SetBounds(new Rect(point.Position.X, point.Position.Y, 0, 0));
+                selectionRect.Visibility = Visibility.Visible;
                 selectionRect.HandOverPointerPressedEvent(args);
             }
         }
@@ -308,5 +309,4 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
             }
         }
     }
-
 }
