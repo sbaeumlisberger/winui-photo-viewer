@@ -37,7 +37,8 @@
             ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" 
             SelectionMode="Extended" 
             SelectionChanged="GridView_SelectionChanged" 
-            FlyoutBase.AttachedFlyout="{x:Bind mediaFileContextMenuHolder.MediaFileContextMenu}">
+            FlyoutBase.AttachedFlyout="{x:Bind mediaFileContextMenuHolder.MediaFileContextMenu}"
+            ChoosingItemContainer="GridView_ChoosingItemContainer">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="models:IMediaFileInfo">
                     <Border DataContextChanged="OverviewItemBorder_DataContextChanged">

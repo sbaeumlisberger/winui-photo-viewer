@@ -56,12 +56,21 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
         ViewModel!.SelectedItems = gridView.SelectedItems.Cast<IMediaFileInfo>().ToList();
     }
 
+    private void GridView_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+    {
+        if (args.ItemContainer?.ContentTemplateRoot is { } element)
+        {
+            element.Visibility = Visibility.Collapsed;
+        }
+    }
+
     private void OverviewItemBorder_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
     {
         if (sender.DataContext is IMediaFileInfo mediaFile)
         {
             var overviewItem = (OverviewItem)((Border)sender).Child;
             overviewItem.DataContext = ViewModel!.GetItemModel(mediaFile);
+            sender.Visibility = Visibility.Visible;
         }
     }
 
