@@ -30,7 +30,8 @@
             <Setter Property="ItemContainerStyle">
                 <Setter.Value>
                     <Style TargetType="ListViewItem">
-                        <Setter Property="Padding" Value="4"/>
+                        <Setter Property="Margin" Value="-4,-2.2,-4,-2.2"/>
+                        <Setter Property="Padding" Value="12,8,12,8"/>
                         <Setter Property="MinHeight" Value="0"/>
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     </Style>
@@ -46,6 +47,10 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="{ThemeResource SystemColorHighlightColor}" Opacity="0.4"/>
+        <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="{ThemeResource SystemColorHighlightColor}" Opacity="0.6"/>
+        <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPressed" Color="{ThemeResource SystemColorHighlightColor}" Opacity="0.8"/>
 
         <XamlUICommand 
             x:Name="RemovePeopleTagCommand"
@@ -146,19 +151,20 @@
                     </StackPanel>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_PeopleHeader}" Style="{StaticResource HeaderStyle}"/>
-                    <ListView 
+                    <ListView
                         ItemsSource="{x:Bind ViewModel.PeopleSectionModel.People, Mode=OneWay}" 
-                        Style="{StaticResource ItemWithCountListView}">
+                        Style="{StaticResource ItemWithCountListView}"
+                        SelectionMode="Extended"
+                        SelectionChanged="PeopleListView_SelectionChanged">             
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="viewModels:ItemWithCountModel">
                                 <local:ItemWithCount>
                                     <local:ItemWithCount.ContextFlyout>
-                                        <MenuFlyout>
+                                        <MenuFlyout utils:ListViewExtension.AutoSelect="True">
                                             <MenuFlyoutItem
-                                                Icon="Delete"
-                                                Text="{x:Bind res:Strings.MetadataPanel_RemovePeopleTag}"
-                                                Command="{StaticResource RemovePeopleTagCommand}"                                              
-                                                CommandParameter="{x:Bind Value}"/>
+                                               Icon="Delete"
+                                               Text="{x:Bind res:Strings.MetadataPanel_RemovePeopleTag}"
+                                               Command="{StaticResource RemovePeopleTagCommand}"/>
                                         </MenuFlyout>
                                     </local:ItemWithCount.ContextFlyout>
                                 </local:ItemWithCount>
@@ -194,7 +200,7 @@
                         </HyperlinkButton>
                     </Grid>
                     <ToggleButton 
-                        Margin="0,4,0,0"
+                        Margin="0,6,0,0"
                         Content="{x:Bind res:Strings.MetadataPanel_TagPeopleOnPhoto}"
                         Visibility="{x:Bind ViewModel.PeopleSectionModel.IsTagPeopleOnPhotoButtonVisible}"
                         Command="{x:Bind ViewModel.PeopleSectionModel.ToggleTagPeopleOnPhotoCommand}"                       

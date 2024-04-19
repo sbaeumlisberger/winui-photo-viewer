@@ -493,7 +493,7 @@
     <value>Schlagwort entfernen</value>
   </data>
   <data name="MetadataPanel_RemovePeopleTag" xml:space="preserve">
-    <value>Personenmarkierung entfernen</value>
+    <value>Entfernen</value>
   </data>
   <data name="MetadataPanel_ShiftDateTakenButton" xml:space="preserve">
     <value>Aufnahmedaten verschieben</value>

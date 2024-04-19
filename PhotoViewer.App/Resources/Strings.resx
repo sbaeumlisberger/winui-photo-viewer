@@ -493,7 +493,7 @@
     <value>Remove keyword</value>
   </data>
   <data name="MetadataPanel_RemovePeopleTag" xml:space="preserve">
-    <value>Remove people tag</value>
+    <value>Remove</value>
   </data>
   <data name="MetadataPanel_ShiftDateTakenButton" xml:space="preserve">
     <value>Shift date taken</value>

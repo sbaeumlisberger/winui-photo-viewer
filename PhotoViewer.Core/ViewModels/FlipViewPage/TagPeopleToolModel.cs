@@ -162,12 +162,12 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     public IReadOnlyList<string> FindSuggestions(string text)
     {
-        return suggestionsService.FindMatches(text);
+        return suggestionsService.FindMatches(text, exclude: TaggedPeople.Select(x => x.Name).ToList());
     }
 
     public IReadOnlyList<string> GetRecentSuggestions()
     {
-        return suggestionsService.GetRecentSuggestions();
+        return suggestionsService.GetRecentSuggestions(exclude: TaggedPeople.Select(x => x.Name).ToList());
     }
 
     public void TrySelectNextDetectedFace()

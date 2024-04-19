@@ -1186,7 +1186,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove people tag.
+        ///   Looks up a localized string similar to Remove.
         /// </summary>
         internal static string MetadataPanel_RemovePeopleTag {
             get {

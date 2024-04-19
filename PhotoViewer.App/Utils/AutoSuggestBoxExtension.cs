@@ -29,11 +29,11 @@ public class AutoSuggestBoxExtension
     private static readonly DependencyProperty VerticalOffsetChangedCallbackTokenProperty = DependencyPropertyHelper<AutoSuggestBoxExtension>
         .RegisterAttached<long?>(null);
 
-    public static bool GetIsSuggestionListOverflowEnabled(DependencyObject obj) => (bool)obj.GetValue(IsSuggestionListOverflowEnabledProperty);
-    public static void SetIsSuggestionListOverflowEnabled(DependencyObject obj, bool value) => obj.SetValue(IsSuggestionListOverflowEnabledProperty, value);
+    public static bool GetIsSuggestionListOverflowEnabled(AutoSuggestBox obj) => (bool)obj.GetValue(IsSuggestionListOverflowEnabledProperty);
+    public static void SetIsSuggestionListOverflowEnabled(AutoSuggestBox obj, bool value) => obj.SetValue(IsSuggestionListOverflowEnabledProperty, value);
 
-    public static SuggestionListDirection GetSuggestionListDirection(DependencyObject obj) => (SuggestionListDirection)obj.GetValue(SuggestionListDirectionProperty);
-    public static void SetSuggestionListDirection(DependencyObject obj, SuggestionListDirection value) => obj.SetValue(SuggestionListDirectionProperty, value);
+    public static SuggestionListDirection GetSuggestionListDirection(AutoSuggestBox obj) => (SuggestionListDirection)obj.GetValue(SuggestionListDirectionProperty);
+    public static void SetSuggestionListDirection(AutoSuggestBox obj, SuggestionListDirection value) => obj.SetValue(SuggestionListDirectionProperty, value);
 
     private static void OnIsSuggestionListOverflowEnabledChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
     {

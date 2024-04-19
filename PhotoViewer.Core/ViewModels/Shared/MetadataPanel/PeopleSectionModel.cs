@@ -25,6 +25,8 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 
     private bool CanAddPerson => !string.IsNullOrWhiteSpace(AutoSuggestBoxText) && !IsWriting;
 
+    public IList<string> SelectedPeopleNames { get; set; } = [];
+
     private ObservableList<ItemWithCountModel> people = new();
 
     private readonly IMetadataService metadataService;
@@ -82,12 +84,12 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 
     public IReadOnlyList<string> FindSuggestions(string text)
     {
-        return suggestionsService.FindMatches(text);
+        return suggestionsService.FindMatches(text, exclude: people.Select(x => x.Value).ToList());
     }
 
     public IReadOnlyList<string> GetRecentSuggestions()
     {
-        return suggestionsService.GetRecentSuggestions();
+        return suggestionsService.GetRecentSuggestions(exclude: people.Select(x => x.Value).ToList());
     }
 
     private List<ItemWithCountModel> CreateItemModels(IReadOnlyList<MetadataView> metadata)
@@ -132,15 +134,22 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
     }
 
     [RelayCommand]
-    private async Task RemovePeopleTagAsync(string personName)
+    private async Task RemovePeopleTagAsync()
     {
         var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
 
         await WriteFilesAsync(async file =>
         {
+            bool modified = false;
+
             var peopleTags = await metadataService.GetMetadataAsync(file, MetadataProperties.People).ConfigureAwait(false);
 
-            if (peopleTags.RemoveFirst(peopleTag => peopleTag.Name == personName))
+            foreach (var personName in SelectedPeopleNames)
+            {   
+                modified |= peopleTags.RemoveFirst(peopleTag => peopleTag.Name == personName);                
+            }
+
+            if (modified)
             {
                 await metadataService.WriteMetadataAsync(file, MetadataProperties.People, peopleTags).ConfigureAwait(false);
                 modifiedFiles.Add(file);

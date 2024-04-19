@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Resources;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.ViewModels;
+using System.Linq;
 
 namespace PhotoViewer.App.Views;
 public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPanelModel>
@@ -68,6 +69,11 @@ public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPa
 
     private void KeywordAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        sender.RunWhenTextChanged(args.QueryText, () => ViewModel!.KeywordsSectionModel.AddKeywordCommand.TryExecute());  
+        sender.RunWhenTextChanged(args.QueryText, () => ViewModel!.KeywordsSectionModel.AddKeywordCommand.TryExecute());
+    }
+
+    private void PeopleListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        ViewModel!.PeopleSectionModel.SelectedPeopleNames = ((ListView)sender).SelectedItems.Cast<ItemWithCountModel>().Select(x => x.Value).ToList();
     }
 }

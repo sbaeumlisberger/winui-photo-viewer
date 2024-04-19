@@ -9,8 +9,8 @@ public class TextBoxExtension
     public static readonly DependencyProperty IsClearButtonHiddenProperty = DependencyPropertyHelper<TextBoxExtension>
         .RegisterAttached(false, TextBox_IsClearButtonHiddenChanged);
 
-    public static bool GetIsClearButtonHidden(FrameworkElement element) => (bool)element.GetValue(IsClearButtonHiddenProperty);
-    public static void SetIsClearButtonHidden(FrameworkElement element, bool value) => element.SetValue(IsClearButtonHiddenProperty, value);
+    public static bool GetIsClearButtonHidden(TextBox element) => (bool)element.GetValue(IsClearButtonHiddenProperty);
+    public static void SetIsClearButtonHidden(TextBox element, bool value) => element.SetValue(IsClearButtonHiddenProperty, value);
 
     private TextBoxExtension() { }
 

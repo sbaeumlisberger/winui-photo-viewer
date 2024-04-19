@@ -7,11 +7,11 @@ namespace PhotoViewer.Core.Services
 {
     public interface ISuggestionsService
     {
-        IReadOnlyList<string> GetAll();
+        List<string> GetAll();
 
-        IReadOnlyList<string> GetRecentSuggestions();
+        List<string> GetRecentSuggestions(ICollection<string>? exclude = null, int max = 12);
 
-        IReadOnlyList<string> FindMatches(string query, int max = 12);
+        List<string> FindMatches(string query, ICollection<string>? exclude = null, int max = 12);
 
         Task AddSuggestionAsync(string suggestion);
 
@@ -28,7 +28,7 @@ namespace PhotoViewer.Core.Services
     {
         private record class JsonObject(List<string> Values);
 
-        private const int MaxRecentCount = 12;
+        private const int MaxRecentCount = 20;
 
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
@@ -50,24 +50,30 @@ namespace PhotoViewer.Core.Services
             filePathRecent = Path.Combine(AppData.PublicFolder, id + "-recent.json");
             Task.Run(LoadSuggestionsAsync);
         }
-        public IReadOnlyList<string> GetAll()
+        public List<string> GetAll()
         {
             return suggestions.OrderBy(suggestion => suggestion).ToList();
         }
 
-        public IReadOnlyList<string> GetRecentSuggestions()
+        public List<string> GetRecentSuggestions(ICollection<string>? exclude, int max)
         {
-            return recent;
+            exclude ??= [];
+
+            return recent.Where(suggestion => !exclude.Contains(suggestion)).Take(max).ToList();
         }
 
-        public IReadOnlyList<string> FindMatches(string query, int max)
+        public List<string> FindMatches(string query, ICollection<string>? exclude, int max)
         {
+            exclude ??= [];
+
             if (string.IsNullOrWhiteSpace(query))
             {
-                return recent.Take(max).ToList();
+                return GetRecentSuggestions(exclude, max);
             }
+
             return suggestions
                 .Where(suggestion => suggestion.Contains(query, StringComparison.CurrentCultureIgnoreCase))
+                .Where(suggestion => !exclude.Contains(suggestion))
                 .OrderByDescending(suggestion => suggestion.StartsWith(query, StringComparison.CurrentCultureIgnoreCase))
                 .ThenBy(suggestion => suggestion)
                 .Take(max)
