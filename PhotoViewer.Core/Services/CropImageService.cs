@@ -126,7 +126,7 @@ internal class CropImageService : ICropImageService
         {
             PeopleTag person = people[i];
 
-            if (person.Rectangle.IsEmpty)
+            if (person.Rectangle is null)
             {
                 continue;
             }
@@ -134,10 +134,10 @@ internal class CropImageService : ICropImageService
             Rect newBoundsRect = new Rect(newBounds.X, newBounds.Y, newBounds.Width, newBounds.Height);
 
             Rect personRectInPixels = new Rect(
-                person.Rectangle.X * sizeBefore.Width,
-                person.Rectangle.Y * sizeBefore.Height,
-                person.Rectangle.Width * sizeBefore.Width,
-                person.Rectangle.Height * sizeBefore.Height);
+                person.Rectangle.Value.X * sizeBefore.Width,
+                person.Rectangle.Value.Y * sizeBefore.Height,
+                person.Rectangle.Value.Width * sizeBefore.Width,
+                person.Rectangle.Value.Height * sizeBefore.Height);
 
             if (personRectInPixels.Intersects(newBoundsRect))
             {

@@ -86,15 +86,15 @@ internal class RotateBitmapService : IRotateBitmapService
         {
             foreach (var peopleTag in people)
             {
-                if (peopleTag.Rectangle == default || peopleTag.Rectangle.IsEmpty)
+                if (peopleTag.Rectangle is null)
                 {
                     continue;
                 }
                 peopleTag.Rectangle = new FaceRect(
-                    1 - (peopleTag.Rectangle.Y + peopleTag.Rectangle.Height),
-                    peopleTag.Rectangle.X,
-                    peopleTag.Rectangle.Height,
-                    peopleTag.Rectangle.Width);
+                    1 - (peopleTag.Rectangle.Value.Y + peopleTag.Rectangle.Value.Height),
+                    peopleTag.Rectangle.Value.X,
+                    peopleTag.Rectangle.Value.Height,
+                    peopleTag.Rectangle.Value.Width);
             }
 
             await metadataService.WriteMetadataAsync(bitmapFile, MetadataProperties.People, people).ConfigureAwait(false);

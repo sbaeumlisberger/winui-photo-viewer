@@ -265,8 +265,8 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     private async Task LoadTaggedPeopleAsync()
     {
         TaggedPeople = (await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People))
-             .Where(peopleTag => !peopleTag.Rectangle.IsEmpty)
-             .Select(peopleTag => new PeopleTagViewModel(IsSelectionEnabled, peopleTag.Name, peopleTag.Rectangle.ToRect()))
+             .Where(peopleTag => peopleTag.Rectangle is not null)
+             .Select(peopleTag => new PeopleTagViewModel(IsSelectionEnabled, peopleTag.Name, peopleTag.Rectangle!.Value.ToRect()))
              .ToList();
     }
 
