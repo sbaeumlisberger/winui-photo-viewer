@@ -190,7 +190,7 @@
     <value>Fortfahren</value>
   </data>
   <data name="DeleteSingleRawFilesDialog_ErrorMessage" xml:space="preserve">
-    <value>Die folgenden RAW-Dateien konnten nicht gelöscht werden:</value>
+    <value>Es konnten nicht alle RAW-Dateien gelöscht werden. Folgende Fehler sind aufgetreten:</value>
   </data>
   <data name="DeleteSingleRawFilesDialog_InProgressMessage" xml:space="preserve">
     <value>Einzelne RAW-Dateien werden gelöscht.</value>
@@ -520,7 +520,7 @@
     <value>Fortfahren</value>
   </data>
   <data name="MoveRawFilesToSubfolderDialog_ErrorMessage" xml:space="preserve">
-    <value>Die folgenden Dateien konnten nicht verschoben werden:</value>
+    <value>Es konnten nicht alle Dateien verschoben werden. Folgende Fehler sind aufgetreten:</value>
   </data>
   <data name="MoveRawFilesToSubfolderDialog_InProgressMessage" xml:space="preserve">
     <value>RAW-Dateien werden in Unterordner verschoben.</value>
@@ -541,7 +541,7 @@
     <value>Fortfahren</value>
   </data>
   <data name="PrefixFilesByDateDialog_ErrorMessage" xml:space="preserve">
-    <value>Die folgenden Dateien konnten nicht verschoben werden:</value>
+    <value>Es konnten nicht alle Dateien umbenannt werden. Folgende Fehler sind aufgetreten:</value>
   </data>
   <data name="PrefixFilesByDateDialog_InProgressMessage" xml:space="preserve">
     <value>Alle Dateien werden sortiert nach Aufnahmedatum mit einer fortlaufenden Nummer als Präfix umbenannt.</value>

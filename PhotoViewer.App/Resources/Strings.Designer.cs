@@ -277,7 +277,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following RAW files could not be deleted:.
+        ///   Looks up a localized string similar to Not all RAW files could be deleted. The following errors occurred:.
         /// </summary>
         internal static string DeleteSingleRawFilesDialog_ErrorMessage {
             get {
@@ -1267,7 +1267,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following files could not be moved:.
+        ///   Looks up a localized string similar to Not all files could be moved. The following errors occurred:.
         /// </summary>
         internal static string MoveRawFilesToSubfolderDialog_ErrorMessage {
             get {
@@ -1429,7 +1429,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following files could not be renamed:.
+        ///   Looks up a localized string similar to Not all files could be renamed. The following errors occurred:.
         /// </summary>
         internal static string PrefixFilesByDateDialog_ErrorMessage {
             get {

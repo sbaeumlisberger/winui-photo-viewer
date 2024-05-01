@@ -190,7 +190,7 @@
     <value>Continue</value>
   </data>
   <data name="DeleteSingleRawFilesDialog_ErrorMessage" xml:space="preserve">
-    <value>The following RAW files could not be deleted:</value>
+    <value>Not all RAW files could be deleted. The following errors occurred:</value>
   </data>
   <data name="DeleteSingleRawFilesDialog_InProgressMessage" xml:space="preserve">
     <value>Single RAW files are deleted.</value>
@@ -520,7 +520,7 @@
     <value>Continue</value>
   </data>
   <data name="MoveRawFilesToSubfolderDialog_ErrorMessage" xml:space="preserve">
-    <value>The following files could not be moved:</value>
+    <value>Not all files could be moved. The following errors occurred:</value>
   </data>
   <data name="MoveRawFilesToSubfolderDialog_InProgressMessage" xml:space="preserve">
     <value>Moving RAW files to subfolder.</value>
@@ -541,7 +541,7 @@
     <value>Continue</value>
   </data>
   <data name="PrefixFilesByDateDialog_ErrorMessage" xml:space="preserve">
-    <value>The following files could not be renamed:</value>
+    <value>Not all files could be renamed. The following errors occurred:</value>
   </data>
   <data name="PrefixFilesByDateDialog_InProgressMessage" xml:space="preserve">
     <value>Rename all files sorted by date taken with a sequential number as prefix.</value>
