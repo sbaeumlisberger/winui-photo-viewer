@@ -56,7 +56,7 @@ public partial class FlipViewPageModel : ViewModelBase
     {
         FlipViewModel.PropertyChanged -= FlipViewModel_PropertyChanged;
         displayRequest.DisposeSafely(() => displayRequest = null);
-    
+
         FlipViewModel.Cleanup();
         DetailsBarModel.Cleanup();
         CommandBarModel.Cleanup();

@@ -42,10 +42,10 @@ internal static class Utils
         return namedTypeSymbol.AllInterfaces.FirstOrDefault(interfaceSymbol => interfaceSymbol.Name == interfaceName);
     }
 
-    public static bool Inherits(this INamedTypeSymbol namedTypeSymbol, string typeName) 
+    public static bool Inherits(this INamedTypeSymbol namedTypeSymbol, string typeName)
     {
         var baseType = namedTypeSymbol.BaseType;
-        while (baseType != null) 
+        while (baseType != null)
         {
             if (baseType.Name == typeName)
             {

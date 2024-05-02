@@ -1,5 +1,4 @@
 ﻿using Essentials.NET;
-using System;
 using System.Collections.Specialized;
 
 namespace PhotoViewer.Core.Utils;
@@ -101,7 +100,7 @@ internal class VirtualizedCollection<TKey, TValue> where TKey : notnull
         return keys.Skip(skipCount).Take(takeCount).ToList();
     }
 
-    private void CleanupCachedValuesWithoutKey() 
+    private void CleanupCachedValuesWithoutKey()
     {
         var keysToCleanup = cache.Keys.Except(keys).ToList();
 

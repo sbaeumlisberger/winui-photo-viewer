@@ -145,8 +145,8 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
             var peopleTags = await metadataService.GetMetadataAsync(file, MetadataProperties.People).ConfigureAwait(false);
 
             foreach (var personName in SelectedPeopleNames)
-            {   
-                modified |= peopleTags.RemoveFirst(peopleTag => peopleTag.Name == personName);                
+            {
+                modified |= peopleTags.RemoveFirst(peopleTag => peopleTag.Name == personName);
             }
 
             if (modified)

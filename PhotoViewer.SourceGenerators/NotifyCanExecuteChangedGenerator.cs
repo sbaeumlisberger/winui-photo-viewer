@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -57,7 +57,7 @@ public class NotifyCanExecuteChangedGenerator : IIncrementalGenerator
 
         foreach (var method in classSymbol.GetMembers().OfType<IMethodSymbol>())
         {
-            if (method.GetAttribute("RelayCommandAttribute") is { } attribute 
+            if (method.GetAttribute("RelayCommandAttribute") is { } attribute
                 && attribute.GetArgument("CanExecute") is { } canExecuteArgument)
             {
                 if (canExecuteArgument.Value.Value is string propertyName)

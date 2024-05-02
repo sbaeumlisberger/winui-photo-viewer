@@ -1,9 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using SourceGenerators;
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Text;
 
 namespace PhotoViewer.SourceGenerators;
 

@@ -11,7 +11,6 @@ using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
-using System.Linq;
 using Windows.Storage;
 
 namespace PhotoViewer.Core.ViewModels.Dialogs;

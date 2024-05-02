@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace SourceGenerators;
@@ -94,8 +93,8 @@ public class ViewRegistrationGenerator : IIncrementalGenerator
             {
                 context.ReportError("PVSG", "Constructor must not have any arguments.", constructor.Locations[0]);
             }
-          
-            yield return $$"""{ typeof({{viewModelTypeArg.Value}}), () => new {{className}}() },""";            
+
+            yield return $$"""{ typeof({{viewModelTypeArg.Value}}), () => new {{className}}() },""";
         }
     }
 
@@ -105,7 +104,7 @@ public class ViewRegistrationGenerator : IIncrementalGenerator
         {
             var attribute = classSymbol.GetAttribute("ViewRegistrationAttribute")!;
             var viewModelTypeArg = attribute.ConstructorArguments.FirstOrDefault();
-            string className = Utils.GetFullName(classSymbol);           
+            string className = Utils.GetFullName(classSymbol);
             yield return $$"""{ typeof({{viewModelTypeArg.Value}}), typeof({{className}}) },""";
         }
     }

@@ -4,7 +4,6 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core;
-using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using Windows.Media.Core;
 using Windows.Media.Playback;

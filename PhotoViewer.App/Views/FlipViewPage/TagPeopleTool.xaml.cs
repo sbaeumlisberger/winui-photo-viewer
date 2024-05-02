@@ -252,7 +252,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        sender.RunWhenTextChanged(args.QueryText, () => ViewModel!.AddPersonCommand.TryExecute());         
+        sender.RunWhenTextChanged(args.QueryText, () => ViewModel!.AddPersonCommand.TryExecute());
     }
 
     private void FocusAutoSuggestBox()

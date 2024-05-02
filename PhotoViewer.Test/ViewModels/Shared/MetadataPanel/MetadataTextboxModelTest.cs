@@ -62,7 +62,7 @@ public class MetadataTextboxModelTest
         metadataTextboxModel.Text = "some value";
 
         Assert.False(metadataTextboxModel.IsWriting);
- 
+
         timeProvider.Advance(MetadataTextboxModel.DebounceTime);
 
         Assert.True(metadataTextboxModel.IsWriting);
@@ -86,10 +86,10 @@ public class MetadataTextboxModelTest
         var metadata = new Dictionary<string, object?>() { { "test-property", "value from file" } };
         metadataTextboxModel.UpdateFilesChanged(ImmutableList.Create(fileMock), new[] { new MetadataView(metadata) });
 
-        metadataTextboxModel.Text = "some value 01";   
-        
+        metadataTextboxModel.Text = "some value 01";
+
         metadataTextboxModel.Text = "some value 02";
-     
+
         metadataTextboxModel.Text = "some value 03";
 
         timeProvider.Advance(MetadataTextboxModel.DebounceTime);
@@ -134,7 +134,7 @@ public class MetadataTextboxModelTest
         var file = Substitute.For<IBitmapFileInfo>();
         metadataServiceMock.GetMetadataAsync(file, metadataPropertyMock).Returns("value from file");
         metadataTextboxModel.UpdateFilesChanged(ImmutableList.Create(file), new[] { CreateMetadataView("value from file") });
-   
+
         var otherFile = Substitute.For<IBitmapFileInfo>();
         metadataTextboxModel.UpdateFilesChanged(ImmutableList.Create(otherFile), new[] { CreateMetadataView("value from other file") });
 

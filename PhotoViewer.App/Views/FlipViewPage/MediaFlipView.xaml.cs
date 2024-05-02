@@ -63,7 +63,7 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
     private void FlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         Log.Debug("FlipView_SelectionChanged: SelectedIndex=" + flipView.SelectedIndex + ", SelectedItem=" + flipView.SelectedItem);
-       
+
         if (e.AddedItems.Count == 1 && e.RemovedItems.Count == 1)
         {
             // update view model when selection was changed by the user

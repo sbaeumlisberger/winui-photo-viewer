@@ -8,7 +8,6 @@ using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.Utils;
 
 namespace PhotoViewer.Core.ViewModels;
 

@@ -7,7 +7,6 @@ using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
-using System.Linq;
 
 namespace PhotoViewer.Core.ViewModels.Dialogs;
 

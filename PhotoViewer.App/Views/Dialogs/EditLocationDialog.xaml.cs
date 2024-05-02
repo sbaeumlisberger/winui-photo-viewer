@@ -165,7 +165,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
             _ = ShowLocationOnMapAsync(location, centerAndZoomLocation: true);
             ViewModel!.Location = location;
             locationSearchBox.Text = string.Empty;
-        }        
+        }
     }
 
     private void LocationSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -173,7 +173,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
         updateSuggestionsThrottle.Invoke(sender.Text);
     }
 
-    private async Task UpdateSuggestionsAsync(string query) 
+    private async Task UpdateSuggestionsAsync(string query)
     {
         locationSearchBox.ItemsSource = await ViewModel!.FindLocationsAsync(query);
     }

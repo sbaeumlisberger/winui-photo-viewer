@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
@@ -144,7 +143,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
             if (preview)
             {
                 // update window title because linked files may have changed
-                Messenger.Send(new ChangeWindowTitleMessage(SelectedItem?.DisplayName ?? ""));       
+                Messenger.Send(new ChangeWindowTitleMessage(SelectedItem?.DisplayName ?? ""));
             }
         }
         catch (Exception ex)
@@ -201,7 +200,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         Items = items;
         Items.CollectionChanged += Items_CollectionChanged;
         SelectedItem = selectedItem;
-        UpdateSelectedIndex();     
+        UpdateSelectedIndex();
     }
 
     private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -227,7 +226,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     partial void OnSelectedItemChanged()
     {
         Log.Info($"Selection changed to {SelectedItem?.DisplayName}");
-        
+
         UpdateSelectedIndex();
 
         Messenger.Send(new ChangeWindowTitleMessage(SelectedItem?.DisplayName ?? ""));

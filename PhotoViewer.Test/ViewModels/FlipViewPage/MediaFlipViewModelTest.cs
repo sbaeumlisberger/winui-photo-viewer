@@ -120,7 +120,7 @@ public class MediaFlipViewModelTest
         IMediaFileInfo startFile = files[17];
         mediaFlipViewModel.SetFiles(files, startFile);
         bool selectionValid = true;
-        mediaFlipViewModel.PropertyChanged += (_, _) => 
+        mediaFlipViewModel.PropertyChanged += (_, _) =>
         {
             if (!mediaFlipViewModel.Items.Contains(mediaFlipViewModel.SelectedItem!))
             {

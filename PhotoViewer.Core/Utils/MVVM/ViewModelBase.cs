@@ -62,7 +62,7 @@ public class ViewModelBase : ObservableObjectBase, IViewModel
             throw new InvalidOperationException();
         }
         LastDispatchTask = synchronizationContext.DispatchAsync(action);
-        return LastDispatchTask;       
+        return LastDispatchTask;
     }
 
 }

@@ -1,5 +1,4 @@
 ﻿using Essentials.NET;
-using System;
 
 namespace PhotoViewer.Core.Utils;
 
