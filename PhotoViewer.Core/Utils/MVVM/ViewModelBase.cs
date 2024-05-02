@@ -57,10 +57,6 @@ public class ViewModelBase : ObservableObjectBase, IViewModel
     /// </summary>
     protected Task DispatchAsync(Action action)
     {
-        if (synchronizationContext is null)
-        {
-            throw new InvalidOperationException();
-        }
         LastDispatchTask = synchronizationContext.DispatchAsync(action);
         return LastDispatchTask;
     }

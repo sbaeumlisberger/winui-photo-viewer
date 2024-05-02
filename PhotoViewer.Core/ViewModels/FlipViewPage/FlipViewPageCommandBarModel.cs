@@ -13,6 +13,7 @@ using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using PhotoViewer.Core.ViewModels.Shared;
 using System.Windows.Input;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 
 namespace PhotoViewer.App.ViewModels;
@@ -24,6 +25,7 @@ public interface IFlipViewPageCommandBarModel : IViewModel
 
 public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageCommandBarModel
 {
+    private readonly HashSet<string> ContentTypesSupportedByBitmapEncoder = BitmapEncoder.GetEncoderInformationEnumerator().SelectMany(info => info.MimeTypes).ToHashSet();
 
     public IMediaFlipViewItemModel? SelectedItemModel { get; set; }
 
@@ -41,7 +43,9 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     public bool CanStartDiashow => SelectedItemModel != null;
 
-    public bool CanCropImage => SelectedItemModel?.MediaFile is IBitmapFileInfo;
+    public bool CanCropImage => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmapFileInfo && ContentTypesSupportedByBitmapEncoder.Contains(bitmapFileInfo.ContentType);
+
+    public bool CanEditImage => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmapFileInfo && ContentTypesSupportedByBitmapEncoder.Contains(bitmapFileInfo.ContentType);
 
     public bool CanRotate => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmap && rotateBitmapService.CanRotate(bitmap);
 
@@ -118,6 +122,12 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     private void CropImage()
     {
         Messenger.Send(new ToggleCropImageToolMessage());
+    }
+
+    [RelayCommand(CanExecute = nameof(CanEditImage))]
+    private void EditImage()
+    {
+        Messenger.Send(new ToggleEditImageOverlayMessage());
     }
 
     [RelayCommand(CanExecute = nameof(CanRotate))]

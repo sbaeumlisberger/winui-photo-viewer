@@ -56,6 +56,7 @@
     <None Remove="Views\BitmapViewer.xaml" />
     <None Remove="Views\DetailsBar.xaml" />
     <None Remove="Views\FlipViewPageCommandBar.xaml" />
+    <None Remove="Views\FlipViewPage\EditImageOverlay.xaml" />
     <None Remove="Views\ItemWithCount.xaml" />
     <None Remove="Views\MediaFileContextMenu.xaml" />
     <None Remove="Views\MediaFlipView.xaml" />
@@ -206,6 +207,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Strings.cs</LastGenOutput>
     </None>
+    <Page Update="Views\FlipViewPage\EditImageOverlay.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\Dialogs\UnhandledExceptionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

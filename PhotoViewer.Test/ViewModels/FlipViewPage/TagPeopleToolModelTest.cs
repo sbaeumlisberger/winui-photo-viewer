@@ -81,12 +81,12 @@ public class TagPeopleToolModelTest
 
         var peopleTagVM1 = tagPeopleToolModel.TaggedPeople[0];
         Assert.Equal(examplePeopleTag1.Name, peopleTagVM1.Name);
-        Assert.Equal(examplePeopleTag1.Rectangle.ToRect(), peopleTagVM1.FaceBox);
+        Assert.Equal(examplePeopleTag1.Rectangle!.Value.ToRect(), peopleTagVM1.FaceBox);
         Assert.False(peopleTagVM1.IsVisible);
 
         var peopleTagVM2 = tagPeopleToolModel.TaggedPeople[1];
         Assert.Equal(examplePeopleTag3.Name, peopleTagVM2.Name);
-        Assert.Equal(examplePeopleTag3.Rectangle.ToRect(), peopleTagVM2.FaceBox);
+        Assert.Equal(examplePeopleTag3.Rectangle!.Value.ToRect(), peopleTagVM2.FaceBox);
         Assert.False(peopleTagVM2.IsVisible);
     }
 
@@ -103,7 +103,7 @@ public class TagPeopleToolModelTest
     }
 
     [Fact]
-    public async void ActivationMessage_ShowsTaggedPeople_WhenIsEnabledTrue()
+    public async Task ActivationMessage_ShowsTaggedPeople_WhenIsEnabledTrue()
     {
         await InitializeTagPeopleToolModel(peopleTags: examplePeopleTags);
         tagPeopleToolModel.IsEnabled = true;
@@ -115,7 +115,7 @@ public class TagPeopleToolModelTest
     }
 
     [Fact]
-    public async void ActivationMessage_DoesNotShowTaggedPeople_WhenIsEnabledFalse()
+    public async Task ActivationMessage_DoesNotShowTaggedPeople_WhenIsEnabledFalse()
     {
         await InitializeTagPeopleToolModel(peopleTags: examplePeopleTags);
 

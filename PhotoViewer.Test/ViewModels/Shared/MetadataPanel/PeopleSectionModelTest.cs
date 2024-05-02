@@ -142,7 +142,8 @@ public class PeopleSectionModelTest
         peopleSectionModel.UpdateFilesChanged(files, Substitute.For<IReadOnlyList<MetadataView>>());
         var messageCapture = TestUtils.CaptureMessage<MetadataModifiedMessage>(messenger);
 
-        await peopleSectionModel.RemovePeopleTagCommand.ExecuteAsync(Name1);
+        peopleSectionModel.SelectedPeopleNames = [Name1];
+        await peopleSectionModel.RemovePeopleTagCommand.ExecuteAsync(null);
 
         await VerifyNotReceivedWriteMetadataAsync(files[0]);
         await VerifyReceivedWriteMetadataAsync(files[1], new string[0]);

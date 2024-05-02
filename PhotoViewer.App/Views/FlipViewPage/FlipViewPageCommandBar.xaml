@@ -106,6 +106,13 @@
             <KeyboardAccelerator Modifiers="Control" Key="M"/>
         </AppBarButton.KeyboardAccelerators>
     </AppBarButton>
+    <AppBarButton        
+        ToolTipService.ToolTip="{x:Bind res:Strings.FlipViewPageCommandBar_EditButton}"
+        Command="{x:Bind ViewModel.EditImageCommand}">
+        <AppBarButton.Icon>
+            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE9E9;" />
+        </AppBarButton.Icon>
+    </AppBarButton>
     <AppBarButton
         Icon="Crop" 
         ToolTipService.ToolTip="{x:Bind res:Strings.FlipViewPageCommandBar_CropButton}"

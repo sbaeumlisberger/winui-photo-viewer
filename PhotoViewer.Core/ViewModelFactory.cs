@@ -31,6 +31,7 @@ public interface IViewModelFactory
     IImageViewModel CreateImageViewModel(IBitmapFileInfo bitmapFile);
     EditLocationDialogModel CreateEditLocationDialogModel(Location? orginalLocation, Func<Location?, Task> saveLocation);
     BackgroundTasksViewModel CreateBackgroundTasksViewModel();
+    EditImageOverlayModel CreateEditImageOverlayModel();
 }
 
 public class ViewModelFactory : IViewModelFactory
@@ -252,5 +253,10 @@ public class ViewModelFactory : IViewModelFactory
     public BackgroundTasksViewModel CreateBackgroundTasksViewModel()
     {
         return new BackgroundTasksViewModel(backgroundTaskService);
+    }
+
+    public EditImageOverlayModel CreateEditImageOverlayModel()
+    {
+        return new EditImageOverlayModel(messenger, dialogService);
     }
 }

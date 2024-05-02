@@ -358,6 +358,105 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Brightness.
+        /// </summary>
+        internal static string EditImageOverlay_Brightness {
+            get {
+                return ResourceManager.GetString("EditImageOverlay_Brightness", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string EditImageOverlay_Cancel {
+            get {
+                return ResourceManager.GetString("EditImageOverlay_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contrast.
+        /// </summary>
+        internal static string EditImageOverlay_Contrast {
+            get {
+                return ResourceManager.GetString("EditImageOverlay_Contrast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Highlights.
+        /// </summary>
+        internal static string EditImageOverlay_Highlights {
+            get {
+                return ResourceManager.GetString("EditImageOverlay_Highlights", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Saturation.
+        /// </summary>
+        internal static string EditImageOverlay_Saturation {
+            get {
+                return ResourceManager.GetString("EditImageOverlay_Saturation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        internal static string EditImageOverlay_Save {
+            get {
+                return ResourceManager.GetString("EditImageOverlay_Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save copy.
+        /// </summary>
+        internal static string EditImageOverlay_SaveCopy {
+            get {
+                return ResourceManager.GetString("EditImageOverlay_SaveCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shadows.
+        /// </summary>
+        internal static string EditImageOverlay_Shadows {
+            get {
+                return ResourceManager.GetString("EditImageOverlay_Shadows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sharpen.
+        /// </summary>
+        internal static string EditImageOverlay_Sharpen {
+            get {
+                return ResourceManager.GetString("EditImageOverlay_Sharpen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Temperature.
+        /// </summary>
+        internal static string EditImageOverlay_Temperature {
+            get {
+                return ResourceManager.GetString("EditImageOverlay_Temperature", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit image.
+        /// </summary>
+        internal static string EditImageOverlay_Title {
+            get {
+                return ResourceManager.GetString("EditImageOverlay_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Altitude.
         /// </summary>
         internal static string EditLocationDialog_AltitudeLabel {
@@ -534,6 +633,15 @@ namespace PhotoViewer.App.Resources {
         internal static string FlipViewPageCommandBar_DiashowButton {
             get {
                 return ResourceManager.GetString("FlipViewPageCommandBar_DiashowButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit image.
+        /// </summary>
+        internal static string FlipViewPageCommandBar_EditButton {
+            get {
+                return ResourceManager.GetString("FlipViewPageCommandBar_EditButton", resourceCulture);
             }
         }
         

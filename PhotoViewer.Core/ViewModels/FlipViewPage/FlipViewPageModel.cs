@@ -24,6 +24,8 @@ public partial class FlipViewPageModel : ViewModelBase
 
     public IMetadataPanelModel MetadataPanelModel { get; }
 
+    public EditImageOverlayModel EditImageOverlayModel { get; }
+
     public bool ShowUI { get; private set; } = true;
 
     private readonly ApplicationSession session;
@@ -45,6 +47,7 @@ public partial class FlipViewPageModel : ViewModelBase
         DetailsBarModel = viewModelFactory.CreateDetailsBarModel();
         CommandBarModel = viewModelFactory.CreateFlipViewPageCommandBarModel(FlipViewModel.SelectPreviousCommand, FlipViewModel.SelectNextCommand);
         MetadataPanelModel = viewModelFactory.CreateMetadataPanelModel(true);
+        EditImageOverlayModel = viewModelFactory.CreateEditImageOverlayModel();
 
         FlipViewModel.PropertyChanged += FlipViewModel_PropertyChanged;
 
@@ -120,8 +123,10 @@ public partial class FlipViewPageModel : ViewModelBase
         {
             var selectedItemModel = FlipViewModel.SelectedItemModel;
             DetailsBarModel.SelectedItemModel = selectedItemModel;
-            CommandBarModel.SelectedItemModel = selectedItemModel;        
-            MetadataPanelModel.Files = selectedItemModel is not null ? new [] { selectedItemModel.MediaFile } : Array.Empty<IMediaFileInfo>();
+            CommandBarModel.SelectedItemModel = selectedItemModel;
+            MetadataPanelModel.Files = selectedItemModel is not null ? [selectedItemModel.MediaFile] : [];
+            EditImageOverlayModel.File = selectedItemModel?.MediaFile as IBitmapFileInfo;
+            EditImageOverlayModel.Image = (selectedItemModel as IBitmapFlipViewItemModel)?.ImageViewModel.Image;
         }
     }
 

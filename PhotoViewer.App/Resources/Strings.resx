@@ -801,4 +801,40 @@
   <data name="TagPeopleTool_RemovePeopleTagMenuItem" xml:space="preserve">
     <value>Remove</value>
   </data>
+  <data name="FlipViewPageCommandBar_EditButton" xml:space="preserve">
+    <value>Edit image</value>
+  </data>
+  <data name="EditImageOverlay_Brightness" xml:space="preserve">
+    <value>Brightness</value>
+  </data>
+  <data name="EditImageOverlay_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="EditImageOverlay_Contrast" xml:space="preserve">
+    <value>Contrast</value>
+  </data>
+  <data name="EditImageOverlay_Highlights" xml:space="preserve">
+    <value>Highlights</value>
+  </data>
+  <data name="EditImageOverlay_Saturation" xml:space="preserve">
+    <value>Saturation</value>
+  </data>
+  <data name="EditImageOverlay_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="EditImageOverlay_SaveCopy" xml:space="preserve">
+    <value>Save copy</value>
+  </data>
+  <data name="EditImageOverlay_Shadows" xml:space="preserve">
+    <value>Shadows</value>
+  </data>
+  <data name="EditImageOverlay_Sharpen" xml:space="preserve">
+    <value>Sharpen</value>
+  </data>
+  <data name="EditImageOverlay_Temperature" xml:space="preserve">
+    <value>Temperature</value>
+  </data>
+  <data name="EditImageOverlay_Title" xml:space="preserve">
+    <value>Edit image</value>
+  </data>
 </root>
