@@ -1,7 +1,6 @@
 ﻿using Essentials.NET;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using PhotoViewer.App.Resources;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
@@ -117,10 +116,15 @@ public class DialogService
         {
             Title = messageDialogModel.Title,
             Content = messageDialogModel.Message,
-            PrimaryButtonText = messageDialogModel.PrimaryButtonText ?? Strings.MessageDialog_PrimaryButtonText,
+            CloseButtonText = messageDialogModel.CloseButtonText,
+            PrimaryButtonText = messageDialogModel.PrimaryButtonText,
+            SecondaryButtonText = messageDialogModel.SecondaryButtonText,
+            DefaultButton = ContentDialogButton.Primary
         };
         InitializeContentDialog(dialog);
-        await dialog.ShowAsync();
+        var result = await dialog.ShowAsync();
+        messageDialogModel.WasPrimaryButtonActivated = result == ContentDialogResult.Primary;
+        messageDialogModel.WasSecondaryButtonActivated = result == ContentDialogResult.Secondary;
     }
 
     private async Task ShowLaunchFileDialogAsync(LaunchFileDialogModel launchFileDialogModel)
@@ -173,6 +177,7 @@ public class DialogService
     {
         dialog.XamlRoot = window.Content.XamlRoot;
         dialog.RequestedTheme = ((FrameworkElement)window.Content).RequestedTheme;
+        dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
     }
 
     private static DataTransferManager GetDataTransferManagerForWindow([In] IntPtr appWindow)

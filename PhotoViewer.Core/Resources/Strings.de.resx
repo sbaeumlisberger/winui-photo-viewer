@@ -156,6 +156,9 @@
   <data name="LoadFilesErrorDialog_Title" xml:space="preserve">
     <value>Dateien konnten nicht geladen werden</value>
   </data>
+  <data name="MessageDialog_CloseButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
   <data name="MetadataPanel_LocationPlaceholder" xml:space="preserve">
     <value>Kein Aufnahmeort sepzifiziert</value>
   </data>
@@ -177,6 +180,9 @@
   <data name="RenameFileErrorDialog_Title" xml:space="preserve">
     <value>Datei konnte nicht umbennant werden</value>
   </data>
+  <data name="SaveImageFailedDialog_Title" xml:space="preserve">
+    <value>Speichern fehlgeschlagen</value>
+  </data>
   <data name="SetDesktopBackgroundFailedDialog_Ttile" xml:space="preserve">
     <value>Desktop-Hintergrund konnte nicht festgelegt werden</value>
   </data>
@@ -185,6 +191,18 @@
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Einstellungen</value>
+  </data>
+  <data name="UnsavedChangesDialog_Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="UnsavedChangesDialog_CloseWithoutSaving" xml:space="preserve">
+    <value>Ohne Speichern schließen</value>
+  </data>
+  <data name="UnsavedChangesDialog_Message" xml:space="preserve">
+    <value>Möchten Sie die Anwendung ohne zu speichern schließen ?</value>
+  </data>
+  <data name="UnsavedChangesDialog_Title" xml:space="preserve">
+    <value>Ungespeicherte Änderungen</value>
   </data>
   <data name="WaitForBackgroundTaskDialog_Message" xml:space="preserve">
     <value>Es wird auf die Ausführung von Hintergrundaufgaben gewartet ...</value>

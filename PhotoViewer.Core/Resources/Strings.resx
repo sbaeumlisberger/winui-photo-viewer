@@ -156,6 +156,9 @@
   <data name="LoadFilesErrorDialog_Title" xml:space="preserve">
     <value>Could not load files</value>
   </data>
+  <data name="MessageDialog_CloseButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
   <data name="MetadataPanel_LocationPlaceholder" xml:space="preserve">
     <value>No place taken specified</value>
   </data>
@@ -177,6 +180,9 @@
   <data name="RenameFileErrorDialog_Title" xml:space="preserve">
     <value>File could not be renamed</value>
   </data>
+  <data name="SaveImageFailedDialog_Title" xml:space="preserve">
+    <value>Failed to save image</value>
+  </data>
   <data name="SetDesktopBackgroundFailedDialog_Ttile" xml:space="preserve">
     <value>Failed to set desktop background</value>
   </data>
@@ -185,6 +191,18 @@
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="UnsavedChangesDialog_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="UnsavedChangesDialog_CloseWithoutSaving" xml:space="preserve">
+    <value>Close without saving</value>
+  </data>
+  <data name="UnsavedChangesDialog_Message" xml:space="preserve">
+    <value>Do you want to close the app without saving?</value>
+  </data>
+  <data name="UnsavedChangesDialog_Title" xml:space="preserve">
+    <value>Unsaved changes</value>
   </data>
   <data name="WaitForBackgroundTaskDialog_Message" xml:space="preserve">
     <value>Waiting for background tasks to be completed ...</value>

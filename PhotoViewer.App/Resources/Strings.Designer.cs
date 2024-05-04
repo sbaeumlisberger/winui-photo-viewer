@@ -1069,15 +1069,6 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to OK.
-        /// </summary>
-        internal static string MessageDialog_PrimaryButtonText {
-            get {
-                return ResourceManager.GetString("MessageDialog_PrimaryButtonText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Add date taken.
         /// </summary>
         internal static string MetadataPanel_AddDateTakenButton {

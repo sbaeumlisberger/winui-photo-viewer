@@ -178,6 +178,15 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        public static string MessageDialog_CloseButtonText {
+            get {
+                return ResourceManager.GetString("MessageDialog_CloseButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No place taken specified.
         /// </summary>
         public static string MetadataPanel_LocationPlaceholder {
@@ -241,6 +250,15 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to save image.
+        /// </summary>
+        public static string SaveImageFailedDialog_Title {
+            get {
+                return ResourceManager.GetString("SaveImageFailedDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to set desktop background.
         /// </summary>
         public static string SetDesktopBackgroundFailedDialog_Ttile {
@@ -264,6 +282,42 @@ namespace PhotoViewer.Core.Resources {
         public static string SettingsPage_Title {
             get {
                 return ResourceManager.GetString("SettingsPage_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string UnsavedChangesDialog_Cancel {
+            get {
+                return ResourceManager.GetString("UnsavedChangesDialog_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close without saving.
+        /// </summary>
+        public static string UnsavedChangesDialog_CloseWithoutSaving {
+            get {
+                return ResourceManager.GetString("UnsavedChangesDialog_CloseWithoutSaving", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to close the app without saving?.
+        /// </summary>
+        public static string UnsavedChangesDialog_Message {
+            get {
+                return ResourceManager.GetString("UnsavedChangesDialog_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsaved changes.
+        /// </summary>
+        public static string UnsavedChangesDialog_Title {
+            get {
+                return ResourceManager.GetString("UnsavedChangesDialog_Title", resourceCulture);
             }
         }
         

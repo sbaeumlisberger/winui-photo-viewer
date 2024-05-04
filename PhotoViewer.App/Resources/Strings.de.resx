@@ -417,9 +417,6 @@
   <data name="MediaFlipView_ExitDiashow" xml:space="preserve">
     <value>Beenden</value>
   </data>
-  <data name="MessageDialog_PrimaryButtonText" xml:space="preserve">
-    <value>OK</value>
-  </data>
   <data name="MetadataPanel_AddDateTakenButton" xml:space="preserve">
     <value>Aufnahmedatum hinzufügen</value>
   </data>

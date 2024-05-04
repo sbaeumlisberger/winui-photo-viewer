@@ -8,9 +8,11 @@ using Microsoft.UI;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Utils;
 using System.ComponentModel;
 using System.Numerics;
@@ -46,6 +48,14 @@ public partial class EditImageOverlayModel : ViewModelBase
         /// <summary>0 to 100</summary>
         public double Sharpen { get; set; }
 
+        public bool HasChanges => Brightness != 0
+                                  || Highlights != 0
+                                  || Shadows != 0
+                                  || Contrast != 0
+                                  || Saturation != 0
+                                  || Temperature != 0
+                                  || Sharpen != 0;
+
         public void Reset()
         {
             Brightness = 0;
@@ -74,7 +84,6 @@ public partial class EditImageOverlayModel : ViewModelBase
 
     private CanvasRenderTarget? canvasRenderTarget;
 
-    // TODO prevent close window when modified
     internal EditImageOverlayModel(IMessenger messenger, IDialogService dialogService) : base(messenger)
     {
         this.dialogService = dialogService;
@@ -95,6 +104,26 @@ public partial class EditImageOverlayModel : ViewModelBase
         Register<ToggleEditImageOverlayMessage>(msg => IsVisible = !IsVisible);
     }
 
+    public async Task<bool> ConfirmCloseAsync()
+    {
+        if (!Settings.HasChanges)
+        {
+            return true;
+        }
+
+        var dialogModel = new MessageDialogModel()
+        {
+            Title = Strings.UnsavedChangesDialog_Title,
+            Message = Strings.UnsavedChangesDialog_Message,
+            PrimaryButtonText = Strings.UnsavedChangesDialog_CloseWithoutSaving,
+            CloseButtonText = Strings.UnsavedChangesDialog_Cancel
+        };
+
+        await dialogService.ShowDialogAsync(dialogModel);
+
+        return dialogModel.WasPrimaryButtonActivated;
+    }
+
     [RelayCommand]
     private void Cancel()
     {
@@ -104,9 +133,21 @@ public partial class EditImageOverlayModel : ViewModelBase
     [RelayCommand]
     private async Task SaveAsync()
     {
-        await SaveReplaceAsync();
-        Messenger.Send(new BitmapModifiedMesssage(File!));
-        CloseAndReset();
+        try
+        {
+            await SaveReplaceAsync();
+            Messenger.Send(new BitmapModifiedMesssage(File!));
+            CloseAndReset();
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to save image", ex);
+            await dialogService.ShowDialogAsync(new MessageDialogModel()
+            {
+                Title = Strings.SaveImageFailedDialog_Title,
+                Message = ex.Message
+            });
+        }
     }
 
     [RelayCommand]
@@ -117,21 +158,34 @@ public partial class EditImageOverlayModel : ViewModelBase
             SuggestedFileName = File!.FileName,
             FileTypeChoices = new() { { File.FileExtension.RemoveStart("."), [File.FileExtension] } }
         };
+
         await dialogService.ShowDialogAsync(fileSavePickerModel);
 
         if (fileSavePickerModel.File is { } dstFile)
         {
-            if (dstFile.IsSameFile(File.StorageFile))
+            try
             {
-                await SaveReplaceAsync();
-                Messenger.Send(new BitmapModifiedMesssage(File));
-            }
-            else
-            {
-                await SaveCopyAsnc(dstFile);
-            }
+                if (dstFile.IsSameFile(File.StorageFile))
+                {
+                    await SaveReplaceAsync();
+                    Messenger.Send(new BitmapModifiedMesssage(File));
+                }
+                else
+                {
+                    await SaveCopyAsnc(dstFile);
+                }
 
-            CloseAndReset();
+                CloseAndReset();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Failed to save image", ex);
+                await dialogService.ShowDialogAsync(new MessageDialogModel()
+                {
+                    Title = Strings.SaveImageFailedDialog_Title,
+                    Message = ex.Message
+                });
+            }
         }
     }
 

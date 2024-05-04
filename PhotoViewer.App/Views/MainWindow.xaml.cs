@@ -12,6 +12,7 @@ using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System;
+using Windows.Foundation;
 using Windows.System;
 using WinUIEx;
 
@@ -19,6 +20,8 @@ namespace PhotoViewer.App;
 
 public sealed partial class MainWindow : WindowEx
 {
+    public event TypedEventHandler<MainWindow, AppWindowClosingEventArgs>? Closing;
+
     private readonly ViewRegistrations viewRegistrations = ViewRegistrations.Instance;
 
     private readonly MainWindowModel viewModel;
@@ -82,6 +85,14 @@ public sealed partial class MainWindow : WindowEx
 
     private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
     {
+        Closing?.Invoke(this, args);
+
+        if (args.Cancel)
+        {
+            args.Cancel = true;
+            return;
+        }
+
         try
         {
             args.Cancel = true;
