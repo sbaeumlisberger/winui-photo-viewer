@@ -56,6 +56,7 @@ public class ViewModelFactory : IViewModelFactory
     private readonly IFaceDetectionService faceDetectionService = new FaceDetectionService();
     private readonly ICropImageService cropImageService;
     private readonly IBackgroundTaskService backgroundTaskService = new BackgroundTaskService();
+    private readonly Lazy<FaceRecognitionService> faceRecognitionService ;
 
     public ViewModelFactory(ApplicationSettings settings)
     {
@@ -65,6 +66,7 @@ public class ViewModelFactory : IViewModelFactory
         rotateBitmapService = new RotateBitmapService(metadataService);
         cropImageService = new CropImageService(messenger, metadataService);
         mediaFilesLoaderService = new MediaFilesLoaderService(imageLoaderService, new FileSystemService());
+        faceRecognitionService = new Lazy<FaceRecognitionService>(() => new FaceRecognitionService(messenger));
     }
 
     public AppModel CreateAppModel()
@@ -258,5 +260,16 @@ public class ViewModelFactory : IViewModelFactory
     public EditImageOverlayModel CreateEditImageOverlayModel()
     {
         return new EditImageOverlayModel(messenger, dialogService);
+    }
+
+    public PeopleTaggingPageModel CreatePeopleTaggingBatchViewPageModel()
+    {
+        return new PeopleTaggingPageModel(
+            applicationSession, 
+            faceDetectionService,
+            imageLoaderService,
+            peopleSuggestionsService, 
+            metadataService,
+            faceRecognitionService.Value);
     }
 }

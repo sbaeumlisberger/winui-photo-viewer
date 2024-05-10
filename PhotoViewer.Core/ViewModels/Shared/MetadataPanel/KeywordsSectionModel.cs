@@ -66,7 +66,7 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
 
     public IReadOnlyList<string> GetRecentSuggestions()
     {
-        return suggestionsService.GetRecentSuggestions();
+        return suggestionsService.GetRecent();
     }
 
     private List<ItemWithCountModel> CreateListItemModels(IReadOnlyList<MetadataView> metadata)

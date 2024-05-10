@@ -9,7 +9,7 @@ namespace PhotoViewer.Core.Services
     {
         List<string> GetAll();
 
-        List<string> GetRecentSuggestions(ICollection<string>? exclude = null, int max = 12);
+        List<string> GetRecent(ICollection<string>? exclude = null, int max = 12);
 
         List<string> FindMatches(string query, ICollection<string>? exclude = null, int max = 12);
 
@@ -55,7 +55,7 @@ namespace PhotoViewer.Core.Services
             return suggestions.OrderBy(suggestion => suggestion).ToList();
         }
 
-        public List<string> GetRecentSuggestions(ICollection<string>? exclude, int max)
+        public List<string> GetRecent(ICollection<string>? exclude, int max)
         {
             exclude ??= [];
 
@@ -68,7 +68,7 @@ namespace PhotoViewer.Core.Services
 
             if (string.IsNullOrWhiteSpace(query))
             {
-                return GetRecentSuggestions(exclude, max);
+                return GetRecent(exclude, max);
             }
 
             return suggestions

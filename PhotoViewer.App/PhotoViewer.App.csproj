@@ -35,6 +35,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <None Remove="Controls\CanvasImageControl.xaml" />
     <None Remove="Controls\ProgressControl.xaml" />
     <None Remove="Controls\SelectionRect.xaml" />
     <None Remove="Views\ComparePage.xaml" />
@@ -64,6 +65,7 @@
     <None Remove="Views\OverviewItem.xaml" />
     <None Remove="Views\OverviewPage.xaml" />
     <None Remove="Views\OverviewPageCommandBar.xaml" />
+    <None Remove="Views\PeopleTaggingPage\PeopleTaggingPage.xaml" />
     <None Remove="Views\TagPeopleTool.xaml" />
     <None Remove="Views\VectorGraphicFlipViewItem.xaml" />
     <None Remove="Views\VideoFlipViewItem.xaml" />
@@ -73,7 +75,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="MetadataAPI" Version="1.5.0" />
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240404000" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240428000" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
     <PackageReference Include="WIC.DotNet" Version="1.3.1" />
     <PackageReference Include="WinUIEx" Version="2.3.4" />
@@ -203,10 +205,16 @@
     <Page Update="Controls\ProgressControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Update="Controls\CanvasImageControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <None Update="Resources\Strings.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Strings.cs</LastGenOutput>
     </None>
+    <Page Update="Views\PeopleTaggingBatchViewPage\PeopleTaggingPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\FlipViewPage\EditImageOverlay.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

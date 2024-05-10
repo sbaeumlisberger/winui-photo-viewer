@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using MetadataAPI;
 using MetadataAPI.Data;
+using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.Core.Messages;
@@ -89,7 +90,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 
     public IReadOnlyList<string> GetRecentSuggestions()
     {
-        return suggestionsService.GetRecentSuggestions(exclude: people.Select(x => x.Value).ToList());
+        return suggestionsService.GetRecent(exclude: people.Select(x => x.Value).ToList());
     }
 
     private List<ItemWithCountModel> CreateItemModels(IReadOnlyList<MetadataView> metadata)
@@ -168,5 +169,11 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
     private async Task ManagePeopleSuggestionsAsync()
     {
         await dialogService.ShowDialogAsync(new ManagePeopleDialogModel(suggestionsService, dialogService));
+    }
+
+    [RelayCommand]
+    private void OpenBatchView() 
+    {
+        Messenger.Send(new NavigateToPageMessage(typeof(PeopleTaggingPageModel)));
     }
 }

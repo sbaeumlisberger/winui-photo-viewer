@@ -63,19 +63,24 @@ public class ImageLoaderService : IImageLoaderService
     {
         using (var fileStream = await file.OpenAsRandomAccessStreamAsync(FileAccessMode.Read).ConfigureAwait(false))
         {
+            InMemoryRandomAccessStream memoryStream = new();
+            await RandomAccessStream.CopyAsync(fileStream, memoryStream);
+            fileStream.Dispose();
+            memoryStream.Seek(0);
+
             cancellationToken.ThrowIfCancellationRequested();
-            ColorSpaceInfo colorSpace = GetColorSpaceInfo(fileStream);
-            fileStream.Seek(0);
+            ColorSpaceInfo colorSpace = GetColorSpaceInfo(memoryStream);
+            memoryStream.Seek(0);
             cancellationToken.ThrowIfCancellationRequested();
             try
             {
-                var canvasBitmap = await CanvasBitmap.LoadAsync(Device, fileStream).AsTask(cancellationToken).ConfigureAwait(false);
+                var canvasBitmap = await CanvasBitmap.LoadAsync(Device, memoryStream).AsTask(cancellationToken).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
                 return new CanvasBitmapImageModel(file.DisplayName, canvasBitmap, colorSpace);
             }
             catch (ArgumentException ex) when (ex.HResult == -2147024809)
             {
-                var canvasVirtualBitmap = await CanvasVirtualBitmap.LoadAsync(Device, fileStream).AsTask(cancellationToken).ConfigureAwait(false);
+                var canvasVirtualBitmap = await CanvasVirtualBitmap.LoadAsync(Device, memoryStream).AsTask(cancellationToken).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
                 return new CanvasVirtualBitmapImageModel(file.DisplayName, canvasVirtualBitmap, colorSpace);
             }

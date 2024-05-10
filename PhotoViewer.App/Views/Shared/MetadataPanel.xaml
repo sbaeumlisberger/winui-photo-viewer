@@ -199,13 +199,17 @@
                             <FontIcon FontSize="14" FontFamily="Segoe Fluent Icons" Glyph="&#xE115;" /> 
                         </HyperlinkButton>
                     </Grid>
-                    <ToggleButton 
-                        Margin="0,6,0,0"
+                    <StackPanel Margin="0,6,0,0" Orientation="Horizontal" Spacing="8">
+                    <ToggleButton                       
                         Content="{x:Bind res:Strings.MetadataPanel_TagPeopleOnPhoto}"
                         Visibility="{x:Bind ViewModel.PeopleSectionModel.IsTagPeopleOnPhotoButtonVisible}"
                         Command="{x:Bind ViewModel.PeopleSectionModel.ToggleTagPeopleOnPhotoCommand}"                       
                         IsChecked="{x:Bind ViewModel.PeopleSectionModel.IsTagPeopleOnPhotoButtonChecked, Mode=OneWay}"/>
-
+                        <Button
+                            Content="Batch View"
+                            Command="{x:Bind ViewModel.PeopleSectionModel.OpenBatchViewCommand}"/>
+                    </StackPanel>
+                
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_KeywordsHeader}" Style="{StaticResource HeaderStyle}"/>
                     <ListView 
                         ItemsSource="{x:Bind ViewModel.KeywordsSectionModel.Keywords, Mode=OneWay}" 

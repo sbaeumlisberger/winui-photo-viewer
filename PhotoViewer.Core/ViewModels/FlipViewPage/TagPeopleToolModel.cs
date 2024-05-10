@@ -167,7 +167,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     public IReadOnlyList<string> GetRecentSuggestions()
     {
-        return suggestionsService.GetRecentSuggestions(exclude: TaggedPeople.Select(x => x.Name).ToList());
+        return suggestionsService.GetRecent(exclude: TaggedPeople.Select(x => x.Name).ToList());
     }
 
     public void TrySelectNextDetectedFace()
@@ -218,6 +218,8 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
             return;
         }
 
+
+        // TODO rotate backwards!
         var faceRect = new FaceRect(SelectionRectInPercent.X, SelectionRectInPercent.Y,
                                     SelectionRectInPercent.Width, SelectionRectInPercent.Height);
 
@@ -264,10 +266,29 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     private async Task LoadTaggedPeopleAsync()
     {
+        var orientation = await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.Orientation);
         TaggedPeople = (await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People))
              .Where(peopleTag => peopleTag.Rectangle is not null)
-             .Select(peopleTag => new PeopleTagViewModel(IsSelectionEnabled, peopleTag.Name, peopleTag.Rectangle!.Value.ToRect()))
+             .Select(peopleTag => new PeopleTagViewModel(IsSelectionEnabled, peopleTag.Name, RotateRect(peopleTag.Rectangle!.Value.ToRect(), orientation)))
              .ToList();
+    }
+
+    private Rect RotateRect(Rect rect, PhotoOrientation orientation)
+    {
+        switch (orientation)
+        {
+            case PhotoOrientation.Normal:
+            case PhotoOrientation.Unspecified:
+                return rect;
+            case PhotoOrientation.Rotate90:
+                return new Rect(1 - rect.Bottom, rect.X, rect.Height, rect.Width);
+            case PhotoOrientation.Rotate180:
+                return new Rect(1 - rect.Right, 1 - rect.Bottom, rect.Width, rect.Height);
+            case PhotoOrientation.Rotate270:
+                return new Rect(rect.Y, 1 - rect.Right, rect.Height, rect.Width);
+            default:
+                throw new NotSupportedException("Invalid image orientation.");
+        }
     }
 
     private async Task DetectFacesAsync()

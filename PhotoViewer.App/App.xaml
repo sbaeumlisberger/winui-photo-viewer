@@ -27,6 +27,41 @@
                     <Style x:Key="PrimaryDialogButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
                         <Setter Property="MinWidth" Value="120"/>
                     </Style>
+                    <Style x:Key="NoMaxWithTooltipStyle" TargetType="ToolTip">
+                        <!-- override default template to "remove" max width -->
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ToolTip">
+                                    <ContentPresenter
+                                        x:Name="LayoutRoot"
+                                        MaxWidth="999999"
+                                        Padding="{TemplateBinding Padding}"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Content="{TemplateBinding Content}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                                        TextWrapping="Wrap">       
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="OpenStates">
+                                                <VisualState x:Name="Closed">
+                                                    <Storyboard>
+                                                        <FadeOutThemeAnimation TargetName="LayoutRoot" />
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="Opened">
+                                                    <Storyboard>
+                                                        <FadeInThemeAnimation TargetName="LayoutRoot" />
+                                                    </Storyboard>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                    </ContentPresenter>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
             <ResourceDictionary.ThemeDictionaries>
@@ -37,6 +72,6 @@
                     <SolidColorBrush x:Key="PageBackgroundBrush" Color="Black"/>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
-        </ResourceDictionary>       
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

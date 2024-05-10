@@ -14,45 +14,12 @@
 
     <StackPanel Background="Transparent" Padding="8">
         <ToolTipService.ToolTip>
-            <ToolTip x:Name="tooltip" Opened="ToolTip_Opened" Closed="ToolTip_Closed">
-                <ToolTip.Style>
-                    <Style TargetType="ToolTip">
-                        <!-- override default template to extend max width -->
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ToolTip">
-                                    <ContentPresenter
-                                        x:Name="LayoutRoot"
-                                        MaxWidth="600"
-                                        Padding="{TemplateBinding Padding}"
-                                        Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        Content="{TemplateBinding Content}"
-                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                        ContentTransitions="{TemplateBinding ContentTransitions}"
-                                        TextWrapping="Wrap">
-                                        <VisualStateManager.VisualStateGroups>
-                                            <VisualStateGroup x:Name="OpenStates">
-                                                <VisualState x:Name="Closed">
-                                                    <Storyboard>
-                                                        <FadeOutThemeAnimation TargetName="LayoutRoot" />
-                                                    </Storyboard>
-                                                </VisualState>
-                                                <VisualState x:Name="Opened">
-                                                    <Storyboard>
-                                                        <FadeInThemeAnimation TargetName="LayoutRoot" />
-                                                    </Storyboard>
-                                                </VisualState>
-                                            </VisualStateGroup>
-                                        </VisualStateManager.VisualStateGroups>
-                                    </ContentPresenter>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ToolTip.Style>
-                <StackPanel Spacing="8">
+            <ToolTip
+                x:Name="tooltip" 
+                Style="{StaticResource NoMaxWithTooltipStyle}"
+                Opened="ToolTip_Opened"
+                Closed="ToolTip_Closed">               
+                <StackPanel Spacing="8" MaxWidth="600">
                     <Border x:Name="toolTipPreview"/>
                     <TextBlock
                         Text="{x:Bind ViewModel.DisplayName, Mode=OneWay}"

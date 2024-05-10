@@ -8,6 +8,7 @@ using PhotoViewer.App.Messages;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core;
+using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
@@ -106,6 +107,7 @@ public sealed partial class MainWindow : WindowEx
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
+        messenger.Send(new AppClosingMessage());
         messenger.UnregisterAll(this);
         Log.ArchiveLogFile();
     }
