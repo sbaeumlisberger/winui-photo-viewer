@@ -5,7 +5,7 @@ using OpenCvSharp;
 Console.WriteLine("PeopleTagsFixer started");
 
 string path = @"D:\Dateien\Fotos & Bilder\Fotos Familie";
-bool dryRun = true;
+bool dryRun = false;
 
 var files = Directory.EnumerateFiles(path, "*.jpg", SearchOption.AllDirectories);
 
@@ -88,6 +88,7 @@ Parallel.ForEach(files, file =>
             if (!dryRun)
             {
                 encoder.SetProperty(MetadataProperties.People, peopleTags);
+                encoder.EncodeAsync().GetAwaiter().GetResult();
             }
 
             Interlocked.Increment(ref fixedCount);
