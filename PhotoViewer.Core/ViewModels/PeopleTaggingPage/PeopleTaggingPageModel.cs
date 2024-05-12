@@ -5,7 +5,6 @@ using MetadataAPI.Data;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
@@ -18,6 +17,14 @@ using Windows.Storage.Streams;
 using Windows.Storage;
 using System.Runtime.Intrinsics.Arm;
 using System.IO;
+using OpenCvSharp;
+using Windows.Graphics.DirectX;
+using Rect = Windows.Foundation.Rect;
+using System.Runtime.InteropServices;
+using System.Collections;
+using Size = Windows.Foundation.Size;
+using CommunityToolkit.Mvvm.Messaging;
+using PhotoViewer.App.Messages;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -27,7 +34,9 @@ public partial class PeopleTaggingPageModel : ViewModelBase
 
     public IReadOnlyList<DetectedFace> SelectedFaces { get; set; } = [];
 
-    public IReadOnlyList<string> PeopleNames { get; set; } = [];
+    public IReadOnlyList<string> RecentPeopleNames { get; set; } = [];
+
+    public IReadOnlyList<string> AllPeopleNames { get; set; } = [];
 
     public string NameSearch { get; set; } = string.Empty;
 
@@ -43,20 +52,29 @@ public partial class PeopleTaggingPageModel : ViewModelBase
 
     internal PeopleTaggingPageModel(
         ApplicationSession session,
+        IMessenger messenger,
         IFaceDetectionService faceDetectionService,
         ICachedImageLoaderService imageLoaderService,
         ISuggestionsService peopleSuggestionsService,
         IMetadataService metadataService,
         FaceRecognitionService faceRecognitionService)
+        : base(messenger)
     {
         this.faceDetectionService = faceDetectionService;
         this.imageLoaderService = imageLoaderService;
         this.peopleSuggestionsService = peopleSuggestionsService;
         this.metadataService = metadataService;
         this.faceRecognitionService = faceRecognitionService;
-        PeopleNames = peopleSuggestionsService.GetRecent().Union(peopleSuggestionsService.GetAll()).ToList();
+        RecentPeopleNames = peopleSuggestionsService.GetRecent();
+        AllPeopleNames = peopleSuggestionsService.GetAll();
         PropertyChanged += PeopleTaggingBatchViewPageModel_PropertyChanged;
         _ = InitalizeAsync(session);
+    }
+
+    [RelayCommand]
+    private void GoBack()
+    {
+        Messenger.Send(new NavigateBackMessage());
     }
 
     [RelayCommand]
@@ -70,7 +88,9 @@ public partial class PeopleTaggingPageModel : ViewModelBase
                 peopleTags.Append(new PeopleTag(name, face.FaceRectInPercent)).ToArray();
                 await metadataService.WriteMetadataAsync(face.File, MetadataProperties.People, peopleTags);
                 DetectedFaces.FirstGroupByKey(face.RecognizedName).Remove(face);
-                faceRecognitionService.Train(face.File, face.FaceRect, name);
+                //faceRecognitionService.Train(face.File, face.FaceRect, name);
+                await peopleSuggestionsService.AddSuggestionAsync(name);
+                RecentPeopleNames = peopleSuggestionsService.GetRecent();
             }
         }
         catch (Exception ex)
@@ -85,11 +105,11 @@ public partial class PeopleTaggingPageModel : ViewModelBase
         {
             if (string.IsNullOrEmpty(NameSearch))
             {
-                PeopleNames = peopleSuggestionsService.GetRecent().Union(peopleSuggestionsService.GetAll()).ToList();
+                AllPeopleNames = peopleSuggestionsService.GetAll();
             }
             else
             {
-                PeopleNames = peopleSuggestionsService.FindMatches(NameSearch, [], int.MaxValue);
+                AllPeopleNames = peopleSuggestionsService.FindMatches(NameSearch, [], int.MaxValue);
             }
         }
     }
@@ -98,89 +118,81 @@ public partial class PeopleTaggingPageModel : ViewModelBase
     {
         var files = session.Files.OfType<IBitmapFileInfo>().ToList();
 
-        Stopwatch stopwatch2 = Stopwatch.StartNew();
+        Stopwatch stopwatch = Stopwatch.StartNew();
         await Parallel.ForEachAsync(files, async (file, _) =>
         {
-            try
+            var peopleTags = await metadataService.GetMetadataAsync(file, MetadataProperties.People);
+            if (peopleTags.Count != 0)
             {
-                var peopleTags = await metadataService.GetMetadataAsync(file, MetadataProperties.People);
-                if (peopleTags.Count == 0)
-                {
-                    //return;
-                }
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                Log.Debug($"Loading image {file.FilePath}");
-                var image = await imageLoaderService.LoadFromFileAsync(file, CancellationToken.None) as ICanvasBitmapImageModel;
-                stopwatch.Stop();
-                Log.Debug($"Loaded image {file.FilePath} in {stopwatch.ElapsedMilliseconds} ms");
-                if (image is not null)
-                {
-                    var canvasBitmap = image.CanvasBitmap;
-                    var softwareBitmap = await ToSoftwareBitmap(canvasBitmap);
-                    await DetectFacesAsync(file, canvasBitmap, softwareBitmap);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"Failed to load image {file.FilePath}", ex);
+                await DetectFacesAsync(file);
             }
         });
-        stopwatch2.Stop();
-        Log.Debug($"Completed Face Detection in {stopwatch2.ElapsedMilliseconds} ms");
+        stopwatch.Stop();
+        Log.Debug($"Completed Face Detection in {stopwatch.ElapsedMilliseconds} ms");
     }
 
-    private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
-
-    private async Task<SoftwareBitmap> ToSoftwareBitmap(CanvasBitmap canvasBitmap)
-    {
-        await semaphore.WaitAsync();
-        try
-        {
-            return await SoftwareBitmap.CreateCopyFromSurfaceAsync(canvasBitmap);
-        }
-        finally
-        {
-            semaphore.Release();
-        }
-    }
-
-    private async Task DetectFacesAsync(IBitmapFileInfo bitmapFile, CanvasBitmap canvasBitmap, SoftwareBitmap softwareBitmap)
+    private async Task DetectFacesAsync(IBitmapFileInfo bitmapFile)
     {
         try
         {
             Log.Debug($"Detecting faces in {bitmapFile.FilePath}");
 
+            var softwareBitmap = await TryLoadSoftwareBitmapAsync(bitmapFile);
+
+            if (softwareBitmap is null)
+            {
+                return;
+            }
+
             var detectedFaces = await faceDetectionService.DetectFacesAsync(softwareBitmap);
 
-            var imageSize = new Size(softwareBitmap.PixelWidth, softwareBitmap.PixelHeight);
+            if (detectedFaces.Count == 0)
+            {
+                return;
+            }
+
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            var canvasBitmap = CanvasBitmap.CreateFromSoftwareBitmap(CanvasDevice.GetSharedDevice(), softwareBitmap);
+            stopwatch.Stop();
+            Log.Debug($"CanvasBitmap.CreateFromSoftwareBitmap took {stopwatch.ElapsedMilliseconds} ms");
+
+            var sizeInPixels = canvasBitmap.SizeInPixels;
 
             foreach (var face in detectedFaces)
             {
                 var faceBox = face.FaceBox;
 
                 var faceRectInPercent = new FaceRect(
-                    faceBox.X / imageSize.Width,
-                    faceBox.Y / imageSize.Height,
-                    faceBox.Width / imageSize.Width,
-                    faceBox.Height / imageSize.Height);
+                    faceBox.X / sizeInPixels.Width,
+                    faceBox.Y / sizeInPixels.Height,
+                    faceBox.Width / sizeInPixels.Width,
+                    faceBox.Height / sizeInPixels.Height);
 
                 double extraFactor = 0.3;
                 double extraLeft = Math.Min(faceBox.Width * extraFactor, faceBox.X);
                 double extraTop = Math.Min(faceBox.Height * extraFactor, faceBox.Y);
-                double extraRight = Math.Min(faceBox.Width * extraFactor, imageSize.Width - (faceBox.X + faceBox.Width));
-                double extraBottom = Math.Min(faceBox.Height * extraFactor, imageSize.Height - (faceBox.Y + faceBox.Height));
-                        
-                var faceImage = new AtlasEffect()
-                {
-                    Source = canvasBitmap,
-                    SourceRectangle = new Rect(
+                double extraRight = Math.Min(faceBox.Width * extraFactor, sizeInPixels.Width - (faceBox.X + faceBox.Width));
+                double extraBottom = Math.Min(faceBox.Height * extraFactor, sizeInPixels.Height - (faceBox.Y + faceBox.Height));
+
+                Rect extraRectInPixels = new Rect(
                         faceBox.X - extraLeft,
                         faceBox.Y - extraTop,
                         faceBox.Width + extraLeft + extraRight,
-                        faceBox.Height + extraTop + extraBottom)
+                        faceBox.Height + extraTop + extraBottom);
+
+                Rect extraRectInDIPs = new Rect(
+                    canvasBitmap.ConvertPixelsToDips((int)extraRectInPixels.X),
+                    canvasBitmap.ConvertPixelsToDips((int)extraRectInPixels.Y),
+                    canvasBitmap.ConvertPixelsToDips((int)extraRectInPixels.Width),
+                    canvasBitmap.ConvertPixelsToDips((int)extraRectInPixels.Height));
+
+                var faceImage = new AtlasEffect()
+                {
+                    Source = canvasBitmap,
+                    SourceRectangle = extraRectInDIPs,
                 };
 
-                string recognizedName = faceRecognitionService.Predict(bitmapFile, faceBox) ?? "unknown";
+                string recognizedName = "unknown";// faceRecognitionService.Predict(bitmapFile, faceBox) ?? "unknown";
 
                 await DispatchAsync(() => DetectedFaces.AddItem(recognizedName, new DetectedFace(faceRectInPercent, faceBox, faceImage, bitmapFile, canvasBitmap, recognizedName)));
             }
@@ -188,6 +200,38 @@ public partial class PeopleTaggingPageModel : ViewModelBase
         catch (Exception ex)
         {
             Log.Error($"Failed to detect faces in {bitmapFile.FilePath}", ex);
+        }
+    }
+
+    private async Task<SoftwareBitmap?> TryLoadSoftwareBitmapAsync(IBitmapFileInfo bitmapFile)
+    {
+        try
+        {
+            // TODO use opencv to speed up?
+
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            Log.Debug($"Loading image {bitmapFile.FilePath}");
+            using var fileStream = await bitmapFile.OpenAsRandomAccessStreamAsync(FileAccessMode.Read);
+
+            // read file at once into memory to prevent slow parallel file access
+            InMemoryRandomAccessStream memoryStream = new();
+            await RandomAccessStream.CopyAsync(fileStream, memoryStream);
+            fileStream.Dispose();
+            memoryStream.Seek(0);
+
+            var bitmapDecoder = await BitmapDecoder.CreateAsync(memoryStream);
+            // pixel format and alpha mode mus be compatible with CanvasBitmap.CreateFromSoftwareBitmap
+            // for pixel format see: https://microsoft.github.io/Win2D/WinUI2/html/M_Microsoft_Graphics_Canvas_CanvasBitmap_CreateFromSoftwareBitmap.htm
+            // for alpha mode see: https://microsoft.github.io/Win2D/WinUI2/html/PixelFormats.htm
+            var softwareBitmap = await bitmapDecoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Rgba8, BitmapAlphaMode.Premultiplied);
+            stopwatch.Stop();
+            Log.Debug($"Loaded image {bitmapFile.FilePath} in {stopwatch.ElapsedMilliseconds} ms");
+            return softwareBitmap;
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"Failed to load image {bitmapFile.FilePath}", ex);
+            return null;
         }
     }
 

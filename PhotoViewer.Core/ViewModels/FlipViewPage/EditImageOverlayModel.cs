@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
+using MetadataAPI;
+using MetadataAPI.Data;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.UI;
@@ -13,10 +15,10 @@ using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using System.ComponentModel;
 using System.Numerics;
-using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -80,13 +82,16 @@ public partial class EditImageOverlayModel : ViewModelBase
 
     private readonly IDialogService dialogService;
 
+    private readonly IMetadataService metadataService;
+
     private readonly Throttle renderThrottle;
 
     private CanvasRenderTarget? canvasRenderTarget;
 
-    internal EditImageOverlayModel(IMessenger messenger, IDialogService dialogService) : base(messenger)
+    internal EditImageOverlayModel(IMessenger messenger, IDialogService dialogService, IMetadataService metadataService) : base(messenger)
     {
         this.dialogService = dialogService;
+        this.metadataService = metadataService;
 
         renderThrottle = new Throttle(TimeSpan.FromMilliseconds(30), Render);
 
@@ -320,10 +325,15 @@ public partial class EditImageOverlayModel : ViewModelBase
         fileStream.Seek(0);
         fileStream.Size = 0;
         await RandomAccessStream.CopyAsync(memoryStream, fileStream);
+
+        metadataService.InvalidateCache(File);
     }
 
     private async Task TranscodeAsync(IRandomAccessStream srcStream, IRandomAccessStream dstStream)
     {
+        var metadataDecoder = new MetadataDecoder(srcStream.AsStream());
+        var oldOrientation = metadataDecoder.GetProperty(MetadataProperties.Orientation);
+
         srcStream.Seek(0);
         var decoder = await BitmapDecoder.CreateAsync(srcStream);
 
@@ -331,20 +341,55 @@ public partial class EditImageOverlayModel : ViewModelBase
         dstStream.Size = 0;
         var encoder = await BitmapEncoder.CreateForTranscodingAsync(dstStream, decoder);
 
-        await RemoveOrientationFlagAsync(encoder); // TODO people tags?
         SetPixelData(encoder, canvasRenderTarget!);
 
         await encoder.FlushAsync();
         await dstStream.FlushAsync();
+
+        dstStream.Seek(0);
+        await RemoveOrientationFlag(dstStream.AsStream(), oldOrientation);
     }
 
-    private static async Task RemoveOrientationFlagAsync(BitmapEncoder encoder)
+    private static async Task RemoveOrientationFlag(Stream stream, PhotoOrientation oldOrientation)
     {
-        var fileExtensions = encoder.EncoderInformation.FileExtensions;
-        if (fileExtensions.Contains(".jpg") || fileExtensions.Contains(".tif"))
+        var metadataEncoder = new MetadataEncoder(stream);
+
+        if (!MetadataProperties.Orientation.SupportedFormats.Contains(metadataEncoder.CodecInfo.GetContainerFormat()))
         {
-            var value = new BitmapTypedValue(Windows.Storage.FileProperties.PhotoOrientation.Normal, PropertyType.UInt16);
-            await encoder.BitmapProperties.SetPropertiesAsync([new KeyValuePair<string, BitmapTypedValue>("System.Photo.Orientation", value)]);
+            return;
+        }
+
+        metadataEncoder.SetProperty(MetadataProperties.Orientation, PhotoOrientation.Normal);
+
+        var peopleTags = metadataEncoder.GetProperty(MetadataProperties.People);
+        foreach (var peopleTag in peopleTags)
+        {
+            if (peopleTag.Rectangle is not null)
+            {
+                peopleTag.Rectangle = ReverseRotateRect(peopleTag.Rectangle.Value, oldOrientation);
+            }
+        }
+        metadataEncoder.SetProperty(MetadataProperties.People, peopleTags);
+
+        await metadataEncoder.EncodeAsync();
+        stream.Flush();
+    }
+
+    private static FaceRect ReverseRotateRect(FaceRect rect, PhotoOrientation orientation)
+    {
+        switch (orientation)
+        {
+            case PhotoOrientation.Normal:
+            case PhotoOrientation.Unspecified:
+                return rect;
+            case PhotoOrientation.Rotate90:
+                return new FaceRect(rect.Y, 1 - rect.X - rect.Width, rect.Height, rect.Width);               
+            case PhotoOrientation.Rotate180:
+                return new FaceRect(1 - rect.X - rect.Width, 1 - rect.Y - rect.Height, rect.Width, rect.Height);
+            case PhotoOrientation.Rotate270:
+                return new FaceRect(1 - rect.Y - rect.Height, rect.X, rect.Height, rect.Width);
+            default:
+                throw new NotSupportedException("Unsupported orientation: " + orientation);
         }
     }
 

@@ -259,13 +259,14 @@ public class ViewModelFactory : IViewModelFactory
 
     public EditImageOverlayModel CreateEditImageOverlayModel()
     {
-        return new EditImageOverlayModel(messenger, dialogService);
+        return new EditImageOverlayModel(messenger, dialogService, metadataService);
     }
 
     public PeopleTaggingPageModel CreatePeopleTaggingBatchViewPageModel()
     {
         return new PeopleTaggingPageModel(
             applicationSession, 
+            messenger,
             faceDetectionService,
             imageLoaderService,
             peopleSuggestionsService, 

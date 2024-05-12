@@ -1,6 +1,7 @@
 ﻿using MetadataAPI;
 using MetadataAPI.Data;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -79,26 +80,6 @@ internal class RotateBitmapService : IRotateBitmapService
         }
 
         await metadataService.WriteMetadataAsync(bitmapFile, MetadataProperties.Orientation, orientation).ConfigureAwait(false);
-
-        var people = await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People).ConfigureAwait(false);
-
-        if (people.Any())
-        {
-            foreach (var peopleTag in people)
-            {
-                if (peopleTag.Rectangle is null)
-                {
-                    continue;
-                }
-                peopleTag.Rectangle = new FaceRect(
-                    1 - (peopleTag.Rectangle.Value.Y + peopleTag.Rectangle.Value.Height),
-                    peopleTag.Rectangle.Value.X,
-                    peopleTag.Rectangle.Value.Height,
-                    peopleTag.Rectangle.Value.Width);
-            }
-
-            await metadataService.WriteMetadataAsync(bitmapFile, MetadataProperties.People, people).ConfigureAwait(false);
-        }
 
         bitmapFile.InvalidateCache();
     }

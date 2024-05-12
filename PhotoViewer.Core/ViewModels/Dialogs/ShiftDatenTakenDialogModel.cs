@@ -3,11 +3,11 @@ using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using MetadataAPI;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 
 namespace PhotoViewer.Core.ViewModels.Dialogs;

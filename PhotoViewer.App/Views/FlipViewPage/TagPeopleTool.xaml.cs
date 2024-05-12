@@ -83,17 +83,21 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void PeopleTag_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
-        if (ViewModel != null && !ViewModel.IsSelectionEnabled)
+        var element = (FrameworkElement)sender;
+
+        if (ViewModel != null && !ViewModel.IsSelectionEnabled && element.DataContext is PeopleTagViewModel peopleTagVM)
         {
-            ((PeopleTagViewModel)((FrameworkElement)sender).DataContext).IsVisible = true;
+            peopleTagVM.IsVisible = true;
         }
     }
 
     private void PeopleTag_PointerExited(object sender, PointerRoutedEventArgs e)
     {
-        if (ViewModel != null && !ViewModel.IsSelectionEnabled)
+        var element = (FrameworkElement)sender;
+
+        if (ViewModel != null && !ViewModel.IsSelectionEnabled && element.DataContext is PeopleTagViewModel peopleTagVM)
         {
-            ((PeopleTagViewModel)((FrameworkElement)sender).DataContext).IsVisible = false;
+            peopleTagVM.IsVisible = false;
         }
     }
 

@@ -4,7 +4,6 @@ using MetadataEditModule.ViewModel;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;

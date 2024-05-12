@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using OpenCvSharp;
 using OpenCvSharp.Face;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using System.Text.Json;
@@ -63,10 +64,11 @@ internal class FaceRecognitionService
 
         using var faceImg = new Mat(image, rect);
 
-        var label = faceRecognizer.Predict(faceImg);
+        faceRecognizer.Predict(faceImg, out int label, out double confidence);
 
         if (nameByLabel.TryGetValue(label, out string? name))
         {
+            Log.Debug($"Predicted name: {name}, confidence: {confidence}");
             return name;
         }
 

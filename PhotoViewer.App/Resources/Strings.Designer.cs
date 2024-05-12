@@ -1879,6 +1879,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Orientation.
+        /// </summary>
+        internal static string PropertiesDialog_Orientation {
+            get {
+                return ResourceManager.GetString("PropertiesDialog_Orientation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show in explorer.
         /// </summary>
         internal static string PropertiesDialog_ShowInExplorer {

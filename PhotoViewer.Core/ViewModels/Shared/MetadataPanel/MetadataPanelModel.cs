@@ -5,7 +5,6 @@ using MetadataAPI;
 using MetadataEditModule.ViewModel;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Messages;

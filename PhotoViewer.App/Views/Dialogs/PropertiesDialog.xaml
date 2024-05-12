@@ -57,6 +57,9 @@
         <TextBlock Text="{x:Bind res:Strings.PropertiesDialog_Dimensions}"/>
         <TextBox Text="{x:Bind ViewModel.Dimensions, Mode=OneWay}"/>
 
+        <TextBlock Text="{x:Bind res:Strings.PropertiesDialog_Orientation}"/>
+        <TextBox Text="{x:Bind ViewModel.Orientation, Mode=OneWay}"/>
+
         <Border Height="16" Grid.ColumnSpan="2"/>
 
         <TextBlock Text="{x:Bind res:Strings.PropertiesDialog_Camera}"/>

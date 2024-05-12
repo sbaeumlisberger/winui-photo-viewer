@@ -831,4 +831,7 @@
   <data name="EditImageOverlay_Title" xml:space="preserve">
     <value>Bild bearbeiten</value>
   </data>
+  <data name="PropertiesDialog_Orientation" xml:space="preserve">
+    <value>Orientierung</value>
+  </data>
 </root>

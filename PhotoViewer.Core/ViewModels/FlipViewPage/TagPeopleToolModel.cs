@@ -5,7 +5,6 @@ using MetadataAPI;
 using MetadataAPI.Data;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Messages;
@@ -206,6 +205,8 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
             return;
         }
 
+        var orientation = await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.Orientation);
+        
         var people = await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People);
 
         if (people.Any(peopleTag => peopleTag.Name == personName))
@@ -218,12 +219,9 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
             return;
         }
 
+        var faceRect = ReverseRotateRect(SelectionRectInPercent, orientation);
 
-        // TODO rotate backwards!
-        var faceRect = new FaceRect(SelectionRectInPercent.X, SelectionRectInPercent.Y,
-                                    SelectionRectInPercent.Width, SelectionRectInPercent.Height);
-
-        people.Add(new PeopleTag(personName, faceRect));
+        people.Add(new PeopleTag(personName, new FaceRect(faceRect.X, faceRect.Y, faceRect.Width, faceRect.Height)));
 
         try
         {
@@ -273,6 +271,24 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
              .ToList();
     }
 
+    private Rect ReverseRotateRect(Rect rect, PhotoOrientation orientation)
+    {
+        switch (orientation)
+        {
+            case PhotoOrientation.Normal:
+            case PhotoOrientation.Unspecified:
+                return rect;
+            case PhotoOrientation.Rotate90:
+                return new Rect(1 - rect.Bottom, rect.X, rect.Height, rect.Width);             
+            case PhotoOrientation.Rotate180:
+                return new Rect(1 - rect.Right, 1 - rect.Bottom, rect.Width, rect.Height);
+            case PhotoOrientation.Rotate270:
+                return new Rect(rect.Y, 1 - rect.Right, rect.Height, rect.Width);
+            default:
+                throw new NotSupportedException("Unsupported orientation: " + orientation);
+        }
+    }
+
     private Rect RotateRect(Rect rect, PhotoOrientation orientation)
     {
         switch (orientation)
@@ -281,13 +297,13 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
             case PhotoOrientation.Unspecified:
                 return rect;
             case PhotoOrientation.Rotate90:
-                return new Rect(1 - rect.Bottom, rect.X, rect.Height, rect.Width);
+                return new Rect(rect.Y, 1 - rect.Right, rect.Height, rect.Width);         
             case PhotoOrientation.Rotate180:
                 return new Rect(1 - rect.Right, 1 - rect.Bottom, rect.Width, rect.Height);
             case PhotoOrientation.Rotate270:
-                return new Rect(rect.Y, 1 - rect.Right, rect.Height, rect.Width);
+                return new Rect(1 - rect.Bottom, rect.X, rect.Height, rect.Width);
             default:
-                throw new NotSupportedException("Invalid image orientation.");
+                throw new NotSupportedException("Unsupported orientation: " + orientation);
         }
     }
 

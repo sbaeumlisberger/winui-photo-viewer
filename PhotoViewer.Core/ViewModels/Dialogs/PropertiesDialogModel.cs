@@ -3,10 +3,10 @@ using Essentials.NET;
 using MetadataAPI;
 using MetadataAPI.Data;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using System.Globalization;
 using Windows.Storage;
 using Windows.System;
@@ -24,6 +24,8 @@ public partial class PropertiesDialogModel : ViewModelBase
     public string DateTaken { get; private set; } = string.Empty;
 
     public string Dimensions { get; private set; } = string.Empty;
+
+    public string Orientation { get; private set; } = string.Empty;
 
     public string Camera { get; private set; } = string.Empty;
 
@@ -95,6 +97,9 @@ public partial class PropertiesDialogModel : ViewModelBase
         MetadataView metadata = await metadataService.GetMetadataAsync(mediaFileInfo);
 
         DateTaken = metadata.Get(MetadataProperties.DateTaken)?.ToString("g", CultureInfo.InstalledUICulture) ?? "";
+
+        var orientation = metadata.Get(MetadataProperties.Orientation);
+        Orientation = $"{(int)orientation} ({orientation})";
 
         string cameraManufacturer = metadata.Get(MetadataProperties.CameraManufacturer) ?? "";
         string cameraModel = metadata.Get(MetadataProperties.CameraModel) ?? "";

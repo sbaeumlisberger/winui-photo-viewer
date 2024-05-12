@@ -1,6 +1,5 @@
 ﻿using MetadataAPI;
 using MetadataAPI.Data;
-using PhotoViewer.App.Services;
 using PhotoViewer.Core.Models;
 using System.Globalization;
 using System.Xml.Linq;

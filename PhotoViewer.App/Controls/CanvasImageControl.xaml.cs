@@ -10,6 +10,7 @@ using PhotoViewer.App.Utils.Logging;
 using System;
 using System.Diagnostics;
 using System.Numerics;
+using Windows.Foundation;
 
 namespace PhotoViewer.App.Controls;
 
@@ -53,6 +54,7 @@ public sealed partial class CanvasImageControl : UserControl
     private void CanvasImageControl_Unloaded(object sender, RoutedEventArgs e)
     {
         canvasControl?.RemoveFromVisualTree();
+        canvasControl = null;
         Content = null;
     }
 
@@ -85,6 +87,8 @@ public sealed partial class CanvasImageControl : UserControl
                     double scaleX = Width / imageSize.Width;
                     double scaleY = Height / imageSize.Height;
                     scaleFactor = Math.Min(scaleX, scaleY);
+                    canvasControl.Width = Width;
+                    canvasControl.Height = Height;
                 }
             }
             catch (Exception ex)

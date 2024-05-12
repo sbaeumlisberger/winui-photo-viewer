@@ -2,11 +2,12 @@
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using System.Runtime.CompilerServices;
 using WIC;
 using Windows.Storage;
 
-namespace PhotoViewer.App.Services;
+namespace PhotoViewer.Core.Services;
 
 public interface IMetadataService
 {
@@ -19,6 +20,8 @@ public interface IMetadataService
     Task WriteMetadataAsync<T>(IBitmapFileInfo bitmap, IMetadataProperty<T> property, T value);
 
     void UpdateCache<T>(IBitmapFileInfo bitmap, IMetadataProperty<T> property, T value);
+
+    void InvalidateCache(IBitmapFileInfo bitmap);
 }
 
 internal class MetadataService : IMetadataService
@@ -126,6 +129,10 @@ internal class MetadataService : IMetadataService
         }
     }
 
+    public void InvalidateCache(IBitmapFileInfo bitmap)
+    {
+        cacheTable.Remove(bitmap);
+    }
 }
 
 

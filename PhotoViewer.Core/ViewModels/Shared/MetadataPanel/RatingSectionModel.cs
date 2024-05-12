@@ -2,7 +2,6 @@
 using Essentials.NET;
 using MetadataAPI;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Services;
 

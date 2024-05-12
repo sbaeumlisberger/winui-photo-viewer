@@ -4,7 +4,6 @@ using Microsoft.Extensions.Time.Testing;
 using NSubstitute;
 using NSubstitute.ReceivedExtensions;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
