@@ -1,30 +1,22 @@
 ﻿using CommunityToolkit.Mvvm.Collections;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
 using MetadataAPI.Data;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
-using PhotoViewer.App.Models;
+using OpenCvSharp;
+using PhotoViewer.App.Messages;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using System.ComponentModel;
 using System.Diagnostics;
-using Windows.Foundation;
-using Windows.Graphics.Imaging;
-using Windows.Storage.Streams;
-using Windows.Storage;
-using System.Runtime.Intrinsics.Arm;
-using System.IO;
-using OpenCvSharp;
-using Windows.Graphics.DirectX;
-using Rect = Windows.Foundation.Rect;
 using System.Runtime.InteropServices;
-using System.Collections;
-using Size = Windows.Foundation.Size;
-using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewer.App.Messages;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Graphics.Imaging;
+using Rect = Windows.Foundation.Rect;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -116,7 +108,10 @@ public partial class PeopleTaggingPageModel : ViewModelBase
 
     private async Task InitalizeAsync(ApplicationSession session)
     {
-        var files = session.Files.OfType<IBitmapFileInfo>().ToList();
+        var files = session.Files
+            .OfType<IBitmapFileInfo>()
+            .Where(file => file.IsMetadataSupported)
+            .ToList();
 
         Stopwatch stopwatch = Stopwatch.StartNew();
         await Parallel.ForEachAsync(files, async (file, _) =>
@@ -137,12 +132,9 @@ public partial class PeopleTaggingPageModel : ViewModelBase
         {
             Log.Debug($"Detecting faces in {bitmapFile.FilePath}");
 
-            var softwareBitmap = await TryLoadSoftwareBitmapAsync(bitmapFile);
+            using Mat matBGRA8 = LoadImageAsMatBGRA8(bitmapFile);
 
-            if (softwareBitmap is null)
-            {
-                return;
-            }
+            var softwareBitmap = ConvertMatBGRA8toSoftwareBitmap(matBGRA8);
 
             var detectedFaces = await faceDetectionService.DetectFacesAsync(softwareBitmap);
 
@@ -151,50 +143,14 @@ public partial class PeopleTaggingPageModel : ViewModelBase
                 return;
             }
 
-            Stopwatch stopwatch = Stopwatch.StartNew();
+            //Stopwatch stopwatch = Stopwatch.StartNew();
             var canvasBitmap = CanvasBitmap.CreateFromSoftwareBitmap(CanvasDevice.GetSharedDevice(), softwareBitmap);
-            stopwatch.Stop();
-            Log.Debug($"CanvasBitmap.CreateFromSoftwareBitmap took {stopwatch.ElapsedMilliseconds} ms");
-
-            var sizeInPixels = canvasBitmap.SizeInPixels;
+            //stopwatch.Stop();
+            //Log.Debug($"CanvasBitmap.CreateFromSoftwareBitmap took {stopwatch.ElapsedMilliseconds} ms");
 
             foreach (var face in detectedFaces)
             {
-                var faceBox = face.FaceBox;
-
-                var faceRectInPercent = new FaceRect(
-                    faceBox.X / sizeInPixels.Width,
-                    faceBox.Y / sizeInPixels.Height,
-                    faceBox.Width / sizeInPixels.Width,
-                    faceBox.Height / sizeInPixels.Height);
-
-                double extraFactor = 0.3;
-                double extraLeft = Math.Min(faceBox.Width * extraFactor, faceBox.X);
-                double extraTop = Math.Min(faceBox.Height * extraFactor, faceBox.Y);
-                double extraRight = Math.Min(faceBox.Width * extraFactor, sizeInPixels.Width - (faceBox.X + faceBox.Width));
-                double extraBottom = Math.Min(faceBox.Height * extraFactor, sizeInPixels.Height - (faceBox.Y + faceBox.Height));
-
-                Rect extraRectInPixels = new Rect(
-                        faceBox.X - extraLeft,
-                        faceBox.Y - extraTop,
-                        faceBox.Width + extraLeft + extraRight,
-                        faceBox.Height + extraTop + extraBottom);
-
-                Rect extraRectInDIPs = new Rect(
-                    canvasBitmap.ConvertPixelsToDips((int)extraRectInPixels.X),
-                    canvasBitmap.ConvertPixelsToDips((int)extraRectInPixels.Y),
-                    canvasBitmap.ConvertPixelsToDips((int)extraRectInPixels.Width),
-                    canvasBitmap.ConvertPixelsToDips((int)extraRectInPixels.Height));
-
-                var faceImage = new AtlasEffect()
-                {
-                    Source = canvasBitmap,
-                    SourceRectangle = extraRectInDIPs,
-                };
-
-                string recognizedName = "unknown";// faceRecognitionService.Predict(bitmapFile, faceBox) ?? "unknown";
-
-                await DispatchAsync(() => DetectedFaces.AddItem(recognizedName, new DetectedFace(faceRectInPercent, faceBox, faceImage, bitmapFile, canvasBitmap, recognizedName)));
+                await ProcessDetectedFaceAsync(face, canvasBitmap, matBGRA8, bitmapFile);
             }
         }
         catch (Exception ex)
@@ -203,36 +159,82 @@ public partial class PeopleTaggingPageModel : ViewModelBase
         }
     }
 
-    private async Task<SoftwareBitmap?> TryLoadSoftwareBitmapAsync(IBitmapFileInfo bitmapFile)
+    private async Task ProcessDetectedFaceAsync(DetectedFaceModel face, CanvasBitmap canvasBitmap, Mat matBGRA8, IBitmapFileInfo bitmapFile)
     {
-        try
+        var sizeInPixels = canvasBitmap.SizeInPixels;
+
+        var faceBoxInPixels = face.FaceBox;
+
+        var faceRectInPercent = ToFaceRectInPercent(faceBoxInPixels, sizeInPixels);
+
+        var extendedFaceBoxInPixels = ExtendFaceBox(faceBoxInPixels, 0.3, sizeInPixels);
+        var extendedFaceBoxInDIPs = ConvertFromPixelsToDIPs(extendedFaceBoxInPixels, canvasBitmap);
+
+        var faceImage = new AtlasEffect()
         {
-            // TODO use opencv to speed up?
+            Source = canvasBitmap,
+            SourceRectangle = extendedFaceBoxInDIPs,
+        };
 
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            Log.Debug($"Loading image {bitmapFile.FilePath}");
-            using var fileStream = await bitmapFile.OpenAsRandomAccessStreamAsync(FileAccessMode.Read);
+        string recognizedName = "unknown";
+        //string recognizedName = faceRecognitionService.Predict(matBGRA8, faceBox) ?? "unknown";
 
-            // read file at once into memory to prevent slow parallel file access
-            InMemoryRandomAccessStream memoryStream = new();
-            await RandomAccessStream.CopyAsync(fileStream, memoryStream);
-            fileStream.Dispose();
-            memoryStream.Seek(0);
-
-            var bitmapDecoder = await BitmapDecoder.CreateAsync(memoryStream);
-            // pixel format and alpha mode mus be compatible with CanvasBitmap.CreateFromSoftwareBitmap
-            // for pixel format see: https://microsoft.github.io/Win2D/WinUI2/html/M_Microsoft_Graphics_Canvas_CanvasBitmap_CreateFromSoftwareBitmap.htm
-            // for alpha mode see: https://microsoft.github.io/Win2D/WinUI2/html/PixelFormats.htm
-            var softwareBitmap = await bitmapDecoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Rgba8, BitmapAlphaMode.Premultiplied);
-            stopwatch.Stop();
-            Log.Debug($"Loaded image {bitmapFile.FilePath} in {stopwatch.ElapsedMilliseconds} ms");
-            return softwareBitmap;
-        }
-        catch (Exception ex)
-        {
-            Log.Error($"Failed to load image {bitmapFile.FilePath}", ex);
-            return null;
-        }
+        await DispatchAsync(() => DetectedFaces.AddItem(recognizedName, new DetectedFace(faceRectInPercent, faceImage, bitmapFile, canvasBitmap, recognizedName)));
     }
 
+    private Mat LoadImageAsMatBGRA8(IBitmapFileInfo bitmapFile)
+    {
+        //Stopwatch stopwatch = Stopwatch.StartNew();
+        //Log.Debug($"Loading image {bitmapFile.FilePath}");
+
+        using Mat matBGR8 = Cv2.ImRead(bitmapFile.FilePath, ImreadModes.Color);
+        Mat matBGRA8 = new Mat(matBGR8.Width, matBGR8.Height, MatType.CV_8UC4);
+        Cv2.CvtColor(matBGR8, matBGRA8, ColorConversionCodes.BGR2BGRA);
+
+        //stopwatch.Stop();
+        //Log.Debug($"Loaded image {bitmapFile.FilePath} in {stopwatch.ElapsedMilliseconds} ms");
+        return matBGRA8;
+    }
+
+    private SoftwareBitmap ConvertMatBGRA8toSoftwareBitmap(Mat matBGRA8)
+    {
+        //Stopwatch stopwatch = Stopwatch.StartNew();
+
+        byte[] pixelBytes = new byte[matBGRA8.Total() * matBGRA8.ElemSize()];
+        Marshal.Copy(matBGRA8.Data, pixelBytes, 0, pixelBytes.Length);
+
+        var softwareBitmap = SoftwareBitmap.CreateCopyFromBuffer(pixelBytes.AsBuffer(), BitmapPixelFormat.Bgra8, matBGRA8.Width, matBGRA8.Height, BitmapAlphaMode.Ignore);
+
+        //stopwatch.Stop();
+        //Log.Debug($"Create SoftwareBitmap took {stopwatch.ElapsedMilliseconds} ms");
+
+        return softwareBitmap;
+    }
+
+    private FaceRect ToFaceRectInPercent(BitmapBounds rect, BitmapSize bitmapSize)
+    {
+        return new FaceRect(
+            rect.X / bitmapSize.Width,
+            rect.Y / bitmapSize.Height,
+            rect.Width / bitmapSize.Width,
+            rect.Height / bitmapSize.Height);
+    }
+
+    private Rect ExtendFaceBox(BitmapBounds faceBox, double factor, BitmapSize imageSize)
+    {
+        double extendedX = Math.Max(faceBox.X - faceBox.Width * factor, 0);
+        double extendedY = Math.Max(faceBox.Y - faceBox.Height * factor, 0);
+        double extendedWidth = Math.Min(faceBox.Width + (faceBox.X - extendedX) + faceBox.Width * factor, imageSize.Width - extendedX);
+        double extendedHeight = Math.Min(faceBox.Height + (faceBox.Y - extendedY) + faceBox.Height * factor, imageSize.Height - extendedY);
+        return new Rect(extendedX, extendedY, extendedWidth, extendedHeight);
+    }
+
+    private Rect ConvertFromPixelsToDIPs(Rect rect, CanvasBitmap canvasBitmap)
+    {
+        return new Rect(
+            canvasBitmap.ConvertPixelsToDips((int)rect.X),
+            canvasBitmap.ConvertPixelsToDips((int)rect.Y),
+            canvasBitmap.ConvertPixelsToDips((int)rect.Width),
+            canvasBitmap.ConvertPixelsToDips((int)rect.Height));
+    }
 }

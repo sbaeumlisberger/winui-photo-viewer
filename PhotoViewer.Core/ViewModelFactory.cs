@@ -56,7 +56,7 @@ public class ViewModelFactory : IViewModelFactory
     private readonly IFaceDetectionService faceDetectionService = new FaceDetectionService();
     private readonly ICropImageService cropImageService;
     private readonly IBackgroundTaskService backgroundTaskService = new BackgroundTaskService();
-    private readonly Lazy<FaceRecognitionService> faceRecognitionService ;
+    private readonly Lazy<FaceRecognitionService> faceRecognitionService;
 
     public ViewModelFactory(ApplicationSettings settings)
     {
@@ -265,11 +265,11 @@ public class ViewModelFactory : IViewModelFactory
     public PeopleTaggingPageModel CreatePeopleTaggingBatchViewPageModel()
     {
         return new PeopleTaggingPageModel(
-            applicationSession, 
+            applicationSession,
             messenger,
             faceDetectionService,
             imageLoaderService,
-            peopleSuggestionsService, 
+            peopleSuggestionsService,
             metadataService,
             faceRecognitionService.Value);
     }

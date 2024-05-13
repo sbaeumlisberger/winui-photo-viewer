@@ -383,7 +383,7 @@ public partial class EditImageOverlayModel : ViewModelBase
             case PhotoOrientation.Unspecified:
                 return rect;
             case PhotoOrientation.Rotate90:
-                return new FaceRect(rect.Y, 1 - rect.X - rect.Width, rect.Height, rect.Width);               
+                return new FaceRect(rect.Y, 1 - rect.X - rect.Width, rect.Height, rect.Width);
             case PhotoOrientation.Rotate180:
                 return new FaceRect(1 - rect.X - rect.Width, 1 - rect.Y - rect.Height, rect.Width, rect.Height);
             case PhotoOrientation.Rotate270:

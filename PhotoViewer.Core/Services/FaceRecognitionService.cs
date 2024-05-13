@@ -51,18 +51,19 @@ internal class FaceRecognitionService
         faceRecognizer.Update([faceImg], [label]);
     }
 
-    public string? Predict(IBitmapFileInfo file, BitmapBounds faceRect)
+    public string? Predict(Mat imageBGRA, BitmapBounds faceRect)
     {
         if (faceRecognizer.Empty)
         {
             return null;
         }
 
-        using Mat image = Cv2.ImRead(file.FilePath, ImreadModes.Grayscale);
+        using Mat grayImage = new Mat();
+        Cv2.CvtColor(imageBGRA, grayImage, ColorConversionCodes.BGRA2GRAY);
 
         Rect rect = new Rect((int)faceRect.X, (int)faceRect.Y, (int)faceRect.Width, (int)faceRect.Height);
 
-        using var faceImg = new Mat(image, rect);
+        using var faceImg = new Mat(grayImage, rect);
 
         faceRecognizer.Predict(faceImg, out int label, out double confidence);
 
