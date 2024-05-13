@@ -206,7 +206,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         }
 
         var orientation = await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.Orientation);
-        
+
         var people = await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People);
 
         if (people.Any(peopleTag => peopleTag.Name == personName))
@@ -279,7 +279,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
             case PhotoOrientation.Unspecified:
                 return rect;
             case PhotoOrientation.Rotate90:
-                return new Rect(1 - rect.Bottom, rect.X, rect.Height, rect.Width);             
+                return new Rect(1 - rect.Bottom, rect.X, rect.Height, rect.Width);
             case PhotoOrientation.Rotate180:
                 return new Rect(1 - rect.Right, 1 - rect.Bottom, rect.Width, rect.Height);
             case PhotoOrientation.Rotate270:
@@ -297,7 +297,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
             case PhotoOrientation.Unspecified:
                 return rect;
             case PhotoOrientation.Rotate90:
-                return new Rect(rect.Y, 1 - rect.Right, rect.Height, rect.Width);         
+                return new Rect(rect.Y, 1 - rect.Right, rect.Height, rect.Width);
             case PhotoOrientation.Rotate180:
                 return new Rect(1 - rect.Right, 1 - rect.Bottom, rect.Width, rect.Height);
             case PhotoOrientation.Rotate270:

@@ -171,7 +171,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
     }
 
     [RelayCommand]
-    private void OpenBatchView() 
+    private void OpenBatchView()
     {
         Messenger.Send(new NavigateToPageMessage(typeof(PeopleTaggingPageModel)));
     }

@@ -61,8 +61,8 @@ Parallel.ForEach(files, file =>
                     {
                         pt.Rectangle = RotateRectPre2017(orientation, pt.Rectangle.Value);
                     }
-                    if (dateTaken > new DateTime(2019, 12, 1) 
-                        || file.Contains("\\2017-01-") 
+                    if (dateTaken > new DateTime(2019, 12, 1)
+                        || file.Contains("\\2017-01-")
                         || file.Contains("\\2019-07-02")
                         || file.Contains("\\2019-08-05"))
                     {

@@ -1,13 +1,10 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
 using PhotoViewer.App.Controls;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.ViewModels;
 using System.Linq;
-using Windows.Graphics.Imaging;
 
 namespace PhotoViewer.App.Views;
 

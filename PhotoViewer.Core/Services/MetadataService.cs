@@ -2,7 +2,6 @@
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Services;
 using System.Runtime.CompilerServices;
 using WIC;
 using Windows.Storage;

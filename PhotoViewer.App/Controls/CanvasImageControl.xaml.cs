@@ -10,7 +10,6 @@ using PhotoViewer.App.Utils.Logging;
 using System;
 using System.Diagnostics;
 using System.Numerics;
-using Windows.Foundation;
 
 namespace PhotoViewer.App.Controls;
 
