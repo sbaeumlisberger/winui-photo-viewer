@@ -341,6 +341,15 @@ public partial class EditImageOverlayModel : ViewModelBase
         dstStream.Size = 0;
         var encoder = await BitmapEncoder.CreateForTranscodingAsync(dstStream, decoder);
 
+        if (encoder.EncoderInformation.CodecId == BitmapEncoder.JpegEncoderId
+            || encoder.EncoderInformation.CodecId == BitmapEncoder.TiffEncoderId)
+        {
+            encoder.IsThumbnailGenerated = true;
+            double aspectRadio = decoder.PixelWidth / (double)decoder.PixelHeight;
+            encoder.GeneratedThumbnailWidth = (uint)(256 * Math.Min(aspectRadio, 1));
+            encoder.GeneratedThumbnailHeight = (uint)(256 / Math.Max(aspectRadio, 1));
+        }
+
         SetPixelData(encoder, canvasRenderTarget!);
 
         await encoder.FlushAsync();
