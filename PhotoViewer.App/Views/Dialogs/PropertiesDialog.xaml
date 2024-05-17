@@ -39,7 +39,7 @@
         <TextBlock Text="{x:Bind res:Strings.PropertiesDialog_FileSize}"/>
         <TextBox Text="{x:Bind ViewModel.FileSize, Mode=OneWay}"/>
 
-        <TextBlock VerticalAlignment="Top" Text="{x:Bind res:Strings.PropertiesDialog_FilePath}"/>
+        <TextBlock VerticalAlignment="Top" Margin="0,4,0,0" Text="{x:Bind res:Strings.PropertiesDialog_FilePath}"/>
         <StackPanel>
             <TextBox Text="{x:Bind ViewModel.FilePath, Mode=OneWay}" TextWrapping="Wrap" MaxHeight="280"/>
             <Button Margin="0,4,0,4" 
