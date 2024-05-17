@@ -86,7 +86,7 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
 
                 var orientation = metadataReader.GetProperty(MetadataProperties.Orientation);
 
-                if (orientation == PhotoOrientation.Rotate90 || orientation == PhotoOrientation.Rotate270) 
+                if (orientation == PhotoOrientation.Rotate90 || orientation == PhotoOrientation.Rotate270)
                 {
                     return new Size(height, width);
                 }

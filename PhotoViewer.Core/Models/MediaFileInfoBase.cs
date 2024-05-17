@@ -70,7 +70,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
     public async Task<DateTimeOffset> GetDateModifiedAsync()
     {
         if (dateModified is null)
-        {         
+        {
             if (FilePath is not null)
             {
                 var lastWriteTime = File.GetLastWriteTimeUtc(FilePath);
@@ -93,7 +93,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
             {
                 fileSize = (ulong)new FileInfo(FilePath).Length;
             }
-            else 
+            else
             {
                 fileSize = (await StorageFile.GetBasicPropertiesAsync()).Size;
             }

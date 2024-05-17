@@ -18,7 +18,7 @@ public partial class SortMenuModel : ViewModelBase
     public bool IsSortedAscending { get; set; }
 
     public bool IsSortedDescending { get; set; }
-    
+
     private readonly SortService sortService;
 
     private readonly ApplicationSession applicationSession;
