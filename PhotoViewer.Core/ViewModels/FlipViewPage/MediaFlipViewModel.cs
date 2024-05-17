@@ -110,6 +110,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         });
 
         Register<MediaFilesRenamedMessage>(OnReceive);
+
+        Register<FilesSortedMessage>(msg => SetFiles(msg.SortedFiles, SelectedItem));
     }
 
     protected override void OnCleanup()

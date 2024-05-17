@@ -32,6 +32,7 @@ public interface IViewModelFactory
     EditLocationDialogModel CreateEditLocationDialogModel(Location? orginalLocation, Func<Location?, Task> saveLocation);
     BackgroundTasksViewModel CreateBackgroundTasksViewModel();
     EditImageOverlayModel CreateEditImageOverlayModel();
+    SortMenuModel CreateSortMenuModel();
 }
 
 public class ViewModelFactory : IViewModelFactory
@@ -57,6 +58,7 @@ public class ViewModelFactory : IViewModelFactory
     private readonly ICropImageService cropImageService;
     private readonly IBackgroundTaskService backgroundTaskService = new BackgroundTaskService();
     private readonly Lazy<FaceRecognitionService> faceRecognitionService;
+    private readonly SortService sortService = new SortService(new MetadataService());
 
     public ViewModelFactory(ApplicationSettings settings)
     {
@@ -272,5 +274,10 @@ public class ViewModelFactory : IViewModelFactory
             peopleSuggestionsService,
             metadataService,
             faceRecognitionService.Value);
+    }
+
+    public SortMenuModel CreateSortMenuModel()
+    {
+        return new SortMenuModel(applicationSession, sortService, messenger);
     }
 }

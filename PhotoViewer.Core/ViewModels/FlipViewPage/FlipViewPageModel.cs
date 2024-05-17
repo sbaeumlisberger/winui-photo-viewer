@@ -34,7 +34,7 @@ public partial class FlipViewPageModel : ViewModelBase
 
     private IDisposable? displayRequest;
 
-    public FlipViewPageModel(
+    internal FlipViewPageModel(
         ApplicationSession session,
         IMessenger messenger,
         IViewModelFactory viewModelFactory,

@@ -2,6 +2,8 @@
 using Essentials.NET;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
+using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 
 namespace PhotoViewer.Core.Models;
@@ -11,9 +13,13 @@ public interface IApplicationSession
     IReadOnlyList<IMediaFileInfo> Files { get; }
 }
 
-public class ApplicationSession : IApplicationSession
+internal class ApplicationSession : IApplicationSession
 {
     public IReadOnlyList<IMediaFileInfo> Files => files;
+
+    public SortBy SortBy { get; private set; } = SortBy.Unspecified;
+
+    public bool IsSortedDescending { get; private set; } = false;
 
     private List<IMediaFileInfo> files = new List<IMediaFileInfo>();
 
@@ -31,6 +37,13 @@ public class ApplicationSession : IApplicationSession
         messenger.Register<MediaFilesDeletedMessage>(this, msg =>
         {
             msg.Files.ForEach(file => files.Remove(file));
+        });
+
+        messenger.Register<FilesSortedMessage>(this, msg =>
+        {
+            files = new List<IMediaFileInfo>(msg.SortedFiles);
+            SortBy = msg.SortBy;
+            IsSortedDescending = msg.Descending;
         });
     }
 

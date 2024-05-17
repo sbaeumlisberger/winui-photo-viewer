@@ -53,6 +53,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     public BackgroundTasksViewModel BackgroundTasks { get; }
 
+    public SortMenuModel SortMenuModel { get; }
+
     private readonly IDialogService dialogService;
 
     private readonly IMediaFilesLoaderService mediaFilesLoaderService;
@@ -75,7 +77,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         IDeleteSingleRawFilesCommand deleteSingleRawFilesCommand,
         IShiftDatenTakenCommand shiftDatenTakenCommand,
         IImportGpxTrackCommand importGpxTrackCommand,
-        IPrefixFilesByDateCommand prefixFilesByDateCommand) : base(messenger)
+        IPrefixFilesByDateCommand prefixFilesByDateCommand)
+     : base(messenger)
     {
         this.dialogService = dialogService;
         this.mediaFilesLoaderService = mediaFilesLoaderService;
@@ -92,6 +95,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         PrefixFilesByDateCommand = prefixFilesByDateCommand;
 
         BackgroundTasks = viewModelFactory.CreateBackgroundTasksViewModel();
+
+        SortMenuModel = viewModelFactory.CreateSortMenuModel();
     }
 
     [RelayCommand]
@@ -164,4 +169,5 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     {
         Messenger.Send(new NavigateToPageMessage(typeof(SettingsPageModel)));
     }
+
 }

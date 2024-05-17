@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
@@ -44,11 +45,12 @@ public partial class OverviewPageModel : ViewModelBase
         OverviewPageCommandBarModel = viewModelFactory.CreateOverviewPageCommandBarModel();
         MetadataPanelModel = viewModelFactory.CreateMetadataPanelModel(false);
         ContextMenuModel = viewModelFactory.CreateMediaFileContextMenuModel(isRenameFilesEnabled: true);
-
-        Messenger.Register<MediaFilesLoadingMessage>(this, OnReceived);
-        Messenger.Register<MediaFilesDeletedMessage>(this, OnReceived);
-
+       
         Items = new ObservableList<IMediaFileInfo>(session.Files);
+
+        Register<MediaFilesLoadingMessage>(OnReceived);
+        Register<MediaFilesDeletedMessage>(OnReceived);        
+        Register<FilesSortedMessage>(msg => Items = new ObservableList<IMediaFileInfo>(session.Files));
     }
 
     protected override void OnCleanup()

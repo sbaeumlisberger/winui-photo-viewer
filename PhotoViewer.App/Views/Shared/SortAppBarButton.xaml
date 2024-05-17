@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AppBarButton
+    x:Class="PhotoViewer.App.Views.Shared.SortAppBarButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewer.App.Views.Shared"
+    xmlns:res="using:PhotoViewer.App.Resources"    
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"   
+    Style="{ThemeResource AppBarButtonOverflowStyle}"
+    Icon="Sort" 
+    Label="{x:Bind res:Strings.SortMenu_Sort}">
+    
+    <AppBarButton.Flyout>
+        <MenuFlyout Placement="Left">
+            <RadioMenuFlyoutItem 
+                GroupName="SortBy" 
+                Text="{x:Bind res:Strings.SortMenu_SortByFileName}"
+                IsChecked="{x:Bind ViewModel.IsSortedByFileName, Mode=OneWay}"
+                Command="{x:Bind ViewModel.SortByFileNameCommand}"/>
+            <RadioMenuFlyoutItem 
+                GroupName="SortBy" 
+                Text="{x:Bind res:Strings.SortMenu_SortByFileSize}"
+                IsChecked="{x:Bind ViewModel.IsSortedByFileSize, Mode=OneWay}"
+                Command="{x:Bind ViewModel.SortByFileSizeCommand}"/>
+            <RadioMenuFlyoutItem 
+                GroupName="SortBy" 
+                Text="{x:Bind res:Strings.SortMenu_SortByDateTaken}"
+                IsChecked="{x:Bind ViewModel.IsSortedByDateTaken, Mode=OneWay}"
+                Command="{x:Bind ViewModel.SortByDateTakenCommand}"/>
+            <MenuFlyoutSeparator/>
+            <RadioMenuFlyoutItem
+                GroupName="SortOrder"
+                Text="{x:Bind res:Strings.SortMenu_Ascending}"
+                IsChecked="{x:Bind ViewModel.IsSortedAscending, Mode=OneWay}"
+                Command="{x:Bind ViewModel.ToggleSortOrderCommand}"/>
+            <RadioMenuFlyoutItem 
+                GroupName="SortOrder" 
+                Text="{x:Bind res:Strings.SortMenu_Descending}"
+                IsChecked="{x:Bind ViewModel.IsSortedDescending, Mode=OneWay}"
+                Command="{x:Bind ViewModel.ToggleSortOrderCommand}"/>
+        </MenuFlyout>
+    </AppBarButton.Flyout>
+</AppBarButton>

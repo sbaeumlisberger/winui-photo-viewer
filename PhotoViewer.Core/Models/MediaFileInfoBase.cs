@@ -70,26 +70,35 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
     public async Task<DateTimeOffset> GetDateModifiedAsync()
     {
         if (dateModified is null)
-        {
-            await LoadBasicPropertiesAsync().ConfigureAwait(false);
+        {         
+            if (FilePath is not null)
+            {
+                var lastWriteTime = File.GetLastWriteTimeUtc(FilePath);
+                var creationTime = File.GetCreationTimeUtc(FilePath);
+                dateModified = lastWriteTime > creationTime ? lastWriteTime : creationTime;
+            }
+            else
+            {
+                dateModified = (await StorageFile.GetBasicPropertiesAsync()).DateModified;
+            }
         }
-        return (DateTimeOffset)dateModified!;
+        return dateModified.Value;
     }
 
     public async Task<ulong> GetFileSizeAsync()
     {
         if (fileSize is null)
         {
-            await LoadBasicPropertiesAsync().ConfigureAwait(false);
+            if (FilePath is not null)
+            {
+                fileSize = (ulong)new FileInfo(FilePath).Length;
+            }
+            else 
+            {
+                fileSize = (await StorageFile.GetBasicPropertiesAsync()).Size;
+            }
         }
-        return (ulong)fileSize!;
-    }
-
-    private async Task LoadBasicPropertiesAsync()
-    {
-        var basicProperties = await StorageFile.GetBasicPropertiesAsync().AsTask().ConfigureAwait(false);
-        dateModified = basicProperties.DateModified;
-        fileSize = basicProperties.Size;
+        return fileSize.Value;
     }
 
     public abstract Task<Size> GetSizeInPixelsAsync();

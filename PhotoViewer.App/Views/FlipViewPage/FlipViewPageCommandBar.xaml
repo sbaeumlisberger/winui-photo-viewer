@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PhotoViewer.App.Views"
+    xmlns:shared="using:PhotoViewer.App.Views.Shared"
     xmlns:res="using:PhotoViewer.App.Resources"   
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,7 +12,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     DefaultLabelPosition="Collapsed">
 
-    <CommandBar.Resources>        
+    <CommandBar.Resources>
         <XamlUICommand
             x:Key="MoveRawFilesToSubfolderUICommand"
             Label="{x:Bind res:Strings.MoveRawFilesToSubfolderUICommand_Label}" 
@@ -79,7 +80,7 @@
                 Text="{x:Bind ViewModel.BackgroundTasks.StatusText, Mode=OneWay}"/>
         </StackPanel>
     </CommandBar.Content>
-    
+
     <AppBarButton 
         Icon="ViewAll"
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_OverviewButton}"
@@ -157,8 +158,9 @@
     <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource ShiftDatenTakenUICommand}"/>
     <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource ImportGpxTrackUICommand}"/>
     <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource PrefixFilesByDateUICommand}"/>
-    
+
     <CommandBar.SecondaryCommands>
+        <shared:SortAppBarButton DataContext="{x:Bind ViewModel.SortMenuModel}"/>
         <AppBarButton 
             Icon="OpenLocal" 
             Label="{x:Bind res:Strings.FlipViewPageCommandBar_OpenFolderButton}"
@@ -183,7 +185,7 @@
         <AppBarButton 
             Icon="Setting" 
             Label="{x:Bind res:Strings.FlipViewPageCommandBar_SettingsButton}"
-            Command="{x:Bind ViewModel.NavigateToSettingsPageCommand}"/>    
+            Command="{x:Bind ViewModel.NavigateToSettingsPageCommand}"/>
     </CommandBar.SecondaryCommands>
-    
+
 </CommandBar>

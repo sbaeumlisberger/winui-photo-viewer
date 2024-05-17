@@ -837,4 +837,22 @@
   <data name="PropertiesDialog_Orientation" xml:space="preserve">
     <value>Orientation</value>
   </data>
+  <data name="SortMenu_Ascending" xml:space="preserve">
+    <value>Ascending</value>
+  </data>
+  <data name="SortMenu_Descending" xml:space="preserve">
+    <value>Descending</value>
+  </data>
+  <data name="SortMenu_Sort" xml:space="preserve">
+    <value>Sort</value>
+  </data>
+  <data name="SortMenu_SortByDateTaken" xml:space="preserve">
+    <value>Date taken</value>
+  </data>
+  <data name="SortMenu_SortByFileName" xml:space="preserve">
+    <value>File name</value>
+  </data>
+  <data name="SortMenu_SortByFileSize" xml:space="preserve">
+    <value>File size</value>
+  </data>
 </root>

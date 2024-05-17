@@ -31,6 +31,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
 
     public BackgroundTasksViewModel BackgroundTasks { get; }
 
+    public SortMenuModel SortMenuModel { get; }
 
     private readonly IDialogService dialogService;
 
@@ -56,6 +57,8 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
         DeleteCommand = deleteFilesCommand;
 
         BackgroundTasks = viewModelFactory.CreateBackgroundTasksViewModel();
+
+        SortMenuModel = viewModelFactory.CreateSortMenuModel();
     }
 
     [RelayCommand]

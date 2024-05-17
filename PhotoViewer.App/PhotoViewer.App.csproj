@@ -66,6 +66,7 @@
     <None Remove="Views\OverviewPage.xaml" />
     <None Remove="Views\OverviewPageCommandBar.xaml" />
     <None Remove="Views\PeopleTaggingPage\PeopleTaggingPage.xaml" />
+    <None Remove="Views\Shared\SortAppBarButton.xaml" />
     <None Remove="Views\TagPeopleTool.xaml" />
     <None Remove="Views\VectorGraphicFlipViewItem.xaml" />
     <None Remove="Views\VideoFlipViewItem.xaml" />
@@ -212,6 +213,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Strings.cs</LastGenOutput>
     </None>
+    <Page Update="Views\Shared\SortAppBarButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\PeopleTaggingBatchViewPage\PeopleTaggingPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -263,7 +267,6 @@
   <ItemGroup>
     <Folder Include="Views\ComparePage\" />
     <Folder Include="Views\SettingsPage\" />
-    <Folder Include="Views\Shared\" />
     <Folder Include="Views\OverviewPage\" />
   </ItemGroup>
   

@@ -2203,6 +2203,60 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ascending.
+        /// </summary>
+        internal static string SortMenu_Ascending {
+            get {
+                return ResourceManager.GetString("SortMenu_Ascending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Descending.
+        /// </summary>
+        internal static string SortMenu_Descending {
+            get {
+                return ResourceManager.GetString("SortMenu_Descending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort.
+        /// </summary>
+        internal static string SortMenu_Sort {
+            get {
+                return ResourceManager.GetString("SortMenu_Sort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date taken.
+        /// </summary>
+        internal static string SortMenu_SortByDateTaken {
+            get {
+                return ResourceManager.GetString("SortMenu_SortByDateTaken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File name.
+        /// </summary>
+        internal static string SortMenu_SortByFileName {
+            get {
+                return ResourceManager.GetString("SortMenu_SortByFileName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File size.
+        /// </summary>
+        internal static string SortMenu_SortByFileSize {
+            get {
+                return ResourceManager.GetString("SortMenu_SortByFileSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter name.
         /// </summary>
         internal static string TagPeopleTool_NamePlaceholder {
