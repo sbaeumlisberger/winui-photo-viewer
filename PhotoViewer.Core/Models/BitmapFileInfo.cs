@@ -1,4 +1,6 @@
-﻿using PhotoViewer.App.Models;
+﻿using MetadataAPI;
+using MetadataAPI.Data;
+using PhotoViewer.App.Models;
 using WIC;
 using Windows.Foundation;
 using Windows.Storage;
@@ -79,6 +81,15 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
 
                 decoder.GetFrame(0).GetSize(out int width, out int height);
 
+                var metadataQueryReader = decoder.GetFrame(0).GetMetadataQueryReader();
+                var metadataReader = new MetadataReader(metadataQueryReader, decoder.GetDecoderInfo());
+
+                var orientation = metadataReader.GetProperty(MetadataProperties.Orientation);
+
+                if (orientation == PhotoOrientation.Rotate90 || orientation == PhotoOrientation.Rotate270) 
+                {
+                    return new Size(height, width);
+                }
                 return new Size(width, height);
 
             }).ConfigureAwait(false);
