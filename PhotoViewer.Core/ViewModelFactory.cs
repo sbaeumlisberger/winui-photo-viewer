@@ -57,7 +57,6 @@ public class ViewModelFactory : IViewModelFactory
     private readonly IFaceDetectionService faceDetectionService = new FaceDetectionService();
     private readonly ICropImageService cropImageService;
     private readonly IBackgroundTaskService backgroundTaskService = new BackgroundTaskService();
-    private readonly Lazy<FaceRecognitionService> faceRecognitionService;
     private readonly SortService sortService = new SortService(new MetadataService());
 
     public ViewModelFactory(ApplicationSettings settings)
@@ -68,7 +67,6 @@ public class ViewModelFactory : IViewModelFactory
         rotateBitmapService = new RotateBitmapService(metadataService);
         cropImageService = new CropImageService(messenger, metadataService);
         mediaFilesLoaderService = new MediaFilesLoaderService(imageLoaderService, new FileSystemService());
-        faceRecognitionService = new Lazy<FaceRecognitionService>(() => new FaceRecognitionService(messenger));
     }
 
     public AppModel CreateAppModel()
@@ -272,8 +270,7 @@ public class ViewModelFactory : IViewModelFactory
             faceDetectionService,
             imageLoaderService,
             peopleSuggestionsService,
-            metadataService,
-            faceRecognitionService.Value);
+            metadataService);
     }
 
     public SortMenuModel CreateSortMenuModel()

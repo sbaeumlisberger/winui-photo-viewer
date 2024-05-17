@@ -8,5 +8,4 @@ public record DetectedFace(
     FaceRect FaceRectInPercent,
     ICanvasImage FaceImage,
     IBitmapFileInfo File,
-    CanvasBitmap SourceImage,
-    string RecognizedName);
+    CanvasBitmap SourceImage);

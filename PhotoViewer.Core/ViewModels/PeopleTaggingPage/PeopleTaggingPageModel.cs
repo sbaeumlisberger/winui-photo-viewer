@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Collections;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
 using MetadataAPI;
 using MetadataAPI.Data;
 using Microsoft.Graphics.Canvas;
@@ -22,7 +22,7 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class PeopleTaggingPageModel : ViewModelBase
 {
-    public ObservableGroupedCollection<string, DetectedFace> DetectedFaces { get; } = [];
+    public ObservableList<DetectedFace> DetectedFaces { get; } = [];
 
     public IReadOnlyList<DetectedFace> SelectedFaces { get; set; } = [];
 
@@ -40,23 +40,19 @@ public partial class PeopleTaggingPageModel : ViewModelBase
 
     private readonly IMetadataService metadataService;
 
-    private readonly FaceRecognitionService faceRecognitionService;
-
     internal PeopleTaggingPageModel(
         ApplicationSession session,
         IMessenger messenger,
         IFaceDetectionService faceDetectionService,
         ICachedImageLoaderService imageLoaderService,
         ISuggestionsService peopleSuggestionsService,
-        IMetadataService metadataService,
-        FaceRecognitionService faceRecognitionService)
+        IMetadataService metadataService)
         : base(messenger)
     {
         this.faceDetectionService = faceDetectionService;
         this.imageLoaderService = imageLoaderService;
         this.peopleSuggestionsService = peopleSuggestionsService;
         this.metadataService = metadataService;
-        this.faceRecognitionService = faceRecognitionService;
         RecentPeopleNames = peopleSuggestionsService.GetRecent();
         AllPeopleNames = peopleSuggestionsService.GetAll();
         PropertyChanged += PeopleTaggingBatchViewPageModel_PropertyChanged;
@@ -79,8 +75,7 @@ public partial class PeopleTaggingPageModel : ViewModelBase
                 var peopleTags = await metadataService.GetMetadataAsync(face.File, MetadataProperties.People);
                 peopleTags.Append(new PeopleTag(name, face.FaceRectInPercent)).ToArray();
                 await metadataService.WriteMetadataAsync(face.File, MetadataProperties.People, peopleTags);
-                DetectedFaces.FirstGroupByKey(face.RecognizedName).Remove(face);
-                //faceRecognitionService.Train(face.File, face.FaceRect, name);
+                DetectedFaces.Remove(face);
                 await peopleSuggestionsService.AddSuggestionAsync(name);
                 RecentPeopleNames = peopleSuggestionsService.GetRecent();
             }
@@ -150,7 +145,7 @@ public partial class PeopleTaggingPageModel : ViewModelBase
 
             foreach (var face in detectedFaces)
             {
-                await ProcessDetectedFaceAsync(face, canvasBitmap, matBGRA8, bitmapFile);
+                await ProcessDetectedFaceAsync(face, canvasBitmap, bitmapFile);
             }
         }
         catch (Exception ex)
@@ -159,7 +154,7 @@ public partial class PeopleTaggingPageModel : ViewModelBase
         }
     }
 
-    private async Task ProcessDetectedFaceAsync(DetectedFaceModel face, CanvasBitmap canvasBitmap, Mat matBGRA8, IBitmapFileInfo bitmapFile)
+    private async Task ProcessDetectedFaceAsync(DetectedFaceModel face, CanvasBitmap canvasBitmap, IBitmapFileInfo bitmapFile)
     {
         var sizeInPixels = canvasBitmap.SizeInPixels;
 
@@ -176,10 +171,7 @@ public partial class PeopleTaggingPageModel : ViewModelBase
             SourceRectangle = extendedFaceBoxInDIPs,
         };
 
-        string recognizedName = "unknown";
-        //string recognizedName = faceRecognitionService.Predict(matBGRA8, faceBox) ?? "unknown";
-
-        await DispatchAsync(() => DetectedFaces.AddItem(recognizedName, new DetectedFace(faceRectInPercent, faceImage, bitmapFile, canvasBitmap, recognizedName)));
+        await DispatchAsync(() => DetectedFaces.Add(new DetectedFace(faceRectInPercent, faceImage, bitmapFile, canvasBitmap)));
     }
 
     private Mat LoadImageAsMatBGRA8(IBitmapFileInfo bitmapFile)

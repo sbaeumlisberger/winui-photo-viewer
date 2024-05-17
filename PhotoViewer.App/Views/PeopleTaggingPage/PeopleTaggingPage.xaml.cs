@@ -1,6 +1,5 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Data;
 using PhotoViewer.App.Controls;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.ViewModels;
@@ -15,17 +14,6 @@ public sealed partial class PeopleTaggingPage : Page, IMVVMControl<PeopleTagging
     {
         DataContext = App.Current.ViewModelFactory.CreatePeopleTaggingBatchViewPageModel();
         this.InitializeComponentMVVM();
-    }
-
-    private void PeopleTaggingPage_Loaded(object sender, RoutedEventArgs e)
-    {
-        var collectionViewSource = new CollectionViewSource()
-        {
-            Source = ViewModel!.DetectedFaces,
-            IsSourceGrouped = true
-        };
-
-        detectedFacesGridView.ItemsSource = collectionViewSource.View;
     }
 
     private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
