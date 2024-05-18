@@ -122,7 +122,7 @@ public class GpxServiceTest
         metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken).Returns(dateTaken);
         metadataService.GetMetadataAsync(file, MetadataProperties.GeoTag).Returns((GeoTag?)null);
 
-        bool applied = await gpxService.TryApplyGpxTrackToFile(gpxTrack, file);
+        bool applied = await gpxService.TryApplyGpxTrackToFile(gpxTrack, file, AltitudeReference.Ellipsoid);
 
         Assert.True(applied);
         await metadataService.Received().WriteMetadataAsync(file, MetadataProperties.GeoTag,
@@ -136,7 +136,7 @@ public class GpxServiceTest
         var file = Substitute.For<IBitmapFileInfo>();
         metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken).Returns((DateTime?)null);
 
-        bool applied = await gpxService.TryApplyGpxTrackToFile(gpxTrack, file);
+        bool applied = await gpxService.TryApplyGpxTrackToFile(gpxTrack, file, AltitudeReference.Ellipsoid);
 
         Assert.False(applied);
     }

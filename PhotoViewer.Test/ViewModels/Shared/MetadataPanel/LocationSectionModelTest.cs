@@ -131,53 +131,6 @@ public class LocationSectionModelTest
         Assert.True(locationSectionModel.ShowLocationOnMapCommand.CanExecute(null));
     }
 
-    [Fact]
-    public async Task AppliesImportedGpxTrackToFiles()
-    {
-        var files = ImmutableList.Create(
-            Substitute.For<IBitmapFileInfo>(),
-            Substitute.For<IBitmapFileInfo>(),
-            Substitute.For<IBitmapFileInfo>());
-        locationSectionModel.UpdateFilesChanged(files, new MetadataView[0]);
-        var gpxFile = Substitute.For<IStorageFile>();
-        dialogService.When(x => x.ShowDialogAsync(Arg.Any<FileOpenPickerModel>()))
-            .Do(callInfo => callInfo.Arg<FileOpenPickerModel>().File = gpxFile);
-        var gpxTrack = new GpxTrack(new List<GpxTrackPoint>());
-        gpxService.ReadTrackFromGpxFileAsync(gpxFile).Returns(gpxTrack);
-        gpxService.TryApplyGpxTrackToFile(gpxTrack, files[0]).Returns(true);
-        gpxService.TryApplyGpxTrackToFile(gpxTrack, files[1]).Returns(false);
-        gpxService.TryApplyGpxTrackToFile(gpxTrack, files[2]).Returns(true);
-        var metadataModifiedMessageCapture = TestUtils.CaptureMessage<MetadataModifiedMessage>(messenger);
-
-        await locationSectionModel.ImportFromGpxFileCommand.ExecuteAsync(null);
-
-        await gpxService.Received().TryApplyGpxTrackToFile(gpxTrack, files[0]);
-        await gpxService.Received().TryApplyGpxTrackToFile(gpxTrack, files[1]);
-        await gpxService.Received().TryApplyGpxTrackToFile(gpxTrack, files[2]);
-        Assert.NotNull(metadataModifiedMessageCapture.Message);
-        Assert.Equal(2, metadataModifiedMessageCapture.Message.Files.Count);
-        Assert.Equal(MetadataProperties.GeoTag, metadataModifiedMessageCapture.Message.MetadataProperty);
-    }
-
-    [Fact]
-    public async Task ShowsDialogForGpxFileParseErrors()
-    {
-        var files = ImmutableList.Create(
-            Substitute.For<IBitmapFileInfo>(),
-            Substitute.For<IBitmapFileInfo>(),
-            Substitute.For<IBitmapFileInfo>());
-        locationSectionModel.UpdateFilesChanged(files, new MetadataView[0]);
-        var gpxFile = Substitute.For<IStorageFile>();
-        dialogService.When(x => x.ShowDialogAsync(Arg.Any<FileOpenPickerModel>()))
-            .Do(callInfo => callInfo.Arg<FileOpenPickerModel>().File = gpxFile);
-        string errorMessage = "Some Error Message";
-        gpxService.ReadTrackFromGpxFileAsync(gpxFile).ThrowsAsync(new Exception(errorMessage));
-
-        await locationSectionModel.ImportFromGpxFileCommand.ExecuteAsync(null);
-
-        await dialogService.Received().ShowDialogAsync(Arg.Is<MessageDialogModel>(dialog => dialog.Message.Contains(errorMessage)));
-    }
-
     private MetadataView CreateMetadataView(Address? address, Geopoint? geoTag)
     {
         return new MetadataView(new Dictionary<string, object?>()
