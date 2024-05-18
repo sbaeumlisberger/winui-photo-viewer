@@ -12,6 +12,7 @@ using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
+using System.Collections.Concurrent;
 using System.Globalization;
 using Windows.System;
 
@@ -141,7 +142,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
                 return;
             }
 
-            var modifiedFiles = new List<IBitmapFileInfo>();
+            var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
 
             await WriteFilesAndCancelPreviousAsync(async (file, _) =>
             {

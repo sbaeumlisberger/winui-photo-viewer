@@ -10,6 +10,7 @@ using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
+using System.Collections.Concurrent;
 using Windows.Storage;
 
 namespace PhotoViewer.Core.ViewModels.Dialogs;
@@ -77,11 +78,11 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
 
         try
         {
-            var result = await ImportGpxFileAsync(SelectedFile!, mediaFiles, Progress, cts.Token);
+            var (result, updatedFilesCount) = await ImportGpxFileAsync(SelectedFile!, mediaFiles, Progress, cts.Token);
 
             ShowProgress = false;
             ShowSuccessMessage = result.IsSuccessfully;
-            UpdatedFilesCount = result.ProcessedElements.Count;
+            UpdatedFilesCount = updatedFilesCount;
             ShowErrorMessage = result.HasFailures;
             Errors = result.Failures.Select(failure => failure.Element.FileName + ": " + failure.Exception.Message).ToList();
         }
@@ -104,20 +105,25 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
         Progress?.Cancel();
     }
 
-    private async Task<ParallelResult<IBitmapFileInfo>> ImportGpxFileAsync(IStorageFile gpxFile, IReadOnlyList<IMediaFileInfo> mediaFiles, Progress progress, CancellationToken cancellationToken)
+    private async Task<(ParallelResult<IBitmapFileInfo> ParallelResult, int UpdatedFilesCount)> ImportGpxFileAsync(IStorageFile gpxFile, IReadOnlyList<IMediaFileInfo> mediaFiles, Progress progress, CancellationToken cancellationToken)
     {
         var gpxTrack = await gpxService.ReadTrackFromGpxFileAsync(gpxFile);
 
         var mediaFilesToProcess = mediaFiles.OfType<IBitmapFileInfo>().Where(bitmap => bitmap.IsMetadataSupported).ToList();
 
+        var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
+
         var result = await mediaFilesToProcess.Parallel(cancellationToken, progress).TryProcessAsync(async mediaFile =>
         {
-            await gpxService.TryApplyGpxTrackToFile(gpxTrack, mediaFile);
+            if (await gpxService.TryApplyGpxTrackToFile(gpxTrack, mediaFile)) 
+            {
+                modifiedFiles.Add(mediaFile);
+            }            
         });
 
-        Messenger.Send(new MetadataModifiedMessage(result.ProcessedElements, MetadataProperties.GeoTag));
+        Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.GeoTag));
 
-        return result;
+        return (result, modifiedFiles.Count);
     }
 
 }
