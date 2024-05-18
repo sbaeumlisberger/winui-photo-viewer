@@ -31,7 +31,8 @@ internal class SortService
             case SortBy.FileName:
                 return doSort(file => file.FileName);
             case SortBy.FileSize:
-                return doSort(file => file.GetFileSizeAsync().GetAwaiter().GetResult());
+                var fileSizeByFile = await GetFileSizeDictionaryAsync(mediaFiles);
+                return doSort(file => fileSizeByFile[file]);
             case SortBy.DateTaken:
                 var dateTakenByFile = await GetDateTakenDictionaryAsync(mediaFiles);
                 return doSort(file => dateTakenByFile[file]);
@@ -45,6 +46,18 @@ internal class SortService
                 ? mediaFiles.OrderByDescending(selector).ToList()
                 : mediaFiles.OrderBy(selector).ToList();
         }
+    }
+
+    private async Task<Dictionary<IMediaFileInfo, ulong>> GetFileSizeDictionaryAsync(IReadOnlyList<IMediaFileInfo> mediaFiles)
+    {
+        var fileSizeByFile = new Dictionary<IMediaFileInfo, ulong>();
+
+        foreach (var file in mediaFiles)
+        {
+            fileSizeByFile[file] = await file.GetFileSizeAsync();
+        }
+
+        return fileSizeByFile;
     }
 
     private async Task<Dictionary<IMediaFileInfo, DateTimeOffset>> GetDateTakenDictionaryAsync(IReadOnlyList<IMediaFileInfo> mediaFiles)

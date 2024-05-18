@@ -79,7 +79,9 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
             }
             else
             {
-                dateModified = (await StorageFile.GetBasicPropertiesAsync()).DateModified;
+                var basicProperties = await StorageFile.GetBasicPropertiesAsync().AsTask().ConfigureAwait(false);
+                dateModified = basicProperties.DateModified;
+                fileSize = basicProperties.Size;
             }
         }
         return dateModified.Value;
@@ -95,7 +97,9 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
             }
             else
             {
-                fileSize = (await StorageFile.GetBasicPropertiesAsync()).Size;
+                var basicProperties = await StorageFile.GetBasicPropertiesAsync().AsTask().ConfigureAwait(false);
+                fileSize = basicProperties.Size; 
+                dateModified = basicProperties.DateModified;               
             }
         }
         return fileSize.Value;
