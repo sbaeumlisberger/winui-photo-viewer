@@ -10,7 +10,7 @@
     mc:Ignorable="d"
     x:Name="dialog"
     Style="{StaticResource DefaultContentDialogStyle}"
-    Title="{x:Bind res:Strings.ImportGpxTrackDialog_Title}">
+    Title="{x:Bind ViewModel.Title, Mode=OneTime}">
 
     <Grid Width="400" MinHeight="160">
         <Grid Visibility="{x:Bind ViewModel.ShowFileSelection, Mode=OneWay}">
@@ -22,15 +22,29 @@
             <StackPanel Margin="0,8,0,0" Spacing="8">
                 <TextBlock                
                     TextWrapping="Wrap"
-                    Text="{x:Bind res:Strings.ImportGpxTrackDialog_StartMessage}"/>                
+                    Text="{x:Bind res:Strings.ImportGpxTrackDialog_StartMessage}"/>
                 <Button
                     Content="{x:Bind res:Strings.ImportGpxTrackDialog_BrowseFileButton}"
-                    Command="{x:Bind ViewModel.BrowseFileCommand}"/>            
+                    Command="{x:Bind ViewModel.BrowseFileCommand}"/>
                 <TextBlock
                     Foreground="{ThemeResource TextFillColorDisabled}"
                     TextWrapping="Wrap"  
                     Text="{x:Bind ViewModel.SelectedFilePath, Mode=OneWay}"/>
-            </StackPanel>     
+
+                <StackPanel Margin="0,8,0,0" Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="{x:Bind res:Strings.ImportGpxTrackDialog_AltitudeReferenceSystem}"/>
+                    <HyperlinkButton
+                        Padding="2,2,1,1" 
+                        ToolTipService.ToolTip="{x:Bind res:Strings.ImportGpxTrackDialog_AltitudeReferenceSystemInfoToolTip}"
+                        NavigateUri="https://learn.microsoft.com/en-us/uwp/api/windows.devices.geolocation.altitudereferencesystem?#fields">
+                        <FontIcon FontSize="16" FontFamily="Segoe Fluent Icons" Glyph="&#xE946;" />
+                    </HyperlinkButton>
+                </StackPanel>
+                <ComboBox 
+                    MinWidth="120"
+                    ItemsSource="{x:Bind ViewModel.AvailableAltitudeReferenceSystems, Mode=OneTime}"
+                    SelectedItem="{x:Bind ViewModel.AltitudeReferenceSystem, Mode=TwoWay}" />
+            </StackPanel>
 
             <StackPanel Style="{StaticResource DialogButtonPanel}">
                 <Button

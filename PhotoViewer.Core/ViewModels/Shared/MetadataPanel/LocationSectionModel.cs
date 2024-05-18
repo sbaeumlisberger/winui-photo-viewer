@@ -12,6 +12,7 @@ using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
+using PhotoViewer.Core.ViewModels.Dialogs;
 using System.Collections.Concurrent;
 using System.Globalization;
 using Windows.System;
@@ -118,41 +119,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
     [RelayCommand]
     private async Task ImportFromGpxFileAsync()
     {
-        var fileOpenPickerModel = new FileOpenPickerModel()
-        {
-            FileTypeFilter = new[] { ".gpx" }
-        };
-
-        await dialogService.ShowDialogAsync(fileOpenPickerModel);
-
-        if (fileOpenPickerModel.File is { } gpxFile)
-        {
-            GpxTrack gpxTrack;
-            try
-            {
-                gpxTrack = await gpxService.ReadTrackFromGpxFileAsync(gpxFile);
-            }
-            catch (Exception ex)
-            {
-                await dialogService.ShowDialogAsync(new MessageDialogModel()
-                {
-                    Title = Strings.GpxFileParseErrorDialog_Title,
-                    Message = string.Format(Strings.GpxFileParseErrorDialog_Message, ex.Message)
-                });
-                return;
-            }
-
-            var modifiedFiles = new ConcurrentBag<IBitmapFileInfo>();
-
-            await WriteFilesAndCancelPreviousAsync(async (file, _) =>
-            {
-                if (await gpxService.TryApplyGpxTrackToFile(gpxTrack, file))
-                {
-                    modifiedFiles.Add(file);
-                }
-            },
-            _ => Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.GeoTag)));
-        }
+        await dialogService.ShowDialogAsync(new ImportGpxTrackDialogModel(Messenger, dialogService, gpxService, Files));
     }
 
     private async Task SaveLocation(Location? location)

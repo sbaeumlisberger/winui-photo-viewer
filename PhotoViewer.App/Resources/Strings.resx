@@ -310,7 +310,7 @@
     <value>Browse GPX file</value>
   </data>
   <data name="ImportGpxTrackDialog_ErrorMessage" xml:space="preserve">
-    <value>The import of the GPX track was completed with errors. {0} photos were updated. The following errors occurred:</value>
+    <value>The import of the GPX track was completed with errors. {0} photo(s) were updated. The following errors occurred:</value>
   </data>
   <data name="ImportGpxTrackDialog_ImportButton" xml:space="preserve">
     <value>Import</value>
@@ -322,10 +322,7 @@
     <value>Select a file that contains the GPX track you want to import.</value>
   </data>
   <data name="ImportGpxTrackDialog_SuccessMessage" xml:space="preserve">
-    <value>GPX track was imported successfully. {0} photos were updated.</value>
-  </data>
-  <data name="ImportGpxTrackDialog_Title" xml:space="preserve">
-    <value>Import GPX track</value>
+    <value>GPX track was imported successfully. {0} photo(s) were updated.</value>
   </data>
   <data name="ImportGpxTrackUICommand_Label" xml:space="preserve">
     <value>Apply GPX track to all photos</value>
@@ -869,5 +866,11 @@
   </data>
   <data name="PeopleTaggingPage_SearchPeoplePlaceholder" xml:space="preserve">
     <value>Search</value>
+  </data>
+  <data name="ImportGpxTrackDialog_AltitudeReferenceSystem" xml:space="preserve">
+    <value>Altitude reference system</value>
+  </data>
+  <data name="ImportGpxTrackDialog_AltitudeReferenceSystemInfoToolTip" xml:space="preserve">
+    <value>Open documentation</value>
   </data>
 </root>

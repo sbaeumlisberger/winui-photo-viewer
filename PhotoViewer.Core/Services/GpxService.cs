@@ -11,7 +11,7 @@ internal interface IGpxService
 {
     Task<GpxTrack> ReadTrackFromGpxFileAsync(IStorageFile file);
 
-    Task<bool> TryApplyGpxTrackToFile(GpxTrack gpxTrack, IBitmapFileInfo file);
+    Task<bool> TryApplyGpxTrackToFile(GpxTrack gpxTrack, IBitmapFileInfo file, AltitudeReference altitudeReference = AltitudeReference.Ellipsoid);
 }
 
 internal class GpxService : IGpxService
@@ -65,7 +65,7 @@ internal class GpxService : IGpxService
         return new GpxTrack(trkpList);
     }
 
-    public async Task<bool> TryApplyGpxTrackToFile(GpxTrack gpxTrack, IBitmapFileInfo file)
+    public async Task<bool> TryApplyGpxTrackToFile(GpxTrack gpxTrack, IBitmapFileInfo file, AltitudeReference altitudeReference)
     {
         if (await metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken) is { } dateTaken
             && gpxTrack.FindTrackPointForTimestamp(dateTaken) is { } gpxTrackPoint)
@@ -75,7 +75,7 @@ internal class GpxService : IGpxService
                 Latitude = gpxTrackPoint.Latitude,
                 Longitude = gpxTrackPoint.Longitude,
                 Altitude = gpxTrackPoint.Ele,
-                AltitudeReference = AltitudeReference.Unspecified, // TODO
+                AltitudeReference = altitudeReference,
             };
             var geoTagFromFile = await metadataService.GetMetadataAsync(file, MetadataProperties.GeoTag);
             if (geoTagFromGpx != geoTagFromFile)

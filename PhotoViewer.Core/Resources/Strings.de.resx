@@ -138,11 +138,14 @@
   <data name="DeleteFilesErrorDialog_Title" xml:space="preserve">
     <value>Fehler beim Löschen</value>
   </data>
-  <data name="GpxFileParseErrorDialog_Message" xml:space="preserve">
+  <data name="ImportGpxTrackDialog_GpxFileParseErrorMessage" xml:space="preserve">
     <value>Beim Lesen der ausgewählten GPX-Datei ist ein Fehler aufgetreten: {0}</value>
   </data>
-  <data name="GpxFileParseErrorDialog_Title" xml:space="preserve">
-    <value>GPX-Datei konnte nicht gelesen werden</value>
+  <data name="ImportGpxTrackDialog_Title" xml:space="preserve">
+    <value>GPX-Track für ausgewählte Fotos importieren</value>
+  </data>
+  <data name="ImportGpxTrackDialog_TitleAll" xml:space="preserve">
+    <value>GPX-Track für alle Fotos importieren</value>
   </data>
   <data name="ImportSettingsFailedDialog_Message" xml:space="preserve">
     <value>Der Import der Einstellungen aus der angegebenen Datei ist fehlgeschlagen.</value>

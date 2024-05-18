@@ -2,12 +2,14 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using MetadataAPI;
+using MetadataAPI.Data;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using System.Collections.Concurrent;
@@ -17,6 +19,7 @@ namespace PhotoViewer.Core.ViewModels.Dialogs;
 
 public partial class ImportGpxTrackDialogModel : ViewModelBase
 {
+    public string Title { get; }
 
     public bool ShowFileSelection { get; private set; } = true;
 
@@ -32,13 +35,15 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
 
     public bool CanImport => SelectedFilePath != string.Empty;
 
+    public IReadOnlyList<AltitudeReference> AvailableAltitudeReferenceSystems { get; } = Enum.GetValues<AltitudeReference>();
+
+    public AltitudeReference AltitudeReferenceSystem { get; set; } = AltitudeReference.Ellipsoid;
+
     public Progress? Progress { get; private set; }
 
     public int UpdatedFilesCount { get; private set; } = 0;
 
     public IReadOnlyList<string> Errors { get; private set; } = Array.Empty<string>();
-
-    private readonly IMetadataService metadataService;
 
     private readonly IDialogService dialogService;
 
@@ -46,12 +51,13 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
 
     private readonly IReadOnlyList<IMediaFileInfo> mediaFiles;
 
-    internal ImportGpxTrackDialogModel(IMessenger messenger, IMetadataService metadataService, IDialogService dialogService, IGpxService gpxService, IReadOnlyList<IMediaFileInfo> mediaFiles) : base(messenger)
+    internal ImportGpxTrackDialogModel(IMessenger messenger, IDialogService dialogService, IGpxService gpxService, IReadOnlyList<IMediaFileInfo> mediaFiles, bool allFiles = false) : base(messenger)
     {
-        this.metadataService = metadataService;
         this.dialogService = dialogService;
         this.gpxService = gpxService;
         this.mediaFiles = mediaFiles;
+
+        Title = allFiles ? Strings.ImportGpxTrackDialog_TitleAll : Strings.ImportGpxTrackDialog_Title;
     }
 
     [RelayCommand]
@@ -95,7 +101,7 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
             Log.Error("Failed to import GPX file", ex);
             ShowProgress = false;
             ShowErrorMessage = true;
-            Errors = new[] { ex.Message };
+            Errors = [string.Format(Strings.ImportGpxTrackDialog_GpxFileParseErrorMessage, ex.Message)];
         }
     }
 
@@ -115,7 +121,7 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
 
         var result = await mediaFilesToProcess.Parallel(cancellationToken, progress).TryProcessAsync(async mediaFile =>
         {
-            if (await gpxService.TryApplyGpxTrackToFile(gpxTrack, mediaFile))
+            if (await gpxService.TryApplyGpxTrackToFile(gpxTrack, mediaFile, AltitudeReferenceSystem))
             {
                 modifiedFiles.Add(mediaFile);
             }

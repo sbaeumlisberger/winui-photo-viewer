@@ -126,18 +126,27 @@ namespace PhotoViewer.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to An error occurred while reading the selected GPX file: {0}.
         /// </summary>
-        public static string GpxFileParseErrorDialog_Message {
+        public static string ImportGpxTrackDialog_GpxFileParseErrorMessage {
             get {
-                return ResourceManager.GetString("GpxFileParseErrorDialog_Message", resourceCulture);
+                return ResourceManager.GetString("ImportGpxTrackDialog_GpxFileParseErrorMessage", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to GPX file could not be read.
+        ///   Looks up a localized string similar to Import GPX track for selected photo(s).
         /// </summary>
-        public static string GpxFileParseErrorDialog_Title {
+        public static string ImportGpxTrackDialog_Title {
             get {
-                return ResourceManager.GetString("GpxFileParseErrorDialog_Title", resourceCulture);
+                return ResourceManager.GetString("ImportGpxTrackDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import GPX track for all photos.
+        /// </summary>
+        public static string ImportGpxTrackDialog_TitleAll {
+            get {
+                return ResourceManager.GetString("ImportGpxTrackDialog_TitleAll", resourceCulture);
             }
         }
         
