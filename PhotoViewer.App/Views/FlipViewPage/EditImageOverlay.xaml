@@ -11,7 +11,10 @@
     mc:Ignorable="d"
     Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
 
-    <Grid Background="{ThemeResource PageBackgroundBrush}">
+    <Grid 
+        x:Name="root"
+        x:Load="{x:Bind ViewModel.IsVisible, Mode=OneWay}"
+        Background="{ThemeResource PageBackgroundBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300"/>
             <ColumnDefinition Width="*"/>

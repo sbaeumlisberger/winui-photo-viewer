@@ -9,9 +9,10 @@
     mc:Ignorable="d">
 
     <RelativePanel 
+        x:Name="root"
+        x:Load="{x:Bind ViewModel.IsVisible, Mode=OneWay}"
         Padding="4"
-        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"   
-        Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
         
         <TextBlock 
             RelativePanel.AlignLeftWithPanel="True" 

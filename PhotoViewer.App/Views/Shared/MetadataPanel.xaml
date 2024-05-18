@@ -13,61 +13,62 @@
     mc:Ignorable="d"
     x:Name="uc">
 
-    <UserControl.Resources>
-        <Style x:Key="HeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
-            <Setter Property="Margin"  Value="0,16,0,4" />
-        </Style>
-
-        <Style x:Key="LocationTextBoxStyle" TargetType="TextBox">
-            <Setter Property="IsReadOnly" Value="True"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Padding" Value="4"/>
-            <Setter Property="Height" Value="28"/>
-        </Style>
-        
-        <Style x:Key="ItemWithCountListView" TargetType="ListView">
-            <Setter Property="ItemContainerStyle">
-                <Setter.Value>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="Margin" Value="-4,-2.2,-4,-2.2"/>
-                        <Setter Property="Padding" Value="12,8,12,8"/>
-                        <Setter Property="MinHeight" Value="0"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    </Style>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="SelectionMode" Value="None"/>
-            <Setter Property="MaxHeight"  Value="300"/>
-            <Setter Property="ItemsPanel">
-                <Setter.Value>
-                    <ItemsPanelTemplate>
-                        <StackPanel/>
-                    </ItemsPanelTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="{ThemeResource SystemColorHighlightColor}" Opacity="0.4"/>
-        <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="{ThemeResource SystemColorHighlightColor}" Opacity="0.6"/>
-        <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPressed" Color="{ThemeResource SystemColorHighlightColor}" Opacity="0.8"/>
-
-        <XamlUICommand 
-            x:Name="RemovePeopleTagCommand"
-            Command="{x:Bind ViewModel.PeopleSectionModel.RemovePeopleTagCommand}"/>
-        <XamlUICommand 
-            x:Name="RemoveKeywordCommand"
-            Command="{x:Bind ViewModel.KeywordsSectionModel.RemoveKeywordCommand}"/>
-        <XamlUICommand 
-            x:Name="ApplyKeywordToAllCommand"
-            Command="{x:Bind ViewModel.KeywordsSectionModel.ApplyKeywordToAllCommand}"/>        
-    </UserControl.Resources>
-
     <Grid 
+        x:Name="root"
         Width="320"
         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-        Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
-        
+        x:Load="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
+
+        <Grid.Resources>
+            <Style x:Key="HeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+                <Setter Property="Margin"  Value="0,16,0,4" />
+            </Style>
+
+            <Style x:Key="LocationTextBoxStyle" TargetType="TextBox">
+                <Setter Property="IsReadOnly" Value="True"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Padding" Value="4"/>
+                <Setter Property="Height" Value="28"/>
+            </Style>
+
+            <Style x:Key="ItemWithCountListView" TargetType="ListView">
+                <Setter Property="ItemContainerStyle">
+                    <Setter.Value>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Margin" Value="-4,-2.2,-4,-2.2"/>
+                            <Setter Property="Padding" Value="12,8,12,8"/>
+                            <Setter Property="MinHeight" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="SelectionMode" Value="None"/>
+                <Setter Property="MaxHeight"  Value="300"/>
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <StackPanel/>
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="{ThemeResource SystemColorHighlightColor}" Opacity="0.4"/>
+            <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="{ThemeResource SystemColorHighlightColor}" Opacity="0.6"/>
+            <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPressed" Color="{ThemeResource SystemColorHighlightColor}" Opacity="0.8"/>
+
+            <XamlUICommand 
+                x:Name="RemovePeopleTagCommand"
+                Command="{x:Bind ViewModel.PeopleSectionModel.RemovePeopleTagCommand}"/>
+            <XamlUICommand 
+                x:Name="RemoveKeywordCommand"
+                Command="{x:Bind ViewModel.KeywordsSectionModel.RemoveKeywordCommand}"/>
+            <XamlUICommand 
+                x:Name="ApplyKeywordToAllCommand"
+                Command="{x:Bind ViewModel.KeywordsSectionModel.ApplyKeywordToAllCommand}"/>
+        </Grid.Resources>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
