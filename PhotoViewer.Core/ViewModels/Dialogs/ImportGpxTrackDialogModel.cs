@@ -115,10 +115,10 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
 
         var result = await mediaFilesToProcess.Parallel(cancellationToken, progress).TryProcessAsync(async mediaFile =>
         {
-            if (await gpxService.TryApplyGpxTrackToFile(gpxTrack, mediaFile)) 
+            if (await gpxService.TryApplyGpxTrackToFile(gpxTrack, mediaFile))
             {
                 modifiedFiles.Add(mediaFile);
-            }            
+            }
         });
 
         Messenger.Send(new MetadataModifiedMessage(modifiedFiles, MetadataProperties.GeoTag));

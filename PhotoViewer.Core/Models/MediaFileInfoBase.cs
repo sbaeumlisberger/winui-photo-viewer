@@ -98,8 +98,8 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
             else
             {
                 var basicProperties = await StorageFile.GetBasicPropertiesAsync().AsTask().ConfigureAwait(false);
-                fileSize = basicProperties.Size; 
-                dateModified = basicProperties.DateModified;               
+                fileSize = basicProperties.Size;
+                dateModified = basicProperties.DateModified;
             }
         }
         return fileSize.Value;
