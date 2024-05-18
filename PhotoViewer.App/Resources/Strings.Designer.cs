@@ -1267,6 +1267,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Batch mode.
+        /// </summary>
+        internal static string MetadataPanel_PeopleTaggingPageButton {
+            get {
+                return ResourceManager.GetString("MetadataPanel_PeopleTaggingPageButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rating.
         /// </summary>
         internal static string MetadataPanel_RatingHeader {
@@ -1312,7 +1321,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tag people on photo.
+        ///   Looks up a localized string similar to Tag on photo.
         /// </summary>
         internal static string MetadataPanel_TagPeopleOnPhoto {
             get {
@@ -1506,6 +1515,42 @@ namespace PhotoViewer.App.Resources {
         internal static string OverviewPageCommandBar_ViewButton {
             get {
                 return ResourceManager.GetString("OverviewPageCommandBar_ViewButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All people.
+        /// </summary>
+        internal static string PeopleTaggingPage_AllPeople {
+            get {
+                return ResourceManager.GetString("PeopleTaggingPage_AllPeople", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        internal static string PeopleTaggingPage_Back {
+            get {
+                return ResourceManager.GetString("PeopleTaggingPage_Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recently tagged people.
+        /// </summary>
+        internal static string PeopleTaggingPage_RecentPeople {
+            get {
+                return ResourceManager.GetString("PeopleTaggingPage_RecentPeople", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        internal static string PeopleTaggingPage_SearchPeoplePlaceholder {
+            get {
+                return ResourceManager.GetString("PeopleTaggingPage_SearchPeoplePlaceholder", resourceCulture);
             }
         }
         

@@ -499,7 +499,7 @@
     <value>Show on map</value>
   </data>
   <data name="MetadataPanel_TagPeopleOnPhoto" xml:space="preserve">
-    <value>Tag people on photo</value>
+    <value>Tag on photo</value>
   </data>
   <data name="MetadataPanel_Title" xml:space="preserve">
     <value>Metadata</value>
@@ -854,5 +854,20 @@
   </data>
   <data name="SortMenu_SortByFileSize" xml:space="preserve">
     <value>File size</value>
+  </data>
+  <data name="MetadataPanel_PeopleTaggingPageButton" xml:space="preserve">
+    <value>Batch mode</value>
+  </data>
+  <data name="PeopleTaggingPage_AllPeople" xml:space="preserve">
+    <value>All people</value>
+  </data>
+  <data name="PeopleTaggingPage_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="PeopleTaggingPage_RecentPeople" xml:space="preserve">
+    <value>Recently tagged people</value>
+  </data>
+  <data name="PeopleTaggingPage_SearchPeoplePlaceholder" xml:space="preserve">
+    <value>Search</value>
   </data>
 </root>
