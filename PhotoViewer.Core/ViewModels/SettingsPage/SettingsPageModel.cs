@@ -26,6 +26,8 @@ namespace PhotoViewer.Core.ViewModels
 
         public ApplicationSettings Settings { get; }
 
+        public string AppName { get; }
+
         public string Version { get; }
 
         internal SettingsPageModel(
@@ -38,6 +40,7 @@ namespace PhotoViewer.Core.ViewModels
             this.dialogService = dialogService;
             Settings = settings;
             Settings.PropertyChanged += Settings_PropertyChanged;
+            AppName = AppData.ApplicationName;
             var version = AppData.Version;
             Version = $"{version.Major}.{version.Minor}.{version.Build}";
         }
