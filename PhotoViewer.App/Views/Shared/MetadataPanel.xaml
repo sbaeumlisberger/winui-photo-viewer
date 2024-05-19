@@ -85,7 +85,7 @@
                 Padding="4"
                 Command="{x:Bind ViewModel.CloseCommand}"  
                 ToolTipService.ToolTip="{x:Bind res:Strings.MetadataPanel_CloseButtonToolTip}">
-                <SymbolIcon Symbol="ClosePane" />
+                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEA49;" />
             </Button>
         </RelativePanel>
 
