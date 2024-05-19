@@ -177,6 +177,21 @@
   <data name="PeopleTagAlreadyExistingDialog_Title" xml:space="preserve">
     <value>Person bereits markiert</value>
   </data>
+  <data name="PhotoOrientation_Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="PhotoOrientation_Rotate180" xml:space="preserve">
+    <value>Zur Anzeige 180° gedreht angzeigt</value>
+  </data>
+  <data name="PhotoOrientation_Rotate270" xml:space="preserve">
+    <value>Zur Anzeige 90° nach rechts gedreht</value>
+  </data>
+  <data name="PhotoOrientation_Rotate90" xml:space="preserve">
+    <value>Zur Anzeige 90° nach links gedreht</value>
+  </data>
+  <data name="PhotoOrientation_Unspecified" xml:space="preserve">
+    <value>Unspezifziert</value>
+  </data>
   <data name="RemovePeopleTagErrorDialog_Title" xml:space="preserve">
     <value>Personenmarkierung konnte nicht entfernet werden</value>
   </data>

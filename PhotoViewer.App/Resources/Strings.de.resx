@@ -292,7 +292,7 @@
     <value>Zurück</value>
   </data>
   <data name="FlipViewPageCommandBar_RotateButton" xml:space="preserve">
-    <value>Drehen nach rechts</value>
+    <value>Um 90° nach rechts drehen</value>
   </data>
   <data name="FlipViewPageCommandBar_SettingsButton" xml:space="preserve">
     <value>Einstellungen</value>

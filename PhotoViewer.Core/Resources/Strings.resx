@@ -177,6 +177,21 @@
   <data name="PeopleTagAlreadyExistingDialog_Title" xml:space="preserve">
     <value>Person already tagged</value>
   </data>
+  <data name="PhotoOrientation_Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="PhotoOrientation_Rotate180" xml:space="preserve">
+    <value>displayed rotated 180°</value>
+  </data>
+  <data name="PhotoOrientation_Rotate270" xml:space="preserve">
+    <value>displayed rotated 90° clockwise</value>
+  </data>
+  <data name="PhotoOrientation_Rotate90" xml:space="preserve">
+    <value>displayed rotated 90° counterclockwise</value>
+  </data>
+  <data name="PhotoOrientation_Unspecified" xml:space="preserve">
+    <value>Unspecified</value>
+  </data>
   <data name="RemovePeopleTagErrorDialog_Title" xml:space="preserve">
     <value>Could not remove people tag</value>
   </data>

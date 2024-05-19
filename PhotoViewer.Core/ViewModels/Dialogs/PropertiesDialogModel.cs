@@ -6,6 +6,7 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using System.Globalization;
 using Windows.Storage;
@@ -99,7 +100,7 @@ public partial class PropertiesDialogModel : ViewModelBase
         DateTaken = metadata.Get(MetadataProperties.DateTaken)?.ToString("g", CultureInfo.InstalledUICulture) ?? "";
 
         var orientation = metadata.Get(MetadataProperties.Orientation);
-        Orientation = $"{(int)orientation} ({orientation})";
+        Orientation = $"{(int)orientation} ({MapOrientationToDisplayText(orientation)})";
 
         string cameraManufacturer = metadata.Get(MetadataProperties.CameraManufacturer) ?? "";
         string cameraModel = metadata.Get(MetadataProperties.CameraModel) ?? "";
@@ -144,4 +145,22 @@ public partial class PropertiesDialogModel : ViewModelBase
         });
     }
 
+    private string MapOrientationToDisplayText(PhotoOrientation orientation)
+    {
+        switch (orientation)
+        {
+            case PhotoOrientation.Unspecified:
+                return Strings.PhotoOrientation_Unspecified;
+            case PhotoOrientation.Normal:
+                return Strings.PhotoOrientation_Normal;
+            case PhotoOrientation.Rotate90:
+                return Strings.PhotoOrientation_Rotate90;
+            case PhotoOrientation.Rotate180:
+                return Strings.PhotoOrientation_Rotate180;
+            case PhotoOrientation.Rotate270:
+                return Strings.PhotoOrientation_Rotate270;
+            default:
+                return orientation.ToString();
+        }
+    }
 }

@@ -292,7 +292,7 @@
     <value>Previous</value>
   </data>
   <data name="FlipViewPageCommandBar_RotateButton" xml:space="preserve">
-    <value>Rotate left</value>
+    <value>Rotate by 90° clockwise</value>
   </data>
   <data name="FlipViewPageCommandBar_SettingsButton" xml:space="preserve">
     <value>Settings</value>

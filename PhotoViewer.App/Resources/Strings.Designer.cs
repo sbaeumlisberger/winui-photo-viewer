@@ -691,7 +691,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rotate left.
+        ///   Looks up a localized string similar to Rotate by 90° clockwise.
         /// </summary>
         internal static string FlipViewPageCommandBar_RotateButton {
             get {

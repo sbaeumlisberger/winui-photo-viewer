@@ -241,6 +241,51 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Normal.
+        /// </summary>
+        public static string PhotoOrientation_Normal {
+            get {
+                return ResourceManager.GetString("PhotoOrientation_Normal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to displayed rotated 180°.
+        /// </summary>
+        public static string PhotoOrientation_Rotate180 {
+            get {
+                return ResourceManager.GetString("PhotoOrientation_Rotate180", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to displayed rotated 90° clockwise.
+        /// </summary>
+        public static string PhotoOrientation_Rotate270 {
+            get {
+                return ResourceManager.GetString("PhotoOrientation_Rotate270", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to displayed rotated 90° counterclockwise.
+        /// </summary>
+        public static string PhotoOrientation_Rotate90 {
+            get {
+                return ResourceManager.GetString("PhotoOrientation_Rotate90", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unspecified.
+        /// </summary>
+        public static string PhotoOrientation_Unspecified {
+            get {
+                return ResourceManager.GetString("PhotoOrientation_Unspecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not remove people tag.
         /// </summary>
         public static string RemovePeopleTagErrorDialog_Title {
