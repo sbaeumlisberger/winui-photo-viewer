@@ -12,7 +12,7 @@
     Style="{StaticResource DefaultContentDialogStyle}"
     Title="{x:Bind res:Strings.PrefixFilesByDateDialog_Title}">
 
-    <Grid Width="400" MinHeight="120">
+    <Grid MinHeight="120">
         <Grid Visibility="{x:Bind ViewModel.ShowConfirmation, Mode=OneWay}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>

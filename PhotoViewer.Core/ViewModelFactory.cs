@@ -33,6 +33,7 @@ public interface IViewModelFactory
     BackgroundTasksViewModel CreateBackgroundTasksViewModel();
     EditImageOverlayModel CreateEditImageOverlayModel();
     SortMenuModel CreateSortMenuModel();
+    ToolsMenuModel CreateToolsMenuModel();
 }
 
 public class ViewModelFactory : IViewModelFactory
@@ -137,12 +138,7 @@ public class ViewModelFactory : IViewModelFactory
             selectPreviousCommand,
             selectNextCommand,
             settings,
-            deleteFilesCommand,
-            new MoveRawFilesToSubfolderCommand(applicationSession, settings, dialogService),
-            new DeleteSingleRawFilesCommand(applicationSession, messenger, dialogService),
-            new ShiftDatenTakenCommand(applicationSession, messenger, dialogService, metadataService),
-            new ImportGpxTrackCommand(applicationSession, messenger, dialogService, metadataService, gpxService),
-            new PrefixFilesByDateCommand(applicationSession, dialogService, metadataService, messenger));
+            deleteFilesCommand);
     }
 
     public IMetadataPanelModel CreateMetadataPanelModel(bool showTagPeopleOnPhotoButton)
@@ -276,5 +272,15 @@ public class ViewModelFactory : IViewModelFactory
     public SortMenuModel CreateSortMenuModel()
     {
         return new SortMenuModel(applicationSession, sortService, messenger);
+    }
+
+    public ToolsMenuModel CreateToolsMenuModel()
+    {
+        return new ToolsMenuModel(
+            new MoveRawFilesToSubfolderCommand(applicationSession, settings, dialogService),
+            new DeleteSingleRawFilesCommand(applicationSession, messenger, dialogService),
+            new ShiftDatenTakenCommand(applicationSession, messenger, dialogService, metadataService),
+            new ImportGpxTrackCommand(applicationSession, messenger, dialogService, metadataService, gpxService),
+            new PrefixFilesByDateCommand(applicationSession, dialogService, metadataService, messenger));
     }
 }

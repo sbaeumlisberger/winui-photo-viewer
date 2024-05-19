@@ -35,12 +35,6 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     public ICommand SelectNextCommand { get; }
 
-    public IAcceleratedCommand MoveRawFilesToSubfolderCommand { get; }
-    public IAcceleratedCommand DeleteSingleRawFilesCommand { get; }
-    public IAcceleratedCommand ShiftDatenTakenCommand { get; }
-    public IAcceleratedCommand ImportGpxTrackCommand { get; }
-    public IAcceleratedCommand PrefixFilesByDateCommand { get; }
-
     public bool CanStartDiashow => SelectedItemModel != null;
 
     public bool CanCropImage => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmapFileInfo && ContentTypesSupportedByBitmapEncoder.Contains(bitmapFileInfo.ContentType);
@@ -54,6 +48,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     public BackgroundTasksViewModel BackgroundTasks { get; }
 
     public SortMenuModel SortMenuModel { get; }
+
+    public ToolsMenuModel ToolsMenuModel { get; }
 
     private readonly IDialogService dialogService;
 
@@ -72,12 +68,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         ICommand selectPreviousCommand,
         ICommand selectNextCommand,
         ApplicationSettings settings,
-        IDeleteFilesCommand deleteFilesCommand,
-        IMoveRawFilesToSubfolderCommand moveRawFilesToSubfolderCommand,
-        IDeleteSingleRawFilesCommand deleteSingleRawFilesCommand,
-        IShiftDatenTakenCommand shiftDatenTakenCommand,
-        IImportGpxTrackCommand importGpxTrackCommand,
-        IPrefixFilesByDateCommand prefixFilesByDateCommand)
+        IDeleteFilesCommand deleteFilesCommand)
      : base(messenger)
     {
         this.dialogService = dialogService;
@@ -88,15 +79,11 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         DeleteCommand = deleteFilesCommand;
         SelectPreviousCommand = selectPreviousCommand;
         SelectNextCommand = selectNextCommand;
-        MoveRawFilesToSubfolderCommand = moveRawFilesToSubfolderCommand;
-        DeleteSingleRawFilesCommand = deleteSingleRawFilesCommand;
-        ShiftDatenTakenCommand = shiftDatenTakenCommand;
-        ImportGpxTrackCommand = importGpxTrackCommand;
-        PrefixFilesByDateCommand = prefixFilesByDateCommand;
 
         BackgroundTasks = viewModelFactory.CreateBackgroundTasksViewModel();
 
         SortMenuModel = viewModelFactory.CreateSortMenuModel();
+        ToolsMenuModel = viewModelFactory.CreateToolsMenuModel();
     }
 
     [RelayCommand]

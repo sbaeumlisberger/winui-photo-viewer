@@ -33,6 +33,8 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
 
     public SortMenuModel SortMenuModel { get; }
 
+    public ToolsMenuModel ToolsMenuModel { get; }
+
     private readonly IDialogService dialogService;
 
     private readonly IMediaFilesLoaderService mediaFilesLoaderService;
@@ -59,6 +61,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
         BackgroundTasks = viewModelFactory.CreateBackgroundTasksViewModel();
 
         SortMenuModel = viewModelFactory.CreateSortMenuModel();
+        ToolsMenuModel = viewModelFactory.CreateToolsMenuModel();
     }
 
     [RelayCommand]

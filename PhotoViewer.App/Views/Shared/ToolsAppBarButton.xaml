@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AppBarButton
+    x:Class="PhotoViewer.App.Views.Shared.ToolsAppBarButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewer.App.Views.Shared"
+    xmlns:res="using:PhotoViewer.App.Resources"    
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"   
+    Style="{ThemeResource AppBarButtonOverflowStyle}"
+    Icon="Manage" 
+    Label="{x:Bind res:Strings.FlipViewPageCommandBar_ToolsButton}">
+
+    <AppBarButton.Flyout>
+        <MenuFlyout Placement="Left">
+            <MenuFlyoutItem
+                Text="{x:Bind res:Strings.MoveRawFilesToSubfolderUICommand_Label}" 
+                Command="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand}">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator
+                        Key="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand.AcceleratorKey}"
+                        Modifiers="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand.AcceleratorModifiers}"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem
+                Text="{x:Bind res:Strings.DeleteSingleRawFilesUICommand_Label}" 
+                Command="{x:Bind ViewModel.DeleteSingleRawFilesCommand}">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator
+                        Key="{x:Bind ViewModel.DeleteSingleRawFilesCommand.AcceleratorKey}"
+                        Modifiers="{x:Bind ViewModel.DeleteSingleRawFilesCommand.AcceleratorModifiers}"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem
+                Text="{x:Bind res:Strings.ShiftDatenTakenUICommand_Label}" 
+                Command="{x:Bind ViewModel.ShiftDatenTakenCommand}">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator
+                        Key="{x:Bind ViewModel.ShiftDatenTakenCommand.AcceleratorKey}"
+                        Modifiers="{x:Bind ViewModel.ShiftDatenTakenCommand.AcceleratorModifiers}"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem
+                Text="{x:Bind res:Strings.ImportGpxTrackUICommand_Label}" 
+                Command="{x:Bind ViewModel.ImportGpxTrackCommand}">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator
+                        Key="{x:Bind ViewModel.ImportGpxTrackCommand.AcceleratorKey}"
+                        Modifiers="{x:Bind ViewModel.ImportGpxTrackCommand.AcceleratorModifiers}"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem
+                Text="{x:Bind res:Strings.PrefixFilesByDateUICommand_Label}" 
+                Command="{x:Bind ViewModel.PrefixFilesByDateCommand}">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator
+                        Key="{x:Bind ViewModel.PrefixFilesByDateCommand.AcceleratorKey}"
+                        Modifiers="{x:Bind ViewModel.PrefixFilesByDateCommand.AcceleratorModifiers}"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+        </MenuFlyout>
+    </AppBarButton.Flyout>
+
+</AppBarButton>

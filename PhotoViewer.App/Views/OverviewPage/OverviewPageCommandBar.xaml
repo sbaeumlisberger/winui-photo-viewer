@@ -81,9 +81,13 @@
             </MenuFlyout>
         </AppBarButton.Flyout>
     </AppBarButton>
-        
+
+    <!-- enable keyboard accelerators for custom app bar buttons used as secondary commands -->
+    <shared:ToolsAppBarButton Width="0" IsTabStop="False" DataContext="{x:Bind ViewModel.ToolsMenuModel}" Flyout="{x:Null}"/>
+
     <CommandBar.SecondaryCommands>
         <shared:SortAppBarButton DataContext="{x:Bind ViewModel.SortMenuModel}"/>
+        <shared:ToolsAppBarButton DataContext="{x:Bind ViewModel.ToolsMenuModel}"/>
         <AppBarButton 
             Icon="OpenLocal" 
             Label="{x:Bind res:Strings.FlipViewPageCommandBar_OpenFolderButton}"

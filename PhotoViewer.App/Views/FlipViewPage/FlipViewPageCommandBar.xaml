@@ -12,63 +12,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     DefaultLabelPosition="Collapsed">
 
-    <CommandBar.Resources>
-        <XamlUICommand
-            x:Key="MoveRawFilesToSubfolderUICommand"
-            Label="{x:Bind res:Strings.MoveRawFilesToSubfolderUICommand_Label}" 
-            Command="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand}">
-            <XamlUICommand.KeyboardAccelerators>
-                <KeyboardAccelerator
-                    Key="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand.AcceleratorKey}"
-                    Modifiers="{x:Bind ViewModel.MoveRawFilesToSubfolderCommand.AcceleratorModifiers}"/>
-            </XamlUICommand.KeyboardAccelerators>
-        </XamlUICommand>
-
-        <XamlUICommand
-            x:Key="DeleteSingleRawFilesUICommand"
-            Label="{x:Bind res:Strings.DeleteSingleRawFilesUICommand_Label}" 
-            Command="{x:Bind ViewModel.DeleteSingleRawFilesCommand}">
-            <XamlUICommand.KeyboardAccelerators>
-                <KeyboardAccelerator
-                    Key="{x:Bind ViewModel.DeleteSingleRawFilesCommand.AcceleratorKey}"
-                    Modifiers="{x:Bind ViewModel.DeleteSingleRawFilesCommand.AcceleratorModifiers}"/>
-            </XamlUICommand.KeyboardAccelerators>
-        </XamlUICommand>
-
-        <XamlUICommand
-            x:Key="ShiftDatenTakenUICommand"
-            Label="{x:Bind res:Strings.ShiftDatenTakenUICommand_Label}" 
-            Command="{x:Bind ViewModel.ShiftDatenTakenCommand}">
-            <XamlUICommand.KeyboardAccelerators>
-                <KeyboardAccelerator
-                    Key="{x:Bind ViewModel.ShiftDatenTakenCommand.AcceleratorKey}"
-                    Modifiers="{x:Bind ViewModel.ShiftDatenTakenCommand.AcceleratorModifiers}"/>
-            </XamlUICommand.KeyboardAccelerators>
-        </XamlUICommand>
-
-        <XamlUICommand
-            x:Key="ImportGpxTrackUICommand"
-            Label="{x:Bind res:Strings.ImportGpxTrackUICommand_Label}" 
-            Command="{x:Bind ViewModel.ImportGpxTrackCommand}">
-            <XamlUICommand.KeyboardAccelerators>
-                <KeyboardAccelerator
-                    Key="{x:Bind ViewModel.ImportGpxTrackCommand.AcceleratorKey}"
-                    Modifiers="{x:Bind ViewModel.ImportGpxTrackCommand.AcceleratorModifiers}"/>
-            </XamlUICommand.KeyboardAccelerators>
-        </XamlUICommand>
-
-        <XamlUICommand
-            x:Key="PrefixFilesByDateUICommand"
-            Label="{x:Bind res:Strings.PrefixFilesByDateUICommand_Label}" 
-            Command="{x:Bind ViewModel.PrefixFilesByDateCommand}">
-            <XamlUICommand.KeyboardAccelerators>
-                <KeyboardAccelerator
-                    Key="{x:Bind ViewModel.PrefixFilesByDateCommand.AcceleratorKey}"
-                    Modifiers="{x:Bind ViewModel.PrefixFilesByDateCommand.AcceleratorModifiers}"/>
-            </XamlUICommand.KeyboardAccelerators>
-        </XamlUICommand>
-    </CommandBar.Resources>
-
     <CommandBar.Content>
         <StackPanel Orientation="Horizontal" Height="48" Spacing="12" Margin="8,0,0,0">
             <ProgressRing 
@@ -152,15 +95,12 @@
         </AppBarButton.KeyboardAccelerators>
     </AppBarButton>
 
-    <!-- enable keyboard accelerators for commands in menu flyout of secondary command -->
-    <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource MoveRawFilesToSubfolderUICommand}"/>
-    <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource DeleteSingleRawFilesUICommand}"/>
-    <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource ShiftDatenTakenUICommand}"/>
-    <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource ImportGpxTrackUICommand}"/>
-    <AppBarButton Width="0" IsTabStop="False" Command="{StaticResource PrefixFilesByDateUICommand}"/>
+    <!-- enable keyboard accelerators for custom app bar buttons used as secondary commands -->
+    <shared:ToolsAppBarButton Width="0" IsTabStop="False" DataContext="{x:Bind ViewModel.ToolsMenuModel}" Flyout="{x:Null}"/>
 
     <CommandBar.SecondaryCommands>
         <shared:SortAppBarButton DataContext="{x:Bind ViewModel.SortMenuModel}"/>
+        <shared:ToolsAppBarButton DataContext="{x:Bind ViewModel.ToolsMenuModel}"/>
         <AppBarButton 
             Icon="OpenLocal" 
             Label="{x:Bind res:Strings.FlipViewPageCommandBar_OpenFolderButton}"
@@ -168,20 +108,7 @@
             <AppBarButton.KeyboardAccelerators>
                 <KeyboardAccelerator Key="O" Modifiers="Control"/>
             </AppBarButton.KeyboardAccelerators>
-        </AppBarButton>
-        <AppBarButton             
-            Icon="Manage"
-            Label="{x:Bind res:Strings.FlipViewPageCommandBar_ToolsButton}">
-            <AppBarButton.Flyout>
-                <MenuFlyout Placement="Left">
-                    <MenuFlyoutItem Command="{StaticResource MoveRawFilesToSubfolderUICommand}"/>
-                    <MenuFlyoutItem Command="{StaticResource DeleteSingleRawFilesUICommand}"/>
-                    <MenuFlyoutItem Command="{StaticResource ShiftDatenTakenUICommand}"/>
-                    <MenuFlyoutItem Command="{StaticResource ImportGpxTrackUICommand}"/>
-                    <MenuFlyoutItem Command="{StaticResource PrefixFilesByDateUICommand}"/>
-                </MenuFlyout>
-            </AppBarButton.Flyout>
-        </AppBarButton>
+        </AppBarButton>      
         <AppBarButton 
             Icon="Setting" 
             Label="{x:Bind res:Strings.FlipViewPageCommandBar_SettingsButton}"

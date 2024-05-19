@@ -67,6 +67,7 @@
     <None Remove="Views\OverviewPageCommandBar.xaml" />
     <None Remove="Views\PeopleTaggingPage\PeopleTaggingPage.xaml" />
     <None Remove="Views\Shared\SortAppBarButton.xaml" />
+    <None Remove="Views\Shared\ToolsAppBarButton.xaml" />
     <None Remove="Views\TagPeopleTool.xaml" />
     <None Remove="Views\VectorGraphicFlipViewItem.xaml" />
     <None Remove="Views\VideoFlipViewItem.xaml" />
@@ -154,6 +155,10 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Shared\ToolsAppBarButton.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\VideoFlipViewItem.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
