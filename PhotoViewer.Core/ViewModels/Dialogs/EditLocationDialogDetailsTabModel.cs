@@ -94,7 +94,7 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
 
         Address? address = null;
 
-        if (!string.IsNullOrEmpty(Latitude) || !string.IsNullOrEmpty(City)
+        if (!string.IsNullOrEmpty(Street) || !string.IsNullOrEmpty(City)
             || !string.IsNullOrEmpty(Region) || !string.IsNullOrEmpty(Country))
         {
             address = new Address()
