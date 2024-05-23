@@ -1,4 +1,5 @@
 ﻿using Essentials.NET;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
 using System.Globalization;
 using System.Text.Json;
@@ -17,17 +18,11 @@ namespace PhotoViewer.Core.Services
         /// <summary>Retruns a list of locations found for the given query.</summary>
         Task<IReadOnlyList<Location>> FindLocationsAsync(string query, uint maxResults = 5);
 
-        /// <summary>Returns the location of the specified query. If no location is found, null is returned.</summary>
-        Task<Location?> FindLocationAsync(string query);
-
         /// <summary>Returns the nearest address of the specified position. If no address is found, null is returned.</summary>
         Task<Address?> FindAddressAsync(Geopoint position);
 
         /// <summary>Returns the position of the specified address. If no position is found, null is returned.</summary>
         Task<Geopoint?> FindGeopointAsync(Address address);
-
-        /// <summary>Returns the position of the specified address. If no position is found, null is returned.</summary>
-        Task<Geopoint?> FindGeopointAsync(string address);
     }
 
     /// <summary>A service to geocode and reverse-geocode location data via the Bing Maps REST Services.</summary>
@@ -38,9 +33,9 @@ namespace PhotoViewer.Core.Services
     {
         private const string BaseURL = "http://dev.virtualearth.net/REST/v1";
 
-        private string BingCultureCode => CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+        private static string BingCultureCode => CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 
-        private readonly string mapServiceToken = AppData.MapServiceToken;
+        private static string MapServiceToken => AppData.MapServiceToken;
 
         public async Task<Location?> FindLocationAsync(Geopoint geopoint)
         {
@@ -48,14 +43,19 @@ namespace PhotoViewer.Core.Services
             {
                 throw new ArgumentNullException(nameof(geopoint));
             }
-            var uri = new Uri(BaseURL + "/Locations/" + ToPointString(geopoint) + ToQueryString(
-                ("key", mapServiceToken),
+
+            var uri = new Uri(BaseURL + "/Locations/" + ToPointParam(geopoint) + ToQueryString(
+                ("key", MapServiceToken),
                 ("culture", BingCultureCode),
                 ("verboseplacenames", "true")
             ));
+
+            Log.Debug($"Sending request to {uri.ToString().Replace(MapServiceToken, "****")}");
+
             var httpClient = new HttpClient();
             var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
-            return (await ParseLocationsAsync(response).ConfigureAwait(false)).FirstOrDefault();
+            var locations = await ParseLocationsAsync(response).ConfigureAwait(false);
+            return locations.FirstOrDefault(); ;
         }
 
         public async Task<IReadOnlyList<Location>> FindLocationsAsync(string query, uint maxResults = 5)
@@ -64,40 +64,38 @@ namespace PhotoViewer.Core.Services
             {
                 throw new ArgumentNullException(nameof(query));
             }
+
             if (query == string.Empty)
             {
                 return Array.Empty<Location>();
             }
+
             var uri = new Uri(BaseURL + "/Locations" + ToQueryString(
-                ("key", mapServiceToken),
+                ("key", MapServiceToken),
                 ("culture", BingCultureCode),
                 ("verboseplacenames", "true"),
                 ("query", query),
                 ("maxResults", maxResults.ToString())
             ));
+
+            Log.Debug($"Sending request to {uri.ToString().Replace(MapServiceToken, "****")}");
+
             var httpClient = new HttpClient();
             var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
-            return await ParseLocationsAsync(response).ConfigureAwait(false);
-        }
 
-        public async Task<Location?> FindLocationAsync(string query)
-        {
-            return (await FindLocationsAsync(query, 1).ConfigureAwait(false)).FirstOrDefault();
+            return await ParseLocationsAsync(response).ConfigureAwait(false);
         }
 
         public async Task<Address?> FindAddressAsync(Geopoint position)
         {
-            return (await FindLocationAsync(position).ConfigureAwait(false))?.Address;
+            var location = await FindLocationAsync(position).ConfigureAwait(false);
+            return location?.Address;
         }
 
         public async Task<Geopoint?> FindGeopointAsync(Address address)
         {
-            return (await FindLocationAsync(address.ToString()).ConfigureAwait(false))?.Geopoint;
-        }
-
-        public async Task<Geopoint?> FindGeopointAsync(string address)
-        {
-            return (await FindLocationAsync(address).ConfigureAwait(false))?.Geopoint;
+            var locations = await FindLocationsAsync(address.ToString(), 1).ConfigureAwait(false);
+            return locations.FirstOrDefault()?.Geopoint;
         }
 
         private async Task<List<Location>> ParseLocationsAsync(string response)
@@ -113,7 +111,7 @@ namespace PhotoViewer.Core.Services
                 locations.Add(ParseLocation(entry));
             }
 
-            if (locations.Any())
+            if (locations.Count != 0)
             {
                 // retrieving the elevation data requires an additional request
                 await UpdateElevationDataAsync(locations).ConfigureAwait(false);
@@ -184,8 +182,8 @@ namespace PhotoViewer.Core.Services
         {
             var locations = new List<Location>();
             var uri = new Uri(BaseURL + "/Elevation/List" + ToQueryString(
-                ("key", mapServiceToken),
-                ("points", string.Join(",", geopoints.Select(ToPointString))),
+                ("key", MapServiceToken),
+                ("points", string.Join(",", geopoints.Select(ToPointParam))),
                 ("heights", "ellipsoid")
             ));
             var httpClient = new HttpClient();
@@ -215,7 +213,7 @@ namespace PhotoViewer.Core.Services
             return string.Empty;
         }
 
-        private string ToPointString(Geopoint geopoint)
+        private string ToPointParam(Geopoint geopoint)
         {
             string latitude = geopoint.Position.Latitude.ToString(CultureInfo.InvariantCulture);
             string longitude = geopoint.Position.Longitude.ToString(CultureInfo.InvariantCulture);

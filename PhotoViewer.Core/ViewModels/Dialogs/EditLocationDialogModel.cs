@@ -55,7 +55,7 @@ public partial class EditLocationDialogModel : ViewModelBase
             Latitude = latitude,
             Longitude = longitude
         };
-        var geopoint = new Geopoint(geopositon, AltitudeReferenceSystem.Unspecified);
+        var geopoint = new Geopoint(geopositon, AltitudeReferenceSystem.Ellipsoid);
         Location = await locationService.FindLocationAsync(geopoint);
     }
 
