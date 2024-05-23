@@ -1,4 +1,5 @@
-﻿using Windows.Devices.Geolocation;
+﻿using PhotoViewer.Core.Utils;
+using Windows.Devices.Geolocation;
 
 namespace PhotoViewer.Core.Models;
 
@@ -12,5 +13,10 @@ public record Location
     {
         Address = address;
         Geopoint = point;
+    }
+
+    public override string ToString()
+    {
+        return Address != null ? Address.ToString() : Geopoint?.ToDecimalString() ?? "";
     }
 }

@@ -31,7 +31,7 @@
                     UpdateTextOnSelect="False">
                     <AutoSuggestBox.ItemTemplate>
                         <DataTemplate x:DataType="models:Location">
-                            <TextBlock Text="{x:Bind Address}"/>
+                            <TextBlock Text="{x:Bind}"/>
                         </DataTemplate>
                     </AutoSuggestBox.ItemTemplate>
                 </AutoSuggestBox>
