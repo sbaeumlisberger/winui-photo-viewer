@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="MetadataAPI" Version="1.5.0" />
-    <PackageReference Include="OpenCvSharp4.Windows" Version="4.9.0.20240103" />
+    <PackageReference Include="OpenCvSharp4.Windows" Version="4.10.0.20240616" />
   </ItemGroup>
 
 </Project>
