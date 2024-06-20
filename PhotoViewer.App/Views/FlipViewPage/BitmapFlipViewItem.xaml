@@ -19,7 +19,8 @@
         <controls:BitmapViewer 
             x:Name="bitmapViewer"
             BitmapImage="{x:Bind ViewModel.ImageViewModel.Image, Mode=OneWay}" 
-            IsEnabled="{x:Bind ViewModel.IsSelected, Mode=OneWay}">
+            IsEnabled="{x:Bind ViewModel.IsSelected, Mode=OneWay}"
+            IsScaleUpEnabeld="{x:Bind ViewModel.IsDiashowActive, Mode=OneWay}">
             <Grid 
                 Visibility="{x:Bind ViewModel.IsContextMenuEnabeld, Mode=OneWay}"
                 Background="Transparent" 
