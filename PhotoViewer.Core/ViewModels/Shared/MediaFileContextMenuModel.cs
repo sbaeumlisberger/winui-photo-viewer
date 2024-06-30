@@ -19,11 +19,15 @@ namespace PhotoViewer.Core.ViewModels;
 public interface IMediaFileContextMenuModel : IViewModel
 {
     IReadOnlyList<IMediaFileInfo> Files { get; set; }
+
+    public bool IsEnabled { get; set; }
 }
 
 public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContextMenuModel
 {
     public IReadOnlyList<IMediaFileInfo> Files { get; set; } = Array.Empty<IMediaFileInfo>();
+
+    public bool IsEnabled { get; set; } = true;
 
     public bool IsOpenWithItemVisible => Files.Count == 1;
 

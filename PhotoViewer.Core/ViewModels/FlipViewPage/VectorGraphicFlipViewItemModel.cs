@@ -21,7 +21,7 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
 
     public bool IsLoadingFailed { get; private set; } = false;
 
-    public bool IsContextMenuEnabeld => !IsDiashowActive;
+    public bool IsContextMenuEnabeld => IsSelected && !IsDiashowActive;
 
     public IMediaFileContextMenuModel ContextMenuModel { get; }
 
@@ -32,6 +32,11 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
         MediaFile = mediaFile;
         ContextMenuModel = viewModelFactory.CreateMediaFileContextMenuModel();
         ContextMenuModel.Files = new[] { mediaFile };
+    }
+
+    partial void OnIsContextMenuEnabeldChanged()
+    {
+        ContextMenuModel.IsEnabled = IsContextMenuEnabeld;
     }
 
     public async Task InitializeAsync()

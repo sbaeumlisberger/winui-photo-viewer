@@ -24,7 +24,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     public MediaPlayer? MediaPlayer { get; private set; }
 
-    public bool IsContextMenuEnabeld => !IsDiashowActive;
+    public bool IsContextMenuEnabeld => IsSelected && !IsDiashowActive;
 
     public IMediaFileContextMenuModel ContextMenuModel { get; }
 
@@ -41,6 +41,11 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
         MediaFile = mediaFile;
         ContextMenuModel = viewModelFactory.CreateMediaFileContextMenuModel();
         ContextMenuModel.Files = new[] { mediaFile };
+    }
+
+    partial void OnIsContextMenuEnabeldChanged()
+    {
+        ContextMenuModel.IsEnabled = IsContextMenuEnabeld;
     }
 
     public async Task InitializeAsync()

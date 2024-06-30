@@ -19,7 +19,10 @@
                 Icon="NewWindow" Text="{x:Bind res:Strings.MediaFileContextMenu_OpenInNewWindows}"
                 Command="{x:Bind ViewModel.OpenInNewWindowCommand}">
                 <MenuFlyoutItem.KeyboardAccelerators>
-                    <KeyboardAccelerator Modifiers="Control" Key="N"/>
+                    <KeyboardAccelerator 
+                        IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}"
+                        Modifiers="Control"
+                        Key="N"/>
                 </MenuFlyoutItem.KeyboardAccelerators>
             </MenuFlyoutItem>
 
@@ -29,7 +32,10 @@
                 Icon="Copy" Text="{x:Bind res:Strings.MediaFileContextMenu_Open}" 
                 Command="{x:Bind ViewModel.CopyCommand, Mode=OneWay}">
                 <MenuFlyoutItem.KeyboardAccelerators>
-                    <KeyboardAccelerator Modifiers="Control,Shift" Key="C"/>
+                    <KeyboardAccelerator 
+                        IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}"
+                        Modifiers="Control,Shift" 
+                        Key="C"/>
                 </MenuFlyoutItem.KeyboardAccelerators>
             </MenuFlyoutItem>
 
@@ -42,7 +48,10 @@
                 Command="{x:Bind ViewModel.PrintCommand, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.IsPrinItemVisible, Mode=OneWay}">
                 <MenuFlyoutItem.KeyboardAccelerators>
-                    <KeyboardAccelerator Modifiers="Control" Key="P"/>
+                    <KeyboardAccelerator
+                        IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}"
+                        Modifiers="Control"
+                        Key="P"/>
                 </MenuFlyoutItem.KeyboardAccelerators>
             </MenuFlyoutItem>
 
@@ -80,7 +89,7 @@
                 Command="{x:Bind ViewModel.RenameCommand, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.IsRenameItemVisible, Mode=OneWay}">
                 <MenuFlyoutItem.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="F2"/>
+                    <KeyboardAccelerator IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}" Key="F2"/>
                 </MenuFlyoutItem.KeyboardAccelerators>
             </MenuFlyoutItem>
             
@@ -90,7 +99,10 @@
                 Command="{x:Bind ViewModel.RotateCommand, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.IsRotateItemVisible, Mode=OneWay}">
                 <MenuFlyoutItem.KeyboardAccelerators>
-                    <KeyboardAccelerator Modifiers="Control" Key="R"/>
+                    <KeyboardAccelerator
+                        IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}" 
+                        Modifiers="Control"
+                        Key="R"/>
                 </MenuFlyoutItem.KeyboardAccelerators>
             </MenuFlyoutItem>
 
@@ -101,6 +113,7 @@
                 CommandParameter="{x:Bind ViewModel.Files, Mode=OneWay}">
                 <MenuFlyoutItem.KeyboardAccelerators>
                     <KeyboardAccelerator 
+                        IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}"
                         Modifiers="{x:Bind ViewModel.DeleteCommand.AcceleratorModifiers}"
                         Key="{x:Bind ViewModel.DeleteCommand.AcceleratorKey}"/>
                 </MenuFlyoutItem.KeyboardAccelerators>

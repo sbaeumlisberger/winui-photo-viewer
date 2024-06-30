@@ -23,7 +23,7 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
 
     public IImageViewModel ImageViewModel { get; }
 
-    public bool IsContextMenuEnabeld => !IsDiashowActive;
+    public bool IsContextMenuEnabeld => IsSelected && !IsDiashowActive;
 
     public IMediaFileContextMenuModel ContextMenuModel { get; }
 
@@ -51,6 +51,11 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
         }
 
         CropImageToolModel = viewModelFactory.CreateCropImageToolModel(bitmapFile);
+    }
+
+    partial void OnIsContextMenuEnabeldChanged()
+    {
+        ContextMenuModel.IsEnabled = IsContextMenuEnabeld;
     }
 
     private void ImageViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
