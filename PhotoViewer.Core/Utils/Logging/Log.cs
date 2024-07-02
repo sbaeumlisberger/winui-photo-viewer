@@ -7,9 +7,9 @@ public static class Log
 {
     public static ILogger? Logger { get; set; }
 
-    public static void Debug(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
+    public static void Debug(string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Logger?.Debug(message, memberName, file, lineNumber);
+        Logger?.Debug(message, exception, memberName, file, lineNumber);
     }
 
     public static void Info(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)

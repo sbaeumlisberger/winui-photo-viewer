@@ -14,9 +14,9 @@ internal class LoggerMock : ILogger
         this.testOutputHelper = testOutputHelper;
     }
 
-    public void Debug(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
+    public void Debug(string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Log("DEBUG", message, null, file, lineNumber);
+        Log("DEBUG", message, exception, file, lineNumber);
     }
 
     public void Info(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)

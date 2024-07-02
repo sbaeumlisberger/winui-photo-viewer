@@ -5,7 +5,7 @@ namespace PhotoViewer.App.Utils.Logging;
 
 public interface ILogger
 {
-    void Debug(string value, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1);
+    void Debug(string value, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1);
 
     void Info(string value, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1);
 

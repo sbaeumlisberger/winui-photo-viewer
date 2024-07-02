@@ -30,11 +30,11 @@ public class LoggerImpl : ILogger
         Task.Delay(5000).ContinueWith(_ => CleanupOldLogFiles());
     }
 
-    public void Debug(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
+    public void Debug(string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
         if (isDebugLogEnabled)
         {
-            Log("DEBUG", message, null, file, lineNumber);
+            Log("DEBUG", message, exception, file, lineNumber);
         }
     }
 
