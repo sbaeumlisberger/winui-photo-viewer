@@ -39,6 +39,8 @@ namespace PhotoViewer.Core.ViewModels
 
         public bool IsUnsupportedFilesMessageVisibile { get; private set; } = false;
 
+        public bool ShowSelectOnlySupportedFilesButton { get; private set; } = false;
+
         public MetadataTextboxModel TitleTextboxModel { get; }
         public LocationSectionModel LocationSectionModel { get; }
         public PeopleSectionModel PeopleSectionModel { get; }
@@ -125,12 +127,13 @@ namespace PhotoViewer.Core.ViewModels
             IsLoading = true;
 
             supportedFiles = Files.OfType<IBitmapFileInfo>().Where(file => file.IsMetadataSupported).ToImmutableList();
-            bool allFilsSupported = supportedFiles.Count == Files.Count;
+            bool allFilesSupported = supportedFiles.Count == Files.Count;
 
-            IsNoFilesSelectedMessageVisible = !Files.Any();
-            IsUnsupportedFilesMessageVisibile = Files.Any() && !allFilsSupported;
+            IsNoFilesSelectedMessageVisible = Files.Count == 0;
+            IsUnsupportedFilesMessageVisibile = Files.Count > 0 && !allFilesSupported;
+            ShowSelectOnlySupportedFilesButton = Files.Count > 1 && !allFilesSupported;
 
-            if (Files.Any() && allFilsSupported)
+            if (supportedFiles.Count > 0 && allFilesSupported)
             {
                 try
                 {
@@ -172,5 +175,10 @@ namespace PhotoViewer.Core.ViewModels
             IsVisible = false;
         }
 
+        [RelayCommand]
+        private void SelectOnlySupportedFiles() 
+        {
+            Messenger.Send(new SelectFilesMessage(supportedFiles.Cast<IMediaFileInfo>().ToImmutableList()));
+        }
     }
 }

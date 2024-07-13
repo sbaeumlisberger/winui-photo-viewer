@@ -49,6 +49,7 @@ public partial class OverviewPageModel : ViewModelBase
         Register<MediaFilesLoadingMessage>(OnReceived);
         Register<MediaFilesDeletedMessage>(OnReceived);
         Register<FilesSortedMessage>(msg => Items = new ObservableList<IMediaFileInfo>(session.Files));
+        Register<SelectFilesMessage>(msg => SelectedItems = msg.FilesToSelect);
     }
 
     protected override void OnCleanup()

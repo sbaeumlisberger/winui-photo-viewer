@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Essentials.NET;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
@@ -9,7 +10,9 @@ using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.ViewModels;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace PhotoViewer.App.Views;
@@ -21,15 +24,33 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
 
     private PrintRegistration? printRegistration;
 
+    private bool isUpdatingSelection = false;
+
     public OverviewPage()
     {
         DataContext = App.Current.ViewModelFactory.CreateOverviewPageModel();
         this.InitializeComponentMVVM();
     }
 
+    partial void ConnectToViewModel(OverviewPageModel viewModel)
+    {
+        viewModel.PropertyChanged += ViewModel_PropertyChanged;
+    }
+
     partial void DisconnectFromViewModel(OverviewPageModel viewModel)
     {
+        viewModel.PropertyChanged -= ViewModel_PropertyChanged;
         viewModel.Cleanup();
+    }
+
+    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(OverviewPageModel.SelectedItems):
+                UpdateSelection();
+                break;
+        }
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -51,9 +72,22 @@ public sealed partial class OverviewPage : Page, IMVVMControl<OverviewPageModel>
         }
     }
 
+    private void UpdateSelection()
+    {
+        if (!gridView.SelectedItems.SequenceEqual(ViewModel!.SelectedItems))
+        {
+            isUpdatingSelection = true;
+            gridView.SelectedItems.ReplaceAll(ViewModel!.SelectedItems);
+            isUpdatingSelection = false;
+        }
+    }
+
     private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        ViewModel!.SelectedItems = gridView.SelectedItems.Cast<IMediaFileInfo>().ToList();
+        if (!isUpdatingSelection)
+        {
+            ViewModel!.SelectedItems = gridView.SelectedItems.Cast<IMediaFileInfo>().ToList();
+        }
     }
 
     private void GridView_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)

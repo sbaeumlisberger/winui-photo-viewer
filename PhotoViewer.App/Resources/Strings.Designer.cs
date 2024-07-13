@@ -1312,6 +1312,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select only supported files.
+        /// </summary>
+        internal static string MetadataPanel_SelectOnlySupportedFiles {
+            get {
+                return ResourceManager.GetString("MetadataPanel_SelectOnlySupportedFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shift date taken.
         /// </summary>
         internal static string MetadataPanel_ShiftDateTakenButton {

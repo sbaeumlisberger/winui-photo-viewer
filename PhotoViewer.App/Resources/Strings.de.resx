@@ -870,4 +870,7 @@
   <data name="PeopleTaggingPage_SearchPeoplePlaceholder" xml:space="preserve">
     <value>Suchen</value>
   </data>
+  <data name="MetadataPanel_SelectOnlySupportedFiles" xml:space="preserve">
+    <value>Nur unterstütze Dateien auswählen</value>
+  </data>
 </root>

@@ -873,4 +873,7 @@
   <data name="ImportGpxTrackDialog_AltitudeReferenceSystemInfoToolTip" xml:space="preserve">
     <value>Open documentation</value>
   </data>
+  <data name="MetadataPanel_SelectOnlySupportedFiles" xml:space="preserve">
+    <value>Select only supported files</value>
+  </data>
 </root>
