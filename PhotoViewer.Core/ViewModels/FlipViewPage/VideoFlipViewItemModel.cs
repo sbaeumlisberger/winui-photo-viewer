@@ -157,12 +157,12 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     private void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
     {
-        playbackCompletionSource.SetResult();
+        playbackCompletionSource.TrySetResult();
     }
 
     private void MediaPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
     {
         Log.Error($"An error occured playing \"{MediaFile.DisplayName}\": {args.Error}: {args.ErrorMessage}", args.ExtendedErrorCode);
-        playbackCompletionSource.SetResult();
+        playbackCompletionSource.TrySetResult();
     }
 }

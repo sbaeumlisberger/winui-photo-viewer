@@ -23,7 +23,8 @@
             <MediaTransportControls 
                 Margin="128,0,128,8"
                 IsCompact="True"
-                IsZoomButtonVisible="False"/>
+                IsZoomButtonVisible="False"
+                Tapped="MediaTransportControls_Tapped"/>
         </MediaPlayerElement.TransportControls>
     </MediaPlayerElement>
     

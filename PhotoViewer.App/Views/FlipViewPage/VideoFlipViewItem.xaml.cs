@@ -42,4 +42,9 @@ public sealed partial class VideoFlipViewItem : UserControl, IMVVMControl<VideoF
             mediaPlayerElement.ShowAttachedFlyout(args);
         }
     }
+
+    private void MediaTransportControls_Tapped(object sender, TappedRoutedEventArgs e)
+    {
+        e.Handled = true;
+    }
 }
