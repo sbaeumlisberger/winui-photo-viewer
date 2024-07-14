@@ -14,13 +14,14 @@
             x:Name="mediaFileContextMenuHolder" 
             DataContext="{x:Bind ViewModel.ContextMenuModel}"/>
     </UserControl.Resources>
-  
+
     <Grid>
         <controls:BitmapViewer 
             x:Name="bitmapViewer"
             BitmapImage="{x:Bind ViewModel.ImageViewModel.Image, Mode=OneWay}" 
             IsEnabled="{x:Bind ViewModel.IsSelected, Mode=OneWay}"
-            IsScaleUpEnabeld="{x:Bind ViewModel.IsDiashowActive, Mode=OneWay}">
+            IsScaleUpEnabeld="{x:Bind ViewModel.IsDiashowActive, Mode=OneWay}"
+            SizeChanged="BitmapViewer_SizeChanged">
             <Grid 
                 Visibility="{x:Bind ViewModel.IsContextMenuEnabeld, Mode=OneWay}"
                 Background="Transparent" 
@@ -45,7 +46,7 @@
                 Margin="0,8,0,0"
                 Text="{x:Bind x:String.Format(res:Strings.BitmapFlipViewItem_LoadingMessage, ViewModel.MediaFile.FileName)}"/>
         </StackPanel>
-    
+
         <StackPanel 
             HorizontalAlignment="Center" 
             VerticalAlignment="Center" 
@@ -59,6 +60,19 @@
                 Content="{x:Bind res:Strings.BitmapFlipViewItem_ReloadButton}"
                 Command="{x:Bind ViewModel.ImageViewModel.ReloadCommand}"/>
         </StackPanel>
+
+        <Border 
+            x:Name="zoomTextBlockContainer"
+            Visibility="Collapsed"
+            Width="64"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            Padding="8"    
+            Margin="12"
+            CornerRadius="4"
+            Background="{ThemeResource SystemControlBackgroundAltMediumBrush}">
+            <TextBlock TextAlignment="Center" x:Name="zoomTextBlock"/>
+        </Border>
     </Grid>
 
 </UserControl>

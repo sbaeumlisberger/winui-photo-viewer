@@ -43,6 +43,13 @@ public sealed partial class VectorGraphicFlipViewItem : UserControl, IMVVMContro
                 await ShowSvgAsync(svg);
             }
         }
+        else if (e.PropertyName == nameof(ViewModel.IsDiashowActive))
+        {
+            if (ViewModel!.IsDiashowActive)
+            {
+                scrollViewer.ChangeView(0, 0, 1);
+            }
+        }
     }
 
     private async Task ShowSvgAsync(string svg)
