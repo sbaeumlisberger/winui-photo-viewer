@@ -7,12 +7,12 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="e0a2c53a-fca5-4900-82b0-ae74f7c64dce"
+    Name="0ea2fe07-2b84-45b5-8887-6da1918642b3"
     Publisher="C=DE, CN=Sebastian Bäumlisberger"
-    Version="1.0.11.0" />
+    Version="5.0.0.0" />
 
   <Properties>
-    <DisplayName>WinUIPhotoViewer</DisplayName>
+    <DisplayName>Universe Photos</DisplayName>
     <PublisherDisplayName>Sebastian</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -32,7 +32,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="WinUI Photo Viewer"
+        DisplayName="Universe Photos"
         Description="A photo viewer build with WinUI"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
@@ -73,7 +73,7 @@
               <uap:FileType ContentType="video/mp2t">.ts</uap:FileType>
               <uap:FileType ContentType="video/quicktime">.mov</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>Photo Viewer</uap:DisplayName>
+            <uap:DisplayName>Universe Photos</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
       </Extensions>

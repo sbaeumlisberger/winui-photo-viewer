@@ -34,7 +34,7 @@ public class MediaFlipViewModelTest
     }
 
     [Fact]
-    public async void Receive_MediaFilesLoadedMessage()
+    public async Task Receive_MediaFilesLoadedMessage()
     {
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[17];
@@ -61,7 +61,7 @@ public class MediaFlipViewModelTest
     }
 
     [Fact]
-    public async void PreloadedItemModelIsResused_WhenLoadingMediaFilesCompleted()
+    public async Task PreloadedItemModelIsResused_WhenLoadingMediaFilesCompleted()
     {
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[17];
@@ -81,7 +81,7 @@ public class MediaFlipViewModelTest
     }
 
     [Fact]
-    public async void Receive_MediaFilesLoadedMessage_DeleteStartFileWhileLoadingMoreFiles()
+    public async Task Receive_MediaFilesLoadedMessage_DeleteStartFileWhileLoadingMoreFiles()
     {
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[17];
@@ -114,7 +114,7 @@ public class MediaFlipViewModelTest
     }
 
     [Fact]
-    public async void Receive_MediaFilesDeletedMessage()
+    public async Task Receive_MediaFilesDeletedMessage()
     {
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[17];
@@ -141,7 +141,7 @@ public class MediaFlipViewModelTest
     }
 
     [Fact]
-    public async void Receive_MediaFilesDeletedMessage_LastItem()
+    public async Task Receive_MediaFilesDeletedMessage_LastItem()
     {
         var files = Enumerable.Range(0, 200).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[199];
@@ -160,7 +160,7 @@ public class MediaFlipViewModelTest
     }
 
     [Fact]
-    public async void Receive_MediaFilesDeletedMessage_Empty()
+    public async Task Receive_MediaFilesDeletedMessage_Empty()
     {
         var files = Enumerable.Range(0, 1).Select(i => MockMediaFileInfo("File_" + i + ".jpg")).ToList();
         IMediaFileInfo startFile = files[0];

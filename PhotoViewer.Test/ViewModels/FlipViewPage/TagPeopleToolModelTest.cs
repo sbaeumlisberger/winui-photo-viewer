@@ -287,14 +287,14 @@ public class TagPeopleToolModelTest
 
         tagPeopleToolModel.TrySelectNextDetectedFace();
 
-        Assert.Equal(0, tagPeopleToolModel.SuggestedFaces.Count);
+        Assert.Empty(tagPeopleToolModel.SuggestedFaces);
         Assert.Equal(exampleSuggestedFaces[2], tagPeopleToolModel.SelectionRectInPercent);
 
         tagPeopleToolModel.AutoSuggestBoxText = "Some Name";
 
         tagPeopleToolModel.TrySelectNextDetectedFace();
 
-        Assert.Equal(0, tagPeopleToolModel.SuggestedFaces.Count);
+        Assert.Empty(tagPeopleToolModel.SuggestedFaces);
         Assert.Equal(Rect.Empty, tagPeopleToolModel.SelectionRectInPercent);
         Assert.Equal(string.Empty, tagPeopleToolModel.AutoSuggestBoxText);
     }

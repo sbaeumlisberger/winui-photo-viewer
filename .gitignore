@@ -9,4 +9,5 @@ BundleArtifacts/
 !**/[Pp]ackages/build/
 project.assets.json
 
-*.csproj.user
+*.user
+*.assets.cache
