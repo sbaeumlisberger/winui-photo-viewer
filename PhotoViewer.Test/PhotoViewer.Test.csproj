@@ -2,8 +2,9 @@
 
 	<PropertyGroup>
 		<TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
-    <UseRidGraph>true</UseRidGraph>
-    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+		<WindowsSdkPackageVersion>10.0.22621.37-preview</WindowsSdkPackageVersion>
+		<UseRidGraph>true</UseRidGraph>
+		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Platforms>x86;x64;arm64</Platforms>
@@ -11,7 +12,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Remove="Resources\TestFile.jpg" />
+		<Content Remove="Resources\TestFile.jpg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -23,8 +24,8 @@
 		</PackageReference>
 		<PackageReference Include="NSubstitute" Version="5.1.0" />
 		<PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.17">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="xunit" Version="2.9.0" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
@@ -38,15 +39,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Update="Resources\CropImageServiceTest\TestFile.jpg">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
+		<Content Update="Resources\CropImageServiceTest\TestFile.jpg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="Resources\CropImageServiceTest\TestFile.jpg">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
+		<None Update="Resources\CropImageServiceTest\TestFile.jpg">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 </Project>

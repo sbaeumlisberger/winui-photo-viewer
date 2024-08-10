@@ -24,14 +24,15 @@ namespace PhotoViewer.Core.Services
         Task RemoveSuggestionAsync(string suggestion);
     }
 
+    internal record class SuggestionsJsonObject(List<string> Values);
+
     internal class SuggestionsService : ISuggestionsService
     {
-        private record class JsonObject(List<string> Values);
-
         private const int MaxRecentCount = 20;
 
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
+            TypeInfoResolver = PhotoViewerJsonSerializerContext.Default,
             WriteIndented = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
@@ -104,14 +105,14 @@ namespace PhotoViewer.Core.Services
         public async Task ImportFromFileAsync(IStorageFile file)
         {
             using var stream = File.OpenRead(file.Path);
-            var suggestionsJsonObject = await JsonSerializer.DeserializeAsync<JsonObject>(stream, JsonOptions);
+            var suggestionsJsonObject = await JsonSerializer.DeserializeAsync<SuggestionsJsonObject>(stream, JsonOptions);
             suggestions = suggestionsJsonObject!.Values.ToHashSet();
             await PersistSuggestionsAsync();
         }
 
         public async Task ExportToFileAsync(IStorageFile file)
         {
-            var suggestionsJsonObject = new JsonObject(suggestions.ToList());
+            var suggestionsJsonObject = new SuggestionsJsonObject(suggestions.ToList());
             using var stream = File.Open(file.Path, FileMode.Create);
             await JsonSerializer.SerializeAsync(stream, suggestionsJsonObject, JsonOptions);
         }
@@ -121,27 +122,27 @@ namespace PhotoViewer.Core.Services
             if (File.Exists(filePathSuggestions))
             {
                 using var stream = File.OpenRead(filePathSuggestions);
-                var suggestionsJsonObject = await JsonSerializer.DeserializeAsync<JsonObject>(stream, JsonOptions);
+                var suggestionsJsonObject = await JsonSerializer.DeserializeAsync<SuggestionsJsonObject>(stream, JsonOptions);
                 suggestions = suggestionsJsonObject!.Values.ToHashSet();
             }
             if (File.Exists(filePathRecent))
             {
                 using var stream = File.OpenRead(filePathRecent);
-                var recentJsonObject = await JsonSerializer.DeserializeAsync<JsonObject>(stream, JsonOptions);
+                var recentJsonObject = await JsonSerializer.DeserializeAsync<SuggestionsJsonObject>(stream, JsonOptions);
                 recent = recentJsonObject!.Values;
             }
         }
 
         private async Task PersistSuggestionsAsync()
         {
-            var suggestionsJsonObject = new JsonObject(suggestions.ToList());
+            var suggestionsJsonObject = new SuggestionsJsonObject(suggestions.ToList());
             using var stream = File.Open(filePathSuggestions, FileMode.Create);
             await JsonSerializer.SerializeAsync(stream, suggestionsJsonObject, JsonOptions);
         }
 
         private async Task PersistRecentAsync()
         {
-            var recentJsonObject = new JsonObject(recent.ToList());
+            var recentJsonObject = new SuggestionsJsonObject(recent.ToList());
             using var stream = File.Open(filePathRecent, FileMode.Create);
             await JsonSerializer.SerializeAsync(stream, recentJsonObject, JsonOptions);
         }

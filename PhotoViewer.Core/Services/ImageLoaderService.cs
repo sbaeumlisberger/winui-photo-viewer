@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using PhotoViewer.App.Exceptions;
 using PhotoViewer.App.Models;
+using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -20,7 +21,9 @@ public class ImageLoaderService : IImageLoaderService
 {
     private CanvasDevice Device => CanvasDevice.GetSharedDevice();
 
-    private IGifImageLoaderService gifImageLoaderService;
+    private readonly IGifImageLoaderService gifImageLoaderService;
+
+    private readonly IWICImagingFactory wic = WICImagingFactory.Create();
 
     public ImageLoaderService(IGifImageLoaderService gifImageLoaderService)
     {
@@ -39,6 +42,8 @@ public class ImageLoaderService : IImageLoaderService
         }
         catch (Exception ex)
         {
+            Log.Debug($"Failed to load image {file.FileName}", ex);
+
             if (TryGetDeocderInfoForFileExtension(file.FileExtension) is null)
             {
                 throw new CodecNotFoundException(file.FileExtension, ex);
@@ -63,17 +68,20 @@ public class ImageLoaderService : IImageLoaderService
     {
         using (var fileStream = await file.OpenAsRandomAccessStreamAsync(FileAccessMode.Read).ConfigureAwait(false))
         {
-            InMemoryRandomAccessStream memoryStream = new();
+            var memoryStream = new InMemoryRandomAccessStream();
+            Log.Debug($"Read {file.FileName} into memory");
             await RandomAccessStream.CopyAsync(fileStream, memoryStream);
             fileStream.Dispose();
             memoryStream.Seek(0);
 
             cancellationToken.ThrowIfCancellationRequested();
-            ColorSpaceInfo colorSpace = GetColorSpaceInfo(memoryStream);
+            ColorSpaceInfo colorSpace = new ColorSpaceInfo(ColorSpaceType.NotSpecified, null); // GetColorSpaceInfo(memoryStream.AsStream());
             memoryStream.Seek(0);
             cancellationToken.ThrowIfCancellationRequested();
+
             try
             {
+                Log.Debug($"Load CanvasBitmap for {file.FileName}");
                 var canvasBitmap = await CanvasBitmap.LoadAsync(Device, memoryStream).AsTask(cancellationToken).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
                 return new CanvasBitmapImageModel(file.DisplayName, canvasBitmap, colorSpace);
@@ -87,11 +95,9 @@ public class ImageLoaderService : IImageLoaderService
         }
     }
 
-    private ColorSpaceInfo GetColorSpaceInfo(IRandomAccessStream fileStream)
+    private ColorSpaceInfo GetColorSpaceInfo(Stream fileStream)
     {
-        var wic = new WICImagingFactory();
-
-        var decoder = wic.CreateDecoderFromStream(fileStream.AsStream(), WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
+        var decoder = wic.CreateDecoderFromStream(fileStream, WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
 
         var colorContexts = GetColorContexts(decoder);
 
@@ -141,12 +147,16 @@ public class ImageLoaderService : IImageLoaderService
         return ColorSpaceType.NotSpecified;
     }
 
-    private static BitmapCodecInformation? TryGetDeocderInfoForFileExtension(string fileExtension)
+    private IWICBitmapEncoderInfo? TryGetDeocderInfoForFileExtension(string fileExtension)
     {
-        var installedEncoders = BitmapDecoder.GetDecoderInformationEnumerator();
+        var installedEncoders = wic
+            .CreateComponentEnumerator(WICComponentType.WICEncoder, WICComponentEnumerateOptions.WICComponentEnumerateDefault)
+            .AsEnumerable()
+            .OfType<IWICBitmapEncoderInfo>();
+
         foreach (var encoderInfo in installedEncoders)
         {
-            if (encoderInfo.FileExtensions.Contains(fileExtension.ToLower()))
+            if (encoderInfo.GetFileExtensions().Contains(fileExtension.ToLower()))
             {
                 return encoderInfo;
             }

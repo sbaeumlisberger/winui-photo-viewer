@@ -20,12 +20,12 @@ internal class FileSystemService : IFileSystemService
 {
     public async Task<List<IStorageFile>> ListFilesAsync(IStorageFolder storageFolder)
     {
-        return (await storageFolder.GetFilesAsync().AsTask().ConfigureAwait(false)).Cast<IStorageFile>().ToList();
+        return (await storageFolder.GetFilesAsync().AsTask().ConfigureAwait(false)).OfType<IStorageFile>().ToList();
     }
 
     public async Task<List<IStorageFile>> ListFilesAsync(IStorageQueryResultBase storageQuery)
     {
-        return (await ((StorageFileQueryResult)storageQuery).GetFilesAsync().AsTask().ConfigureAwait(false)).Cast<IStorageFile>().ToList();
+        return (await ((StorageFileQueryResult)storageQuery).GetFilesAsync().AsTask().ConfigureAwait(false)).OfType<IStorageFile>().ToList();
     }
 
     public async Task<IStorageFolder?> TryGetFolderAsync(string path)

@@ -1,285 +1,314 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
-    <UseRidGraph>true</UseRidGraph>
-    <TargetPlatformMinVersion>10.0.22621.0</TargetPlatformMinVersion>
-    <RootNamespace>PhotoViewer.App</RootNamespace>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x86;x64;arm64</Platforms>
-    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-    <PublishProfile>win-$(Platform).pubxml</PublishProfile>
-    <UseWinUI>true</UseWinUI>
-    <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
-    <Nullable>Enable</Nullable>
-    <DefaultLanguage>en</DefaultLanguage>
-    <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
-    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <PackageCertificateThumbprint>F5904C5D838E31A57B6A68E4F67D537277194C93</PackageCertificateThumbprint>
-    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
-    <GenerateTestArtifacts>True</GenerateTestArtifacts>
-    <AppxBundle>Never</AppxBundle>
-    <AppInstallerUri>\\DISKSTATION\Documents\Programme\PhotoViewer</AppInstallerUri>
-    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <Compile Remove="Assets\SampleFiles\**" />
-    <Content Remove="Assets\SampleFiles\**" />
-    <EmbeddedResource Remove="Assets\SampleFiles\**" />
-    <None Remove="Assets\SampleFiles\**" />
-    <Page Remove="Assets\SampleFiles\**" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Remove="Controls\CanvasImageControl.xaml" />
-    <None Remove="Controls\ProgressControl.xaml" />
-    <None Remove="Controls\SelectionRect.xaml" />
-    <None Remove="Views\ComparePage.xaml" />
-    <None Remove="Views\CompareView.xaml" />
-    <None Remove="Views\CropImageTool.xaml" />
-    <None Remove="Views\Dialogs\CrashReportDialog.xaml" />
-    <None Remove="Views\Dialogs\DeleteLinkedFilesDialog.xaml" />
-    <None Remove="Views\Dialogs\DeleteSingleRawFilesDialog.xaml" />
-    <None Remove="Views\Dialogs\EditLocationDialog.xaml" />
-    <None Remove="Views\Dialogs\ImportGpxTrackDialog.xaml" />
-    <None Remove="Views\Dialogs\ManageKeywordsDialog.xaml" />
-    <None Remove="Views\Dialogs\ManagePeopleDialog.xaml" />
-    <None Remove="Views\Dialogs\MoveRawFilesToSubfolderDialog.xaml" />
-    <None Remove="Views\Dialogs\PrefixFilesByDateDialog.xaml" />
-    <None Remove="Views\Dialogs\ShiftDatenTakenDialog.xaml" />
-    <None Remove="Views\Dialogs\UnhandledExceptionDialog.xaml" />
-    <None Remove="Views\FlipViewPage.xaml" />
-    <None Remove="Views\BitmapFlipViewItem.xaml" />
-    <None Remove="Views\BitmapViewer.xaml" />
-    <None Remove="Views\DetailsBar.xaml" />
-    <None Remove="Views\FlipViewPageCommandBar.xaml" />
-    <None Remove="Views\FlipViewPage\EditImageOverlay.xaml" />
-    <None Remove="Views\ItemWithCount.xaml" />
-    <None Remove="Views\MediaFileContextMenu.xaml" />
-    <None Remove="Views\MediaFlipView.xaml" />
-    <None Remove="Views\MetadataPanel.xaml" />
-    <None Remove="Views\OverviewItem.xaml" />
-    <None Remove="Views\OverviewPage.xaml" />
-    <None Remove="Views\OverviewPageCommandBar.xaml" />
-    <None Remove="Views\PeopleTaggingPage\PeopleTaggingPage.xaml" />
-    <None Remove="Views\Shared\SortAppBarButton.xaml" />
-    <None Remove="Views\Shared\ToolsAppBarButton.xaml" />
-    <None Remove="Views\TagPeopleTool.xaml" />
-    <None Remove="Views\VectorGraphicFlipViewItem.xaml" />
-    <None Remove="Views\VideoFlipViewItem.xaml" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="MetadataAPI" Version="1.5.0" />
-    <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240627000" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
-    <PackageReference Include="WIC.DotNet" Version="1.3.1" />
-    <PackageReference Include="WinUIEx" Version="2.3.4" />
-    <Manifest Include="$(ApplicationManifest)" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <PRIResource Include="Resources\Strings.de.resx" />
-    <PRIResource Include="Resources\Strings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-    </PRIResource>
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+		<UseRidGraph>true</UseRidGraph>
+		<TargetPlatformMinVersion>10.0.22621.0</TargetPlatformMinVersion>
+		<WindowsSdkPackageVersion>10.0.22621.37-preview</WindowsSdkPackageVersion>
+		<RootNamespace>PhotoViewer.App</RootNamespace>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<Platforms>x86;x64;arm64</Platforms>
+		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+		<PublishProfile>win-$(Platform).pubxml</PublishProfile>
+		<UseWinUI>true</UseWinUI>
+		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
+		<Nullable>Enable</Nullable>
+		<DefaultLanguage>en</DefaultLanguage>
+		<GenerateAppInstallerFile>True</GenerateAppInstallerFile>
+		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+		<PackageCertificateThumbprint>F5904C5D838E31A57B6A68E4F67D537277194C93</PackageCertificateThumbprint>
+		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+		<AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+		<GenerateTestArtifacts>True</GenerateTestArtifacts>
+		<AppxBundle>Never</AppxBundle>
+		<AppInstallerUri>\\DISKSTATION\Documents\Programme\PhotoViewer</AppInstallerUri>
+		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+		<AppxBundlePlatforms>x64</AppxBundlePlatforms>
+		<PublishAot Condition="'$(ExcludeRestorePackageImports)'=='true'">true</PublishAot>
+		<PublishAot Condition="'$(Configuration)'=='Release'">true</PublishAot>
+		<TrimmerSingleWarn>false</TrimmerSingleWarn>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PhotoViewer.Core\PhotoViewer.Core.csproj" />
-	<ProjectReference Include="..\PhotoViewer.SourceGenerators\PhotoViewer.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+	  <FileAlignment>1024</FileAlignment>
+	</PropertyGroup>
 
-  <!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+	  <FileAlignment>1024</FileAlignment>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'">
+	  <FileAlignment>1024</FileAlignment>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+	  <FileAlignment>1024</FileAlignment>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+	  <FileAlignment>1024</FileAlignment>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">
+	  <FileAlignment>1024</FileAlignment>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="Assets\SampleFiles\**" />
+		<Content Remove="Assets\SampleFiles\**" />
+		<EmbeddedResource Remove="Assets\SampleFiles\**" />
+		<None Remove="Assets\SampleFiles\**" />
+		<Page Remove="Assets\SampleFiles\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="Controls\CanvasImageControl.xaml" />
+		<None Remove="Controls\ProgressControl.xaml" />
+		<None Remove="Controls\SelectionRect.xaml" />
+		<None Remove="Views\ComparePage.xaml" />
+		<None Remove="Views\CompareView.xaml" />
+		<None Remove="Views\CropImageTool.xaml" />
+		<None Remove="Views\Dialogs\CrashReportDialog.xaml" />
+		<None Remove="Views\Dialogs\DeleteLinkedFilesDialog.xaml" />
+		<None Remove="Views\Dialogs\DeleteSingleRawFilesDialog.xaml" />
+		<None Remove="Views\Dialogs\EditLocationDialog.xaml" />
+		<None Remove="Views\Dialogs\ImportGpxTrackDialog.xaml" />
+		<None Remove="Views\Dialogs\ManageKeywordsDialog.xaml" />
+		<None Remove="Views\Dialogs\ManagePeopleDialog.xaml" />
+		<None Remove="Views\Dialogs\MoveRawFilesToSubfolderDialog.xaml" />
+		<None Remove="Views\Dialogs\PrefixFilesByDateDialog.xaml" />
+		<None Remove="Views\Dialogs\ShiftDatenTakenDialog.xaml" />
+		<None Remove="Views\Dialogs\UnhandledExceptionDialog.xaml" />
+		<None Remove="Views\FlipViewPage.xaml" />
+		<None Remove="Views\BitmapFlipViewItem.xaml" />
+		<None Remove="Views\BitmapViewer.xaml" />
+		<None Remove="Views\DetailsBar.xaml" />
+		<None Remove="Views\FlipViewPageCommandBar.xaml" />
+		<None Remove="Views\FlipViewPage\EditImageOverlay.xaml" />
+		<None Remove="Views\ItemWithCount.xaml" />
+		<None Remove="Views\MediaFileContextMenu.xaml" />
+		<None Remove="Views\MediaFlipView.xaml" />
+		<None Remove="Views\MetadataPanel.xaml" />
+		<None Remove="Views\OverviewItem.xaml" />
+		<None Remove="Views\OverviewPage.xaml" />
+		<None Remove="Views\OverviewPageCommandBar.xaml" />
+		<None Remove="Views\PeopleTaggingPage\PeopleTaggingPage.xaml" />
+		<None Remove="Views\Shared\SortAppBarButton.xaml" />
+		<None Remove="Views\Shared\ToolsAppBarButton.xaml" />
+		<None Remove="Views\TagPeopleTool.xaml" />
+		<None Remove="Views\VectorGraphicFlipViewItem.xaml" />
+		<None Remove="Views\VideoFlipViewItem.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+		<PackageReference Include="MetadataAPI" Version="1.6.0-preview2" />
+		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.1-experimental1" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240701003-experimental2" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
+		<PackageReference Include="WIC.DotNet" Version="2.0.0-preview2" />
+		<PackageReference Include="WinUIEx" Version="2.3.4" />
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.0-prerelease.240801.1" />
+		<Manifest Include="$(ApplicationManifest)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PRIResource Include="Resources\Strings.de.resx" />
+		<PRIResource Include="Resources\Strings.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
+		</PRIResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\PhotoViewer.Core\PhotoViewer.Core.csproj" />
+		<ProjectReference Include="..\PhotoViewer.SourceGenerators\PhotoViewer.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+
+	<!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
        Tools extension to be activated for this project even if the Windows App SDK Nuget
        package has not yet been restored -->
-  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
-    <ProjectCapability Include="Msix" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Page Update="Views\Dialogs\ImportGpxTrackDialog.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Dialogs\PrefixFilesByDateDialog.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Dialogs\MoveRawFilesToSubfolderDialog.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Dialogs\EditLocationDialog.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Dialogs\DeleteLinkedFilesDialog.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-    </Page>
-    <Page Update="Views\Dialogs\DeleteSingleRawFilesDialog.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-    </Page>
-    <Page Update="Views\Dialogs\CrashReportDialog.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\OverviewPageCommandBar.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\ItemWithCount.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\MetadataPanel.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Controls\BitmapViewer.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Controls\RatingControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Controls\TimePickerControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\SettingsPage.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\Shared\ToolsAppBarButton.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\VideoFlipViewItem.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\VectorGraphicFlipViewItem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\MediaFlipView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\BitmapFlipViewItem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\OverviewPage.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\FlipViewPageCommandBar.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\DetailsBar.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\FlipViewPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\Dialogs\PropertiesDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\MediaFileContextMenu.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-	<Page Update="Views\OverviewItem.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	</Page>
-	<Page Update="Views\TagPeopleTool.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	</Page>
-	<Page Update="Controls\SelectionRect.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	</Page>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Page Update="Controls\ProgressControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Controls\CanvasImageControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <None Update="Resources\Strings.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Strings.cs</LastGenOutput>
-    </None>
-    <Page Update="Views\Shared\SortAppBarButton.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\PeopleTaggingBatchViewPage\PeopleTaggingPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\FlipViewPage\EditImageOverlay.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\Dialogs\UnhandledExceptionDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\Dialogs\ManagePeopleDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\Dialogs\ManageKeywordsDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\CropImageTool.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\CompareView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\Dialogs\ShiftDatenTakenDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Compile Update="Resources\Strings.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Strings.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Resources\Strings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PRIResource Remove="Assets\SampleFiles\**" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <CustomAdditionalCompileInputs Remove="Views\ComparePage.xaml" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Resource Remove="Views\ComparePage.xaml" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Views\ComparePage\" />
-    <Folder Include="Views\SettingsPage\" />
-    <Folder Include="Views\OverviewPage\" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Content Update="Assets\icon.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  
+	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
+		<ProjectCapability Include="Msix" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Update="Views\Dialogs\ImportGpxTrackDialog.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Views\Dialogs\PrefixFilesByDateDialog.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Views\Dialogs\MoveRawFilesToSubfolderDialog.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Views\Dialogs\EditLocationDialog.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Views\Dialogs\DeleteLinkedFilesDialog.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		</Page>
+		<Page Update="Views\Dialogs\DeleteSingleRawFilesDialog.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		</Page>
+		<Page Update="Views\Dialogs\CrashReportDialog.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Views\OverviewPageCommandBar.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Views\ItemWithCount.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Views\MetadataPanel.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Controls\BitmapViewer.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Controls\RatingControl.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Controls\TimePickerControl.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\SettingsPage.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\Shared\ToolsAppBarButton.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Views\VideoFlipViewItem.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Views\VectorGraphicFlipViewItem.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\MediaFlipView.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\BitmapFlipViewItem.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\OverviewPage.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Views\FlipViewPageCommandBar.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\DetailsBar.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\FlipViewPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\Dialogs\PropertiesDialog.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\MediaFileContextMenu.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\OverviewItem.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\TagPeopleTool.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Controls\SelectionRect.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Update="Controls\ProgressControl.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Controls\CanvasImageControl.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<None Update="Resources\Strings.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>Strings.cs</LastGenOutput>
+		</None>
+		<Page Update="Views\Shared\SortAppBarButton.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\PeopleTaggingBatchViewPage\PeopleTaggingPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\FlipViewPage\EditImageOverlay.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\Dialogs\UnhandledExceptionDialog.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\Dialogs\ManagePeopleDialog.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\Dialogs\ManageKeywordsDialog.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\CropImageTool.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\CompareView.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\Dialogs\ShiftDatenTakenDialog.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Compile Update="Resources\Strings.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Strings.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Resources\Strings.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Strings.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PRIResource Remove="Assets\SampleFiles\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<CustomAdditionalCompileInputs Remove="Views\ComparePage.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Remove="Views\ComparePage.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Views\ComparePage\" />
+		<Folder Include="Views\SettingsPage\" />
+		<Folder Include="Views\OverviewPage\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Update="Assets\icon.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
 </Project>

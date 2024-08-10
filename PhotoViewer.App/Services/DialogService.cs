@@ -112,6 +112,13 @@ public class DialogService
 
     private async Task ShowMessageDialogAsync(MessageDialogModel messageDialogModel)
     {
+        if (window.Content.XamlRoot is null)
+        {
+            // TODO prevent this from happening (errors on startup)
+            Log.Error("XamlRoot is null");
+            return;
+        }
+
         var dialog = new ContentDialog()
         {
             Title = messageDialogModel.Title,
@@ -167,6 +174,13 @@ public class DialogService
 
     private async Task ShowCustomDialogAsync(object dialogModel)
     {
+        if (window.Content.XamlRoot is null)
+        {
+            // TODO prevent this from happening (errors on startup)
+            Log.Error("XamlRoot is null");
+            return;
+        }
+
         var dialog = (ContentDialog)viewRegistrations.CreateViewForViewModelType(dialogModel.GetType());
         InitializeContentDialog(dialog);
         dialog.DataContext = dialogModel;

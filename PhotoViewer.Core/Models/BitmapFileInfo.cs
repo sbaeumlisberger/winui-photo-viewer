@@ -75,7 +75,7 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
             {
                 using var fileStream = await OpenAsync(FileAccessMode.Read).ConfigureAwait(false);
 
-                var wic = new WICImagingFactory();
+                var wic = WICImagingFactory.Create();
 
                 var decoder = wic.CreateDecoderFromStream(fileStream, WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
 

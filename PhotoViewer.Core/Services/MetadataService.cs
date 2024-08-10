@@ -100,7 +100,7 @@ internal class MetadataService : IMetadataService
 
             using (var fileStream = await file.OpenAsync(FileAccessMode.Read).ConfigureAwait(false))
             {
-                var wic = new WICImagingFactory();
+                var wic = WICImagingFactory.Create();
 
                 var decoder = wic.CreateDecoderFromStream(fileStream, WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
 

@@ -18,7 +18,7 @@ public interface ICropImageService
 
 internal class CropImageService : ICropImageService
 {
-    private readonly WICImagingFactory wic = new WICImagingFactory();
+    private readonly IWICImagingFactory wic = WICImagingFactory.Create();
 
     private readonly IMessenger messenger;
 

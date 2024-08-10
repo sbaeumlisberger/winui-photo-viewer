@@ -84,6 +84,7 @@ public class IMVVMControlGenerator : IIncrementalGenerator
                                 if(Parent is not null) 
                                 {
                                     Log.Warn($"Received unloaded event for {this} but parent is not null");
+                                    return;
                                 }
                                 disconnect();
                                 DataContext = null;

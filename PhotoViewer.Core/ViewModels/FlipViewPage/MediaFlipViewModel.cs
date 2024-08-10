@@ -91,9 +91,9 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
         itemModelsCache = VirtualizedCollection.Create(CacheSize, CreateItemModel, CleanupItemModel, new ObservableList<IMediaFileInfo>());
 
-        Register<MediaFilesLoadingMessage>(OnReceive);
+        Register<MediaFilesLoadingMessage>(OnReceiveMediaFilesLoadingMessage);
 
-        Register<MediaFilesDeletedMessage>(OnReceive);
+        Register<MediaFilesDeletedMessage>(OnReceiveMediaFilesDeletedMessage);
 
         Register<StartDiashowMessage>(msg =>
         {
@@ -109,7 +109,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
             IsDiashowLoopActive = false;
         });
 
-        Register<MediaFilesRenamedMessage>(OnReceive);
+        Register<MediaFilesRenamedMessage>(OnReceiveMediaFilesRenamedMessage);
 
         Register<FilesSortedMessage>(msg => SetFiles(msg.SortedFiles, SelectedItem));
     }
@@ -120,7 +120,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         diashowLoopCancellationTokenSource?.Cancel();
     }
 
-    private async void OnReceive(MediaFilesLoadingMessage msg)
+    private async void OnReceiveMediaFilesLoadingMessage(MediaFilesLoadingMessage msg)
     {
         try
         {
@@ -165,7 +165,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         }
     }
 
-    private async void OnReceive(MediaFilesDeletedMessage msg)
+    private async void OnReceiveMediaFilesDeletedMessage(MediaFilesDeletedMessage msg)
     {
         if (settings.ShowDeleteAnimation && msg.Files.Contains(SelectedItem))
         {
@@ -183,7 +183,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         UpdateFlipViewItemModels(SelectedItem);
     }
 
-    private void OnReceive(MediaFilesRenamedMessage message)
+    private void OnReceiveMediaFilesRenamedMessage(MediaFilesRenamedMessage message)
     {
         if (SelectedItem is not null && message.MediaFiles.Contains(SelectedItem))
         {
