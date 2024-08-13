@@ -1,7 +1,7 @@
 ﻿using NSubstitute;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.Core.Services;
 using System.Diagnostics;
 using Windows.Storage;

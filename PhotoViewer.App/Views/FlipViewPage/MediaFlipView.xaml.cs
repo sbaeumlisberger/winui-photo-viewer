@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Input;
 using PhotoVieweApp.Utils;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Utils;
 using Windows.System;

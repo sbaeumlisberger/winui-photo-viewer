@@ -76,6 +76,7 @@
   
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="Essentials.NET" Version="3.1.2" />
     <PackageReference Include="MetadataAPI" Version="1.5.0" />
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240627000" />

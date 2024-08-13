@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 
 namespace PhotoViewer.App.Utils;
 

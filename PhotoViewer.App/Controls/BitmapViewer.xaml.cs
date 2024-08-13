@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.App.Views;
 using System;
 using Windows.Foundation;

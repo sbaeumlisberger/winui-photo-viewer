@@ -1,6 +1,5 @@
-﻿using PhotoViewer.App.Utils.Logging;
+﻿using Essentials.NET.Logging;
 using System.Runtime.CompilerServices;
-using Windows.Storage;
 using Xunit.Abstractions;
 
 namespace PhotoViewer.Test;
@@ -39,14 +38,9 @@ internal class LoggerMock : ILogger
         Log("FATAL", message, exception, file, lineNumber);
     }
 
-    public Task<IStorageFile> GetLogFileAsync()
+    public void Dispose()
     {
-        throw new NotImplementedException();
-    }
-
-    public void ArchiveLogFile()
-    {
-        throw new NotImplementedException();
+        // not needed
     }
 
     private void Log(string level, string? message, Exception? exception, string file, int lineNumber)

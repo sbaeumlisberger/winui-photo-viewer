@@ -2,7 +2,7 @@
 using Essentials.NET;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.Core;
 using PhotoViewer.Core.ViewModels;
 using Windows.Media.Core;

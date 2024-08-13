@@ -1,5 +1,5 @@
 ﻿using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.Core.Models;
 using Windows.Graphics.Imaging;
 using Windows.Media.FaceAnalysis;

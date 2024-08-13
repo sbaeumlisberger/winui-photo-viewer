@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using MetadataAPI;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;

@@ -1,5 +1,5 @@
 ﻿using Essentials.NET;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;

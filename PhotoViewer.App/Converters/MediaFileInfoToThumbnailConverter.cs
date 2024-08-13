@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using System;
 using System.Threading.Tasks;
 

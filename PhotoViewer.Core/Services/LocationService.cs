@@ -1,5 +1,5 @@
 ﻿using Essentials.NET;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.Core.Models;
 using System.Globalization;
 using System.Text.Json;

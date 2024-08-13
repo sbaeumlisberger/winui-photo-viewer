@@ -11,7 +11,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-		<PackageReference Include="Essentials.NET" Version="3.0.0" />
+		<PackageReference Include="Essentials.NET" Version="3.1.2" />
 		<PackageReference Include="MetadataAPI" Version="1.5.0" />
 		<PackageReference Include="OpenCvSharp4.Windows" Version="4.10.0.20240616" />
 		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0">
