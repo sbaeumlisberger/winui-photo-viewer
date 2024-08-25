@@ -94,14 +94,14 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
     [RelayCommand]
     private void Copy()
     {
-        var storageFiles = Files.SelectMany(file => file.StorageFiles).ToList();
+        var storageFiles = Files.Select(file => file.StorageFile).ToList();
         clipboardService.CopyStorageItems(storageFiles);
     }
 
     [RelayCommand]
     private async Task ShareAsync()
     {
-        var storageFiles = Files.SelectMany(file => file.StorageFiles).ToList();
+        var storageFiles = Files.Select(file => file.StorageFile).ToList();
         await dialogService.ShowDialogAsync(new ShareDialogModel(storageFiles));
     }
 
