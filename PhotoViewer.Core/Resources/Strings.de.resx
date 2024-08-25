@@ -162,6 +162,9 @@
   <data name="MessageDialog_CloseButtonText" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="MetadataPanel_CopyLocationFailed" xml:space="preserve">
+    <value>Kopieren des Aufnahmeorts fehlgeschlagen</value>
+  </data>
   <data name="MetadataPanel_LocationPlaceholder" xml:space="preserve">
     <value>Kein Aufnahmeort sepzifiziert</value>
   </data>

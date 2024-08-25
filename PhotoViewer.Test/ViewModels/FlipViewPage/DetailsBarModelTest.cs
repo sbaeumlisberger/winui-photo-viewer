@@ -36,7 +36,7 @@ public class DetailsBarModelTest
 
     public DetailsBarModelTest()
     {
-        Log.Logger = Substitute.For<ILogger>();
+        Log.Configure(Substitute.For<ILogger>());
 
         Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
 

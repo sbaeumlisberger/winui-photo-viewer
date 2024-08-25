@@ -27,7 +27,7 @@ public class MediaFilesLoaderServiceTest
     public MediaFilesLoaderServiceTest(ITestOutputHelper testOutput)
     {
         this.testOutput = testOutput;
-        Log.Logger = Substitute.For<ILogger>();
+        Log.Configure(Substitute.For<ILogger>());
         mediaFilesLoaderService = new MediaFilesLoaderService(cachedImageLoaderService, fileSystemService);
     }
 

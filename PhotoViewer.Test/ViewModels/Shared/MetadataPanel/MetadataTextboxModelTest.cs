@@ -35,7 +35,7 @@ public class MetadataTextboxModelTest
     public MetadataTextboxModelTest()
     {
         using var _ = synchronizationContextMock.Apply();
-        Log.Logger = Substitute.For<ILogger>();
+        Log.Configure(Substitute.For<ILogger>());
         metadataPropertyMock.Identifier.Returns("test-property");
         metadataTextboxModel = new MetadataTextboxModel(messenger, metadataServiceMock, dialogService, backgroundTaskService, metadataPropertyMock, timeProvider);
         TestUtils.CheckSynchronizationContextOfPropertyChangedEvents(metadataTextboxModel, synchronizationContextMock);

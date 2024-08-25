@@ -162,6 +162,9 @@
   <data name="MessageDialog_CloseButtonText" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="MetadataPanel_CopyLocationFailed" xml:space="preserve">
+    <value>Failed to copy the location information</value>
+  </data>
   <data name="MetadataPanel_LocationPlaceholder" xml:space="preserve">
     <value>No place taken specified</value>
   </data>

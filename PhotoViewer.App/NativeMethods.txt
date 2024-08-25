@@ -1,0 +1,8 @@
+﻿IFileOpenDialog
+IShellItem
+CoCreateInstance
+SIGDN
+HRESULT
+CoTaskMemFree
+SHCreateItemFromParsingName
+COMDLG_FILTERSPEC

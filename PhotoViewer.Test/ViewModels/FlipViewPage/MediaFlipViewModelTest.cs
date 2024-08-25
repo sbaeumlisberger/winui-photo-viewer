@@ -21,7 +21,7 @@ public class MediaFlipViewModelTest
 
     public MediaFlipViewModelTest()
     {
-        Log.Logger = Substitute.For<ILogger>();
+        Log.Configure(Substitute.For<ILogger>());
 
         itemModelFactory = (mediaFile) =>
         {

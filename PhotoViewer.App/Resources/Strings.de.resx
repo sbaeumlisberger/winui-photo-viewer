@@ -873,4 +873,10 @@
   <data name="MetadataPanel_SelectOnlySupportedFiles" xml:space="preserve">
     <value>Nur unterstütze Dateien auswählen</value>
   </data>
+  <data name="MetadataPanel_CopyFormOtherPhotoButton" xml:space="preserve">
+    <value>Kopieren von ...</value>
+  </data>
+  <data name="FileOpenDialog_AllFiles" xml:space="preserve">
+    <value>Alle Dateien</value>
+  </data>
 </root>

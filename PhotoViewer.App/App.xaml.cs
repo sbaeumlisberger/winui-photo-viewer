@@ -41,7 +41,7 @@ public partial class App : Application
         var applicationSettings = new SettingsService().LoadSettings();
 
         LogLevel logLevel = applicationSettings.IsDebugLogEnabled ? LogLevel.DEBUG : LogLevel.INFO;
-        Log.Configure(new DefaultLogger([new DebugAppender(), new FileAppender(Path.Combine(AppData.PublicFolder, "logs"), logLevel)], LoggingFileNamesPrefixRegex()));
+        Log.Configure(new Logger([new DebugAppender(), new FileAppender(Path.Combine(AppData.PublicFolder, "logs"), logLevel)], new DefaultLogFormat(LoggingFileNamesPrefixRegex())));
   
         UnhandledException += App_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;

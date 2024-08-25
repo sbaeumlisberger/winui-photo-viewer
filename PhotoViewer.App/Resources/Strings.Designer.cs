@@ -601,6 +601,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alle files.
+        /// </summary>
+        internal static string FileOpenDialog_AllFiles {
+            get {
+                return ResourceManager.GetString("FileOpenDialog_AllFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Compare.
         /// </summary>
         internal static string FlipViewPageCommandBar_CompareButton {
@@ -1146,6 +1155,15 @@ namespace PhotoViewer.App.Resources {
         internal static string MetadataPanel_CloseButtonToolTip {
             get {
                 return ResourceManager.GetString("MetadataPanel_CloseButtonToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy from ....
+        /// </summary>
+        internal static string MetadataPanel_CopyFormOtherPhotoButton {
+            get {
+                return ResourceManager.GetString("MetadataPanel_CopyFormOtherPhotoButton", resourceCulture);
             }
         }
         
