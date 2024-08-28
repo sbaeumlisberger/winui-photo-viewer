@@ -4,7 +4,7 @@ using Microsoft.Extensions.Time.Testing;
 using NSubstitute;
 using NSubstitute.ReceivedExtensions;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
@@ -35,7 +35,7 @@ public class MetadataTextboxModelTest
     public MetadataTextboxModelTest()
     {
         using var _ = synchronizationContextMock.Apply();
-        Log.Logger = Substitute.For<ILogger>();
+        Log.Configure(Substitute.For<ILogger>());
         metadataPropertyMock.Identifier.Returns("test-property");
         metadataTextboxModel = new MetadataTextboxModel(messenger, metadataServiceMock, dialogService, backgroundTaskService, metadataPropertyMock, timeProvider);
         TestUtils.CheckSynchronizationContextOfPropertyChangedEvents(metadataTextboxModel, synchronizationContextMock);

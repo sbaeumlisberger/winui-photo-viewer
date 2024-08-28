@@ -2,7 +2,7 @@
 using Microsoft.Graphics.Display;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using System;
 using System.Threading.Tasks;
 using WinUIEx;

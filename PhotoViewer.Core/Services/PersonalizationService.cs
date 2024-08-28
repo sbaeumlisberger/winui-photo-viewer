@@ -1,4 +1,4 @@
-﻿using PhotoViewer.App.Utils.Logging;
+﻿using Essentials.NET.Logging;
 using Windows.Storage;
 using Windows.System.UserProfile;
 

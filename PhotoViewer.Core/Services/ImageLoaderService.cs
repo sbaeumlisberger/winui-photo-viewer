@@ -1,12 +1,11 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Essentials.NET.Logging;
+using Microsoft.Graphics.Canvas;
 using PhotoViewer.App.Exceptions;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.Core.Models;
 using System.Runtime.InteropServices;
 using System.Text;
 using WIC;
-using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
 

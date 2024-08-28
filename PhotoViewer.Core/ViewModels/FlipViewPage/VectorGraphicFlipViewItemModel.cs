@@ -1,7 +1,7 @@
 ﻿using Essentials.NET;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;

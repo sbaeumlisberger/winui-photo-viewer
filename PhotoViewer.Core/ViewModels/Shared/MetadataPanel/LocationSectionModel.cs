@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using MetadataAPI;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
@@ -14,6 +14,7 @@ using PhotoViewer.Core.ViewModels;
 using PhotoViewer.Core.ViewModels.Dialogs;
 using System.Globalization;
 using Windows.System;
+using PhotoViewer.App.ViewModels;
 
 namespace MetadataEditModule.ViewModel;
 
@@ -110,7 +111,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
     [RelayCommand]
     private async Task EditLocationAsync()
     {
-        var dialogModel = viewModelFactory.CreateEditLocationDialogModel(orginalLocation, SaveLocation);
+        var dialogModel = viewModelFactory.CreateEditLocationDialogModel(orginalLocation, SaveLocationAsync);
         await dialogService.ShowDialogAsync(dialogModel);
     }
 
@@ -120,7 +121,41 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         await dialogService.ShowDialogAsync(new ImportGpxTrackDialogModel(Messenger, dialogService, gpxService, Files));
     }
 
-    private async Task SaveLocation(Location? location)
+    [RelayCommand]
+    private async Task CopyFormOtherPhotoAsync()
+    {
+        var filePickerModel = new FileOpenPickerModel2()
+        {
+            FileTypeFilter = [.. BitmapFileInfo.JpegFileExtensions, .. BitmapFileInfo.TiffFileExtensions],
+            InitialFolder = Path.GetDirectoryName(Files[0].FilePath)
+        };
+
+        await dialogService.ShowDialogAsync(filePickerModel);
+
+        if (filePickerModel.FilePath is { } file)
+        {
+            try
+            {
+                using var fileStream = File.OpenRead(file);
+                var metadataDecoder = new MetadataDecoder(fileStream);
+                var address = metadataDecoder.GetProperty(MetadataProperties.Address)?.ToAddress();
+                var geoTag = metadataDecoder.GetProperty(MetadataProperties.GeoTag)?.ToGeopoint();
+                await SaveLocationAsync(new Location(address, geoTag));
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Failed to copy location from other photo", ex);
+
+                await dialogService.ShowDialogAsync(new MessageDialogModel()
+                {
+                    Title = Strings.MetadataPanel_CopyLocationFailed,
+                    Message = ex.Message,
+                });
+            }
+        }
+    }
+
+    private async Task SaveLocationAsync(Location? location)
     {
         await WriteFilesAsync(async file =>
         {

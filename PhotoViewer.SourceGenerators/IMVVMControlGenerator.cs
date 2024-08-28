@@ -58,7 +58,7 @@ public class IMVVMControlGenerator : IIncrementalGenerator
                 using System;
                 using Microsoft.UI.Xaml;
                 using PhotoViewer.App.Utils;
-                using PhotoViewer.App.Utils.Logging;
+                using Essentials.NET.Logging;
 
                 {{(@namespace != null ? $"namespace {@namespace};" : "")}}
 

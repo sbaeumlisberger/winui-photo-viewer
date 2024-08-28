@@ -147,6 +147,10 @@
                                     <MenuFlyoutItem 
                                         Text="{x:Bind res:Strings.MetadataPanel_ImportFromGpxFileButton}"
                                         Command="{x:Bind ViewModel.LocationSectionModel.ImportFromGpxFileCommand}"/>
+                                    <MenuFlyoutItem 
+                                        Text="{x:Bind res:Strings.MetadataPanel_CopyFormOtherPhotoButton}"
+                                        Command="{x:Bind ViewModel.LocationSectionModel.CopyFormOtherPhotoCommand}"/>
+
                                 </MenuFlyout>
                             </SplitButton.Flyout>
                         </SplitButton>

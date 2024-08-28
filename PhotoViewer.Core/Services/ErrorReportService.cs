@@ -1,4 +1,4 @@
-﻿using PhotoViewer.App.Utils.Logging;
+﻿using Essentials.NET.Logging;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -11,9 +11,9 @@ public class ErrorReportService
 {
     public async Task SendErrorReportAsync()
     {
-        var logFile = await Log.GetLogFileAsync().ConfigureAwait(false);
+        var logFile = await StorageFile.GetFileFromPathAsync(Log.Logger.Appenders.OfType<FileAppender>().First().LogFilePath).AsTask().ConfigureAwait(false);
         string log = await FileIO.ReadTextAsync(logFile).AsTask().ConfigureAwait(false);
-
+  
         string subject = $"WinUI Photo Viewer Error Report {DateTime.Now:g}";
         string body = CreateBody(log);
 

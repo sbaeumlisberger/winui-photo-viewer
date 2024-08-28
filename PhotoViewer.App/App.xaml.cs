@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Utils;
-using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.Views.Dialogs;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Services;
@@ -10,7 +10,9 @@ using PhotoViewer.Core.ViewModels;
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Globalization;
@@ -38,8 +40,9 @@ public partial class App : Application
 
         var applicationSettings = new SettingsService().LoadSettings();
 
-        Log.Logger = new LoggerImpl(applicationSettings.IsDebugLogEnabled);
-
+        LogLevel logLevel = applicationSettings.IsDebugLogEnabled ? LogLevel.DEBUG : LogLevel.INFO;
+        Log.Configure(new Logger([new DebugAppender(), new FileAppender(Path.Combine(AppData.PublicFolder, "logs"), logLevel)], new DefaultLogFormat(LoggingFileNamesPrefixRegex())));
+  
         UnhandledException += App_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
@@ -180,5 +183,6 @@ public partial class App : Application
         }
     }
 
-
+    [GeneratedRegex(@"^.*\\PhotoViewer\.")]
+    private static partial Regex LoggingFileNamesPrefixRegex();
 }

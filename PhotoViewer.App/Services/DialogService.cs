@@ -1,8 +1,9 @@
 ﻿using Essentials.NET;
+using Essentials.NET.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using PhotoViewer.App.Resources;
 using PhotoViewer.App.Utils;
-using PhotoViewer.App.Utils.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.ViewModels;
 using PhotoViewer.Core.ViewModels.Dialogs;
@@ -15,12 +16,19 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Printing;
 using Windows.Storage.Pickers;
 using Windows.System;
+using Windows.Win32;
+using Windows.Win32.Foundation;
+using Windows.Win32.System.Com;
+using Windows.Win32.UI.Shell;
+using Windows.Win32.UI.Shell.Common;
 using WinRT.Interop;
 
 namespace PhotoViewer.App.Services;
 
 public class DialogService
 {
+    private static readonly Guid CLSID_FileOpenDialog = new Guid("DC1C5A9C-E88A-4DDE-A5A1-60F82A20AEF7");
+
     private readonly ViewRegistrations viewRegistrations = ViewRegistrations.Instance;
 
     private readonly Window window;
@@ -40,6 +48,8 @@ public class DialogService
                 await ShowFolderPickerAsync(folderPickerModel); break;
             case FileOpenPickerModel fileOpenPickerModel:
                 await ShowFileOpenPickerModelAsync(fileOpenPickerModel); break;
+            case FileOpenPickerModel2 fileOpenPickerModel:
+                ShowFileOpenPickerModel(fileOpenPickerModel); break;
             case FileSavePickerModel fileSavePickerModel:
                 await ShowFileSavePickerModelAsync(fileSavePickerModel); break;
             case MessageDialogModel messageDialogModel:
@@ -89,6 +99,47 @@ public class DialogService
         InitializeWithWindow.Initialize(fileOpenPicker, windowHandle);
 
         dialogModel.File = await fileOpenPicker.PickSingleFileAsync();
+    }
+
+    private unsafe void ShowFileOpenPickerModel(FileOpenPickerModel2 dialogModel)
+    {
+        PInvoke.CoCreateInstance(CLSID_FileOpenDialog, null, CLSCTX.CLSCTX_INPROC_SERVER, out IFileOpenDialog fileOpenDialog).ThrowOnFailure(); ;
+
+        if (dialogModel.InitialFolder is { } initialFolder)
+        {
+            PInvoke.SHCreateItemFromParsingName(initialFolder, null, typeof(IShellItem).GUID, out object initialFolderShellItem).ThrowOnFailure();
+            fileOpenDialog.SetFolder((IShellItem)initialFolderShellItem);
+        }
+
+        if (dialogModel.FileTypeFilter is { } fileTypeFilter)
+        {
+            string filterName = Strings.FileOpenDialog_AllFiles;
+            string filterPattern = string.Join(";", fileTypeFilter.Select(fileType => "*" + fileType));
+
+            fixed (char* pfilterName = filterName, pFilterPattern = filterPattern)
+            {
+                var filterSpec = new COMDLG_FILTERSPEC
+                {
+                    pszName = new PCWSTR(pfilterName),
+                    pszSpec = new PCWSTR(pFilterPattern),
+                };
+                fileOpenDialog.SetFileTypes(1, &filterSpec);
+            }
+        }
+
+        try
+        {
+            fileOpenDialog.Show(new HWND(windowHandle));
+            fileOpenDialog.GetResult(out IShellItem shellItem);
+            PWSTR filePathPWSTR = null;
+            shellItem.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, &filePathPWSTR);
+            dialogModel.FilePath = new string(filePathPWSTR);
+            PInvoke.CoTaskMemFree(filePathPWSTR);
+        }
+        catch (COMException e) when (e.HResult == unchecked((int)0x800704C7))
+        {
+            // cancelled
+        }
     }
 
     private async Task ShowFileSavePickerModelAsync(FileSavePickerModel dialogModel)

@@ -1,13 +1,19 @@
-﻿using PhotoViewer.App.Utils.Logging;
+﻿using Essentials.NET.Logging;
 using System.Runtime.CompilerServices;
-using Windows.Storage;
 using Xunit.Abstractions;
 
 namespace PhotoViewer.Test;
 
 internal class LoggerMock : ILogger
 {
+    public IReadOnlyList<ILogAppender> Appenders { get; } = [];
+
     private readonly ITestOutputHelper testOutputHelper;
+
+    public void Dispose()
+    {
+        // not needed
+    }
 
     public LoggerMock(ITestOutputHelper testOutputHelper)
     {
@@ -16,45 +22,35 @@ internal class LoggerMock : ILogger
 
     public void Debug(string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Log("DEBUG", message, exception, file, lineNumber);
+        Write(LogLevel.DEBUG, message, exception, file, memberName, lineNumber);
     }
 
     public void Info(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Log("INFO", message, null, file, lineNumber);
+        Write(LogLevel.INFO, message, null, file, memberName, lineNumber);
     }
 
     public void Warn(string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Log("WARN", message, exception, file, lineNumber);
+        Write(LogLevel.WARN, message, exception, file, memberName, lineNumber);
     }
 
     public void Error(string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Log("ERROR", message, exception, file, lineNumber);
+        Write(LogLevel.ERROR, message, exception, file, memberName, lineNumber);
     }
 
     public void Fatal(string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Log("FATAL", message, exception, file, lineNumber);
+        Write(LogLevel.FATAL, message, exception, file, memberName, lineNumber);
     }
 
-    public Task<IStorageFile> GetLogFileAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ArchiveLogFile()
-    {
-        throw new NotImplementedException();
-    }
-
-    private void Log(string level, string? message, Exception? exception, string file, int lineNumber)
+    public void Write(LogLevel level, string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
         string timestamp = DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
         var fileName = file.Substring(file.IndexOf(@"\PhotoViewer") + @"\PhotoViewer".Length);
 
-        string line = ($"{timestamp} | {level} | {fileName}:{lineNumber} | {message ?? exception?.Message ?? ""}");
+        string line = ($"{timestamp} | {level} | {fileName}:{lineNumber} | {message}");
 
         try
         {

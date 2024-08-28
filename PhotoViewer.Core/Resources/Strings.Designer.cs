@@ -196,6 +196,15 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to copy the location information.
+        /// </summary>
+        public static string MetadataPanel_CopyLocationFailed {
+            get {
+                return ResourceManager.GetString("MetadataPanel_CopyLocationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No place taken specified.
         /// </summary>
         public static string MetadataPanel_LocationPlaceholder {

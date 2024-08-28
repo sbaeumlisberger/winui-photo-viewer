@@ -3,7 +3,7 @@ using Essentials.NET;
 using MetadataAPI;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;

@@ -1,7 +1,7 @@
 ﻿using NSubstitute;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.Core.Services;
 using System.Diagnostics;
 using Windows.Storage;
@@ -27,7 +27,7 @@ public class MediaFilesLoaderServiceTest
     public MediaFilesLoaderServiceTest(ITestOutputHelper testOutput)
     {
         this.testOutput = testOutput;
-        Log.Logger = Substitute.For<ILogger>();
+        Log.Configure(Substitute.For<ILogger>());
         mediaFilesLoaderService = new MediaFilesLoaderService(cachedImageLoaderService, fileSystemService);
     }
 

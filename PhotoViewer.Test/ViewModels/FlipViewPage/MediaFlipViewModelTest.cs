@@ -3,7 +3,7 @@ using NSubstitute;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.ViewModels;
@@ -21,7 +21,7 @@ public class MediaFlipViewModelTest
 
     public MediaFlipViewModelTest()
     {
-        Log.Logger = Substitute.For<ILogger>();
+        Log.Configure(Substitute.For<ILogger>());
 
         itemModelFactory = (mediaFile) =>
         {

@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Utils;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
@@ -126,7 +126,8 @@ namespace PhotoViewer.Core.ViewModels
         [RelayCommand]
         private async Task ShowLogAsync()
         {
-            await Launcher.LaunchFileAsync(await Log.GetLogFileAsync());
+            var logFile = await StorageFile.GetFileFromPathAsync(Log.Logger.Appenders.OfType<FileAppender>().First().LogFilePath);
+            await Launcher.LaunchFileAsync(logFile);
         }
 
     }

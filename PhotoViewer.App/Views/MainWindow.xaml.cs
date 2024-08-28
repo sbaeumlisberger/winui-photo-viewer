@@ -6,7 +6,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
@@ -109,7 +109,7 @@ public sealed partial class MainWindow : WindowEx
     {
         messenger.Send(new AppClosingMessage());
         messenger.UnregisterAll(this);
-        Log.ArchiveLogFile();
+        Log.Logger.Dispose();
     }
 
     private void EnterFullscreen()

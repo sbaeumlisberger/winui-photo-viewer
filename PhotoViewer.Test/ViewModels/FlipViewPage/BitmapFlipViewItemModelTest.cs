@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using NSubstitute;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
@@ -28,7 +28,7 @@ public class BitmapFlipViewItemModelTest
 
     public BitmapFlipViewItemModelTest()
     {
-        Log.Logger = Substitute.For<ILogger>();
+        Log.Configure(Substitute.For<ILogger>());
 
         bitmapFileMock.IsMetadataSupported.Returns(true);
 

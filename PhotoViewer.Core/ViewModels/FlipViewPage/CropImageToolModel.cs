@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Utils;
-using PhotoViewer.App.Utils.Logging;
+using Essentials.NET.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
