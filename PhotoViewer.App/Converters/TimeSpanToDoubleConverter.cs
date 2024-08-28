@@ -3,7 +3,7 @@ using System;
 
 namespace PhotoViewer.App.Converters;
 
-public class TimeSpanToDoubleConverter : IValueConverter
+public partial class TimeSpanToDoubleConverter : IValueConverter
 {
 
     public object Convert(object value, Type targetType, object parameter, string language)

@@ -5,7 +5,7 @@ using System;
 
 namespace PhotoViewer.App.Converters;
 
-public class DeleteLinkedFilesOptionToDisplayNameConverter : IValueConverter
+public partial class DeleteLinkedFilesOptionToDisplayNameConverter : IValueConverter
 {
     public object? Convert(object value, Type targetType, object parameter, string language)
     {

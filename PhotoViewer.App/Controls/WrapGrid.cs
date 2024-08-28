@@ -4,7 +4,7 @@ using Windows.Foundation;
 
 namespace PhotoViewer.App.Controls;
 
-public class WrapGrid : Grid
+public partial class WrapGrid : Grid
 {
 
     protected override Size MeasureOverride(Size availableSize)

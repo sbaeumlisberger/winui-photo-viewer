@@ -5,7 +5,7 @@ using System;
 
 namespace PhotoViewer.App.Converters;
 
-public class AppThemeToDisplayNameConverter : IValueConverter
+public partial class AppThemeToDisplayNameConverter : IValueConverter
 {
     public object? Convert(object value, Type targetType, object parameter, string language)
     {

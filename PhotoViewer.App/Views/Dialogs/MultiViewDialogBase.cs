@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 namespace PhotoViewer.App.Views.Dialogs;
 
-public class MultiViewDialogBase : ContentDialog
+public partial class MultiViewDialogBase : ContentDialog
 {
     private bool closeRequested;
 

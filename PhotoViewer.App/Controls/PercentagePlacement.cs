@@ -4,7 +4,7 @@ using PhotoViewer.App.Utils;
 
 namespace PhotoViewer.App.Controls;
 
-internal class PercentagePlacement : ContentPresenter
+internal partial class PercentagePlacement : ContentPresenter
 {
     public static readonly DependencyProperty PercentageXProperty = DependencyPropertyHelper<PercentagePlacement>.Register(nameof(PercentageX), typeof(double), 0d, (obj, args) => obj.UpdateBounds());
     public static readonly DependencyProperty PercentageYProperty = DependencyPropertyHelper<PercentagePlacement>.Register(nameof(PercentageY), typeof(double), 0d, (obj, args) => obj.UpdateBounds());

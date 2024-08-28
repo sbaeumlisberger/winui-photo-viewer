@@ -5,7 +5,7 @@ using System;
 
 namespace PhotoViewer.App.Converters;
 
-public class AspectRadioModeToDisplayNameConverter : IValueConverter
+public partial class AspectRadioModeToDisplayNameConverter : IValueConverter
 {
     public object? Convert(object value, Type targetType, object parameter, string language)
     {

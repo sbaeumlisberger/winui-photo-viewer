@@ -6,7 +6,7 @@ using System;
 
 namespace PhotoViewer.App.Views;
 
-public class MediaFlipViewItemTemplateSelector : DataTemplateSelector
+public partial class MediaFlipViewItemTemplateSelector : DataTemplateSelector
 {
     public DataTemplate? BitmapFileInfoTemplate { get; set; }
     public DataTemplate? VideoFileInfoTemplate { get; set; }

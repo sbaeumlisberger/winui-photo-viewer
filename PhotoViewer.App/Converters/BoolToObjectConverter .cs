@@ -3,7 +3,7 @@ using System;
 
 namespace PhotoViewer.App.Converters;
 
-public class BoolToObjectConverter : IValueConverter
+public partial class BoolToObjectConverter : IValueConverter
 {
     public object? TrueValue { get; set; }
     public object? FalseValue { get; set; }

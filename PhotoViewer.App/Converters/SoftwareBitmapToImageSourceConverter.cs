@@ -5,7 +5,7 @@ using Windows.Graphics.Imaging;
 
 namespace PhotoViewer.App.Converters;
 
-public class SoftwareBitmapToImageSourceConverter : IValueConverter
+public partial class SoftwareBitmapToImageSourceConverter : IValueConverter
 {
 
     public object Convert(object value, Type targetType, object parameter, string language)
