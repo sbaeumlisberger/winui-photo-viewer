@@ -27,7 +27,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 
     public IList<string> SelectedPeopleNames { get; set; } = [];
 
-    private ObservableList<ItemWithCountModel> people = new();
+    private readonly ObservableList<ItemWithCountModel> people = new();
 
     private readonly IMetadataService metadataService;
 

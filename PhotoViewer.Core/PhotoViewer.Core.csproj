@@ -8,22 +8,22 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Platforms>x86;x64;arm64</Platforms>
+		<IsAotCompatible>true</IsAotCompatible>
 	</PropertyGroup>
 
 	<ItemGroup>
-
+		<PackageReference Include="Essentials.NET" Version="3.2.2" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240821007-preview2" />
-
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.0" />
-		<PackageReference Include="Essentials.NET" Version="3.2.0" />
 		<PackageReference Include="MetadataAPI" Version="1.6.0-preview2" />
 		<PackageReference Include="OpenCvSharp4.Windows" Version="4.10.0.20240616" />
 		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="System.Diagnostics.EventLog" Version="8.0.0" />
-		<PackageReference Include="WIC.DotNet" Version="2.0.0-preview2" />
+		<PackageReference Include="WIC.DotNet" Version="2.0.0-preview3" />
 		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.1-experimental2" />
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.1" />
 	</ItemGroup>
 
 	<ItemGroup>

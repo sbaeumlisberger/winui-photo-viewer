@@ -12,4 +12,4 @@ project.assets.json
 *.user
 *.assets.cache
 
-PhotoViewer.App/Generated Files
+**/Generated Files/CsWinRT/

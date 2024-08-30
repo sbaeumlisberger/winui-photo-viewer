@@ -35,7 +35,7 @@ internal class GifImageLoaderService : IGifImageLoaderService
             _cancellationToken.ThrowIfCancellationRequested();
             var canvasBitmap = CanvasBitmap.CreateFromSoftwareBitmap(device, softwareBitmap);
 
-            var bitmapProperties = await frame.BitmapProperties.GetPropertiesAsync(new[] { LeftPropertyKey, TopPropertyKey, DelayPropertyKey, DisposalPropertyKey }).AsTask(_cancellationToken).ConfigureAwait(false);
+            var bitmapProperties = await frame.BitmapProperties.GetPropertiesAsync([LeftPropertyKey, TopPropertyKey, DelayPropertyKey, DisposalPropertyKey]).AsTask(_cancellationToken).ConfigureAwait(false);
             _cancellationToken.ThrowIfCancellationRequested();
 
             Point offset = ExtractOffset(bitmapProperties);

@@ -60,7 +60,7 @@ public class AppModel
         {
             if (fileActivatedEventArgsWithNeighboringFiles.NeighboringFilesQuery is { } neighboringFilesQuery)
             {
-                var startFile = fileActivatedEventArgsWithNeighboringFiles.Files.OfType<StorageFile>().First();
+                var startFile = (IStorageFile) fileActivatedEventArgsWithNeighboringFiles.Files.First();
                 return mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
             }
             else

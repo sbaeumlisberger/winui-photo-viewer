@@ -18,7 +18,7 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
 
     private bool CanAddKeyword => !string.IsNullOrWhiteSpace(AutoSuggestBoxText) && !IsWriting;
 
-    private ObservableList<ItemWithCountModel> keywords = new();
+    private readonly ObservableList<ItemWithCountModel> keywords = new();
 
     private readonly IMetadataService metadataService;
 

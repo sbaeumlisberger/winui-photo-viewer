@@ -74,7 +74,7 @@ public class ImageLoaderService : IImageLoaderService
             memoryStream.Seek(0);
 
             cancellationToken.ThrowIfCancellationRequested();
-            ColorSpaceInfo colorSpace = new ColorSpaceInfo(ColorSpaceType.NotSpecified, null); // GetColorSpaceInfo(memoryStream.AsStream());
+            ColorSpaceInfo colorSpace = GetColorSpaceInfo(memoryStream);
             memoryStream.Seek(0);
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -94,9 +94,9 @@ public class ImageLoaderService : IImageLoaderService
         }
     }
 
-    private ColorSpaceInfo GetColorSpaceInfo(Stream fileStream)
+    private ColorSpaceInfo GetColorSpaceInfo(IRandomAccessStream fileStream)
     {
-        var decoder = wic.CreateDecoderFromStream(fileStream, WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
+        var decoder = wic.CreateDecoderFromStream(fileStream.AsStream(), WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
 
         var colorContexts = GetColorContexts(decoder);
 

@@ -28,7 +28,7 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
 
     public AltitudeReferenceSystem AltitudeReferenceSystem { get; set; } = AltitudeReferenceSystem.Unspecified;
 
-    public IList<AltitudeReferenceSystem> AvailableAltitudeReferenceSystems => Enum.GetValues<AltitudeReferenceSystem>();
+    public IReadOnlyList<AltitudeReferenceSystem> AvailableAltitudeReferenceSystems => Enum.GetValues<AltitudeReferenceSystem>();
 
     public bool CanSave { get; set; } = true;
 

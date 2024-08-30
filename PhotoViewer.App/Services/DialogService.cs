@@ -163,13 +163,6 @@ public class DialogService
 
     private async Task ShowMessageDialogAsync(MessageDialogModel messageDialogModel)
     {
-        if (window.Content.XamlRoot is null)
-        {
-            // TODO prevent this from happening (errors on startup)
-            Log.Error("XamlRoot is null");
-            return;
-        }
-
         var dialog = new ContentDialog()
         {
             Title = messageDialogModel.Title,
@@ -196,7 +189,7 @@ public class DialogService
 
     private Task ShowShareDialogAsync(ShareDialogModel shareDialogModel)
     {
-        var dataTransferManager = GetDataTransferManagerForWindow(windowHandle);
+        var dataTransferManager = DataTransferManagerInterop.GetForWindow(windowHandle);
         dataTransferManager.DataRequested += DataTransferManager_DataRequested;
         void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
@@ -207,7 +200,7 @@ public class DialogService
             args.Request.Data = dataPackage;
             dataTransferManager.DataRequested -= DataTransferManager_DataRequested;
         }
-        DataTransferManager.As<IDataTransferManagerInterop>().ShowShareUIForWindow(windowHandle);
+        DataTransferManagerInterop.ShowShareUIForWindow(windowHandle);
         return Task.CompletedTask;
     }
 
@@ -225,13 +218,6 @@ public class DialogService
 
     private async Task ShowCustomDialogAsync(object dialogModel)
     {
-        if (window.Content.XamlRoot is null)
-        {
-            // TODO prevent this from happening (errors on startup)
-            Log.Error("XamlRoot is null");
-            return;
-        }
-
         var dialog = (ContentDialog)viewRegistrations.CreateViewForViewModelType(dialogModel.GetType());
         InitializeContentDialog(dialog);
         dialog.DataContext = dialogModel;
@@ -243,21 +229,6 @@ public class DialogService
         dialog.XamlRoot = window.Content.XamlRoot;
         dialog.RequestedTheme = ((FrameworkElement)window.Content).RequestedTheme;
         dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-    }
-
-    private static DataTransferManager GetDataTransferManagerForWindow([In] IntPtr appWindow)
-    {
-        IDataTransferManagerInterop interop = DataTransferManager.As<IDataTransferManagerInterop>();
-        Guid riid = new Guid(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
-        return DataTransferManager.FromAbi(interop.GetForWindow(appWindow, riid));
-    }
-
-    [ComImport, Guid("3A3DCD6C-3EAB-43DC-BCDE-45671CE800C8")]
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    interface IDataTransferManagerInterop
-    {
-        IntPtr GetForWindow([In] IntPtr appWindow, [In] ref Guid riid);
-        void ShowShareUIForWindow(IntPtr appWindow);
     }
 
 }

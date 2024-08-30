@@ -16,9 +16,8 @@
             x:Name="messageTextBlock"
             TextWrapping="Wrap"/>
         <CheckBox 
-            x:Name="sendErrorReportCheckBox"
             Content="Send error report with log"
-            IsChecked="True"/>
-    </StackPanel>              
-               
+            IsChecked="{x:Bind IsSendErrorReportChecked, Mode=TwoWay}"/>
+    </StackPanel>
+
 </ContentDialog>
