@@ -10,7 +10,7 @@ namespace PhotoViewer.Core.Commands;
 
 internal interface IShiftDatenTakenCommand : IAcceleratedCommand { }
 
-internal class ShiftDatenTakenCommand : AsyncCommandBase, IShiftDatenTakenCommand
+internal partial class ShiftDatenTakenCommand : AsyncCommandBase, IShiftDatenTakenCommand
 {
     public VirtualKey AcceleratorKey => VirtualKey.T;
 

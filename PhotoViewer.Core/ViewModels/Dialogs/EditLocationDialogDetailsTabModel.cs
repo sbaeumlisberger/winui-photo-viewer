@@ -2,6 +2,7 @@
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using Windows.Devices.Geolocation;
@@ -28,7 +29,7 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
 
     public AltitudeReferenceSystem AltitudeReferenceSystem { get; set; } = AltitudeReferenceSystem.Unspecified;
 
-    public IReadOnlyList<AltitudeReferenceSystem> AvailableAltitudeReferenceSystems => Enum.GetValues<AltitudeReferenceSystem>();
+    public ReadOnlyCollection<AltitudeReferenceSystem> AvailableAltitudeReferenceSystems => Enum.GetValues<AltitudeReferenceSystem>().AsReadOnly();
 
     public bool CanSave { get; set; } = true;
 

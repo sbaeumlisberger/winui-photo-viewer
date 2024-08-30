@@ -12,6 +12,7 @@ using PhotoViewer.Core.Utils;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Storage;
+using System.Collections.ObjectModel;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -91,7 +92,7 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
         }
     }
 
-    public IReadOnlyList<AspectRadioMode> AvailableAspectRadioModes = Enum.GetValues<AspectRadioMode>();
+    public ReadOnlyCollection<AspectRadioMode> AvailableAspectRadioModes = Enum.GetValues<AspectRadioMode>().AsReadOnly();
 
     public AspectRadioMode AspectRadioMode { get; set; } = AspectRadioMode.Orginal;
 

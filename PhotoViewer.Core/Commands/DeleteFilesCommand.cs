@@ -16,7 +16,7 @@ namespace PhotoViewer.Core.Commands;
 
 public interface IDeleteFilesCommand : IAsyncCommand<IReadOnlyList<IMediaFileInfo>>, IAcceleratedCommand, ICommand { }
 
-public class DeleteFilesCommand : AsyncCommandBase<IReadOnlyList<IMediaFileInfo>>, IDeleteFilesCommand
+public partial class DeleteFilesCommand : AsyncCommandBase<IReadOnlyList<IMediaFileInfo>>, IDeleteFilesCommand
 {
     public VirtualKey AcceleratorKey => VirtualKey.Delete;
 

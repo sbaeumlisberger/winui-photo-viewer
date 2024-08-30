@@ -9,7 +9,7 @@ namespace PhotoViewer.Core.Commands;
 
 internal interface IDeleteSingleRawFilesCommand : IAcceleratedCommand { }
 
-internal class DeleteSingleRawFilesCommand : AsyncCommandBase, IDeleteSingleRawFilesCommand
+internal partial class DeleteSingleRawFilesCommand : AsyncCommandBase, IDeleteSingleRawFilesCommand
 {
     public VirtualKey AcceleratorKey => VirtualKey.W;
 

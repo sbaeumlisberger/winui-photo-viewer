@@ -7,7 +7,7 @@ namespace PhotoViewer.Core.Commands;
 
 internal interface IMoveRawFilesToSubfolderCommand : IAcceleratedCommand { }
 
-internal class MoveRawFilesToSubfolderCommand : AsyncCommandBase, IMoveRawFilesToSubfolderCommand
+internal partial class MoveRawFilesToSubfolderCommand : AsyncCommandBase, IMoveRawFilesToSubfolderCommand
 {
     public VirtualKey AcceleratorKey => VirtualKey.U;
 

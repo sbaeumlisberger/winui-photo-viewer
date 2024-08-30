@@ -1,6 +1,6 @@
 ﻿namespace PhotoViewer.Core.ViewModels;
 
-public record class ItemWithCountModel
+public partial record class ItemWithCountModel
 {
     public string Value { get; }
 

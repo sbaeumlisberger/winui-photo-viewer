@@ -7,7 +7,7 @@ public interface IAsyncCommand
     Task ExecuteAsync();
 }
 
-public abstract class AsyncCommandBase : IAsyncCommand, ICommand
+public abstract partial class AsyncCommandBase : IAsyncCommand, ICommand
 {
     public event EventHandler? CanExecuteChanged;
 
@@ -50,7 +50,7 @@ public interface IAsyncCommand<T>
     Task ExecuteAsync(T parameter);
 }
 
-public abstract class AsyncCommandBase<T> : IAsyncCommand<T>, ICommand
+public abstract partial class AsyncCommandBase<T> : IAsyncCommand<T>, ICommand
 {
     public event EventHandler? CanExecuteChanged;
 

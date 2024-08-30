@@ -10,7 +10,7 @@ namespace PhotoViewer.Core.Commands;
 
 internal interface IImportGpxTrackCommand : IAcceleratedCommand { }
 
-internal class ImportGpxTrackCommand : AsyncCommandBase, IImportGpxTrackCommand
+internal partial class ImportGpxTrackCommand : AsyncCommandBase, IImportGpxTrackCommand
 {
     public VirtualKey AcceleratorKey => VirtualKey.G;
 

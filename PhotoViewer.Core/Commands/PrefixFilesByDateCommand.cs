@@ -9,7 +9,7 @@ namespace PhotoViewer.Core.Commands;
 
 internal interface IPrefixFilesByDateCommand : IAcceleratedCommand { }
 
-internal class PrefixFilesByDateCommand : AsyncCommandBase, IPrefixFilesByDateCommand
+internal partial class PrefixFilesByDateCommand : AsyncCommandBase, IPrefixFilesByDateCommand
 {
     public VirtualKey AcceleratorKey => VirtualKey.S;
 
