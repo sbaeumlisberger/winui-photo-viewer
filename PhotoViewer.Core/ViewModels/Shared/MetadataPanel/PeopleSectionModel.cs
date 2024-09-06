@@ -15,7 +15,7 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 {
-    public IObservableReadOnlyList<ItemWithCountModel> People => people;
+    public ObservableList<ItemWithCountModel> People => people;
 
     public string AutoSuggestBoxText { get; set; } = string.Empty;
 

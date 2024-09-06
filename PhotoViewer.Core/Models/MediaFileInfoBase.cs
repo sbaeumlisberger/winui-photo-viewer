@@ -50,7 +50,6 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
     public async Task<IRandomAccessStream> OpenAsRandomAccessStreamAsync(FileAccessMode fileAccessMode)
     {
         return (await OpenAsync(fileAccessMode)).AsRandomAccessStream();
-        //return await StorageFile.OpenAsync(fileAccessMode);
     }
 
     public async Task<Stream> OpenAsync(FileAccessMode fileAccessMode)

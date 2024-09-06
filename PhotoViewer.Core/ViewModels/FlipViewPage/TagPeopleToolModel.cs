@@ -45,7 +45,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     public IReadOnlyList<PeopleTagViewModel> TaggedPeople { get; set; } = new List<PeopleTagViewModel>();
 
-    public IObservableReadOnlyList<Rect> SuggestedFaces => suggestedFacesInPercent;
+    public ObservableReadOnlyList<Rect> SuggestedFaces => suggestedFacesInPercent.AsReadonly();
 
     public string AutoSuggestBoxText { get; set; } = string.Empty;
 

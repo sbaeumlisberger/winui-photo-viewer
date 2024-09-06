@@ -176,7 +176,7 @@ namespace PhotoViewer.Core.ViewModels
         }
 
         [RelayCommand]
-        private void SelectOnlySupportedFiles() 
+        private void SelectOnlySupportedFiles()
         {
             Messenger.Send(new SelectFilesMessage(supportedFiles.Cast<IMediaFileInfo>().ToImmutableList()));
         }

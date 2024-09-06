@@ -12,7 +12,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Essentials.NET" Version="3.2.2" />
+		<PackageReference Include="Essentials.NET" Version="3.2.4" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240821007-preview2" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.0" />
 		<PackageReference Include="MetadataAPI" Version="1.6.0-preview2" />

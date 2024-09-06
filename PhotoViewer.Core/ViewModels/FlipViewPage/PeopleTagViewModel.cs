@@ -3,7 +3,7 @@ using Windows.Foundation;
 
 namespace PhotoViewer.Core.ViewModels;
 
-public class PeopleTagViewModel : ObservableObject
+public partial class PeopleTagViewModel : ObservableObject
 {
     public string Name { get; }
 
