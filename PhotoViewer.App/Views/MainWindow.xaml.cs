@@ -19,7 +19,7 @@ using WinUIEx;
 
 namespace PhotoViewer.App;
 
-public sealed partial class MainWindow : WindowEx
+public sealed partial class MainWindow : Window
 {
     public event TypedEventHandler<MainWindow, AppWindowClosingEventArgs>? Closing;
 
@@ -35,7 +35,11 @@ public sealed partial class MainWindow : WindowEx
     {
         this.viewModel = viewModel;
         this.messenger = messenger;
+
         this.InitializeComponent();
+
+        WindowManager.Get(this).PersistenceId = "MainWindow";
+
         AppWindow.Closing += AppWindow_Closing;
         Closed += MainWindow_Closed;
 

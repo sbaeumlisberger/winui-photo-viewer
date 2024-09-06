@@ -41,32 +41,52 @@ public partial class ApplicationSettings : ObservableObject
         IsDebugLogEnabled = settings.IsDebugLogEnabled;
     }
 
-    public static ApplicationSettings Deserialize(string serialized)
+    public static ApplicationSettings Deserialize(IEnumerable<string> serialized)
     {
-        var keyValueMap = new Dictionary<string, string>();
-        var reader = new StringReader(serialized);
-        string? line;
-        while ((line = reader.ReadLine()) != null)
+        var settings = new ApplicationSettings();
+        foreach (string line in serialized)
         {
             int equlasSignIndex = line.IndexOf('=');
             if (equlasSignIndex != -1)
             {
-                string key = line.Substring(0, equlasSignIndex).Trim();
-                string value = line.Substring(equlasSignIndex + 1).Trim();
-                keyValueMap.Add(key, value);
+                var key = line.AsSpan(0, equlasSignIndex).Trim();
+                var value = line.AsSpan(equlasSignIndex + 1).Trim();
+
+                switch (key)
+                {
+                    case nameof(Theme):
+                        settings.Theme = Enum.Parse<AppTheme>(value);
+                        break;
+                    case nameof(ShowDeleteAnimation):
+                        settings.ShowDeleteAnimation = bool.Parse(value);
+                        break;
+                    case nameof(AutoOpenMetadataPanel):
+                        settings.AutoOpenMetadataPanel = bool.Parse(value);
+                        break;
+                    case nameof(AutoOpenDetailsBar):
+                        settings.AutoOpenDetailsBar = bool.Parse(value);
+                        break;
+                    case nameof(DiashowTime):
+                        settings.DiashowTime = TimeSpan.ParseExact(value, "hh\\:mm\\:ss", null);
+                        break;
+                    case nameof(LinkRawFiles):
+                        settings.LinkRawFiles = bool.Parse(value);
+                        break;
+                    case nameof(RawFilesFolderName):
+                        settings.RawFilesFolderName = value.ToString();
+                        break;
+                    case nameof(DeleteLinkedFilesOption):
+                        settings.DeleteLinkedFilesOption = Enum.Parse<DeleteLinkedFilesOption>(value);
+                        break;
+                    case nameof(IncludeVideos):
+                        settings.IncludeVideos = bool.Parse(value);
+                        break;
+                    case nameof(IsDebugLogEnabled):
+                        settings.IsDebugLogEnabled = bool.Parse(value);
+                        break;
+                }
             }
-        }
-        var settings = new ApplicationSettings();
-        settings.Theme = (AppTheme)Enum.Parse(typeof(AppTheme), keyValueMap[nameof(Theme)]);
-        settings.ShowDeleteAnimation = bool.Parse(keyValueMap[nameof(ShowDeleteAnimation)]);
-        settings.AutoOpenMetadataPanel = bool.Parse(keyValueMap[nameof(AutoOpenMetadataPanel)]);
-        settings.AutoOpenDetailsBar = bool.Parse(keyValueMap[nameof(AutoOpenDetailsBar)]);
-        settings.DiashowTime = TimeSpan.Parse(keyValueMap[nameof(DiashowTime)]);
-        settings.LinkRawFiles = bool.Parse(keyValueMap[nameof(LinkRawFiles)]);
-        settings.RawFilesFolderName = keyValueMap[nameof(RawFilesFolderName)];
-        settings.DeleteLinkedFilesOption = (DeleteLinkedFilesOption)Enum.Parse(typeof(DeleteLinkedFilesOption), keyValueMap[nameof(DeleteLinkedFilesOption)]);
-        settings.IncludeVideos = bool.Parse(keyValueMap[nameof(IncludeVideos)]);
-        settings.IsDebugLogEnabled = bool.Parse(keyValueMap[nameof(IsDebugLogEnabled)]);
+        };
         return settings;
     }
 
@@ -77,7 +97,7 @@ public partial class ApplicationSettings : ObservableObject
         stringBuilder.AppendLine(nameof(ShowDeleteAnimation) + "=" + ShowDeleteAnimation);
         stringBuilder.AppendLine(nameof(AutoOpenMetadataPanel) + "=" + AutoOpenMetadataPanel);
         stringBuilder.AppendLine(nameof(AutoOpenDetailsBar) + "=" + AutoOpenDetailsBar);
-        stringBuilder.AppendLine(nameof(DiashowTime) + "=" + DiashowTime);
+        stringBuilder.AppendLine(nameof(DiashowTime) + "=" + DiashowTime.ToString("hh\\:mm\\:ss"));
         stringBuilder.AppendLine(nameof(LinkRawFiles) + "=" + LinkRawFiles);
         stringBuilder.AppendLine(nameof(RawFilesFolderName) + "=" + RawFilesFolderName);
         stringBuilder.AppendLine(nameof(DeleteLinkedFilesOption) + "=" + DeleteLinkedFilesOption);

@@ -69,7 +69,7 @@ public class ImageLoaderService : IImageLoaderService
         {
             var memoryStream = new InMemoryRandomAccessStream();
             Log.Debug($"Read {file.FileName} into memory");
-            await RandomAccessStream.CopyAsync(fileStream, memoryStream);
+            await RandomAccessStream.CopyAsync(fileStream, memoryStream).AsTask(cancellationToken).ConfigureAwait(false);
             fileStream.Dispose();
             memoryStream.Seek(0);
 

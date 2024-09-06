@@ -1,14 +1,20 @@
-﻿<winUIEx:WindowEx
+﻿<Window
     x:Class="PhotoViewer.App.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PhotoViewer.App.Views"
+    xmlns:controls="using:PhotoViewer.App.Controls"
     xmlns:winUIEx="using:WinUIEx"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    PersistenceId="MainWindowPersistanceId">
+    mc:Ignorable="d">
 
-    <Frame x:Name="frame" KeyDown="Frame_KeyDown" NavigationFailed="Frame_NavigationFailed"/>
- 
-</winUIEx:WindowEx>
+    <Grid>
+        <Grid>
+            <controls:BitmapViewer x:Name="previewBitmapViewer"/>
+        </Grid>
+        
+        <Frame x:Name="frame" KeyDown="Frame_KeyDown" NavigationFailed="Frame_NavigationFailed"/>
+    </Grid>
+
+</Window>

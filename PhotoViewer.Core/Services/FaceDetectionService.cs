@@ -23,15 +23,15 @@ internal class FaceDetectionService : IFaceDetectionService
             return new List<DetectedFaceModel>();
         }
 
-        var faceDetector = await FaceDetector.CreateAsync().AsTask(cancellationToken);
+        var faceDetector = await FaceDetector.CreateAsync().AsTask(cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
 
-        using var softwareBitmap = await SoftwareBitmap.CreateCopyFromSurfaceAsync(bitmapImage.CanvasBitmap).AsTask(cancellationToken);
+        using var softwareBitmap = await SoftwareBitmap.CreateCopyFromSurfaceAsync(bitmapImage.CanvasBitmap).AsTask(cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
 
         using var softwareBitmapGray8 = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Gray8);
 
-        var detectedFaces = await faceDetector.DetectFacesAsync(softwareBitmapGray8).AsTask(cancellationToken);
+        var detectedFaces = await faceDetector.DetectFacesAsync(softwareBitmapGray8).AsTask(cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
 
         return detectedFaces.OrderBy(face => face.FaceBox.X).Select(face => new DetectedFaceModel(face.FaceBox)).ToList();
@@ -45,12 +45,12 @@ internal class FaceDetectionService : IFaceDetectionService
             return new List<DetectedFaceModel>();
         }
 
-        var faceDetector = await FaceDetector.CreateAsync().AsTask(cancellationToken);
+        var faceDetector = await FaceDetector.CreateAsync().AsTask(cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
 
         using var softwareBitmapGray8 = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Gray8);
 
-        var detectedFaces = await faceDetector.DetectFacesAsync(softwareBitmapGray8).AsTask(cancellationToken);
+        var detectedFaces = await faceDetector.DetectFacesAsync(softwareBitmapGray8).AsTask(cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
 
         return detectedFaces.OrderBy(face => face.FaceBox.X).Select(face => new DetectedFaceModel(face.FaceBox)).ToList();

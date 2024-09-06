@@ -29,7 +29,7 @@ public class SettingsService : ISettingsService
     {
         if (File.Exists(settingsFilePath))
         {
-            var fileContent = File.ReadAllText(settingsFilePath);
+            var fileContent = File.ReadAllLines(settingsFilePath);
             return ApplicationSettings.Deserialize(fileContent);
         }
         else
@@ -51,7 +51,7 @@ public class SettingsService : ISettingsService
 
     public ApplicationSettings ImportSettings(IStorageFile file)
     {
-        var fileContent = File.ReadAllText(file.Path);
+        var fileContent = File.ReadAllLines(file.Path);
         var settingsToImport = ApplicationSettings.Deserialize(fileContent);
         SaveSettings(settingsToImport);
         return settingsToImport;
