@@ -40,9 +40,9 @@ public partial class App : Application
 
         var applicationSettings = new SettingsService().LoadSettings();
 
-        LogLevel logLevel = applicationSettings.IsDebugLogEnabled ? LogLevel.DEBUG : LogLevel.INFO;
-        Log.Configure(new Logger([new DebugAppender(), new FileAppender(Path.Combine(AppData.PublicFolder, "logs"), logLevel)], new DefaultLogFormat(LoggingFileNamesPrefixRegex())));
-  
+        LogLevel logLevel = applicationSettings.IsDebugLogEnabled || Debugger.IsAttached ? LogLevel.DEBUG : LogLevel.INFO;
+        Log.Configure(new Logger([new DebugAppender(), new FileAppender(Path.Combine(AppData.PublicFolder, "logs"), logLevel)], new DefaultLogFormat(LoggingFilePathPrefixRegex())));
+
         UnhandledException += App_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
@@ -184,5 +184,5 @@ public partial class App : Application
     }
 
     [GeneratedRegex(@"^.*\\PhotoViewer\.")]
-    private static partial Regex LoggingFileNamesPrefixRegex();
+    private static partial Regex LoggingFilePathPrefixRegex();
 }
