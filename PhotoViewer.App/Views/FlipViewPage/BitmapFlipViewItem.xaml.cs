@@ -1,8 +1,10 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
 using System;
+using System.Threading.Tasks;
 using Windows.Foundation;
 
 namespace PhotoViewer.App.Views;
@@ -12,11 +14,28 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
     public BitmapFlipViewItem()
     {
         this.InitializeComponentMVVM();
-        bitmapViewer.ScrollViewer.ViewChanged += ScrollViewer_ViewChanged;
     }
 
     partial void ConnectToViewModel(BitmapFlipViewItemModel viewModel)
     {
+        if (viewModel.IsSelected)
+        {
+            LoadContent(viewModel);
+        }
+        else
+        {
+            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+            {
+                LoadContent(viewModel);
+            });
+        }
+    }
+
+    private void LoadContent(BitmapFlipViewItemModel viewModel)
+    {
+        FindName(nameof(content));
+        bitmapViewer.ScrollViewer.ViewChanged += ScrollViewer_ViewChanged;
+
         viewModel.Subscribe(this, nameof(viewModel.IsSelected), OnIsSelectedChanged);
         viewModel.Subscribe(this, nameof(viewModel.IsDiashowActive), OnIsDiashowActiveChanged);
     }
@@ -75,9 +94,17 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
 
         if (zoomFactor == 1 || ViewModel.IsDiashowActive)
         {
-            zoomTextBlockContainer.Visibility = Visibility.Collapsed;
-            zoomTextBlock.Text = "";
+            if (zoomTextBlockContainer is not null)
+            {
+                zoomTextBlockContainer.Visibility = Visibility.Collapsed;
+                zoomTextBlock.Text = "";
+            }
             return;
+        }
+
+        if (zoomTextBlockContainer is null)
+        {
+            FindName(nameof(zoomTextBlockContainer));
         }
 
         Size imageSize = ViewModel.ImageViewModel.Image.SizeInDIPs;
@@ -88,6 +115,6 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
         var imageToViewFactor = Math.Min(Math.Min(viewSize.Width / imageSize.Width, viewSize.Height / imageSize.Height), 1);
 
         zoomTextBlock.Text = Math.Round(imageToViewFactor * zoomFactor * 100) + " %";
-        zoomTextBlockContainer.Visibility = Visibility.Visible;
+        zoomTextBlockContainer!.Visibility = Visibility.Visible;
     }
 }

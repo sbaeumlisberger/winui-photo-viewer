@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET.Logging;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -6,13 +7,21 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Services;
-using Essentials.NET.Logging;
+using PhotoViewer.App.Utils;
+using PhotoViewer.App.Views.Dialogs;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.System;
 using WinUIEx;
@@ -25,19 +34,19 @@ public sealed partial class MainWindow : Window
 
     private readonly ViewRegistrations viewRegistrations = ViewRegistrations.Instance;
 
-    private readonly MainWindowModel viewModel;
+    private MainWindowModel? viewModel;
 
     private readonly DialogService dialogService;
 
     private readonly IMessenger messenger;
 
-    public MainWindow(MainWindowModel viewModel, IMessenger messenger)
+    public MainWindow(IMessenger messenger)
     {
-        this.viewModel = viewModel;
         this.messenger = messenger;
 
         this.InitializeComponent();
 
+        WindowManager.PersistenceStorage = new PersistentDictionary(Path.Combine(AppData.PublicFolder, "window.dat"));
         WindowManager.Get(this).PersistenceId = "MainWindow";
 
         AppWindow.Closing += AppWindow_Closing;
@@ -47,17 +56,29 @@ public sealed partial class MainWindow : Window
 
         dialogService = new DialogService(this);
 
-        viewModel.DialogRequested += ViewModel_DialogRequested;
-
-        viewModel.Subscribe(this, nameof(viewModel.Title), () => Title = viewModel.Title, initialCallback: true);
-        viewModel.Subscribe(this, nameof(viewModel.Theme), ApplyTheme, initialCallback: true);
-
         messenger.Register<EnterFullscreenMessage>(this, _ => EnterFullscreen());
         messenger.Register<ExitFullscreenMessage>(this, _ => ExitFullscreen());
         messenger.Register<NavigateToPageMessage>(this, msg => NavigateToPage(msg.PageType, msg.Parameter));
         messenger.Register<NavigateBackMessage>(this, _ => NavigateBack());
 
         FocusManager.LosingFocus += FocusManager_LosingFocus;
+    }
+
+    public void SetViewModel(MainWindowModel viewModel)
+    {
+        this.viewModel = viewModel;
+
+        viewModel.DialogRequested += ViewModel_DialogRequested;
+
+        viewModel.Subscribe(this, nameof(viewModel.Title), () => Title = viewModel.Title, initialCallback: true);
+        viewModel.Subscribe(this, nameof(viewModel.Theme), ApplyTheme, initialCallback: true);
+    }
+
+    public async Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog)
+    {
+        dialog.XamlRoot = frame.XamlRoot;
+        dialog.RequestedTheme = frame.RequestedTheme;
+        return await dialog.ShowAsync();
     }
 
     private void ViewModel_DialogRequested(object? sender, DialogRequestedEventArgs e)
@@ -156,4 +177,177 @@ public sealed partial class MainWindow : Window
         Log.Error("Navigation failed", e.Exception);
         e.Handled = true;
     }
+
+    private class PersistentDictionary : IDictionary<string, object>
+    {
+        private readonly string filePath;
+        private readonly Dictionary<string, object> dictionary;
+
+        public PersistentDictionary(string filePath)
+        {
+            this.filePath = filePath;
+
+            if (File.Exists(this.filePath))
+            {
+                dictionary = LoadFromFile();
+            }
+            else
+            {
+                dictionary = new Dictionary<string, object>();
+            }
+        }
+
+        private Dictionary<string, object> LoadFromFile()
+        {
+            var dictionary = new Dictionary<string, object>();
+            using var stream = new FileStream(filePath, FileMode.Open);
+            using var reader = new BinaryReader(stream);
+            int count = reader.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                string key = reader.ReadString();
+                object value = ReadObject(reader);
+                dictionary[key] = value;
+            }
+            return dictionary;
+        }
+
+        private void SaveToFile()
+        {
+            using var stream = new FileStream(filePath, FileMode.Create);
+            using var writer = new BinaryWriter(stream);
+            writer.Write(dictionary.Count);
+            foreach (var kvp in dictionary)
+            {
+                writer.Write(kvp.Key);
+                WriteObject(writer, kvp.Value);
+            }
+        }
+
+        private object ReadObject(BinaryReader reader)
+        {
+            byte typeMarker = reader.ReadByte();
+            switch (typeMarker)
+            {
+                case 0: return reader.ReadString();
+                default: throw new InvalidOperationException("Unsupported type: " + typeMarker);
+            }
+        }
+
+        private void WriteObject(BinaryWriter writer, object obj)
+        {
+            switch (obj)
+            {
+                case string s:
+                    writer.Write((byte)0);
+                    writer.Write(s);
+                    break;
+                default:
+                    throw new InvalidOperationException("Unsupported type: " + obj.GetType());
+            }
+        }
+
+        public object this[string key]
+        {
+            get => dictionary[key];
+            set
+            {
+                dictionary[key] = value;
+                SaveToFile();
+            }
+        }
+
+        public ICollection<string> Keys => dictionary.Keys;
+
+        public ICollection<object> Values => dictionary.Values;
+
+        public int Count => dictionary.Count;
+
+        public bool IsReadOnly => false;
+
+        public void Add(string key, object value)
+        {
+            dictionary.Add(key, value);
+            SaveToFile();
+        }
+
+        public bool ContainsKey(string key) => dictionary.ContainsKey(key);
+
+        public bool Remove(string key)
+        {
+            var removed = dictionary.Remove(key);
+            if (removed)
+            {
+                SaveToFile();
+            }
+            return removed;
+        }
+
+        public bool TryGetValue(string key, [MaybeNullWhen(false)] out object value) => dictionary.TryGetValue(key, out value);
+
+        public void Add(KeyValuePair<string, object> item)
+        {
+            dictionary.Add(item.Key, item.Value);
+            SaveToFile();
+        }
+
+        public void Clear()
+        {
+            dictionary.Clear();
+            SaveToFile();
+        }
+
+        public bool Contains(KeyValuePair<string, object> item) => dictionary.Contains(item);
+
+        public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
+        {
+            ((IDictionary<string, object>)dictionary).CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(KeyValuePair<string, object> item)
+        {
+            var removed = dictionary.Remove(item.Key);
+            if (removed)
+            {
+                SaveToFile();
+            }
+            return removed;
+        }
+
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => dictionary.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => dictionary.GetEnumerator();
+    }
+
+    private async void Frame_Loaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            await ReportCrashAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to check or report application crash", ex);
+        }
+    }
+
+    private async Task ReportCrashAsync()
+    {
+        var errors = await Task.Run(() => new EventLogService().GetErrors());
+
+        if (errors.Count != 0)
+        {
+            var errorReportService = new ErrorReportService();
+
+            var crashReport = errorReportService.CreateReport(string.Join("\n\n", errors));
+
+            var dialog = new CrashReportDialog(crashReport);
+
+            if (await ShowDialogAsync(dialog) == ContentDialogResult.Primary)
+            {
+                await errorReportService.SendCrashReportAsync(crashReport);
+            }
+        }
+    }
+
 }

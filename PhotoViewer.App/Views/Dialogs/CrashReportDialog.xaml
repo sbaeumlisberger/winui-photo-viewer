@@ -15,6 +15,7 @@
         <TextBlock 
             Text="A crash was detected. Would you like to send a report?"
             TextWrapping="Wrap"/>
+        <Button Click="ShowReportButton_Click">Show Report</Button>
     </StackPanel>
 
 </ContentDialog>

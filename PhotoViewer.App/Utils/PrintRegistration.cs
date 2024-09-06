@@ -1,7 +1,7 @@
-﻿using Microsoft.UI.Dispatching;
+﻿using Essentials.NET.Logging;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Printing;
-using Essentials.NET.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;

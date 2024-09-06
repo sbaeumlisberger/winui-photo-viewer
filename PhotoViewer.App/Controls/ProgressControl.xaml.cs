@@ -9,7 +9,7 @@ namespace PhotoViewer.App.Controls;
 
 public sealed partial class ProgressControl : UserControl
 {
-    public static DependencyProperty ProgressProperty = DependencyPropertyHelper<ProgressControl>.Register(nameof(Progress), typeof(Progress));
+    public static readonly DependencyProperty ProgressProperty = DependencyPropertyHelper<ProgressControl>.Register(nameof(Progress), typeof(Progress));
 
     public Progress Progress { get => (Progress)GetValue(ProgressProperty); set => SetValue(ProgressProperty, value); }
 

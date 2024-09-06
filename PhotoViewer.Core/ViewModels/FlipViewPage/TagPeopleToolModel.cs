@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
+using Essentials.NET.Logging;
 using MetadataAPI;
 using MetadataAPI.Data;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
-using Essentials.NET.Logging;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
@@ -43,9 +43,9 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     public float UIScaleFactor { get; set; } = 1;
 
-    public IReadOnlyList<PeopleTagViewModel> TaggedPeople { get; set; } = new List<PeopleTagViewModel>();
+    public IReadOnlyList<PeopleTagViewModel> TaggedPeople { get; set; } = [];
 
-    public ObservableReadOnlyList<Rect> SuggestedFaces => suggestedFacesInPercent.AsReadonly();
+    public IObservableReadOnlyList<Rect> SuggestedFaces => suggestedFacesInPercent;
 
     public string AutoSuggestBoxText { get; set; } = string.Empty;
 
@@ -61,9 +61,11 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     private readonly IBitmapFileInfo bitmapFile;
 
-    private readonly ObservableList<Rect> suggestedFacesInPercent = new ObservableList<Rect>();
+    private readonly ObservableList<Rect> suggestedFacesInPercent = [];
 
-    private List<Rect> detectedFaceRectsInPercent = new List<Rect>();
+    private List<Rect> detectedFaceRectsInPercent = [];
+
+    private Task initTask = Task.CompletedTask;
 
     internal TagPeopleToolModel(
         IBitmapFileInfo bitmapFile,
@@ -85,8 +87,9 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         Register<MetadataModifiedMessage>(Receive);
         Register<SetTagPeopleToolActiveMessage>(Receive);
         Register<BitmapModifiedMesssage>(Receive);
-        IsTagPeopleToolActive = Messenger.Send(new IsTagPeopleToolActiveRequestMessage());
-        await LoadTaggedPeopleAsync();
+        IsTagPeopleToolActive = Messenger.Request(new IsTagPeopleToolActiveRequestMessage(), false);
+        initTask = LoadTaggedPeopleAsync();
+        await initTask;
     }
 
     private void Receive(SetTagPeopleToolActiveMessage msg)
@@ -273,20 +276,14 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     private Rect ReverseRotateRect(Rect rect, PhotoOrientation orientation)
     {
-        switch (orientation)
+        return orientation switch
         {
-            case PhotoOrientation.Normal:
-            case PhotoOrientation.Unspecified:
-                return rect;
-            case PhotoOrientation.Rotate90:
-                return new Rect(1 - rect.Bottom, rect.X, rect.Height, rect.Width);
-            case PhotoOrientation.Rotate180:
-                return new Rect(1 - rect.Right, 1 - rect.Bottom, rect.Width, rect.Height);
-            case PhotoOrientation.Rotate270:
-                return new Rect(rect.Y, 1 - rect.Right, rect.Height, rect.Width);
-            default:
-                throw new NotSupportedException("Unsupported orientation: " + orientation);
-        }
+            PhotoOrientation.Normal or PhotoOrientation.Unspecified => rect,
+            PhotoOrientation.Rotate90 => new Rect(1 - rect.Bottom, rect.X, rect.Height, rect.Width),
+            PhotoOrientation.Rotate180 => new Rect(1 - rect.Right, 1 - rect.Bottom, rect.Width, rect.Height),
+            PhotoOrientation.Rotate270 => new Rect(rect.Y, 1 - rect.Right, rect.Height, rect.Width),
+            _ => throw new NotSupportedException("Unsupported orientation: " + orientation),
+        };
     }
 
     private Rect RotateRect(Rect rect, PhotoOrientation orientation)
@@ -309,16 +306,20 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     private async Task DetectFacesAsync()
     {
-        if (TaggedPeople.Any())
+        await initTask;
+
+        if (TaggedPeople.Count > 0)
         {
             return;
         }
 
         try
         {
+            Log.Debug($"Detect faces for {bitmapFile.FileName}");
+
             if (BitmapImage is ICanvasBitmapImageModel bitmapImage)
             {
-                var detectedFaces = await faceDetectionService.DetectFacesAsync(bitmapImage);
+                var detectedFaces = await Task.Run(() => faceDetectionService.DetectFacesAsync(bitmapImage));
 
                 var detectedFaceRectsInPercent = new List<Rect>();
 

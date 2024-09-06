@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Windows.Foundation;
 
-namespace PhotoVieweApp.Utils;
+namespace PhotoViewer.App.Utils;
 
 public static class FrameworkElementUtil
 {

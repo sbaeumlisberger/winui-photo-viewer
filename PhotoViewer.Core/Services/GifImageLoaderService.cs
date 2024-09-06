@@ -4,25 +4,25 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 
-namespace PhotoViewer.App.Services;
+namespace PhotoViewer.Core.Services;
 
 public interface IGifImageLoaderService
 {
-    Task<CanvasBitmapImageModel> LoadAsync(string id, CanvasDevice device, IRandomAccessStream stream, CancellationToken? cancellationToken = null);
+    Task<CanvasBitmapImageModel> LoadAsync(string id, CanvasDevice device, Stream stream, CancellationToken? cancellationToken = null);
 }
 
-internal class GifImageLoaderService : IGifImageLoaderService
+public class GifImageLoaderService : IGifImageLoaderService
 {
     private const string LeftPropertyKey = "/imgdesc/Left";
     private const string TopPropertyKey = "/imgdesc/Top";
     private const string DelayPropertyKey = "/grctlext/Delay";
     private const string DisposalPropertyKey = "/grctlext/Disposal";
 
-    public async Task<CanvasBitmapImageModel> LoadAsync(string id, CanvasDevice device, IRandomAccessStream stream, CancellationToken? cancellationToken = null)
+    public async Task<CanvasBitmapImageModel> LoadAsync(string id, CanvasDevice device, Stream stream, CancellationToken? cancellationToken = null)
     {
         var _cancellationToken = cancellationToken ?? CancellationToken.None;
 
-        var decoder = await BitmapDecoder.CreateAsync(BitmapDecoder.GifDecoderId, stream).AsTask(_cancellationToken).ConfigureAwait(false);
+        var decoder = await BitmapDecoder.CreateAsync(BitmapDecoder.GifDecoderId, stream.AsRandomAccessStream()).AsTask(_cancellationToken).ConfigureAwait(false);
         _cancellationToken.ThrowIfCancellationRequested();
 
         var frames = new List<CanvasBitmapFrameModel>();

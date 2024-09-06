@@ -23,7 +23,7 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
 
     public IImageViewModel ImageViewModel { get; }
 
-    public bool IsContextMenuEnabeld => IsSelected && !IsDiashowActive;
+    public bool IsOverlayVisible => IsSelected && !IsDiashowActive;
 
     public IMediaFileContextMenuModel ContextMenuModel { get; }
 
@@ -53,9 +53,9 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
         CropImageToolModel = viewModelFactory.CreateCropImageToolModel(bitmapFile);
     }
 
-    partial void OnIsContextMenuEnabeldChanged()
+    partial void OnIsOverlayVisibleChanged()
     {
-        ContextMenuModel.IsEnabled = IsContextMenuEnabeld;
+        ContextMenuModel.IsEnabled = IsOverlayVisible;
     }
 
     private void ImageViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)

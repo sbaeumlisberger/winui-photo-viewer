@@ -11,28 +11,27 @@
 
     <UserControl.Resources>
         <local:MediaFileContextMenuHolder 
-            x:Name="mediaFileContextMenuHolder" 
-            DataContext="{x:Bind ViewModel.ContextMenuModel}"/>
+            x:Name="mediaFileContextMenuHolder"
+            DataContext="{x:Bind ViewModel.ContextMenuModel, Mode=OneWay}"/>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid x:Name="content" x:Load="False">
         <controls:BitmapViewer 
             x:Name="bitmapViewer"
             BitmapImage="{x:Bind ViewModel.ImageViewModel.Image, Mode=OneWay}" 
             IsEnabled="{x:Bind ViewModel.IsSelected, Mode=OneWay}"
             IsScaleUpEnabeld="{x:Bind ViewModel.IsDiashowActive, Mode=OneWay}"
             SizeChanged="BitmapViewer_SizeChanged">
-            <Grid 
-                Visibility="{x:Bind ViewModel.IsContextMenuEnabeld, Mode=OneWay}"
-                Background="Transparent" 
+            <Grid
+                Visibility="{x:Bind ViewModel.IsOverlayVisible, Mode=OneWay}"
+                Background="Transparent"
                 ContextFlyout="{x:Bind mediaFileContextMenuHolder.MediaFileContextMenu}">
                 <local:TagPeopleTool
                     x:Name="tagPeopleTool"
                     x:Load="{x:Bind ViewModel.CanTagPeople}"
                     DataContext="{x:Bind ViewModel.PeopleTagToolModel}"/>
                 <local:CropImageTool
-                    x:Name="cropImageTool"
-                    DataContext="{x:Bind ViewModel.CropImageToolModel}"/>
+                    DataContext="{x:Bind ViewModel.CropImageToolModel}"/>             
             </Grid>
         </controls:BitmapViewer>
 
@@ -48,10 +47,11 @@
         </StackPanel>
 
         <StackPanel 
+            x:Name="loadingFailedUI"
             HorizontalAlignment="Center" 
             VerticalAlignment="Center" 
             Spacing="8"
-            Visibility="{x:Bind ViewModel.ImageViewModel.IsLoadingImageFailed, FallbackValue=Collapsed, Mode=OneWay}">
+            x:Load="{x:Bind ViewModel.ImageViewModel.IsLoadingImageFailed, Mode=OneWay}">
             <TextBlock 
                 HorizontalAlignment="Center" 
                 Text="{x:Bind ViewModel.ImageViewModel.ErrorMessage, Mode=OneWay}"/>
@@ -63,6 +63,7 @@
 
         <Border 
             x:Name="zoomTextBlockContainer"
+            x:Load="False"
             Visibility="Collapsed"
             Width="64"
             HorizontalAlignment="Left"

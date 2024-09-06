@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
+using Essentials.NET.Logging;
 using MetadataAPI;
 using PhotoViewer.App.Models;
-using Essentials.NET.Logging;
+using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
@@ -14,7 +15,6 @@ using PhotoViewer.Core.ViewModels;
 using PhotoViewer.Core.ViewModels.Dialogs;
 using System.Globalization;
 using Windows.System;
-using PhotoViewer.App.ViewModels;
 
 namespace MetadataEditModule.ViewModel;
 

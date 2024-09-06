@@ -1,11 +1,11 @@
 ﻿using Essentials.NET;
+using Essentials.NET.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Resources;
-using Essentials.NET.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
+using Essentials.NET.Logging;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
-using Essentials.NET.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Models;
@@ -38,14 +38,15 @@ public interface IViewModelFactory
 
 public class ViewModelFactory : IViewModelFactory
 {
-    private readonly IMessenger messenger = new StrongReferenceMessenger();
+    private readonly IMessenger messenger;
     private readonly ApplicationSettings settings;
     private readonly ApplicationSession applicationSession;
     private readonly IMediaFilesLoaderService mediaFilesLoaderService;
     private readonly IMetadataService metadataService = new MetadataService();
     private readonly IDeleteMediaFilesService deleteMediaService = new DeleteMediaFilesService();
     private readonly IRotateBitmapService rotateBitmapService;
-    private readonly ICachedImageLoaderService imageLoaderService = new CachedImageLoaderService(new ImageLoaderService(new GifImageLoaderService()));
+    private readonly ImageLoaderService imageLoaderService = new ImageLoaderService(new GifImageLoaderService());
+    private readonly ICachedImageLoaderService cachedImageLoaderService;
     private readonly IDisplayRequestService displayRequestService = new DisplayRequestService();
     private readonly ILocationService locationService = new LocationService();
     private readonly ISettingsService settingService = new SettingsService();
@@ -60,14 +61,16 @@ public class ViewModelFactory : IViewModelFactory
     private readonly IBackgroundTaskService backgroundTaskService = new BackgroundTaskService();
     private readonly SortService sortService = new SortService(new MetadataService());
 
-    public ViewModelFactory(ApplicationSettings settings)
+    public ViewModelFactory(IMessenger messenger, ApplicationSettings settings, ICachedImageLoaderService imageLoaderService, IMediaFilesLoaderService mediaFilesLoaderService)
     {
+        this.messenger = messenger;
         this.settings = settings;
+        this.cachedImageLoaderService = imageLoaderService;
+        this.mediaFilesLoaderService = mediaFilesLoaderService;
         gpxService = new GpxService(metadataService);
         applicationSession = new ApplicationSession(messenger);
         rotateBitmapService = new RotateBitmapService(metadataService);
         cropImageService = new CropImageService(messenger, metadataService);
-        mediaFilesLoaderService = new MediaFilesLoaderService(imageLoaderService, new FileSystemService());
     }
 
     public AppModel CreateAppModel()
@@ -85,7 +88,7 @@ public class ViewModelFactory : IViewModelFactory
         Stopwatch sw = Stopwatch.StartNew();
         var flipViewPageModel = new FlipViewPageModel(applicationSession, messenger, this, displayRequestService);
         sw.Stop();
-        Log.Info($"CreateFlipViewPageModel took {sw.ElapsedMilliseconds}ms");
+        Log.Debug($"CreateFlipViewPageModel took {sw.ElapsedMilliseconds}ms");
         return flipViewPageModel;
     }
 
@@ -240,7 +243,7 @@ public class ViewModelFactory : IViewModelFactory
 
     public IImageViewModel CreateImageViewModel(IBitmapFileInfo bitmapFile)
     {
-        return new ImageViewModel(bitmapFile, imageLoaderService, messenger);
+        return new ImageViewModel(bitmapFile, cachedImageLoaderService, messenger);
     }
 
     public EditLocationDialogModel CreateEditLocationDialogModel(Location? orginalLocation, Func<Location?, Task> saveLocation)

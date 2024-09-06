@@ -15,7 +15,6 @@
 
     <Grid 
         x:Name="root"
-        Width="320"
         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
         x:Load="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
 

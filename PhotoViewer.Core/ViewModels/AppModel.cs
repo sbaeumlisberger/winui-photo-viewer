@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET.Logging;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
-using Essentials.NET.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Models;
 using System.Diagnostics;
@@ -33,26 +33,11 @@ public class AppModel
         this.mediaFilesLoaderService = mediaFilesLoaderService;
     }
 
-    public async Task OnLaunchedAsync(IActivatedEventArgs activatedEventArgs, Func<MainWindowModel, IMessenger, Task> showWindow)
-    {
-        Log.Info("Application launched");
-        var stopwatch = Stopwatch.StartNew();
 
-        var loadMediaFilesTask = LoadMediaFiles(activatedEventArgs);
-
-        await showWindow(viewModelFactory.CreateMainWindowModel(), messenger);
-
-        messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel)));
-
-        stopwatch.Stop();
-        Log.Info($"OnLaunched took {stopwatch.ElapsedMilliseconds}ms");
-
-        messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask));
-    }
 
     private LoadMediaFilesTask LoadMediaFiles(IActivatedEventArgs activatedEventArgs)
     {
-        Log.Info($"Enter LoadMediaFiles ({activatedEventArgs})");
+        Log.Info($"Load files from {activatedEventArgs}");
 
         var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName, settings.IncludeVideos);
 
@@ -60,7 +45,7 @@ public class AppModel
         {
             if (fileActivatedEventArgsWithNeighboringFiles.NeighboringFilesQuery is { } neighboringFilesQuery)
             {
-                var startFile = (IStorageFile) fileActivatedEventArgsWithNeighboringFiles.Files.First();
+                var startFile = (IStorageFile)fileActivatedEventArgsWithNeighboringFiles.Files[0];
                 return mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
             }
             else
@@ -79,12 +64,19 @@ public class AppModel
             var arguments = Environment.GetCommandLineArgs().Skip(1).ToList();
             return mediaFilesLoaderService.LoadFromArguments(arguments, config);
         }
+        else if (Debugger.IsAttached)
+        {
+            var folder = KnownFolders.SavedPictures;
+            return mediaFilesLoaderService.LoadFolder(folder, config);
+        }
         else
         {
 #if DEBUG
             return mediaFilesLoaderService.LoadFolder(KnownFolders.PicturesLibrary, config);
 #else
-            return LoadMediaFilesTask.Empty;
+            var folder = KnownFolders.SavedPictures;
+            return mediaFilesLoaderService.LoadFolder(folder, config);
+            //return LoadMediaFilesTask.Empty;
 #endif
         }
     }

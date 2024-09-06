@@ -2,20 +2,25 @@
 using Essentials.NET.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using PhotoViewer.App.Messages;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
+using PhotoViewer.App.ViewModels;
 using PhotoViewer.App.Views.Dialogs;
 using PhotoViewer.Core;
+using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;
 using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
 using Windows.Globalization;
+using Windows.Storage;
 using StringsApp = PhotoViewer.App.Resources.Strings;
 using StringsCore = PhotoViewer.Core.Resources.Strings;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
@@ -26,56 +31,102 @@ public partial class App : Application
 {
     public static new App Current => (App)Application.Current;
 
-    public ViewModelFactory ViewModelFactory { get; }
+    public ViewModelFactory ViewModelFactory { get; private set; } = null!;
 
     public MainWindow Window { get; private set; } = null!;
 
-    private readonly AppModel appModel;
-
     private bool isUnhandeldExceptionDialogShown = false;
 
-    public App()
+    private readonly Task<ApplicationSettings> applicationSettingsTask;
+
+    public App(Task<ApplicationSettings> applicationSettingsTask)
     {
-        var stopwatch = Stopwatch.StartNew();
-
-        var applicationSettings = new SettingsService().LoadSettings();
-
-        LogLevel logLevel = applicationSettings.IsDebugLogEnabled || Debugger.IsAttached ? LogLevel.DEBUG : LogLevel.INFO;
-        Log.Configure(new Logger([new DebugAppender(), new FileAppender(Path.Combine(AppData.PublicFolder, "logs"), logLevel)], new DefaultLogFormat(LoggingFilePathPrefixRegex())));
-
+        this.applicationSettingsTask = applicationSettingsTask;
+        InitializeComponent();
         UnhandledException += App_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+    }
+
+    protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    {
+        IMessenger messenger = new StrongReferenceMessenger();
+
+        LoadMediaFilesTask? loadMediaFilesTask = null;
+        MainWindowModel? mainWindowModel = null;
+
+        var launchTask = Task.Run(async () =>
+        {
+            var args = AppInstance.GetActivatedEventArgs();
+
+            var mediaFilesLoaderService = new MediaFilesLoaderService(CachedImageLoaderService.Instance, new FileSystemService());
+
+            var applicationSettings = await applicationSettingsTask;
+
+            loadMediaFilesTask = LoadMediaFiles(args, applicationSettings, mediaFilesLoaderService);
+
+            ViewModelFactory = new ViewModelFactory(messenger, applicationSettings, CachedImageLoaderService.Instance, mediaFilesLoaderService);
+
+            mainWindowModel = ViewModelFactory.CreateMainWindowModel();
+        });
 
         string language = ApplicationLanguages.Languages[0];
         StringsApp.Culture = new CultureInfo(language);
         StringsCore.Culture = new CultureInfo(language);
 
-        InitializeComponent();
-
-        ViewModelFactory = new ViewModelFactory(applicationSettings);
-
-        appModel = ViewModelFactory.CreateAppModel();
-
-        stopwatch.Stop();
-        Log.Info($"App constructor took {stopwatch.ElapsedMilliseconds}ms");
-    }
-
-    protected override async void OnLaunched(LaunchActivatedEventArgs _)
-    {
-        var args = AppInstance.GetActivatedEventArgs();
-        await appModel.OnLaunchedAsync(args, CreateWindowAsync);
-        await TryReportCrashAsync();
-    }
-
-    private async Task CreateWindowAsync(MainWindowModel windowModel, IMessenger messenger)
-    {
-        var stopwatch = Stopwatch.StartNew();
-        Window = new MainWindow(windowModel, messenger);
-        var initialiationTask = ColorProfileProvider.Instance.InitializeAsync(Window);
+        Window = new MainWindow(messenger);
+        ColorProfileProvider.Instance.InitializeAsync(Window);
         Window.Activate();
-        await initialiationTask;
-        stopwatch.Stop();
-        Log.Info($"CreateWindowAsync took {stopwatch.ElapsedMilliseconds}ms");
+
+        await launchTask;
+
+        Window.SetViewModel(mainWindowModel!);
+
+        messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel)));
+
+        messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask!));
+    }
+
+    private LoadMediaFilesTask LoadMediaFiles(IActivatedEventArgs activatedEventArgs, ApplicationSettings settings, IMediaFilesLoaderService mediaFilesLoaderService)
+    {
+        Log.Info($"Load files from {activatedEventArgs}");
+
+        var config = new LoadMediaConfig(settings.LinkRawFiles, settings.RawFilesFolderName, settings.IncludeVideos);
+
+        if (activatedEventArgs is IFileActivatedEventArgsWithNeighboringFiles fileActivatedEventArgsWithNeighboringFiles)
+        {
+            if (fileActivatedEventArgsWithNeighboringFiles.NeighboringFilesQuery is { } neighboringFilesQuery)
+            {
+                var startFile = (IStorageFile)fileActivatedEventArgsWithNeighboringFiles.Files[0];
+                return mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);
+            }
+            else
+            {
+                var activatedFiles = fileActivatedEventArgsWithNeighboringFiles.Files.Cast<IStorageFile>().ToList();
+                return mediaFilesLoaderService.LoadFileList(activatedFiles, config);
+            }
+        }
+        else if (activatedEventArgs is IFileActivatedEventArgs fileActivatedEventArgs)
+        {
+            var activatedFiles = fileActivatedEventArgs.Files.Cast<IStorageFile>().ToList();
+            return mediaFilesLoaderService.LoadFileList(activatedFiles, config);
+        }
+        else if (Environment.GetCommandLineArgs().Length > 1)
+        {
+            var arguments = Environment.GetCommandLineArgs().Skip(1).ToList();
+            return mediaFilesLoaderService.LoadFromArguments(arguments, config);
+        }
+        else if (Debugger.IsAttached)
+        {
+            return mediaFilesLoaderService.LoadFolder(KnownFolders.SavedPictures, config);
+        }
+        else
+        {
+#if DEBUG
+            return mediaFilesLoaderService.LoadFolder(KnownFolders.PicturesLibrary, config);
+#else
+            return LoadMediaFilesTask.Empty;
+#endif
+        }
     }
 
     private void App_UnhandledException(object sender, UnhandledExceptionEventArgs args)
@@ -126,7 +177,7 @@ public partial class App : Application
 
                 if (dialog.IsSendErrorReportChecked)
                 {
-                    await TrySendErrorReportAsync();
+                    await new ErrorReportService().TrySendErrorReportAsync();
                 }
 
                 if (dialogResult == ContentDialogResult.Primary)
@@ -148,41 +199,4 @@ public partial class App : Application
         }
     }
 
-    private async Task TrySendErrorReportAsync()
-    {
-        Log.Info("Sending error report");
-        try
-        {
-            await new ErrorReportService().SendErrorReportAsync();
-        }
-        catch (Exception ex)
-        {
-            Log.Error("Failed to send crash report: " + ex);
-        }
-    }
-
-    private async Task TryReportCrashAsync()
-    {
-        try
-        {
-            var errors = await Task.Run(() => new EventLogService().GetErrors());
-
-            if (errors.Any())
-            {
-                var dialog = new CrashReportDialog(Window);
-
-                if (await dialog.ShowAsync() == ContentDialogResult.Primary)
-                {
-                    await new ErrorReportService().SendCrashReportAsync(string.Join("\n\n", errors));
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.Error("Failed to check or report application crash", ex);
-        }
-    }
-
-    [GeneratedRegex(@"^.*\\PhotoViewer\.")]
-    private static partial Regex LoggingFilePathPrefixRegex();
 }

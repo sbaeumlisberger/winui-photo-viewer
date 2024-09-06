@@ -1,15 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET.Logging;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
-using Essentials.NET.Logging;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using PhotoViewer.Core.ViewModels.Shared;
 using System.Windows.Input;
@@ -25,8 +24,6 @@ public interface IFlipViewPageCommandBarModel : IViewModel
 
 public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageCommandBarModel
 {
-    private readonly HashSet<string> ContentTypesSupportedByBitmapEncoder = BitmapEncoder.GetEncoderInformationEnumerator().SelectMany(info => info.MimeTypes).ToHashSet();
-
     public IMediaFlipViewItemModel? SelectedItemModel { get; set; }
 
     public IDeleteFilesCommand DeleteCommand { get; }
@@ -37,9 +34,9 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     public bool CanStartDiashow => SelectedItemModel != null;
 
-    public bool CanCropImage => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmapFileInfo && ContentTypesSupportedByBitmapEncoder.Contains(bitmapFileInfo.ContentType);
+    public bool CanCropImage => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmapFileInfo && IsSupportedByBitmapEncoder(bitmapFileInfo);
 
-    public bool CanEditImage => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmapFileInfo && ContentTypesSupportedByBitmapEncoder.Contains(bitmapFileInfo.ContentType);
+    public bool CanEditImage => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmapFileInfo && IsSupportedByBitmapEncoder(bitmapFileInfo);
 
     public bool CanRotate => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmap && rotateBitmapService.CanRotate(bitmap);
 
@@ -58,6 +55,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     private readonly IRotateBitmapService rotateBitmapService;
 
     private readonly ApplicationSettings settings;
+
+    private HashSet<string>? contentTypesSupportedByBitmapEncoder;
 
     internal FlipViewPageCommandBarModel(
         IMessenger messenger,
@@ -155,6 +154,12 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     private void NavigateToSettingsPage()
     {
         Messenger.Send(new NavigateToPageMessage(typeof(SettingsPageModel)));
+    }
+
+    private bool IsSupportedByBitmapEncoder(IBitmapFileInfo bitmapFileInfo) 
+    {
+        contentTypesSupportedByBitmapEncoder ??= BitmapEncoder.GetEncoderInformationEnumerator().SelectMany(info => info.MimeTypes).ToHashSet();
+        return contentTypesSupportedByBitmapEncoder.Contains(bitmapFileInfo.ContentType);
     }
 
 }

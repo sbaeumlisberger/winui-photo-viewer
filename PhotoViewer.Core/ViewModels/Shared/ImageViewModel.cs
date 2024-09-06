@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
+using Essentials.NET.Logging;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
-using Essentials.NET.Logging;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
@@ -73,9 +73,11 @@ public partial class ImageViewModel : ViewModelBase, IImageViewModel
                 ErrorMessage = string.Empty;
 
                 var image = await imageService.LoadFromFileAsync(bitmapFile, cancellationToken, reload);
+                Log.Debug("LoadFromFileAsync completed");
                 cancellationToken.ThrowIfCancellationRequested();
                 Image = image;
 
+                Log.Debug("send BitmapImageLoadedMessage");
                 Messenger.Send(new BitmapImageLoadedMessage(bitmapFile, Image));
             }
             catch (OperationCanceledException)

@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
+using Essentials.NET.Logging;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
-using Essentials.NET.Logging;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 

@@ -1,14 +1,20 @@
 ﻿using Essentials.NET;
+using Essentials.NET.Logging;
+using Microsoft.UI;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using PhotoVieweApp.Utils;
+using Microsoft.UI.Xaml.Media;
+using PhotoViewer.App.Converters;
 using PhotoViewer.App.Models;
+using PhotoViewer.App.Resources;
 using PhotoViewer.App.Utils;
-using Essentials.NET.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Utils;
+using System;
 using Windows.System;
+using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority;
 
 namespace PhotoViewer.App.Views;
 
@@ -17,6 +23,15 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
     public MediaFlipView()
     {
         InitializeComponentMVVM();
+        Loaded += MediaFlipView_Loaded;
+    }
+
+    private void MediaFlipView_Loaded(object sender, RoutedEventArgs e)
+    {
+        DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+        {
+            FindName(nameof(selectedItemIndicator));
+        });
     }
 
     partial void ConnectToViewModel(MediaFlipViewModel viewModel)
@@ -120,5 +135,20 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
     private void FlipView_LosingFocus(UIElement sender, LosingFocusEventArgs args)
     {
         Log.Debug("FlipView_LosingFocus " + args.FocusState + ", " + args.InputDevice + ", " + args.NewFocusedElement);
+    }
+
+    private SolidColorBrush ToFlipViewBackground(bool isDiashowActive)
+    {
+        return new SolidColorBrush(isDiashowActive ? Colors.Black : Colors.Transparent);
+    }
+
+    private SymbolIcon ToDiashowLoopMenuItemIcon(bool isDiashowLoopActive)
+    {
+        return new SymbolIcon(isDiashowLoopActive ? Symbol.Pause : Symbol.Play);
+    }
+
+    private string ToDiashowLoopMenuItemText(bool isDiashowLoopActive)
+    {
+        return isDiashowLoopActive ? Strings.MediaFlipView_DisableDiashowLoop : Strings.MediaFlipView_EnableDiashowLoop;
     }
 }

@@ -1,3 +1,4 @@
+using Essentials.NET.Logging;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI;
@@ -6,7 +7,6 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Utils;
-using Essentials.NET.Logging;
 using System;
 using System.Diagnostics;
 using System.Numerics;

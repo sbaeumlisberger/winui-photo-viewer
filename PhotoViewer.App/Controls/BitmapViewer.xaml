@@ -22,7 +22,7 @@
                 x:Name="dummy" 
                 Background="Transparent"
                 DoubleTapped="Dummy_DoubleTapped">
-                <ContentPresenter Content="{x:Bind Content, Mode=OneWay}"/>
+                <ContentPresenter x:Name="contentPresenter"/>
             </Grid>
         </ScrollViewer>
     </Grid>

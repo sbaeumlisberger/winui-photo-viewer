@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Essentials.NET;
+using Essentials.NET.Logging;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
-using Essentials.NET.Logging;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using Windows.Storage;

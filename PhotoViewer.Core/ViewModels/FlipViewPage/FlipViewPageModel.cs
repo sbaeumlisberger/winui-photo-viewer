@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
+using Essentials.NET.Logging;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
-using Essentials.NET.Logging;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
@@ -16,21 +16,27 @@ namespace PhotoViewer.App.ViewModels;
 
 public partial class FlipViewPageModel : ViewModelBase
 {
-    public IDetailsBarModel DetailsBarModel { get; }
+    public IDetailsBarModel DetailsBarModel => detailsBarModel ?? CreateDetailsBarModel();
+    private IDetailsBarModel? detailsBarModel;
 
-    public IFlipViewPageCommandBarModel CommandBarModel { get; }
+    public IFlipViewPageCommandBarModel CommandBarModel => commandBarModel ?? CreateCommandBarModel();
+    private IFlipViewPageCommandBarModel? commandBarModel;
 
     public IMediaFlipViewModel FlipViewModel { get; }
 
-    public IMetadataPanelModel MetadataPanelModel { get; }
+    public IMetadataPanelModel MetadataPanelModel => metadataPanelModel ?? CreateMetadataPanelModel();
+    private IMetadataPanelModel? metadataPanelModel;
 
-    public EditImageOverlayModel EditImageOverlayModel { get; }
+    public EditImageOverlayModel EditImageOverlayModel => editImageOverlayModel ?? CreateEditImageOverlayModel();
+    private EditImageOverlayModel? editImageOverlayModel;
 
     public bool ShowUI { get; private set; } = true;
 
     private readonly ApplicationSession session;
 
     private readonly IDisplayRequestService displayRequestService;
+
+    private readonly IViewModelFactory viewModelFactory;
 
     private IDisposable? displayRequest;
 
@@ -42,13 +48,9 @@ public partial class FlipViewPageModel : ViewModelBase
     {
         this.session = session;
         this.displayRequestService = displayRequestService;
+        this.viewModelFactory = viewModelFactory;
 
         FlipViewModel = viewModelFactory.CreateMediaFlipViewModel();
-        DetailsBarModel = viewModelFactory.CreateDetailsBarModel();
-        CommandBarModel = viewModelFactory.CreateFlipViewPageCommandBarModel(FlipViewModel.SelectPreviousCommand, FlipViewModel.SelectNextCommand);
-        MetadataPanelModel = viewModelFactory.CreateMetadataPanelModel(true);
-        EditImageOverlayModel = viewModelFactory.CreateEditImageOverlayModel();
-
         FlipViewModel.PropertyChanged += FlipViewModel_PropertyChanged;
 
         Messenger.Register<StartDiashowMessage>(this, OnStartDiashowMessageReceived);
@@ -122,12 +124,56 @@ public partial class FlipViewPageModel : ViewModelBase
         if (e.PropertyName == nameof(FlipViewModel.SelectedItemModel))
         {
             var selectedItemModel = FlipViewModel.SelectedItemModel;
-            DetailsBarModel.SelectedItemModel = selectedItemModel;
-            CommandBarModel.SelectedItemModel = selectedItemModel;
-            MetadataPanelModel.Files = selectedItemModel is not null ? [selectedItemModel.MediaFile] : [];
-            EditImageOverlayModel.File = selectedItemModel?.MediaFile as IBitmapFileInfo;
-            EditImageOverlayModel.Image = (selectedItemModel as IBitmapFlipViewItemModel)?.ImageViewModel.Image;
+
+            if (detailsBarModel != null)
+            {
+                detailsBarModel.SelectedItemModel = selectedItemModel;
+            }
+
+            if (commandBarModel != null)
+            {
+                commandBarModel.SelectedItemModel = selectedItemModel;
+            }
+
+            if (metadataPanelModel != null)
+            {
+                metadataPanelModel.Files = selectedItemModel is not null ? [selectedItemModel.MediaFile] : [];
+            }
+
+            if (editImageOverlayModel != null)
+            {
+                editImageOverlayModel.File = selectedItemModel?.MediaFile as IBitmapFileInfo;
+                editImageOverlayModel.Image = (selectedItemModel as IBitmapFlipViewItemModel)?.ImageViewModel.Image;
+            }
         }
     }
 
+    private IFlipViewPageCommandBarModel CreateCommandBarModel()
+    {
+        commandBarModel = viewModelFactory.CreateFlipViewPageCommandBarModel(FlipViewModel.SelectPreviousCommand, FlipViewModel.SelectNextCommand);
+        commandBarModel.SelectedItemModel = FlipViewModel.SelectedItemModel;
+        return commandBarModel;
+    }
+
+    private IMetadataPanelModel CreateMetadataPanelModel()
+    {
+        metadataPanelModel = viewModelFactory.CreateMetadataPanelModel(true);
+        metadataPanelModel.Files = FlipViewModel.SelectedItemModel is not null ? [FlipViewModel.SelectedItemModel.MediaFile] : [];
+        return metadataPanelModel;
+    }
+
+    private IDetailsBarModel CreateDetailsBarModel()
+    {
+        detailsBarModel = viewModelFactory.CreateDetailsBarModel();
+        DetailsBarModel.SelectedItemModel = FlipViewModel.SelectedItemModel;
+        return detailsBarModel;
+    }
+
+    private EditImageOverlayModel CreateEditImageOverlayModel()
+    {
+        editImageOverlayModel = viewModelFactory.CreateEditImageOverlayModel();
+        EditImageOverlayModel.File = FlipViewModel.SelectedItemModel?.MediaFile as IBitmapFileInfo;
+        EditImageOverlayModel.Image = (FlipViewModel.SelectedItemModel as IBitmapFlipViewItemModel)?.ImageViewModel.Image;
+        return editImageOverlayModel;
+    }
 }

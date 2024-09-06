@@ -2,20 +2,13 @@
 using MetadataAPI;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using PhotoViewer.App.Models;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.ViewModels;
 using PhotoViewer.Core.ViewModels.Dialogs;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Storage;
 using Xunit;
 
@@ -65,7 +58,7 @@ public class ImportGpxTrackDialogModelTest
             .Do(callInfo => callInfo.Arg<FileOpenPickerModel>().File = gpxFile);
         string errorMessage = "Some Error Message";
         gpxService.ReadTrackFromGpxFileAsync(gpxFile).ThrowsAsync(new Exception(errorMessage));
-       
+
         var importGpxTrackDialogModel = new ImportGpxTrackDialogModel(messenger, dialogService, gpxService, files);
         importGpxTrackDialogModel.BrowseFileCommand.Execute(null);
         await importGpxTrackDialogModel.ImportCommand.ExecuteAsync(null);
@@ -75,7 +68,7 @@ public class ImportGpxTrackDialogModelTest
         Assert.Contains(importGpxTrackDialogModel.Errors, error => error.Contains(errorMessage));
     }
 
-    private IBitmapFileInfo MockBitmapFile() 
+    private IBitmapFileInfo MockBitmapFile()
     {
         var mock = Substitute.For<IBitmapFileInfo>();
         mock.IsMetadataSupported.Returns(true);

@@ -1,8 +1,8 @@
 ﻿using Essentials.NET;
+using Essentials.NET.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using PhotoViewer.App.Utils;
-using Essentials.NET.Logging;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
@@ -191,7 +191,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
                 {
                     var text = await dataPackage.GetTextAsync();
 
-                    if (text.Contains(","))
+                    if (text.Contains(','))
                     {
                         string[] parts = text.Split(',', StringSplitOptions.TrimEntries);
                         latitudeTextBox.Text = parts[0];

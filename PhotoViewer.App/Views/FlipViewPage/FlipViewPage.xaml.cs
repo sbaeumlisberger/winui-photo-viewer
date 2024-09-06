@@ -1,9 +1,13 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
+using System;
+using System.Threading.Tasks;
 
 namespace PhotoViewer.App.Views;
 
@@ -17,7 +21,33 @@ public sealed partial class FlipViewPage : Page, IMVVMControl<FlipViewPageModel>
     public FlipViewPage()
     {
         DataContext = App.Current.ViewModelFactory.CreateFlipViewPageModel();
-        this.InitializeComponentMVVM();
+        Loaded += FlipViewPage_Loaded;
+        InitializeComponentMVVM();       
+    }
+
+    private async void FlipViewPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        Program.NotifyStartupCompleted();
+
+        await Task.WhenAny(Program.ImageDrawnTask, Task.Delay(1000));
+
+        DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+        {
+            FindName(nameof(commandBar));
+            commandBarPlaceholder.Visibility = Visibility.Collapsed;
+
+            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+            {
+                FindName(nameof(detailsBar));
+                detailsBarPlaceholder.Visibility = Visibility.Collapsed;
+
+                DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+                {
+                    FindName(nameof(metadataPanel));
+                    metadataPanelPlaceholder.Visibility = Visibility.Collapsed;
+                });
+            });
+        });
     }
 
     partial void DisconnectFromViewModel(FlipViewPageModel viewModel)
@@ -45,7 +75,7 @@ public sealed partial class FlipViewPage : Page, IMVVMControl<FlipViewPageModel>
             {
                 return new PhotoPrintJob(new[] { selectedMediaFile });
             }
-            return new PhotoPrintJob(new IMediaFileInfo[0]);
+            return new PhotoPrintJob(Array.Empty<IMediaFileInfo>());
         });
     }
 }

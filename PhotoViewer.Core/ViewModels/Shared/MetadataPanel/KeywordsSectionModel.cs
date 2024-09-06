@@ -12,7 +12,7 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
 {
-    public ObservableList<ItemWithCountModel> Keywords => keywords; // TODO
+    public IObservableReadOnlyList<ItemWithCountModel> Keywords => keywords;
 
     public string AutoSuggestBoxText { get; set; } = string.Empty;
 

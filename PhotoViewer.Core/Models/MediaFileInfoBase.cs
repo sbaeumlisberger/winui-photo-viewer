@@ -1,5 +1,6 @@
 ﻿using Essentials.NET;
 using Essentials.NET.Logging;
+using PhotoViewer.App.Utils;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -33,7 +34,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
 
     private ulong? fileSize;
 
-    private Windows.Storage.Streams.Buffer? mtpBuffer;
+    private byte[]? mtpBuffer = null;
 
 #if DEBUG
     public readonly string DebugId;
@@ -57,7 +58,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
         if (string.IsNullOrEmpty(FilePath))
         {
             // If the file path is not set, it is probably a file accessed via MTP.            
-            return (await OpenMTPAsync(fileAccessMode).ConfigureAwait(false)).AsStream();
+            return await OpenMTPAsync(fileAccessMode).ConfigureAwait(false);
         }
 
         if (fileAccessMode == FileAccessMode.Read)
@@ -123,7 +124,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
         mtpBuffer = null;
     }
 
-    private async Task<IRandomAccessStream> OpenMTPAsync(FileAccessMode fileAccessMode)
+    private async Task<Stream> OpenMTPAsync(FileAccessMode fileAccessMode)
     {
         if (fileAccessMode != FileAccessMode.Read)
         {
@@ -148,17 +149,12 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
                         throw new Exception("File to large!");
                     }
 
-                    mtpBuffer = new Windows.Storage.Streams.Buffer((uint)fileStream.Size);
-                    await fileStream.ReadAsync(mtpBuffer, mtpBuffer.Capacity, InputStreamOptions.None).AsTask().ConfigureAwait(false);
+                    mtpBuffer = await fileStream.ReadBytesAsync().ConfigureAwait(false);
                 }
             }
         }
 
-        var memoryStream = new InMemoryRandomAccessStream();
-        await memoryStream.WriteAsync(mtpBuffer).AsTask().ConfigureAwait(false);
-        await memoryStream.FlushAsync().AsTask().ConfigureAwait(false);
-        memoryStream.Seek(0);
-        return memoryStream;
+        return new MemoryStream(mtpBuffer);
     }
 
     public async Task RenameAsync(string newName)

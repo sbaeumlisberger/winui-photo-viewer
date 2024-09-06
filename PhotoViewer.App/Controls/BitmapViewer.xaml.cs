@@ -1,4 +1,5 @@
 ﻿using Essentials.NET;
+using Essentials.NET.Logging;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -8,8 +9,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
-using Essentials.NET.Logging;
 using PhotoViewer.App.Views;
+using PhotoViewer.Core.Models;
 using System;
 using Windows.Foundation;
 
@@ -19,17 +20,13 @@ public sealed partial class BitmapViewer : UserControl
 {
     public event TypedEventHandler<BitmapViewer, ScrollViewerViewChangedEventArgs>? ViewChanged;
 
-    public static readonly DependencyProperty BitmapImageProperty = DependencyPropertyHelper<BitmapViewer>.Register(nameof(BitmapImage), typeof(IBitmapImageModel));
+    public IBitmapImageModel? BitmapImage { get => bitmapImage; set => SetField(ref bitmapImage, value, OnBitmapImageChanged); }
+    private IBitmapImageModel? bitmapImage = null;
 
-    public static readonly DependencyProperty IsScaleUpEnabeldProperty = DependencyPropertyHelper<BitmapViewer>.Register(nameof(IsScaleUpEnabeld), typeof(bool), false);
+    public bool IsScaleUpEnabeld { get => isScaleUpEnabeld; set => SetField(ref isScaleUpEnabeld, value, OnIsScaleUpEnabeldChanged); }
+    private bool isScaleUpEnabeld = false;
 
-    public static new readonly DependencyProperty ContentProperty = DependencyPropertyHelper<BitmapViewer>.Register(nameof(Content), typeof(object));
-
-    public IBitmapImageModel? BitmapImage { get => (IBitmapImageModel?)GetValue(BitmapImageProperty); set => SetValue(BitmapImageProperty, value); }
-
-    public bool IsScaleUpEnabeld { get => (bool)GetValue(IsScaleUpEnabeldProperty); set => SetValue(IsScaleUpEnabeldProperty, value); }
-
-    public new object Content { get => GetValue(ContentProperty); set => SetValue(ContentProperty, value); }
+    public new object? Content { get => contentPresenter.Content; set { contentPresenter.Content = value; } }
 
     public ScrollViewer ScrollViewer => scrollViewer;
 
@@ -46,11 +43,9 @@ public sealed partial class BitmapViewer : UserControl
         Unloaded += BitmapViewer_Unloaded;
 
         this.RegisterPropertyChangedCallbackSafely(IsEnabledProperty, OnIsEnabledChanged);
-        this.RegisterPropertyChangedCallbackSafely(BitmapImageProperty, OnBitmapImageChanged);
-        this.RegisterPropertyChangedCallbackSafely(IsScaleUpEnabeldProperty, OnIsScaleUpEnabeldChanged);
 
         colorProfileProvider = ColorProfileProvider.Instance;
-        colorProfileProvider.ColorProfileChanged += ColorProfileProvider_ColorProfileChanged;
+        colorProfileProvider.ColorProfileLoaded += ColorProfileProvider_ColorProfileLoaded;
     }
 
     private void BitmapViewer_Unloaded(object sender, RoutedEventArgs e)
@@ -60,19 +55,26 @@ public sealed partial class BitmapViewer : UserControl
         canvasControl.RemoveFromVisualTree();
         canvasControl = null;
 
-        colorProfileProvider.ColorProfileChanged -= ColorProfileProvider_ColorProfileChanged;
+        colorProfileProvider.ColorProfileLoaded -= ColorProfileProvider_ColorProfileLoaded;
     }
 
-    private void ColorProfileProvider_ColorProfileChanged(object? sender, EventArgs e)
+    private void ColorProfileProvider_ColorProfileLoaded(object? sender, EventArgs e)
     {
-        InvalidateCanvas();
+        if (BitmapImage is not null)
+        {
+            Log.Debug("ColorProfileProvider_ColorProfileLoaded->InvalidateCanvas");
+            InvalidateCanvas();
+        }
     }
 
-    private void OnBitmapImageChanged(DependencyObject sender, DependencyProperty dp)
+    private void OnBitmapImageChanged()
     {
         animatedBitmapRenderer.DisposeSafely(() => animatedBitmapRenderer = null);
 
-        scrollViewer.ChangeView(0, 0, 1);
+        if (scrollViewer.ZoomFactor != 1)
+        {
+            scrollViewer.ChangeView(0, 0, 1);
+        }
 
         if (BitmapImage != null && BitmapImage.Frames.Count > 1)
         {
@@ -80,12 +82,18 @@ public sealed partial class BitmapViewer : UserControl
             animatedBitmapRenderer.FrameRendered += AnimatedBitmapRenderer_FrameRendered;
             animatedBitmapRenderer.IsPlaying = IsEnabled;
         }
+
+        Log.Debug("OnBitmapImageChanged->InvalidateCanvas");
         InvalidateCanvas();
     }
 
-    private void OnIsScaleUpEnabeldChanged(DependencyObject sender, DependencyProperty dp)
+    private void OnIsScaleUpEnabeldChanged()
     {
-        InvalidateCanvas();
+        if (BitmapImage is not null)
+        {
+            Log.Debug("OnIsScaleUpEnabeldChanged->InvalidateCanvas");
+            InvalidateCanvas();
+        }
     }
 
     private void OnIsEnabledChanged(DependencyObject sender, DependencyProperty dp)
@@ -103,6 +111,7 @@ public sealed partial class BitmapViewer : UserControl
 
     private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
     {
+        Log.Debug("ScrollViewer_ViewChanged->InvalidateCanvas");
         InvalidateCanvas();
         ViewChanged?.Invoke(this, e);
     }
@@ -111,6 +120,7 @@ public sealed partial class BitmapViewer : UserControl
     {
         try
         {
+            Log.Debug($"InvalidateCanvas {BitmapImage?.ID}");
             canvasControl.Invalidate();
         }
         catch (Exception ex)
@@ -123,12 +133,19 @@ public sealed partial class BitmapViewer : UserControl
     {
         try
         {
-            if (BitmapImage is null)
+            if (!colorProfileProvider.IsInitialized)
             {
+                Log.Debug("Color profile provider is not initialized yet, skip drawing");
+                return;
+            }
+            else if (BitmapImage is null)
+            {
+                Log.Debug("Image not set, skip drawing");
                 args.DrawingSession.Clear(Colors.Transparent);
             }
             else
             {
+                Log.Debug($"CanvasControl_Draw called for {BitmapImage.ID}");
                 UpdateDummy(BitmapImage);
                 DrawToCanvas(args.DrawingSession, BitmapImage);
             }
@@ -220,6 +237,9 @@ public sealed partial class BitmapViewer : UserControl
         {
             drawingSession.DrawImage(canvasImage, dstRectInPixels, srcRect, 1, CanvasImageInterpolation.NearestNeighbor);
         }
+
+        Log.Info("Image " + image.ID + " drawn");
+        Program.NotifyImageDrawn();
     }
 
 
@@ -243,4 +263,13 @@ public sealed partial class BitmapViewer : UserControl
         }
     }
 
+    private static void SetField<T>(ref T field, T value, Action onChanged)
+    {
+        bool changed = !Equals(value, field);
+        field = value;
+        if (changed)
+        {
+            onChanged();
+        }
+    }
 }

@@ -1,18 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET.Logging;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Utils;
-using Essentials.NET.Logging;
 using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
+using System.Collections.ObjectModel;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Storage;
-using System.Collections.ObjectModel;
 
 namespace PhotoViewer.Core.ViewModels;
 

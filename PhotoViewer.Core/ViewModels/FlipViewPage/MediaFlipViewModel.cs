@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
+using Essentials.NET.Logging;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
-using Essentials.NET.Logging;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
@@ -293,7 +293,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         SelectedItemModel = itemModelsCache.SetSelectedItem(selectedItem);
         ItemModels.ForEach(itemModel => itemModel.IsSelected = itemModel == SelectedItemModel);
         sw.Stop();
-        Log.Info($"UpdateFlipViewItemModels took {sw.ElapsedMilliseconds} ms"); ;
+        Log.Debug($"UpdateFlipViewItemModels took {sw.ElapsedMilliseconds} ms"); ;
     }
 
     private IMediaFlipViewItemModel CreateItemModel(IMediaFileInfo mediaFile)

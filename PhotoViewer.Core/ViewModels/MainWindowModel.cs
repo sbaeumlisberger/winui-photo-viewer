@@ -56,7 +56,7 @@ public partial class MainWindowModel : ViewModelBase
     {
         var backgroundTasks = backgroundTaskService.BackgroundTasks.ToList();
 
-        if (backgroundTasks.Any())
+        if (backgroundTasks.Count != 0)
         {
             var dialogTask = dialogService.ShowDialogAsync(new MessageDialogModel()
             {

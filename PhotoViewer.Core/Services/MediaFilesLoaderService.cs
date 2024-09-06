@@ -1,5 +1,5 @@
-﻿using PhotoViewer.App.Models;
-using Essentials.NET.Logging;
+﻿using Essentials.NET.Logging;
+using PhotoViewer.App.Models;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
@@ -35,7 +35,10 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 
     public LoadMediaFilesTask LoadFolder(IStorageFolder storageFolder, LoadMediaConfig config)
     {
-        var task = Task.Run(async () =>
+        var startFile = fileSystemService.TryGetFirstFileFromFolderAsync(storageFolder.Path).GetAwaiter().GetResult();
+        var startMediaFile = startFile != null ? GetStartMediaFile(startFile) : null;
+
+        return new LoadMediaFilesTask(startMediaFile, Task.Run(async () =>
         {
             var files = await fileSystemService.ListFilesAsync(storageFolder).ConfigureAwait(false);
 
@@ -52,9 +55,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             var mediaFiles = ConvertFilesToMediaFiles(null, files, config);
 
             return new LoadMediaFilesResult(mediaFiles, null);
-        });
-
-        return new LoadMediaFilesTask(null, task);
+        }));
     }
 
     public LoadMediaFilesTask LoadFileList(List<IStorageFile> files, LoadMediaConfig config)
@@ -150,7 +151,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             && startFile.Path.StartsWith(Path.GetTempPath()))
         {
             // file is probably a copy from a file accessed via MTP
-            // the orginal file will be part of the neighboring files query
+            // the original file will be part of the neighboring files query
             return null;
         }
         else if (BitmapFileInfo.CommonFileExtensions.Contains(fileExtension))
@@ -158,7 +159,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             var bitmapFileInfo = new BitmapFileInfo(startFile);
 
             // preload image
-            cachedImageLoaderService.Preload(bitmapFileInfo);
+            //cachedImageLoaderService.Preload(bitmapFileInfo);
 
             return bitmapFileInfo;
         }

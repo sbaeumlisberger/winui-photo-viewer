@@ -2,19 +2,13 @@
 using MetadataAPI;
 using MetadataEditModule.ViewModel;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core;
-using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
-using PhotoViewer.Core.ViewModels;
-using System.Collections.Immutable;
 using Windows.Devices.Geolocation;
-using Windows.Storage;
 using Xunit;
 
 namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;

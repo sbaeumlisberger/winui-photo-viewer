@@ -1,20 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
+using Essentials.NET.Logging;
 using MetadataAPI;
 using MetadataAPI.Data;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
-using OpenCvSharp;
 using PhotoViewer.App.Messages;
+using PhotoViewer.App.Models;
+using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
-using Essentials.NET.Logging;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using Windows.Graphics.Imaging;
 using Rect = Windows.Foundation.Rect;
 
@@ -34,17 +35,19 @@ public partial class PeopleTaggingPageModel : ViewModelBase
 
     private readonly IFaceDetectionService faceDetectionService;
 
-    private readonly ICachedImageLoaderService imageLoaderService;
+    private readonly IImageLoaderService imageLoaderService;
 
     private readonly ISuggestionsService peopleSuggestionsService;
 
     private readonly IMetadataService metadataService;
 
+    private readonly CancellationTokenSource cancellationTokenSource = new();
+
     internal PeopleTaggingPageModel(
         ApplicationSession session,
         IMessenger messenger,
         IFaceDetectionService faceDetectionService,
-        ICachedImageLoaderService imageLoaderService,
+        IImageLoaderService imageLoaderService,
         ISuggestionsService peopleSuggestionsService,
         IMetadataService metadataService)
         : base(messenger)
@@ -57,6 +60,13 @@ public partial class PeopleTaggingPageModel : ViewModelBase
         AllPeopleNames = peopleSuggestionsService.GetAll();
         PropertyChanged += PeopleTaggingBatchViewPageModel_PropertyChanged;
         _ = InitalizeAsync(session);
+    }
+
+    protected override void OnCleanup()
+    {
+        cancellationTokenSource.Cancel();
+        cancellationTokenSource.Dispose();
+        DetectedFaces.ForEach(face => face.SourceImage.Dispose());
     }
 
     [RelayCommand]
@@ -109,43 +119,43 @@ public partial class PeopleTaggingPageModel : ViewModelBase
             .ToList();
 
         Stopwatch stopwatch = Stopwatch.StartNew();
-        await Parallel.ForEachAsync(files, async (file, _) =>
+        await Parallel.ForEachAsync(files, cancellationTokenSource.Token, async (file, cancellationToken) =>
         {
             var peopleTags = await metadataService.GetMetadataAsync(file, MetadataProperties.People);
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (peopleTags.Count != 0)
             {
-                await DetectFacesAsync(file);
+                await DetectFacesAsync(imageLoaderService, file, cancellationToken).ConfigureAwait(false);
             }
         });
         stopwatch.Stop();
         Log.Debug($"Completed Face Detection in {stopwatch.ElapsedMilliseconds} ms");
     }
 
-    private async Task DetectFacesAsync(IBitmapFileInfo bitmapFile)
+    private async Task DetectFacesAsync(IImageLoaderService imageLoaderService, IBitmapFileInfo bitmapFile, CancellationToken cancellationToken)
     {
         try
         {
             Log.Debug($"Detecting faces in {bitmapFile.FilePath}");
 
-            using Mat matBGRA8 = LoadImageAsMatBGRA8(bitmapFile);
+            var image = await imageLoaderService.LoadFromFileAsync(bitmapFile, cancellationToken).ConfigureAwait(false);
 
-            var softwareBitmap = ConvertMatBGRA8toSoftwareBitmap(matBGRA8);
+            if (image is not ICanvasBitmapImageModel canvasBitmapImageModel)
+            {
+                return;
+            }
 
-            var detectedFaces = await faceDetectionService.DetectFacesAsync(softwareBitmap);
+            var detectedFaces = await faceDetectionService.DetectFacesAsync(canvasBitmapImageModel, cancellationToken).ConfigureAwait(false);
 
             if (detectedFaces.Count == 0)
             {
                 return;
             }
 
-            //Stopwatch stopwatch = Stopwatch.StartNew();
-            var canvasBitmap = CanvasBitmap.CreateFromSoftwareBitmap(CanvasDevice.GetSharedDevice(), softwareBitmap);
-            //stopwatch.Stop();
-            //Log.Debug($"CanvasBitmap.CreateFromSoftwareBitmap took {stopwatch.ElapsedMilliseconds} ms");
-
             foreach (var face in detectedFaces)
             {
-                await ProcessDetectedFaceAsync(face, canvasBitmap, bitmapFile);
+                await ProcessDetectedFaceAsync(face, canvasBitmapImageModel.CanvasBitmap, bitmapFile, cancellationToken).ConfigureAwait(false);
             }
         }
         catch (Exception ex)
@@ -154,7 +164,7 @@ public partial class PeopleTaggingPageModel : ViewModelBase
         }
     }
 
-    private async Task ProcessDetectedFaceAsync(DetectedFaceModel face, CanvasBitmap canvasBitmap, IBitmapFileInfo bitmapFile)
+    private async Task ProcessDetectedFaceAsync(DetectedFaceModel face, CanvasBitmap canvasBitmap, IBitmapFileInfo bitmapFile, CancellationToken cancellationToken)
     {
         var sizeInPixels = canvasBitmap.SizeInPixels;
 
@@ -171,36 +181,11 @@ public partial class PeopleTaggingPageModel : ViewModelBase
             SourceRectangle = extendedFaceBoxInDIPs,
         };
 
-        await DispatchAsync(() => DetectedFaces.Add(new DetectedFace(faceRectInPercent, faceImage, bitmapFile, canvasBitmap)));
-    }
-
-    private Mat LoadImageAsMatBGRA8(IBitmapFileInfo bitmapFile)
-    {
-        //Stopwatch stopwatch = Stopwatch.StartNew();
-        //Log.Debug($"Loading image {bitmapFile.FilePath}");
-
-        using Mat matBGR8 = Cv2.ImRead(bitmapFile.FilePath, ImreadModes.Color);
-        Mat matBGRA8 = new Mat(matBGR8.Width, matBGR8.Height, MatType.CV_8UC4);
-        Cv2.CvtColor(matBGR8, matBGRA8, ColorConversionCodes.BGR2BGRA);
-
-        //stopwatch.Stop();
-        //Log.Debug($"Loaded image {bitmapFile.FilePath} in {stopwatch.ElapsedMilliseconds} ms");
-        return matBGRA8;
-    }
-
-    private SoftwareBitmap ConvertMatBGRA8toSoftwareBitmap(Mat matBGRA8)
-    {
-        //Stopwatch stopwatch = Stopwatch.StartNew();
-
-        byte[] pixelBytes = new byte[matBGRA8.Total() * matBGRA8.ElemSize()];
-        Marshal.Copy(matBGRA8.Data, pixelBytes, 0, pixelBytes.Length);
-
-        var softwareBitmap = SoftwareBitmap.CreateCopyFromBuffer(pixelBytes.AsBuffer(), BitmapPixelFormat.Bgra8, matBGRA8.Width, matBGRA8.Height, BitmapAlphaMode.Ignore);
-
-        //stopwatch.Stop();
-        //Log.Debug($"Create SoftwareBitmap took {stopwatch.ElapsedMilliseconds} ms");
-
-        return softwareBitmap;
+        await DispatchAsync(() =>
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            DetectedFaces.Add(new DetectedFace(faceRectInPercent, faceImage, bitmapFile, canvasBitmap));
+        });
     }
 
     private FaceRect ToFaceRectInPercent(BitmapBounds rect, BitmapSize bitmapSize)

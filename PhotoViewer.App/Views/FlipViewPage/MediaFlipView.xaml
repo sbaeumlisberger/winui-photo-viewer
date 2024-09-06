@@ -10,35 +10,12 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <converters:BoolToObjectConverter x:Name="FlipViewBackgroundConverter">
-            <converters:BoolToObjectConverter.TrueValue>
-                <SolidColorBrush Color="Black"/>
-            </converters:BoolToObjectConverter.TrueValue>
-            <converters:BoolToObjectConverter.FalseValue>
-                <SolidColorBrush Color="Transparent"/>
-            </converters:BoolToObjectConverter.FalseValue>
-        </converters:BoolToObjectConverter>
-
-        <converters:BoolToObjectConverter x:Name="DiashowLoopMenuItemIconConverter">
-            <converters:BoolToObjectConverter.TrueValue>
-                <SymbolIcon Symbol="Pause"/>
-            </converters:BoolToObjectConverter.TrueValue>
-            <converters:BoolToObjectConverter.FalseValue>
-                <SymbolIcon Symbol="Play"/>
-            </converters:BoolToObjectConverter.FalseValue>
-        </converters:BoolToObjectConverter>
-
-        <converters:BoolToObjectConverter x:Name="DiashowLoopMenuItemTextConverter"
-             TrueValue="{x:Bind res:Strings.MediaFlipView_DisableDiashowLoop}"
-             FalseValue="{x:Bind res:Strings.MediaFlipView_EnableDiashowLoop}"/>
-
         <Storyboard x:Name="DeleteStoryboard">
             <DoubleAnimation 
                 From="1" To="0" Duration="0:0:0.2"
                 Storyboard.TargetProperty="(FrameworkElement.Opacity)"
                 Storyboard.TargetName="flipView" />
         </Storyboard>
-
     </UserControl.Resources>
 
     <Grid>
@@ -52,7 +29,7 @@
             CornerRadius="0"
             UseTouchAnimationsForAllNavigation="False"
             ContextRequested="FlipView_ContextRequested"
-            Background="{x:Bind ViewModel.IsDiashowActive, Mode=OneWay, Converter={StaticResource FlipViewBackgroundConverter}}"
+            Background="{x:Bind ToFlipViewBackground(ViewModel.IsDiashowActive), Mode=OneWay}"
             Tapped="FlipView_Tapped"
             KeyDown="FlipView_KeyDown"
             LosingFocus="FlipView_LosingFocus">
@@ -96,8 +73,8 @@
             <FlyoutBase.AttachedFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem 
-                        Icon="{x:Bind ViewModel.IsDiashowLoopActive, Mode=OneWay, Converter={StaticResource DiashowLoopMenuItemIconConverter}}" 
-                        Text="{x:Bind ViewModel.IsDiashowLoopActive, Mode=OneWay, Converter={StaticResource DiashowLoopMenuItemTextConverter}}" 
+                        Icon="{x:Bind ToDiashowLoopMenuItemIcon(ViewModel.IsDiashowLoopActive), Mode=OneWay}" 
+                        Text="{x:Bind ToDiashowLoopMenuItemText(ViewModel.IsDiashowLoopActive), Mode=OneWay}" 
                         Command="{x:Bind ViewModel.ToogleDiashowLoopCommand}">
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Space"/>
@@ -143,6 +120,8 @@
         </StackPanel>
 
         <Grid
+            x:Name="selectedItemIndicator"
+            x:Load="False"
             Visibility="{x:Bind ViewModel.ShowSelectedItemIndicator, Mode=OneWay}"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"

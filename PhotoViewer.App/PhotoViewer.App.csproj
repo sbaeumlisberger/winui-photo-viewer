@@ -26,43 +26,11 @@
 		<AppInstallerUri>\\DISKSTATION\Documents\Programme\PhotoViewer</AppInstallerUri>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 		<AppxBundlePlatforms>x64</AppxBundlePlatforms>
-		<PublishAot Condition="'$(ExcludeRestorePackageImports)'=='true'">true</PublishAot>
-		<PublishAot Condition="'$(Configuration)'=='Release'">true</PublishAot>
+		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+		<PublishTrimmed>True</PublishTrimmed>
 		<TrimmerSingleWarn>false</TrimmerSingleWarn>
-		<defineconstants>DISABLE_XAML_GENERATED_MAIN</defineconstants>
+		<!--<PublishAot>true</PublishAot>-->
 	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-	  <FileAlignment>1024</FileAlignment>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-	  <FileAlignment>1024</FileAlignment>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'">
-	  <FileAlignment>1024</FileAlignment>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-	  <FileAlignment>1024</FileAlignment>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-	  <FileAlignment>1024</FileAlignment>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">
-	  <FileAlignment>1024</FileAlignment>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<Compile Remove="Assets\SampleFiles\**" />
-		<Content Remove="Assets\SampleFiles\**" />
-		<EmbeddedResource Remove="Assets\SampleFiles\**" />
-		<None Remove="Assets\SampleFiles\**" />
-		<Page Remove="Assets\SampleFiles\**" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<None Remove="Controls\CanvasImageControl.xaml" />
@@ -104,18 +72,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.1" />
 		<PackageReference Include="MetadataAPI" Version="1.6.0-preview2" />
-		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.1-experimental2" />
+		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
 		<PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.106">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240829007" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
-		<PackageReference Include="WIC.DotNet" Version="2.0.0-preview3" />
-		<PackageReference Include="WinUIEx" Version="2.3.4" />
-		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.1" />
+		<PackageReference Include="WIC.DotNet" Version="2.0.0-preview4" />
+		<PackageReference Include="WinUIEx" Version="2.4.0" />
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.3" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
@@ -290,10 +258,6 @@
 		  <AutoGen>True</AutoGen>
 		  <DependentUpon>Strings.resx</DependentUpon>
 		</Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-		<PRIResource Remove="Assets\SampleFiles\**" />
 	</ItemGroup>
 
 	<ItemGroup>

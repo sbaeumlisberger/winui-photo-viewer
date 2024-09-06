@@ -5,7 +5,7 @@ namespace PhotoViewer.Core;
 
 public static class AppData
 {
-    public const string ApplicationName = "Universe Photos";
+    public const string ApplicationName = "Universe Photos Dev";
 
     public const string ExecutableName = "PhotoViewer.App.exe";
 

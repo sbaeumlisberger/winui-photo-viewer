@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET.Logging;
 using MetadataAPI;
 using Microsoft.Extensions.Time.Testing;
 using NSubstitute;
 using NSubstitute.ReceivedExtensions;
 using PhotoViewer.App.Models;
-using Essentials.NET.Logging;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;

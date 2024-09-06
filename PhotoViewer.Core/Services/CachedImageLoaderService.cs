@@ -9,34 +9,47 @@ public interface ICachedImageLoaderService
 {
     Task<IBitmapImageModel> LoadFromFileAsync(IBitmapFileInfo file, CancellationToken cancellationToken, bool reload = false);
 
-    void Preload(IBitmapFileInfo file);
+    void Preload(string filePath);
 }
 
-internal class CachedImageLoaderService : ICachedImageLoaderService
+public class CachedImageLoaderService : ICachedImageLoaderService
 {
+    public static readonly ICachedImageLoaderService Instance = new CachedImageLoaderService(new ImageLoaderService(new GifImageLoaderService()));
+
     private const int CacheSize = 5;
 
     private readonly IImageLoaderService imageLoaderService;
 
-    private readonly AsyncCache<IBitmapFileInfo, IBitmapImageModel> cache;
+    private readonly AsyncCache<string, IBitmapImageModel> cache; // TODO use some file id as key
+
+    private string? preloadFilePath = null;
+    private Task preloadTask = Task.CompletedTask;
 
     public CachedImageLoaderService(IImageLoaderService imageLoaderService)
     {
         this.imageLoaderService = imageLoaderService;
-        this.cache = new AsyncCache<IBitmapFileInfo, IBitmapImageModel>(CacheSize, image => image.Dispose(), image => image.RequestUsage());
+        this.cache = new AsyncCache<string, IBitmapImageModel>(CacheSize, image => image.Dispose(), image => image.RequestUsage());
     }
 
-    public void Preload(IBitmapFileInfo file)
+    public void Preload(string filePath)
     {
-        Task.Run(() => cache.GetOrCreateAsync(file, imageLoaderService.LoadFromFileAsync));
+        preloadFilePath = filePath;
+        preloadTask = cache.GetOrCreateAsync(Path.GetFileName(filePath),  (_, cancellationToken) => imageLoaderService.LoadFromFileAsync(filePath, cancellationToken));
     }
 
     public async Task<IBitmapImageModel> LoadFromFileAsync(IBitmapFileInfo file, CancellationToken cancellationToken, bool reload = false)
     {
+        if (!preloadTask.IsCompleted)
+        {
+            await preloadTask.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+            preloadTask = Task.CompletedTask;
+        }
+
         if (reload)
         {
-            cache.Remove(file);
+            cache.Remove(file.FileName);
         }
-        return await cache.GetOrCreateAsync(file, imageLoaderService.LoadFromFileAsync, cancellationToken);
+
+        return await cache.GetOrCreateAsync(file.FileName, (_, cancellationToken) => imageLoaderService.LoadFromFileAsync(file, cancellationToken), cancellationToken).ConfigureAwait(false);
     }
 }

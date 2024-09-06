@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using PhotoVieweApp.Utils;
 using PhotoViewer.App.Utils;
 using System;
 using Windows.Foundation;
@@ -18,16 +17,16 @@ public sealed partial class SelectionRect : UserControl
         public required Rect NewBounds { get; set; }
     }
 
-    public static readonly DependencyProperty AspectRadioProperty = DependencyPropertyHelper<SelectionRect>.Register(nameof(AspectRadio), typeof(Size), Size.Empty, (s, e) => s.OnAspectRadioChanged());
-    public static readonly DependencyProperty UIScaleFactorProperty = DependencyPropertyHelper<SelectionRect>.Register(nameof(UIScaleFactor), typeof(float), 1f, (s, e) => s.OnUIScaleFactorChanged());
-
     public event TypedEventHandler<SelectionRect, EventArgs>? InteractionStarted;
     public event TypedEventHandler<SelectionRect, EventArgs>? InteractionEnded;
     public event TypedEventHandler<SelectionRect, BoundsChangingEventArgs>? BoundsChanging;
     public event TypedEventHandler<SelectionRect, EventArgs>? BoundsChanged;
 
-    public Size AspectRadio { get => (Size)GetValue(AspectRadioProperty); set => SetValue(AspectRadioProperty, value); }
-    public float UIScaleFactor { get => (float)GetValue(UIScaleFactorProperty); set => SetValue(UIScaleFactorProperty, value); }
+    public Size AspectRadio { get => aspectRadio; set { aspectRadio = value; OnAspectRadioChanged(); } }
+    private Size aspectRadio = Size.Empty;
+
+    public float UIScaleFactor { get => uiScaleFactor; set { uiScaleFactor = value; OnUIScaleFactorChanged(); } }
+    private float uiScaleFactor = 1f;
 
     private readonly PointerEventHandler pointerReleasedEventHandler;
     private readonly PointerEventHandler pointerExitedEventHandler;

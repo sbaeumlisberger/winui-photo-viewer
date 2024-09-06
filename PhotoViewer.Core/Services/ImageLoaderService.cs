@@ -3,22 +3,30 @@ using Microsoft.Graphics.Canvas;
 using PhotoViewer.App.Exceptions;
 using PhotoViewer.App.Models;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using WIC;
 using Windows.Storage;
-using Windows.Storage.Streams;
+using MetadataAPI;
+using Windows.Graphics.DirectX;
+using MetadataAPI.Data;
+using System;
+using Microsoft.UI.Xaml.Controls;
 
 namespace PhotoViewer.App.Services;
 
 public interface IImageLoaderService
 {
     Task<IBitmapImageModel> LoadFromFileAsync(IBitmapFileInfo file, CancellationToken cancellationToken);
+
+    Task<IBitmapImageModel> LoadFromFileAsync(string filePath, CancellationToken cancellationToken);
 }
 
 public class ImageLoaderService : IImageLoaderService
 {
-    private CanvasDevice Device => CanvasDevice.GetSharedDevice();
+    private static CanvasDevice Device => CanvasDevice.GetSharedDevice();
 
     private readonly IGifImageLoaderService gifImageLoaderService;
 
@@ -29,75 +37,221 @@ public class ImageLoaderService : IImageLoaderService
         this.gifImageLoaderService = gifImageLoaderService;
     }
 
-    public async Task<IBitmapImageModel> LoadFromFileAsync(IBitmapFileInfo file, CancellationToken cancellationToken)
+    public Task<IBitmapImageModel> LoadFromFileAsync(string filePath, CancellationToken cancellationToken)
     {
-        try
+        return Task.Run(async () =>
         {
-            if (file.FileExtension.ToLower() == ".gif")
+            try
             {
-                return await LoadGifAsync(file, cancellationToken).ConfigureAwait(false);
+                if (Path.GetExtension(filePath).Equals(".gif", StringComparison.OrdinalIgnoreCase))
+                {
+                    return await LoadGifAsync(filePath, cancellationToken).ConfigureAwait(false);
+                }
+                return await LoadBitmapAsync(filePath, cancellationToken).ConfigureAwait(false);
             }
-            return await LoadBitmapAsync(file, cancellationToken).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            Log.Debug($"Failed to load image {file.FileName}", ex);
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                Log.Debug($"Failed to load image {Path.GetFileName(filePath)}", ex);
 
-            if (TryGetDeocderInfoForFileExtension(file.FileExtension) is null)
-            {
-                throw new CodecNotFoundException(file.FileExtension, ex);
+                if (TryGetDeocderInfoForFileExtension(Path.GetExtension(filePath)) is null)
+                {
+                    throw new CodecNotFoundException(Path.GetExtension(filePath), ex);
+                }
+                else
+                {
+                    throw;
+                }
             }
-            else
+        });
+    }
+
+    public Task<IBitmapImageModel> LoadFromFileAsync(IBitmapFileInfo file, CancellationToken cancellationToken)
+    {
+        return Task.Run(async () =>
+        {
+            try
             {
-                throw;
+
+                if (file.FileExtension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
+                {
+                    return await LoadGifAsync(file, cancellationToken).ConfigureAwait(false);
+                }
+                return await LoadBitmapAsync(file, cancellationToken).ConfigureAwait(false);
             }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                Log.Debug($"Failed to load image {file.FileName}", ex);
+
+                if (TryGetDeocderInfoForFileExtension(file.FileExtension) is null)
+                {
+                    throw new CodecNotFoundException(file.FileExtension, ex);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        });
+    }
+    private async Task<IBitmapImageModel> LoadGifAsync(string filePath, CancellationToken cancellationToken)
+    {
+        using (var fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return await gifImageLoaderService.LoadAsync(Path.GetFileName(filePath), Device, fileStream, cancellationToken).ConfigureAwait(false);
         }
     }
 
     private async Task<IBitmapImageModel> LoadGifAsync(IBitmapFileInfo file, CancellationToken cancellationToken)
     {
-        using (var fileStream = await file.OpenAsRandomAccessStreamAsync(FileAccessMode.Read).ConfigureAwait(false))
+        using (var fileStream = await file.OpenAsync(FileAccessMode.Read).ConfigureAwait(false))
         {
             cancellationToken.ThrowIfCancellationRequested();
             return await gifImageLoaderService.LoadAsync(file.DisplayName, Device, fileStream, cancellationToken).ConfigureAwait(false);
         }
     }
 
-    private async Task<IBitmapImageModel> LoadBitmapAsync(IBitmapFileInfo file, CancellationToken cancellationToken)
+
+    private async Task<IBitmapImageModel> LoadBitmapAsync(string filePath, CancellationToken cancellationToken)
     {
-        using (var fileStream = await file.OpenAsRandomAccessStreamAsync(FileAccessMode.Read).ConfigureAwait(false))
+        Stopwatch sw = Stopwatch.StartNew();
+        using (var fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
         {
-            var memoryStream = new InMemoryRandomAccessStream();
-            Log.Debug($"Read {file.FileName} into memory");
-            await RandomAccessStream.CopyAsync(fileStream, memoryStream).AsTask(cancellationToken).ConfigureAwait(false);
-            fileStream.Dispose();
-            memoryStream.Seek(0);
-
-            cancellationToken.ThrowIfCancellationRequested();
-            ColorSpaceInfo colorSpace = GetColorSpaceInfo(memoryStream);
-            memoryStream.Seek(0);
-            cancellationToken.ThrowIfCancellationRequested();
-
-            try
-            {
-                Log.Debug($"Load CanvasBitmap for {file.FileName}");
-                var canvasBitmap = await CanvasBitmap.LoadAsync(Device, memoryStream).AsTask(cancellationToken).ConfigureAwait(false);
-                cancellationToken.ThrowIfCancellationRequested();
-                return new CanvasBitmapImageModel(file.DisplayName, canvasBitmap, colorSpace);
-            }
-            catch (ArgumentException ex) when (ex.HResult == -2147024809)
-            {
-                var canvasVirtualBitmap = await CanvasVirtualBitmap.LoadAsync(Device, memoryStream).AsTask(cancellationToken).ConfigureAwait(false);
-                cancellationToken.ThrowIfCancellationRequested();
-                return new CanvasVirtualBitmapImageModel(file.DisplayName, canvasVirtualBitmap, colorSpace);
-            }
+            Log.Debug("Stream open " + sw.ElapsedMilliseconds);
+            sw.Stop();
+            return await LoadBitmapAsync(fileStream, Path.GetFileName(filePath), cancellationToken).ConfigureAwait(false);
         }
     }
 
-    private ColorSpaceInfo GetColorSpaceInfo(IRandomAccessStream fileStream)
+    private async Task<IBitmapImageModel> LoadBitmapAsync(IBitmapFileInfo file, CancellationToken cancellationToken)
     {
-        var decoder = wic.CreateDecoderFromStream(fileStream.AsStream(), WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
+        Stopwatch sw = Stopwatch.StartNew();
+        using (var fileStream = await file.OpenAsync(FileAccessMode.Read).ConfigureAwait(false))
+        {
+            Log.Debug("Stream open " + sw.ElapsedMilliseconds);
+            sw.Stop();
+            return await LoadBitmapAsync(fileStream, file.DisplayName, cancellationToken).ConfigureAwait(false);
+        }
+    }
 
+    private async Task<IBitmapImageModel> LoadBitmapAsync(Stream fileStream, string displayName, CancellationToken cancellationToken)
+    {
+
+        Stopwatch sw = Stopwatch.StartNew();
+
+        MemoryStream memoryStream;
+
+        if (fileStream is MemoryStream _memoryStream)
+        {
+            memoryStream = _memoryStream;
+        }
+        else
+        {
+            memoryStream = new MemoryStream();
+            Log.Debug($"Read {displayName} into memory");
+            await fileStream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
+            fileStream.Dispose();
+            memoryStream.Position = 0;
+            cancellationToken.ThrowIfCancellationRequested();
+            Log.Debug("memoryStream created " + sw.ElapsedMilliseconds);
+            sw.Restart();
+        }
+
+        var decoder = wic.CreateDecoderFromStream(memoryStream, WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
+
+        ColorSpaceInfo colorSpace = GetColorSpaceInfo(decoder);
+        cancellationToken.ThrowIfCancellationRequested();
+        Log.Debug("colorSpace loaded " + sw.ElapsedMilliseconds);
+
+        var frame = decoder.GetFrame(0);
+        frame.GetSize(out int width, out int height);
+        Log.Debug("extracted bitmap size " + sw.ElapsedMilliseconds);
+
+        if (width <= Device.MaximumBitmapSizeInPixels && height <= Device.MaximumBitmapSizeInPixels)
+        {
+            Log.Debug($"Load CanvasBitmap for {displayName}");
+            sw.Restart();
+
+            var directXCompatibleBitmap = ConvertToDirectXCompatibleFormat(frame, out var directXPixelFormat);
+            //Log.Debug("Converted to DirectX compatible format  " + sw.ElapsedMilliseconds);
+
+            var rotatedBitmap = ApplyOrientationFlag(directXCompatibleBitmap, frame, decoder);
+            //Log.Debug("Orientation flag applied " + sw.ElapsedMilliseconds);
+
+            byte[] pixels = rotatedBitmap.GetPixels();
+            //Log.Debug("Got pixles " + sw.ElapsedMilliseconds);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            rotatedBitmap.GetSize(out width, out height);
+
+            var canvasBitmap = CanvasBitmap.CreateFromBytes(Device, pixels, width, height, directXPixelFormat);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            sw.Stop();
+            Log.Debug("CanvasBitmap loaded " + sw.ElapsedMilliseconds);
+
+            return new CanvasBitmapImageModel(displayName, canvasBitmap, colorSpace);
+        }
+        else
+        {
+            Log.Debug("Loading CanvasVirtualBitmap");
+            var canvasVirtualBitmap = await CanvasVirtualBitmap.LoadAsync(Device, memoryStream.AsRandomAccessStream()).AsTask(cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            return new CanvasVirtualBitmapImageModel(displayName, canvasVirtualBitmap, colorSpace);
+        }
+    }
+
+    private IWICBitmapSource ConvertToDirectXCompatibleFormat(IWICBitmapSource bitmap, out DirectXPixelFormat directXPixelFormat)
+    {
+        //var wicPixelFormat = bitmap.GetPixelFormat();
+        //var allPixelFormats = typeof(WICPixelFormat).GetFields().ToDictionary(f => (Guid)f.GetValue(null)!, f => f.Name);
+        //Log.Debug($"WICPixelFormat: {allPixelFormats[wicPixelFormat]}");
+
+        // see https://github.com/microsoft/Win2D/blob/52ef02a7cfbcb476c13d9b87860f429aff15c2b9/winrt/lib/images/CanvasBitmap.cpp#L266
+        var targetWicPixelFormat = WICPixelFormat.WICPixelFormat32bppPBGRA;
+        directXPixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized;
+
+        // TODO?
+        //if (FileFormatSupportsHdr(containerFormat))
+        //{
+        //    GUID frameFormat;
+        //    ThrowIfFailed(wicBitmapFrameDecode->GetPixelFormat(&frameFormat));
+
+        //    if (IsSupportedPixelFormat(device, frameFormat, GUID_WICPixelFormat64bppRGBA, DXGI_FORMAT_R16G16B16A16_UNORM) ||
+        //        IsSupportedPixelFormat(device, frameFormat, GUID_WICPixelFormat64bppRGBAHalf, DXGI_FORMAT_R16G16B16A16_FLOAT) ||
+        //        IsSupportedPixelFormat(device, frameFormat, GUID_WICPixelFormat128bppRGBAFloat, DXGI_FORMAT_R32G32B32A32_FLOAT))
+        //    {
+        //        targetPixelFormat = frameFormat;
+        //    }
+        //}
+
+        var convertedBitmap = wic.CreateFormatConverter();
+        convertedBitmap.Initialize(bitmap, targetWicPixelFormat, WICBitmapDitherType.WICBitmapDitherTypeNone, null, 0, WICBitmapPaletteType.WICBitmapPaletteTypeMedianCut);
+        return convertedBitmap;
+    }
+
+    private IWICBitmapSource ApplyOrientationFlag(IWICBitmapSource bitmap, IWICBitmapFrameDecode frame, IWICBitmapDecoder decoder)
+    {
+        if (MetadataProperties.Orientation.SupportedFormats.Contains(decoder.GetContainerFormat()))
+        {
+            var metadataReader = new MetadataReader(frame.GetMetadataQueryReader(), decoder.GetDecoderInfo());
+            var orientation = metadataReader.GetProperty(MetadataProperties.Orientation);
+            var transformOptions = OrientationToTransformOptions(orientation);
+
+            if (transformOptions != WICBitmapTransformOptions.WICBitmapTransformRotate0)
+            {
+                var rotatedBitmap = wic.CreateBitmapFlipRotator();
+                rotatedBitmap.Initialize(bitmap, transformOptions);
+                return rotatedBitmap;
+            }
+        }
+        return bitmap;
+    }
+
+    private ColorSpaceInfo GetColorSpaceInfo(IWICBitmapDecoder decoder)
+    {
         var colorContexts = GetColorContexts(decoder);
 
         byte[]? colorProfile = null;
@@ -130,7 +284,7 @@ public class ImageLoaderService : IImageLoaderService
                .FirstOrDefault(cc => cc.GetType() == WICColorContextType.WICColorContextExifColorSpace)
                ?.GetExifColorSpace();
 
-        if (exifColorSpace == ExifColorSpace.SRGB || exifColorSpace == /*ExifColorSpace.Uncalibrated*/ (ExifColorSpace)65535)
+        if (exifColorSpace == ExifColorSpace.SRGB || exifColorSpace == ExifColorSpace.Uncalibrated)
         {
             return ColorSpaceType.SRGB;
         }
@@ -144,6 +298,21 @@ public class ImageLoaderService : IImageLoaderService
             return ColorSpaceType.Unknown;
         }
         return ColorSpaceType.NotSpecified;
+    }
+
+    private WICBitmapTransformOptions OrientationToTransformOptions(PhotoOrientation orientation)
+    {
+        return orientation switch
+        {
+            PhotoOrientation.Rotate90 => WICBitmapTransformOptions.WICBitmapTransformRotate270,
+            PhotoOrientation.Rotate180 => WICBitmapTransformOptions.WICBitmapTransformRotate180,
+            PhotoOrientation.Rotate270 => WICBitmapTransformOptions.WICBitmapTransformRotate90,
+            PhotoOrientation.FlipHorizontal => WICBitmapTransformOptions.WICBitmapTransformFlipHorizontal,
+            PhotoOrientation.FlipVertical => WICBitmapTransformOptions.WICBitmapTransformFlipVertical,
+            PhotoOrientation.Transpose => WICBitmapTransformOptions.WICBitmapTransformRotate270 | WICBitmapTransformOptions.WICBitmapTransformFlipHorizontal,
+            PhotoOrientation.Transverse => WICBitmapTransformOptions.WICBitmapTransformRotate90 | WICBitmapTransformOptions.WICBitmapTransformFlipHorizontal,
+            _ => WICBitmapTransformOptions.WICBitmapTransformRotate0
+        };
     }
 
     private IWICBitmapEncoderInfo? TryGetDeocderInfoForFileExtension(string fileExtension)

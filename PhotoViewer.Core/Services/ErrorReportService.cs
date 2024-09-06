@@ -9,26 +9,32 @@ namespace PhotoViewer.Core.Services;
 
 public class ErrorReportService
 {
-    public async Task SendErrorReportAsync()
+    public async Task TrySendErrorReportAsync()
     {
-        var logFile = await StorageFile.GetFileFromPathAsync(Log.Logger.Appenders.OfType<FileAppender>().First().LogFilePath).AsTask().ConfigureAwait(false);
-        string log = await FileIO.ReadTextAsync(logFile).AsTask().ConfigureAwait(false);
-  
-        string subject = $"WinUI Photo Viewer Error Report {DateTime.Now:g}";
-        string body = CreateBody(log);
+        try
+        {
+            var logFilePath = Log.Logger.Appenders.OfType<FileAppender>().First().LogFilePath;
+            var logFile = await StorageFile.GetFileFromPathAsync(logFilePath).AsTask().ConfigureAwait(false);
+            string log = await FileIO.ReadTextAsync(logFile).AsTask().ConfigureAwait(false);
 
-        await SendMailAsync(subject, body).ConfigureAwait(false);
+            string subject = $"WinUI Photo Viewer Error Report {DateTime.Now:g}";
+            string body = CreateReport(log);
+
+            await SendMailAsync(subject, body).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to send error report: " + ex);
+        }
     }
 
-    public async Task SendCrashReportAsync(string crashInfo)
+    public async Task SendCrashReportAsync(string report)
     {
         string subject = $"WinUI Photo Viewer Crash Report {DateTime.Now:g}";
-        string body = CreateBody(crashInfo);
-
-        await SendMailAsync(subject, body).ConfigureAwait(false);
+        await SendMailAsync(subject, report).ConfigureAwait(false);
     }
 
-    private string CreateBody(string message)
+    public string CreateReport(string message)
     {
         var version = Package.Current.Id.Version;
         var bodyBuilder = new StringBuilder();

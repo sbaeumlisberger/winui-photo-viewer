@@ -1,7 +1,7 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Essentials.NET.Logging;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Essentials.NET.Logging;
 using System;
 using System.Collections;
 using System.Linq;

@@ -9,12 +9,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
-        <Grid>
-            <controls:BitmapViewer x:Name="previewBitmapViewer"/>
-        </Grid>
-        
-        <Frame x:Name="frame" KeyDown="Frame_KeyDown" NavigationFailed="Frame_NavigationFailed"/>
-    </Grid>
+    <Frame x:Name="frame" Loaded="Frame_Loaded" KeyDown="Frame_KeyDown" NavigationFailed="Frame_NavigationFailed"/>
 
 </Window>

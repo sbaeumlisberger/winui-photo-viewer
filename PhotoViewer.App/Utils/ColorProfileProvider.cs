@@ -1,8 +1,8 @@
-﻿using Microsoft.Graphics.Canvas.Effects;
+﻿using Essentials.NET.Logging;
+using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Display;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
-using Essentials.NET.Logging;
 using System;
 using System.Threading.Tasks;
 using WinUIEx;
@@ -11,22 +11,26 @@ namespace PhotoViewer.App.Utils;
 
 interface IColorProfileProvider
 {
-    event EventHandler? ColorProfileChanged;
+    event EventHandler? ColorProfileLoaded;
 
     ColorManagementProfile? ColorProfile { get; }
+
+    bool IsInitialized { get; }
 }
 
 internal class ColorProfileProvider : IColorProfileProvider
 {
     public static ColorProfileProvider Instance { get; } = new ColorProfileProvider();
 
-    public event EventHandler? ColorProfileChanged;
+    public event EventHandler? ColorProfileLoaded;
 
     public ColorManagementProfile? ColorProfile { get; private set; }
 
+    public bool IsInitialized { get; private set; } = false;
+
     private DisplayInformation? displayInformation;
 
-    public async Task InitializeAsync(Window window)
+    public async void InitializeAsync(Window window)
     {
         try
         {
@@ -34,10 +38,14 @@ internal class ColorProfileProvider : IColorProfileProvider
             displayInformation = DisplayInformation.CreateForWindowId(windowId);
             displayInformation.ColorProfileChanged += DisplayInformation_ColorProfileChanged;
             ColorProfile = await LoadColorProfileAsync(displayInformation);
+            IsInitialized = true;
+            ColorProfileLoaded?.Invoke(null, EventArgs.Empty);
         }
         catch (Exception ex)
         {
             Log.Error("Failed to initialize ColorProfileProvider", ex);
+            IsInitialized = true;
+            ColorProfileLoaded?.Invoke(null, EventArgs.Empty);
         }
     }
 
@@ -45,7 +53,7 @@ internal class ColorProfileProvider : IColorProfileProvider
     {
         Log.Info("Color profile changed");
         ColorProfile = await LoadColorProfileAsync(sender);
-        ColorProfileChanged?.Invoke(null, EventArgs.Empty);
+        ColorProfileLoaded?.Invoke(null, EventArgs.Empty);
     }
 
     private async Task<ColorManagementProfile?> LoadColorProfileAsync(DisplayInformation displayInformation)
