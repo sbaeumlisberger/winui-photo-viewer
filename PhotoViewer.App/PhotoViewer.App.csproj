@@ -29,6 +29,7 @@
 		<PublishAot Condition="'$(ExcludeRestorePackageImports)'=='true'">true</PublishAot>
 		<PublishAot Condition="'$(Configuration)'=='Release'">true</PublishAot>
 		<TrimmerSingleWarn>false</TrimmerSingleWarn>
+		<defineconstants>DISABLE_XAML_GENERATED_MAIN</defineconstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
@@ -110,7 +111,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240821007-preview2" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240829007" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
 		<PackageReference Include="WIC.DotNet" Version="2.0.0-preview3" />
 		<PackageReference Include="WinUIEx" Version="2.3.4" />
@@ -285,9 +286,9 @@
 			<DependentUpon>Strings.tt</DependentUpon>
 		</Compile>
 		<Compile Update="Resources\Strings.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Strings.resx</DependentUpon>
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>Strings.resx</DependentUpon>
 		</Compile>
 	</ItemGroup>
 
