@@ -9,7 +9,7 @@
     Style="{StaticResource DefaultContentDialogStyle}"
     Title = "Unhandled Exception"
     PrimaryButtonText="Exit Application"
-    CloseButtonText="Ignore Exception">
+    CloseButtonText="Ignore Error">
 
     <StackPanel Spacing="8">
         <TextBlock 
@@ -18,6 +18,7 @@
         <CheckBox 
             Content="Send error report with log"
             IsChecked="{x:Bind IsSendErrorReportChecked, Mode=TwoWay}"/>
+        <Button Click="ShowReportButton_Click">Show Report</Button>
     </StackPanel>
 
 </ContentDialog>

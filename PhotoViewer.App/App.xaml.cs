@@ -169,15 +169,26 @@ public partial class App : Application
         {
             isUnhandeldExceptionDialogShown = true;
 
+            var errorReportService = new ErrorReportService();
+
+            string report = await errorReportService.CreateErrorReportAsync();
+
             await Window.DispatcherQueue.DispatchAsync(async () =>
             {
-                var dialog = new UnhandledExceptionDialog(Window, args.Message);
+                var dialog = new UnhandledExceptionDialog(args.Message, report);
 
-                var dialogResult = await dialog.ShowAsync();
+                var dialogResult = await Window.ShowDialogAsync(dialog);
 
                 if (dialog.IsSendErrorReportChecked)
                 {
-                    await new ErrorReportService().TrySendErrorReportAsync();
+                    try
+                    {
+                        await errorReportService.SendErrorReportAsync(report);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("Failed to send error report: " + ex);
+                    }
                 }
 
                 if (dialogResult == ContentDialogResult.Primary)

@@ -9,29 +9,26 @@ namespace PhotoViewer.Core.Services;
 
 public class ErrorReportService
 {
-    public async Task TrySendErrorReportAsync()
+    public async Task SendErrorReportAsync(string report)
     {
-        try
-        {
-            var logFilePath = Log.Logger.Appenders.OfType<FileAppender>().First().LogFilePath;
-            var logFile = await StorageFile.GetFileFromPathAsync(logFilePath).AsTask().ConfigureAwait(false);
-            string log = await FileIO.ReadTextAsync(logFile).AsTask().ConfigureAwait(false);
-
-            string subject = $"WinUI Photo Viewer Error Report {DateTime.Now:g}";
-            string body = CreateReport(log);
-
-            await SendMailAsync(subject, body).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            Log.Error("Failed to send error report: " + ex);
-        }
+        string subject = $"{AppData.ApplicationName} Error Report {DateTime.Now:g}";
+        await SendMailAsync(subject, report).ConfigureAwait(false);
+        Log.Info("Error report sent successfully");       
     }
 
     public async Task SendCrashReportAsync(string report)
     {
-        string subject = $"WinUI Photo Viewer Crash Report {DateTime.Now:g}";
+        string subject = $"{AppData.ApplicationName} Crash Report {DateTime.Now:g}";
         await SendMailAsync(subject, report).ConfigureAwait(false);
+        Log.Info("Crash report sent successfully");
+    }
+
+    public async Task<string> CreateErrorReportAsync()
+    {
+        var logFilePath = Log.Logger.Appenders.OfType<FileAppender>().First().LogFilePath;
+        var logFile = await StorageFile.GetFileFromPathAsync(logFilePath).AsTask().ConfigureAwait(false);
+        string log = await FileIO.ReadTextAsync(logFile).AsTask().ConfigureAwait(false);
+        return CreateReport(log);
     }
 
     public string CreateReport(string message)
@@ -47,11 +44,11 @@ public class ErrorReportService
 
     private async Task SendMailAsync(string subject, string body)
     {
-        using var smtpClient = new SmtpClient("smtp-mail.outlook.com", 587) { EnableSsl = true };
-        smtpClient.Credentials = new NetworkCredential("universe-photos@outlook.com", CompileTimeConstants.EMailPassword);
+        using var smtpClient = new SmtpClient("smtp.gmail.com", 587) { EnableSsl = true };
+        smtpClient.Credentials = new NetworkCredential("universe.photos.app@gmail.com", CompileTimeConstants.GMailPassword);
 
         var emailMessage = new MailMessage();
-        emailMessage.From = new MailAddress("universe-photos@outlook.com");
+        emailMessage.From = new MailAddress("universe.photos.app@gmail.com");
         emailMessage.To.Add("s.baeumlisberger@live.de");
         emailMessage.Subject = subject;
         emailMessage.Body = body;
