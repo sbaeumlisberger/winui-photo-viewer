@@ -14,9 +14,9 @@
     x:Name="uc">
 
     <Grid 
-        x:Name="root"
+        Width="320"
         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-        x:Load="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
+        Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
 
         <Grid.Resources>
             <Style x:Key="HeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">

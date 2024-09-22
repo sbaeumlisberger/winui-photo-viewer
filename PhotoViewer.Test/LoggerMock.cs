@@ -22,27 +22,27 @@ internal class LoggerMock : ILogger
 
     public void Debug(string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Write(LogLevel.DEBUG, message, exception, file, memberName, lineNumber);
+        Write(LogLevel.DEBUG, message, exception, memberName, file, lineNumber);
     }
 
     public void Info(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Write(LogLevel.INFO, message, null, file, memberName, lineNumber);
+        Write(LogLevel.INFO, message, null, memberName, file, lineNumber);
     }
 
     public void Warn(string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Write(LogLevel.WARN, message, exception, file, memberName, lineNumber);
+        Write(LogLevel.WARN, message, exception, memberName, file, lineNumber);
     }
 
     public void Error(string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Write(LogLevel.ERROR, message, exception, file, memberName, lineNumber);
+        Write(LogLevel.ERROR, message, exception, memberName, file, lineNumber);
     }
 
     public void Fatal(string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)
     {
-        Write(LogLevel.FATAL, message, exception, file, memberName, lineNumber);
+        Write(LogLevel.FATAL, message, exception, memberName, file, lineNumber);
     }
 
     public void Write(LogLevel level, string message, Exception? exception = null, [CallerMemberName] string memberName = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = -1)

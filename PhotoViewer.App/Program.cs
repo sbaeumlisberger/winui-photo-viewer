@@ -1,6 +1,7 @@
 ﻿using Essentials.NET.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using PhotoViewer.App.Models;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
@@ -15,13 +16,7 @@ namespace PhotoViewer.App;
 
 public static class Program
 {
-    public static Task ImageDrawnTask { get; private set; } = Task.CompletedTask;
-
     private static readonly Stopwatch stopwatch = Stopwatch.StartNew();
-
-    private static bool isImageDrawed = false;
-
-    private static TaskCompletionSource? imageDrawnTaskCompletionSource;
 
     [STAThread]
     static int Main(string[] args)
@@ -29,45 +24,45 @@ public static class Program
         if (args.Length > 0)
         {
             string startFilePath = args[0];
-            CachedImageLoaderService.Instance.Preload(startFilePath);
-            imageDrawnTaskCompletionSource = new TaskCompletionSource();
-            ImageDrawnTask = imageDrawnTaskCompletionSource.Task;
+            string fileTypeExtension = Path.GetExtension(startFilePath).ToLower();           
+            if (BitmapFileInfo.CommonFileExtensions.Contains(fileTypeExtension))
+            {
+                CachedImageLoaderService.Instance.Preload(startFilePath);
+            }
         }
 
         var loadSettingsAndSetupLoggingTask = Task.Run(() =>
         {
             var applicationSettings = new SettingsService().LoadSettings();
             SetupLogging(applicationSettings);
+            Log.Debug($"Logging ready after {stopwatch.ElapsedMilliseconds} ms");
             return applicationSettings;
         });
 
         WinRT.ComWrappersSupport.InitializeComWrappers();
+
         Application.Start((_) =>
         {
-            File.AppendAllText(Path.Combine(AppData.PublicFolder, "main.txt"), stopwatch.ElapsedMilliseconds + "\n");
-            var synchronizationContext = new DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread());
+            var dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            var synchronizationContext = new DispatcherQueueSynchronizationContext(dispatcherQueue);
             SynchronizationContext.SetSynchronizationContext(synchronizationContext);
-            new App(loadSettingsAndSetupLoggingTask);
+
+            var applicationSettings = loadSettingsAndSetupLoggingTask.GetAwaiter().GetResult();
+
+            Log.Debug($"Calling App constructor after {stopwatch.ElapsedMilliseconds} ms");
+
+            new App(applicationSettings);
         });
+
         return 0;
     }
 
-    public static void NotifyStartupCompleted()
+    public static void NotifyImageDrawn() // TODO remove
     {
-        //stopwatch.Stop();
-        File.AppendAllText(Path.Combine(AppData.PublicFolder, "startup.txt"), stopwatch.ElapsedMilliseconds + "\n");
-    }
-
-    public static void NotifyImageDrawn()
-    {
-        imageDrawnTaskCompletionSource?.TrySetResult();
-
-        if (!isImageDrawed)
+        if (stopwatch.IsRunning)
         {
-            isImageDrawed = true;
             stopwatch.Stop();
             Log.Debug($"Image was drawn after {stopwatch.ElapsedMilliseconds} ms");
-            File.AppendAllText(Path.Combine(AppData.PublicFolder, "drawed.txt"), stopwatch.ElapsedMilliseconds + "\n");
         }
     }
 

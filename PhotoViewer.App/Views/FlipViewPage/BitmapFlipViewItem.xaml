@@ -63,7 +63,6 @@
 
         <Border 
             x:Name="zoomTextBlockContainer"
-            x:Load="False"
             Visibility="Collapsed"
             Width="64"
             HorizontalAlignment="Left"

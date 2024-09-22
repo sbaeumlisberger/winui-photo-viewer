@@ -23,6 +23,7 @@
 
         <Grid     
             x:Name="metadataPanelPlaceholder"
+            x:Load="{x:Bind ViewModel.ShowMetadataPanelOnStartup}"
             Grid.RowSpan="2" 
             Width="320"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
@@ -31,12 +32,12 @@
             x:Load="False"
             x:Name="metadataPanel"
             Grid.RowSpan="2" 
-            Width="320"
             DataContext="{x:Bind ViewModel.MetadataPanelModel}"
             Visibility="{x:Bind ViewModel.ShowUI, Mode=OneWay}"/>
 
         <Grid 
             x:Name="detailsBarPlaceholder"      
+            x:Load="{x:Bind ViewModel.ShowDetailsBarOnStartup}"
             Grid.Column="1" 
             Height="27"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
@@ -69,6 +70,8 @@
             Visibility="{x:Bind ViewModel.ShowUI, Mode=OneWay}"/>
 
         <local:EditImageOverlay 
+            x:Load="False"
+            x:Name="editImageOverlay"
             Grid.ColumnSpan="2"
             Grid.RowSpan="3"
             DataContext="{x:Bind ViewModel.EditImageOverlayModel}"/>

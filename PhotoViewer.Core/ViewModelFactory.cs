@@ -16,7 +16,6 @@ namespace PhotoViewer.Core;
 
 public interface IViewModelFactory
 {
-    AppModel CreateAppModel();
     MainWindowModel CreateMainWindowModel();
     IDetailsBarModel CreateDetailsBarModel();
     IMediaFlipViewModel CreateMediaFlipViewModel();
@@ -45,8 +44,8 @@ public class ViewModelFactory : IViewModelFactory
     private readonly IMetadataService metadataService = new MetadataService();
     private readonly IDeleteMediaFilesService deleteMediaService = new DeleteMediaFilesService();
     private readonly IRotateBitmapService rotateBitmapService;
-    private readonly ImageLoaderService imageLoaderService = new ImageLoaderService(new GifImageLoaderService());
-    private readonly ICachedImageLoaderService cachedImageLoaderService;
+    private readonly IImageLoaderService imageLoaderService = new ImageLoaderService(new GifImageLoaderService());
+    private readonly ICachedImageLoaderService cachedImageLoaderService = CachedImageLoaderService.Instance;
     private readonly IDisplayRequestService displayRequestService = new DisplayRequestService();
     private readonly ILocationService locationService = new LocationService();
     private readonly ISettingsService settingService = new SettingsService();
@@ -61,21 +60,15 @@ public class ViewModelFactory : IViewModelFactory
     private readonly IBackgroundTaskService backgroundTaskService = new BackgroundTaskService();
     private readonly SortService sortService = new SortService(new MetadataService());
 
-    public ViewModelFactory(IMessenger messenger, ApplicationSettings settings, ICachedImageLoaderService imageLoaderService, IMediaFilesLoaderService mediaFilesLoaderService)
+    public ViewModelFactory(ApplicationSettings settings, IMessenger messenger, IMediaFilesLoaderService mediaFilesLoaderService)
     {
         this.messenger = messenger;
         this.settings = settings;
-        this.cachedImageLoaderService = imageLoaderService;
         this.mediaFilesLoaderService = mediaFilesLoaderService;
         gpxService = new GpxService(metadataService);
         applicationSession = new ApplicationSession(messenger);
         rotateBitmapService = new RotateBitmapService(metadataService);
         cropImageService = new CropImageService(messenger, metadataService);
-    }
-
-    public AppModel CreateAppModel()
-    {
-        return new AppModel(settings, messenger, this, mediaFilesLoaderService);
     }
 
     public MainWindowModel CreateMainWindowModel()
@@ -86,7 +79,7 @@ public class ViewModelFactory : IViewModelFactory
     public FlipViewPageModel CreateFlipViewPageModel()
     {
         Stopwatch sw = Stopwatch.StartNew();
-        var flipViewPageModel = new FlipViewPageModel(applicationSession, messenger, this, displayRequestService);
+        var flipViewPageModel = new FlipViewPageModel(settings, applicationSession, messenger, this, displayRequestService);
         sw.Stop();
         Log.Debug($"CreateFlipViewPageModel took {sw.ElapsedMilliseconds}ms");
         return flipViewPageModel;

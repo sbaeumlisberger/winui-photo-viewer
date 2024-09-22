@@ -37,11 +37,11 @@ public partial class App : Application
 
     private bool isUnhandeldExceptionDialogShown = false;
 
-    private readonly Task<ApplicationSettings> applicationSettingsTask;
+    private readonly ApplicationSettings applicationSettings;
 
-    public App(Task<ApplicationSettings> applicationSettingsTask)
+    public App(ApplicationSettings applicationSettings)
     {
-        this.applicationSettingsTask = applicationSettingsTask;
+        this.applicationSettings = applicationSettings;
         InitializeComponent();
         UnhandledException += App_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
@@ -49,24 +49,27 @@ public partial class App : Application
 
     protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
+        Log.Debug($"Handle OnLaunched");
+
         IMessenger messenger = new StrongReferenceMessenger();
 
-        LoadMediaFilesTask? loadMediaFilesTask = null;
-        MainWindowModel? mainWindowModel = null;
-
-        var launchTask = Task.Run(async () =>
+        var backgroundTask = Task.Run(() =>
         {
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
             var args = AppInstance.GetActivatedEventArgs();
 
             var mediaFilesLoaderService = new MediaFilesLoaderService(CachedImageLoaderService.Instance, new FileSystemService());
 
-            var applicationSettings = await applicationSettingsTask;
+            var loadMediaFilesTask = LoadMediaFiles(args, applicationSettings, mediaFilesLoaderService);
 
-            loadMediaFilesTask = LoadMediaFiles(args, applicationSettings, mediaFilesLoaderService);
+            ViewModelFactory = new ViewModelFactory(applicationSettings, messenger, mediaFilesLoaderService);
 
-            ViewModelFactory = new ViewModelFactory(messenger, applicationSettings, CachedImageLoaderService.Instance, mediaFilesLoaderService);
+            var mainWindowModel = ViewModelFactory.CreateMainWindowModel();
 
-            mainWindowModel = ViewModelFactory.CreateMainWindowModel();
+            Log.Debug($"backgroundTask completed in {stopwatch.ElapsedMilliseconds} ms");
+
+            return (loadMediaFilesTask, mainWindowModel);
         });
 
         string language = ApplicationLanguages.Languages[0];
@@ -77,13 +80,13 @@ public partial class App : Application
         ColorProfileProvider.Instance.InitializeAsync(Window);
         Window.Activate();
 
-        await launchTask;
+        var (loadMediaFilesTask, mainWindowModel) = await backgroundTask;
 
-        Window.SetViewModel(mainWindowModel!);
+        Window.SetViewModel(mainWindowModel);
 
         messenger.Send(new NavigateToPageMessage(typeof(FlipViewPageModel)));
 
-        messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask!));
+        messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask));
     }
 
     private LoadMediaFilesTask LoadMediaFiles(IActivatedEventArgs activatedEventArgs, ApplicationSettings settings, IMediaFilesLoaderService mediaFilesLoaderService)
@@ -117,7 +120,7 @@ public partial class App : Application
         }
         else if (Debugger.IsAttached)
         {
-            return mediaFilesLoaderService.LoadFolder(KnownFolders.SavedPictures, config);
+            return mediaFilesLoaderService.LoadFolder(KnownFolders.PicturesLibrary, config);
         }
         else
         {

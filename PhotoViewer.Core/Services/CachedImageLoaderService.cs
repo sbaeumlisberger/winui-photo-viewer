@@ -2,6 +2,8 @@
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.Core.Models;
+using System.IO.Hashing;
+using System.Text;
 
 namespace PhotoViewer.Core.Services;
 
@@ -20,21 +22,20 @@ public class CachedImageLoaderService : ICachedImageLoaderService
 
     private readonly IImageLoaderService imageLoaderService;
 
-    private readonly AsyncCache<string, IBitmapImageModel> cache; // TODO use some file id as key
+    private readonly AsyncCache<ulong, IBitmapImageModel> cache;
 
-    private string? preloadFilePath = null;
     private Task preloadTask = Task.CompletedTask;
 
     public CachedImageLoaderService(IImageLoaderService imageLoaderService)
     {
         this.imageLoaderService = imageLoaderService;
-        this.cache = new AsyncCache<string, IBitmapImageModel>(CacheSize, image => image.Dispose(), image => image.RequestUsage());
+        this.cache = new AsyncCache<ulong, IBitmapImageModel>(CacheSize, image => image.Dispose(), image => image.RequestUsage());
     }
 
     public void Preload(string filePath)
     {
-        preloadFilePath = filePath;
-        preloadTask = cache.GetOrCreateAsync(Path.GetFileName(filePath),  (_, cancellationToken) => imageLoaderService.LoadFromFileAsync(filePath, cancellationToken));
+        ulong id = MediaFileInfoBase.GetIdForFilePath(filePath);
+        preloadTask = cache.GetOrCreateAsync(id,  (_, cancellationToken) => imageLoaderService.LoadFromFileAsync(filePath, cancellationToken));
     }
 
     public async Task<IBitmapImageModel> LoadFromFileAsync(IBitmapFileInfo file, CancellationToken cancellationToken, bool reload = false)
@@ -47,9 +48,9 @@ public class CachedImageLoaderService : ICachedImageLoaderService
 
         if (reload)
         {
-            cache.Remove(file.FileName);
+            cache.Remove(file.Id);
         }
 
-        return await cache.GetOrCreateAsync(file.FileName, (_, cancellationToken) => imageLoaderService.LoadFromFileAsync(file, cancellationToken), cancellationToken).ConfigureAwait(false);
+        return await cache.GetOrCreateAsync(file.Id, (_, cancellationToken) => imageLoaderService.LoadFromFileAsync(file, cancellationToken), cancellationToken).ConfigureAwait(false);
     }
 }

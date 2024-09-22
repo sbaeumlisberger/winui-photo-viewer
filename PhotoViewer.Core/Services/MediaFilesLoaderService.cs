@@ -35,10 +35,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 
     public LoadMediaFilesTask LoadFolder(IStorageFolder storageFolder, LoadMediaConfig config)
     {
-        var startFile = fileSystemService.TryGetFirstFileFromFolderAsync(storageFolder.Path).GetAwaiter().GetResult();
-        var startMediaFile = startFile != null ? GetStartMediaFile(startFile) : null;
-
-        return new LoadMediaFilesTask(startMediaFile, Task.Run(async () =>
+        return new LoadMediaFilesTask(null, Task.Run(async () =>
         {
             var files = await fileSystemService.ListFilesAsync(storageFolder).ConfigureAwait(false);
 

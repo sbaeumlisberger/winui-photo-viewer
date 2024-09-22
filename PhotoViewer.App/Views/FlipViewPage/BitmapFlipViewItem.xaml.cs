@@ -94,17 +94,9 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
 
         if (zoomFactor == 1 || ViewModel.IsDiashowActive)
         {
-            if (zoomTextBlockContainer is not null)
-            {
-                zoomTextBlockContainer.Visibility = Visibility.Collapsed;
-                zoomTextBlock.Text = "";
-            }
+            zoomTextBlockContainer.Visibility = Visibility.Collapsed;
+            zoomTextBlock.Text = "";
             return;
-        }
-
-        if (zoomTextBlockContainer is null)
-        {
-            FindName(nameof(zoomTextBlockContainer));
         }
 
         Size imageSize = ViewModel.ImageViewModel.Image.SizeInDIPs;

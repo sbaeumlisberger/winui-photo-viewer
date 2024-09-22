@@ -13,8 +13,6 @@ public interface IFileSystemService
 
     Task<IStorageFile?> TryGetFileAsync(string path);
 
-    Task<IStorageFile?> TryGetFirstFileFromFolderAsync(string directoryPath);
-
     bool Exists(string path);
 }
 
@@ -44,15 +42,6 @@ public class FileSystemService : IFileSystemService
         if (File.Exists(path))
         {
             return await StorageFile.GetFileFromPathAsync(path).AsTask().ConfigureAwait(false);
-        }
-        return null;
-    }
-
-    public async Task<IStorageFile?> TryGetFirstFileFromFolderAsync(string directoryPath)
-    {
-        if (Directory.Exists(directoryPath) && Directory.EnumerateFiles(directoryPath).FirstOrDefault() is string filePath)
-        {
-            return await StorageFile.GetFileFromPathAsync(filePath).AsTask().ConfigureAwait(false);
         }
         return null;
     }

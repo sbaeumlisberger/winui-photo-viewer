@@ -8,13 +8,25 @@ internal static class DispatcherQueueUtil
 {
     public static Task DispatchAsync(this DispatcherQueue dispatcherQueue, Action action)
     {
+        return DispatchAsync(dispatcherQueue, DispatcherQueuePriority.Normal, action);
+    }
+
+    public static Task DispatchAsync(this DispatcherQueue dispatcherQueue, DispatcherQueuePriority priority, Action action)
+    {
         if (dispatcherQueue.HasThreadAccess)
         {
-            action();
-            return Task.CompletedTask;
+            try
+            {
+                action();
+                return Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                Task.FromException(ex);
+            }
         }
         var tsc = new TaskCompletionSource();
-        dispatcherQueue.TryEnqueue(() =>
+        dispatcherQueue.TryEnqueue(priority, () =>
         {
             try
             {
@@ -31,12 +43,17 @@ internal static class DispatcherQueueUtil
 
     public static Task DispatchAsync(this DispatcherQueue dispatcherQueue, Func<Task> function)
     {
+        return DispatchAsync(dispatcherQueue, DispatcherQueuePriority.Normal, function);
+    }
+
+    public static Task DispatchAsync(this DispatcherQueue dispatcherQueue, DispatcherQueuePriority priority, Func<Task> function)
+    {
         if (dispatcherQueue.HasThreadAccess)
         {
-            return function();
+            return function();     
         }
         var tsc = new TaskCompletionSource();
-        dispatcherQueue.TryEnqueue(async () =>
+        dispatcherQueue.TryEnqueue(priority, async () =>
         {
             try
             {

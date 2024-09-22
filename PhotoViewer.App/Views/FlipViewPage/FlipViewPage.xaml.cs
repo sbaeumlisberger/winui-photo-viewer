@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Dispatching;
+﻿using Essentials.NET.Logging;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -22,31 +23,30 @@ public sealed partial class FlipViewPage : Page, IMVVMControl<FlipViewPageModel>
     {
         DataContext = App.Current.ViewModelFactory.CreateFlipViewPageModel();
         Loaded += FlipViewPage_Loaded;
-        InitializeComponentMVVM();       
+        InitializeComponentMVVM();
     }
 
-    private async void FlipViewPage_Loaded(object sender, RoutedEventArgs e)
+    private void FlipViewPage_Loaded(object sender, RoutedEventArgs e)
     {
-        Program.NotifyStartupCompleted();
+        Log.Debug("Flip view page loaded");
 
-        await Task.WhenAny(Program.ImageDrawnTask, Task.Delay(1000));
+        LoadWithLowPriority(nameof(commandBar), commandBarPlaceholder,
+            () => LoadWithLowPriority(nameof(detailsBar), detailsBarPlaceholder,
+                () => LoadWithLowPriority(nameof(metadataPanel), metadataPanelPlaceholder,
+                    () => LoadWithLowPriority(nameof(editImageOverlay), null))));
+    }
 
+    private void LoadWithLowPriority(string controlName, FrameworkElement? placeholder, Action? callback = null)
+    {
         DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
         {
-            FindName(nameof(commandBar));
-            commandBarPlaceholder.Visibility = Visibility.Collapsed;
-
-            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+            Log.Debug("Load " + controlName);
+            FindName(controlName);
+            if (placeholder is not null)
             {
-                FindName(nameof(detailsBar));
-                detailsBarPlaceholder.Visibility = Visibility.Collapsed;
-
-                DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
-                {
-                    FindName(nameof(metadataPanel));
-                    metadataPanelPlaceholder.Visibility = Visibility.Collapsed;
-                });
-            });
+                placeholder.Visibility = Visibility.Collapsed;
+            }
+            callback?.Invoke();
         });
     }
 

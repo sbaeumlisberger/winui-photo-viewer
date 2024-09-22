@@ -8,9 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <RelativePanel 
-        x:Name="root"
-        x:Load="{x:Bind ViewModel.IsVisible, Mode=OneWay}"
+    <RelativePanel
+        Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}"
         Padding="4"
         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
         

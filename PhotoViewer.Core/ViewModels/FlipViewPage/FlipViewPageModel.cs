@@ -32,6 +32,11 @@ public partial class FlipViewPageModel : ViewModelBase
 
     public bool ShowUI { get; private set; } = true;
 
+    public bool ShowDetailsBarOnStartup { get; private set; } = false;
+
+    public bool ShowMetadataPanelOnStartup { get; private set; } = false;
+
+
     private readonly ApplicationSession session;
 
     private readonly IDisplayRequestService displayRequestService;
@@ -41,6 +46,7 @@ public partial class FlipViewPageModel : ViewModelBase
     private IDisposable? displayRequest;
 
     internal FlipViewPageModel(
+        ApplicationSettings settings,
         ApplicationSession session,
         IMessenger messenger,
         IViewModelFactory viewModelFactory,
@@ -49,6 +55,9 @@ public partial class FlipViewPageModel : ViewModelBase
         this.session = session;
         this.displayRequestService = displayRequestService;
         this.viewModelFactory = viewModelFactory;
+
+        ShowDetailsBarOnStartup = settings.AutoOpenDetailsBar;
+        ShowMetadataPanelOnStartup = settings.AutoOpenMetadataPanel;
 
         FlipViewModel = viewModelFactory.CreateMediaFlipViewModel();
         FlipViewModel.PropertyChanged += FlipViewModel_PropertyChanged;

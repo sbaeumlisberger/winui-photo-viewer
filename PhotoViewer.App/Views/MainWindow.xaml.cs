@@ -34,6 +34,8 @@ public sealed partial class MainWindow : Window
 
     private readonly ViewRegistrations viewRegistrations = ViewRegistrations.Instance;
 
+    private MainWindowModel ViewModel => viewModel ?? throw new InvalidOperationException("ViewModel not set");
+
     private MainWindowModel? viewModel;
 
     private readonly DialogService dialogService;
@@ -97,9 +99,9 @@ public sealed partial class MainWindow : Window
 
     private void ApplyTheme()
     {
-        var elementTheme = (ElementTheme)viewModel.Theme;
+        var elementTheme = (ElementTheme)ViewModel.Theme;
 
-        if (viewModel.Theme == AppTheme.System)
+        if (ViewModel.Theme == AppTheme.System)
         {
             // force update of theme
             bool isDark = App.Current.RequestedTheme == ApplicationTheme.Dark;
@@ -122,7 +124,7 @@ public sealed partial class MainWindow : Window
         try
         {
             args.Cancel = true;
-            await viewModel.OnClosingAsync();
+            await ViewModel.OnClosingAsync();
         }
         finally
         {

@@ -5,6 +5,8 @@ using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
+using System.IO.Hashing;
+using System.Text;
 
 namespace PhotoViewer.App.Models;
 
@@ -36,16 +38,17 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
 
     private byte[]? mtpBuffer = null;
 
-#if DEBUG
-    public readonly string DebugId;
-#endif
+    public ulong Id { get; }
 
     public MediaFileInfoBase(IStorageFile file)
     {
         StorageFile = file;
-#if DEBUG
-        DebugId = FileName;
-#endif
+        Id = GetIdForFilePath(file.Path);
+    }
+
+    public static ulong GetIdForFilePath(string filePath)
+    {
+        return XxHash3.HashToUInt64(Encoding.UTF8.GetBytes(filePath));
     }
 
     public async Task<IRandomAccessStream> OpenAsRandomAccessStreamAsync(FileAccessMode fileAccessMode)

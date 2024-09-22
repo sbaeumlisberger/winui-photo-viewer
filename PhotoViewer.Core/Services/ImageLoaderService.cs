@@ -117,7 +117,7 @@ public class ImageLoaderService : IImageLoaderService
         Stopwatch sw = Stopwatch.StartNew();
         using (var fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
         {
-            Log.Debug("Stream open " + sw.ElapsedMilliseconds);
+            Log.Debug("Stream open took " + sw.ElapsedMilliseconds + " ms");
             sw.Stop();
             return await LoadBitmapAsync(fileStream, Path.GetFileName(filePath), cancellationToken).ConfigureAwait(false);
         }
@@ -128,7 +128,7 @@ public class ImageLoaderService : IImageLoaderService
         Stopwatch sw = Stopwatch.StartNew();
         using (var fileStream = await file.OpenAsync(FileAccessMode.Read).ConfigureAwait(false))
         {
-            Log.Debug("Stream open " + sw.ElapsedMilliseconds);
+            Log.Debug("Stream open took " + sw.ElapsedMilliseconds + " ms");
             sw.Stop();
             return await LoadBitmapAsync(fileStream, file.DisplayName, cancellationToken).ConfigureAwait(false);
         }
@@ -153,7 +153,7 @@ public class ImageLoaderService : IImageLoaderService
             fileStream.Dispose();
             memoryStream.Position = 0;
             cancellationToken.ThrowIfCancellationRequested();
-            Log.Debug("memoryStream created " + sw.ElapsedMilliseconds);
+            Log.Debug("memoryStream created in " + sw.ElapsedMilliseconds + " ms");
             sw.Restart();
         }
 
@@ -165,9 +165,9 @@ public class ImageLoaderService : IImageLoaderService
 
         var frame = decoder.GetFrame(0);
         frame.GetSize(out int width, out int height);
-        Log.Debug("extracted bitmap size " + sw.ElapsedMilliseconds);
+        Log.Debug("extracted bitmap size in " + sw.ElapsedMilliseconds + " ms");
 
-        if (width <= Device.MaximumBitmapSizeInPixels && height <= Device.MaximumBitmapSizeInPixels)
+        try
         {
             Log.Debug($"Load CanvasBitmap for {displayName}");
             sw.Restart();
@@ -190,13 +190,14 @@ public class ImageLoaderService : IImageLoaderService
             cancellationToken.ThrowIfCancellationRequested();
 
             sw.Stop();
-            Log.Debug("CanvasBitmap loaded " + sw.ElapsedMilliseconds);
+            Log.Debug("CanvasBitmap loaded in " + sw.ElapsedMilliseconds + " ms");
 
             return new CanvasBitmapImageModel(displayName, canvasBitmap, colorSpace);
         }
-        else
+        catch (ArgumentException ex) when (ex.HResult == -2147024809)
+        // TODO: find faster and better solution, but checking the canvas device (Device.MaximumBitmapSizeInPixels) is very slow (~100ms)
         {
-            Log.Debug("Loading CanvasVirtualBitmap");
+            Log.Debug($"Load CanvasVirtualBitmap for {displayName}");
             var canvasVirtualBitmap = await CanvasVirtualBitmap.LoadAsync(Device, memoryStream.AsRandomAccessStream()).AsTask(cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
             return new CanvasVirtualBitmapImageModel(displayName, canvasVirtualBitmap, colorSpace);
