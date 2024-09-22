@@ -314,6 +314,7 @@ public class TagPeopleToolModelTest
     public async Task OnUserEndedSelection_SetsIsNameInputVisibleTrue()
     {
         await InitializeTagPeopleToolModel(active: true, enbaled: true);
+        tagPeopleToolModel.SelectionRectInPercent = new Rect(0.437, 0.254, 0.098, 0.102);
 
         tagPeopleToolModel.OnUserEndedSelection();
 
@@ -375,6 +376,7 @@ public class TagPeopleToolModelTest
         metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People).Returns(peopleTags ?? new List<PeopleTag>());
         await tagPeopleToolModel.InitializeAsync();
         tagPeopleToolModel.BitmapImage = exampleBitmapImage;
+        await Task.Run(() => { }); // ensure async processing of BitmapImage setter is completed
         tagPeopleToolModel.IsEnabled = enbaled;
     }
 

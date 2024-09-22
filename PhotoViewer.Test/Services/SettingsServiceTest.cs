@@ -49,7 +49,7 @@ public class SettingsServiceTest : IDisposable
 
         stopwatch.Stop();
 
-        AssertExampleSettings(settings);
+        AssertSettingsEqual(CreateExampleSettings(), settings);
         Assert.InRange(stopwatch.ElapsedMilliseconds, 0, 10);
     }
 
@@ -73,11 +73,12 @@ public class SettingsServiceTest : IDisposable
     [Fact]
     public void LoadSettings_SavedBefore()
     {
-        settingsService.SaveSettings(CreateExampleSettings());
+        var savedSettings = CreateExampleSettings();
+        settingsService.SaveSettings(savedSettings);
 
-        var settings = settingsService.LoadSettings();
+        var loadedSettings = settingsService.LoadSettings();
 
-        AssertExampleSettings(settings);
+        AssertSettingsEqual(savedSettings, loadedSettings);
     }
 
     [Fact]
@@ -117,8 +118,8 @@ public class SettingsServiceTest : IDisposable
 
         var settings = settingsService.ImportSettings(file);
 
-        AssertExampleSettings(settings);
-        AssertExampleSettings(settingsService.LoadSettings());
+        AssertSettingsEqual(CreateExampleSettings(), settings);
+        AssertSettingsEqual(CreateExampleSettings(), settingsService.LoadSettings());
     }
 
     [Fact]
@@ -128,7 +129,9 @@ public class SettingsServiceTest : IDisposable
         File.WriteAllText(filePath, "");
         var file = await StorageFile.GetFileFromPathAsync(filePath);
 
-        Assert.ThrowsAny<Exception>(() => settingsService.ImportSettings(file));
+        var settings = settingsService.ImportSettings(file);
+
+        AssertSettingsEqual(new ApplicationSettings(), settings);
     }
 
     private ApplicationSettings CreateExampleSettings()
@@ -144,19 +147,18 @@ public class SettingsServiceTest : IDisposable
         return settings;
     }
 
-    private void AssertExampleSettings(ApplicationSettings settings)
+    private void AssertSettingsEqual(ApplicationSettings expected, ApplicationSettings actual)
     {
-        Assert.NotNull(settings);
-        Assert.Equal(AppTheme.Dark, settings.Theme);
-        Assert.False(settings.ShowDeleteAnimation);
-        Assert.True(settings.AutoOpenMetadataPanel);
-        Assert.True(settings.AutoOpenDetailsBar);
-        Assert.Equal(TimeSpan.FromSeconds(5), settings.DiashowTime);
-        Assert.True(settings.LinkRawFiles);
-        Assert.Equal("RAWs", settings.RawFilesFolderName);
-        Assert.Equal(DeleteLinkedFilesOption.Yes, settings.DeleteLinkedFilesOption);
-        Assert.True(settings.IncludeVideos);
-        Assert.True(settings.IsDebugLogEnabled);
+        Assert.Equal(expected.Theme, actual.Theme);
+        Assert.Equal(expected.ShowDeleteAnimation, actual.ShowDeleteAnimation);
+        Assert.Equal(expected.AutoOpenMetadataPanel, actual.AutoOpenMetadataPanel);
+        Assert.Equal(expected.AutoOpenDetailsBar, actual.AutoOpenDetailsBar);
+        Assert.Equal(expected.DiashowTime, actual.DiashowTime);
+        Assert.Equal(expected.LinkRawFiles, actual.LinkRawFiles);
+        Assert.Equal(expected.RawFilesFolderName, actual.RawFilesFolderName);
+        Assert.Equal(expected.DeleteLinkedFilesOption, actual.DeleteLinkedFilesOption);
+        Assert.Equal(expected.IncludeVideos, actual.IncludeVideos);
+        Assert.Equal(expected.IsDebugLogEnabled, actual.IsDebugLogEnabled);
     }
 
 }
