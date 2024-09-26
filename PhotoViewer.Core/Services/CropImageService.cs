@@ -114,48 +114,49 @@ internal class CropImageService : ICropImageService
 
     private bool UpdatePeopleTags(IBitmapFileInfo bitmapFile, MetadataReader metadataReader, MetadataWriter metadataWriter, WICSize sizeBefore, RectInt32 newBounds)
     {
-        var people = metadataReader.GetProperty(MetadataProperties.People);
+        var peopleTags = metadataReader.GetProperty(MetadataProperties.People);
 
-        if (people.Any() is false)
+        if (peopleTags.Any() is false)
         {
             return false;
         }
 
-        for (int i = people.Count - 1; i >= 0; i--)
+        for (int i = peopleTags.Count - 1; i >= 0; i--)
         {
-            PeopleTag person = people[i];
+            PeopleTag peopleTag = peopleTags[i];
 
-            if (person.Rectangle is null)
+            if (peopleTag.Rectangle is null)
             {
                 continue;
             }
 
             Rect newBoundsRect = new Rect(newBounds.X, newBounds.Y, newBounds.Width, newBounds.Height);
 
-            Rect personRectInPixels = new Rect(
-                person.Rectangle.Value.X * sizeBefore.Width,
-                person.Rectangle.Value.Y * sizeBefore.Height,
-                person.Rectangle.Value.Width * sizeBefore.Width,
-                person.Rectangle.Value.Height * sizeBefore.Height);
+            Rect peopleTagRectInPixels = new Rect(
+                peopleTag.Rectangle.Value.X * sizeBefore.Width,
+                peopleTag.Rectangle.Value.Y * sizeBefore.Height,
+                peopleTag.Rectangle.Value.Width * sizeBefore.Width,
+                peopleTag.Rectangle.Value.Height * sizeBefore.Height);
 
-            if (personRectInPixels.Intersects(newBoundsRect))
+            if (peopleTagRectInPixels.Intersects(newBoundsRect))
             {
-                personRectInPixels.Intersect(newBoundsRect);
-                person.Rectangle = new FaceRect(
-                    (personRectInPixels.X - newBounds.X) / newBounds.Width,
-                    (personRectInPixels.Y - newBounds.Y) / newBounds.Height,
-                    personRectInPixels.Width / newBounds.Width,
-                    personRectInPixels.Height / newBounds.Height);
+                peopleTagRectInPixels.Intersect(newBoundsRect);
+                var newPeopleTagRectangle = new FaceRect(
+                    (peopleTagRectInPixels.X - newBounds.X) / newBounds.Width,
+                    (peopleTagRectInPixels.Y - newBounds.Y) / newBounds.Height,
+                    peopleTagRectInPixels.Width / newBounds.Width,
+                    peopleTagRectInPixels.Height / newBounds.Height);
+                peopleTags[i] = new PeopleTag(peopleTag.Name, newPeopleTagRectangle, peopleTag.EmailDigest, peopleTag.LiveCID);
             }
             else
             {
-                people.Remove(person);
+                peopleTags.Remove(peopleTag);
             }
         }
 
-        metadataWriter.SetProperty(MetadataProperties.People, people);
+        metadataWriter.SetProperty(MetadataProperties.People, peopleTags);
 
-        metadataService.UpdateCache(bitmapFile, MetadataProperties.People, people);
+        metadataService.UpdateCache(bitmapFile, MetadataProperties.People, peopleTags);
 
         return true;
     }

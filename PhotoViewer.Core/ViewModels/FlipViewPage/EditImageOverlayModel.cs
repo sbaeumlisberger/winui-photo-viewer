@@ -371,11 +371,14 @@ public partial class EditImageOverlayModel : ViewModelBase
         metadataEncoder.SetProperty(MetadataProperties.Orientation, PhotoOrientation.Normal);
 
         var peopleTags = metadataEncoder.GetProperty(MetadataProperties.People);
-        foreach (var peopleTag in peopleTags)
+        for (int i = peopleTags.Count - 1; i >= 0; i--)
         {
+            PeopleTag peopleTag = peopleTags[i];
+
             if (peopleTag.Rectangle is not null)
             {
-                peopleTag.Rectangle = ReverseRotateRect(peopleTag.Rectangle.Value, oldOrientation);
+                var roatatedRect = ReverseRotateRect(peopleTag.Rectangle.Value, oldOrientation);
+                peopleTags[i] = new PeopleTag(peopleTag.Name, roatatedRect, peopleTag.EmailDigest, peopleTag.LiveCID);
             }
         }
         metadataEncoder.SetProperty(MetadataProperties.People, peopleTags);
