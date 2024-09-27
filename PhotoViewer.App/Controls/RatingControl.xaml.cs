@@ -38,6 +38,7 @@ public sealed partial class RatingControl : UserControl
     public RatingControl()
     {
         InitializeComponent();
+        ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Hand);
     }
 
     private void OnRatingChanged(DependencyPropertyChangedEventArgs e)
@@ -86,16 +87,10 @@ public sealed partial class RatingControl : UserControl
         };
     }
 
-    private void PanelEntered(object sender, PointerRoutedEventArgs e)
-    {
-        ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Hand);
-    }
-
     private void PanelExited(object sender, PointerRoutedEventArgs e)
     {
         hoverdButton = null;
         SetButtons(Rating);
-        ProtectedCursor = null;
     }
 
 }

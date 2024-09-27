@@ -50,7 +50,7 @@ internal static class DispatcherQueueUtil
     {
         if (dispatcherQueue.HasThreadAccess)
         {
-            return function();     
+            return function();
         }
         var tsc = new TaskCompletionSource();
         dispatcherQueue.TryEnqueue(priority, async () =>

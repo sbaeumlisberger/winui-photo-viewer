@@ -4,12 +4,13 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using PhotoViewer.App.Utils;
 using System;
+using System.Diagnostics;
 using Windows.Foundation;
 using Windows.System;
 
 namespace PhotoViewer.App.Controls;
+
 public sealed partial class SelectionRect : UserControl
 {
     public class BoundsChangingEventArgs
@@ -55,16 +56,6 @@ public sealed partial class SelectionRect : UserControl
 
     private void SelectionRect_Loaded(object sender, RoutedEventArgs e)
     {
-        cornerLeftTop.SetCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeNorthwestSoutheast));
-        cornerRightTop.SetCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeNortheastSouthwest));
-        cornerRightBottom.SetCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeNorthwestSoutheast));
-        cornerLeftBottom.SetCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeNortheastSouthwest));
-        borderLeft.SetCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeWestEast));
-        borderTop.SetCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeNorthSouth));
-        borderRight.SetCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeWestEast));
-        borderBottom.SetCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeNorthSouth));
-        rect.SetCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeAll));
-
         canvas = (Canvas)Parent;
         canvas.PointerMoved += Canvas_PointerMoved;
 
@@ -154,10 +145,19 @@ public sealed partial class SelectionRect : UserControl
         }
     }
 
+    private void OnPointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        if (activeElement is null)
+        {
+            ProtectedCursor = InputSystemCursor.Create(GetCursorShapeForElement((FrameworkElement)sender));
+        }
+    }
+
     private void OnPointerPressed(object sender, PointerRoutedEventArgs args)
     {
         args.Handled = true;
         activeElement = (FrameworkElement)sender;
+        ProtectedCursor = InputSystemCursor.Create(GetCursorShapeForElement(activeElement));
         startPointerPosition = args.GetCurrentPoint(canvas).Position;
         startBounds = GetBounds();
         XamlRoot.Content.PointerReleased += OnPointerReleased;
@@ -342,5 +342,22 @@ public sealed partial class SelectionRect : UserControl
             }
         }
         return new Rect(anchorPos, targetPos);
+    }
+
+    private InputSystemCursorShape GetCursorShapeForElement(FrameworkElement element)
+    {
+        return element.Name switch
+        {
+            nameof(borderLeft) => InputSystemCursorShape.SizeWestEast,
+            nameof(borderTop) => InputSystemCursorShape.SizeNorthSouth,
+            nameof(borderRight) => InputSystemCursorShape.SizeWestEast,
+            nameof(borderBottom) => InputSystemCursorShape.SizeNorthSouth,
+            nameof(cornerLeftTop) => InputSystemCursorShape.SizeNorthwestSoutheast,
+            nameof(cornerRightTop) => InputSystemCursorShape.SizeNortheastSouthwest,
+            nameof(cornerLeftBottom) => InputSystemCursorShape.SizeNortheastSouthwest,
+            nameof(cornerRightBottom) => InputSystemCursorShape.SizeNorthwestSoutheast,
+            nameof(rect) => InputSystemCursorShape.SizeAll,
+            _ => throw new UnreachableException(),
+        };
     }
 }

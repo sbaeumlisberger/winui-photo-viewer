@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
 using System;
-using System.Threading.Tasks;
 using Windows.Foundation;
 
 namespace PhotoViewer.App.Views;

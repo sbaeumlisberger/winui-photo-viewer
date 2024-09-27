@@ -75,7 +75,6 @@
         x:Name="panel"    
         HorizontalAlignment="Left" 
         Orientation="Horizontal"
-        PointerEntered="PanelEntered"
         PointerExited="PanelExited">
         <Button 
             Style="{StaticResource RatingButton}"

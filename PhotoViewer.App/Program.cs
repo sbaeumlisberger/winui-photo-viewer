@@ -1,7 +1,6 @@
 ﻿using Essentials.NET.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
-using PhotoViewer.App.Models;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
@@ -24,7 +23,7 @@ public static class Program
         if (args.Length > 0)
         {
             string startFilePath = args[0];
-            string fileTypeExtension = Path.GetExtension(startFilePath).ToLower();           
+            string fileTypeExtension = Path.GetExtension(startFilePath).ToLower();
             if (BitmapFileInfo.CommonFileExtensions.Contains(fileTypeExtension))
             {
                 CachedImageLoaderService.Instance.Preload(startFilePath);

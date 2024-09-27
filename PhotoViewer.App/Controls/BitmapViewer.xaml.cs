@@ -10,7 +10,6 @@ using Microsoft.UI.Xaml.Input;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Views;
-using PhotoViewer.Core.Models;
 using System;
 using Windows.Foundation;
 

@@ -18,6 +18,7 @@
             Fill="Transparent"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
+            PointerEntered="OnPointerEntered"
             PointerPressed="OnPointerPressed"/>
 
         <Rectangle
@@ -28,6 +29,7 @@
             Fill="White"
             StrokeThickness="10"
             Stroke="Transparent"
+            PointerEntered="OnPointerEntered"
             PointerPressed="OnPointerPressed"/>
 
         <Rectangle
@@ -38,6 +40,7 @@
             Fill="White"
             StrokeThickness="10"
             Stroke="Transparent"
+            PointerEntered="OnPointerEntered"
             PointerPressed="OnPointerPressed"/>
 
         <Rectangle
@@ -48,6 +51,7 @@
             Fill="White"
             StrokeThickness="10"
             Stroke="Transparent"
+            PointerEntered="OnPointerEntered"
             PointerPressed="OnPointerPressed"
             RenderTransformOrigin="1,1"/>
 
@@ -59,6 +63,7 @@
             Fill="White"
             StrokeThickness="10"
             Stroke="Transparent"
+            PointerEntered="OnPointerEntered"
             PointerPressed="OnPointerPressed"
             RenderTransformOrigin="1,1"/>
 
@@ -72,6 +77,7 @@
                 Width="{StaticResource CornerSize}"
                 Height="{StaticResource CornerSize}"    
                 Fill="White"
+                PointerEntered="OnPointerEntered"
                 PointerPressed="OnPointerPressed"
                 Stroke="Black"
                 RenderTransformOrigin="0,0"/>
@@ -87,6 +93,7 @@
                 Width="{StaticResource CornerSize}"
                 Height="{StaticResource CornerSize}"       
                 Fill="White"
+                PointerEntered="OnPointerEntered"
                 PointerPressed="OnPointerPressed"
                 Stroke="Black"
                 RenderTransformOrigin="1,0"/>
@@ -102,6 +109,7 @@
                 Width="{StaticResource CornerSize}"
                 Height="{StaticResource CornerSize}" 
                 Fill="White"
+                PointerEntered="OnPointerEntered"
                 PointerPressed="OnPointerPressed"
                 Stroke="Black"
                 RenderTransformOrigin="0,1"/>
@@ -117,6 +125,7 @@
                 Width="{StaticResource CornerSize}"
                 Height="{StaticResource CornerSize}"
                 Fill="White"
+                PointerEntered="OnPointerEntered"
                 PointerPressed="OnPointerPressed"
                 Stroke="Black"
                 RenderTransformOrigin="1,1"/>

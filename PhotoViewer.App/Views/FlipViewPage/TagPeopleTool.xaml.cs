@@ -102,7 +102,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
 
     private void SelectionCanvas_Loaded(object sender, RoutedEventArgs e)
     {
-        selectionCanvas.SetCursor(InputSystemCursor.Create(InputSystemCursorShape.Cross));
+        ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Cross);
     }
 
     private void SelectionCanvas_PointerPressed(object sender, PointerRoutedEventArgs args)

@@ -2,7 +2,6 @@
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
-using System;
 using System.Collections.Generic;
 
 namespace PhotoViewer.App.Views;

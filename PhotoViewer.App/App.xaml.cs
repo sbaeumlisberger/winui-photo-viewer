@@ -11,7 +11,6 @@ using PhotoViewer.App.Views.Dialogs;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.ViewModels;
 using System;
 using System.Diagnostics;
 using System.Globalization;

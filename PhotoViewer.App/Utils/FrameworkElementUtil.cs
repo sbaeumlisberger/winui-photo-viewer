@@ -1,9 +1,7 @@
-﻿using Microsoft.UI.Input;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
-using System.Reflection;
 using System.Threading.Tasks;
 using Windows.Foundation;
 
@@ -24,12 +22,6 @@ public static class FrameworkElementUtil
         {
             flyout.ShowAt(element);
         }
-    }
-
-    public static void SetCursor(this FrameworkElement frameworkElement, InputCursor cursor)
-    {
-        var bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.SetProperty | BindingFlags.Instance;
-        typeof(UIElement).InvokeMember("ProtectedCursor", bindingFlags, null, frameworkElement, new object[] { cursor });
     }
 
     public static async Task<bool> TryFocusAsync(this FrameworkElement frameworkElement)
