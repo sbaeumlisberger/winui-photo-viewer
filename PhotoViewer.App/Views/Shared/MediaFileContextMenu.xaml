@@ -29,7 +29,7 @@
             <MenuFlyoutSeparator/>
 
             <MenuFlyoutItem
-                Icon="Copy" Text="{x:Bind res:Strings.MediaFileContextMenu_Open}" 
+                Icon="Copy" Text="{x:Bind res:Strings.MediaFileContextMenu_Copy}" 
                 Command="{x:Bind ViewModel.CopyCommand, Mode=OneWay}">
                 <MenuFlyoutItem.KeyboardAccelerators>
                     <KeyboardAccelerator 
@@ -37,6 +37,15 @@
                         Modifiers="Control,Shift" 
                         Key="C"/>
                 </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+
+            <MenuFlyoutItem
+                Text="{x:Bind res:Strings.MediaFileContextMenu_CopyPath}" 
+                Command="{x:Bind ViewModel.CopyPathCommand, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.IsCopyPathItemVisible, Mode=OneWay}">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE62F;"/>
+                </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
             <MenuFlyoutItem 

@@ -6,6 +6,7 @@ using PhotoViewer.Core.ViewModels;
 using System.Linq;
 
 namespace PhotoViewer.App.Views;
+
 public sealed partial class MetadataPanel : UserControl, IMVVMControl<MetadataPanelModel>
 {
     public MetadataPanel()

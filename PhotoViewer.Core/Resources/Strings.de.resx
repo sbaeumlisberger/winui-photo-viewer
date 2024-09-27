@@ -168,9 +168,6 @@
   <data name="MetadataPanel_LocationPlaceholder" xml:space="preserve">
     <value>Kein Aufnahmeort sepzifiziert</value>
   </data>
-  <data name="MetadataPanel_LocationPlaceholderDifferentValues" xml:space="preserve">
-    <value>Unterschiedliche Werte</value>
-  </data>
   <data name="OverviewPage_Title" xml:space="preserve">
     <value>Übersicht</value>
   </data>
@@ -236,5 +233,8 @@
   </data>
   <data name="WriteMetadataFailedDialog_Title" xml:space="preserve">
     <value>Schreiben der Metadaten fehlgeschlagen</value>
+  </data>
+  <data name="MetadataPanel_LocationPlaceholderDifferentValues" xml:space="preserve">
+    <value>Unterschiedliche Werte</value>
   </data>
 </root>

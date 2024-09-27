@@ -216,9 +216,9 @@ namespace PhotoViewer.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Different values.
         /// </summary>
-        public static string MetadataPanel_LocationPlaceholderMultipleValues {
+        public static string MetadataPanel_LocationPlaceholderDifferentValues {
             get {
-                return ResourceManager.GetString("MetadataPanel_LocationPlaceholderMultipleValues", resourceCulture);
+                return ResourceManager.GetString("MetadataPanel_LocationPlaceholderDifferentValues", resourceCulture);
             }
         }
         

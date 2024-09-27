@@ -2,8 +2,6 @@
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.Core.Models;
-using System.IO.Hashing;
-using System.Text;
 
 namespace PhotoViewer.Core.Services;
 

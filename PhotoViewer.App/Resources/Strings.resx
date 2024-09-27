@@ -372,7 +372,7 @@
   <data name="MediaFileContextMenu_Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
-  <data name="MediaFileContextMenu_Open" xml:space="preserve">
+  <data name="MediaFileContextMenu_Copy" xml:space="preserve">
     <value>Copy</value>
   </data>
   <data name="MediaFileContextMenu_OpenInNewWindows" xml:space="preserve">
@@ -578,9 +578,6 @@
   </data>
   <data name="OverviewPage_SelectionInfo" xml:space="preserve">
     <value>{0} elements, {1} selected</value>
-  </data>
-  <data name="OverviewPage_Title" xml:space="preserve">
-    <value />
   </data>
   <data name="Printing_CollapseUnusedSpaceTitle" xml:space="preserve">
     <value>Collapse unused space</value>
@@ -881,5 +878,8 @@
   </data>
   <data name="FileOpenDialog_AllFiles" xml:space="preserve">
     <value>Alle files</value>
+  </data>
+  <data name="MediaFileContextMenu_CopyPath" xml:space="preserve">
+    <value>Copy file path</value>
   </data>
 </root>

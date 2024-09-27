@@ -119,7 +119,7 @@ public sealed partial class BitmapViewer : UserControl
     {
         try
         {
-            Log.Debug($"InvalidateCanvas {BitmapImage?.ID}");
+            //Log.Debug($"InvalidateCanvas {BitmapImage?.ID}");
             canvasControl.Invalidate();
         }
         catch (Exception ex)
@@ -144,7 +144,7 @@ public sealed partial class BitmapViewer : UserControl
             }
             else
             {
-                Log.Debug($"CanvasControl_Draw called for {BitmapImage.ID}");
+                //Log.Debug($"CanvasControl_Draw called for {BitmapImage.ID}");
                 UpdateDummy(BitmapImage);
                 DrawToCanvas(args.DrawingSession, BitmapImage);
             }
@@ -237,7 +237,7 @@ public sealed partial class BitmapViewer : UserControl
             drawingSession.DrawImage(canvasImage, dstRectInPixels, srcRect, 1, CanvasImageInterpolation.NearestNeighbor);
         }
 
-        Log.Info("Image " + image.ID + " drawn");
+        //Log.Debug("Image " + image.ID + " drawn");
         Program.NotifyImageDrawn();
     }
 

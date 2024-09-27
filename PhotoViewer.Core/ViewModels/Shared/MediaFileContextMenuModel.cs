@@ -31,6 +31,8 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
 
     public bool IsOpenWithItemVisible => Files.Count == 1;
 
+    public bool IsCopyPathItemVisible => Files.Count == 1;
+
     public bool IsPrinItemVisible => Files.All(file => file is IBitmapFileInfo);
 
     public bool IsSetAsItemVisible => Files.Count == 1 && personalizationService.IsFileExtensionSupported(Files.First().FileExtension);
@@ -94,8 +96,22 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
     [RelayCommand]
     private void Copy()
     {
-        var storageFiles = Files.Select(file => file.StorageFile).ToList();
-        clipboardService.CopyStorageItems(storageFiles);
+        if (Files.Count == 1 && Files.First() is BitmapFileInfo bitmapFile)
+        {
+            clipboardService.CopyBitmapFile(bitmapFile.StorageFile);
+        }
+        else
+        {
+            var storageFiles = Files.Select(file => file.StorageFile).ToList();
+            clipboardService.CopyStorageItems(storageFiles);
+        }
+    }
+
+
+    [RelayCommand]
+    private void CopyPath()
+    {
+        clipboardService.CopyText(Files.First().FilePath);
     }
 
     [RelayCommand]

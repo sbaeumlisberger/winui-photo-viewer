@@ -1,5 +1,6 @@
 ﻿using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace PhotoViewer.Core.Services;
 
@@ -7,6 +8,7 @@ public interface IClipboardService
 {
     void CopyStorageItems(IEnumerable<IStorageItem> items);
     void CopyStorageItem(IStorageItem item);
+    void CopyBitmapFile(IStorageFile bitmapFile);
     void CopyText(string text);
 }
 
@@ -23,7 +25,17 @@ public class ClipboardService : IClipboardService
 
     public void CopyStorageItem(IStorageItem item)
     {
-        CopyStorageItems(new[] { item });
+        CopyStorageItems([item]);
+    }
+
+    public void CopyBitmapFile(IStorageFile bitmapFile)
+    {
+        DataPackage dp = new DataPackage();
+        dp.RequestedOperation = DataPackageOperation.Copy;
+        dp.SetBitmap(RandomAccessStreamReference.CreateFromFile(bitmapFile));
+        dp.SetStorageItems([bitmapFile]); 
+        Clipboard.SetContent(dp);
+        Clipboard.Flush();
     }
 
     public void CopyText(string text)

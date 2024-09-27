@@ -15,7 +15,11 @@ namespace PhotoViewer.App;
 
 public static class Program
 {
-    private static readonly Stopwatch stopwatch = Stopwatch.StartNew();
+    private static int ElapsedMilliseconds => (int)(DateTimeOffset.Now - startTime).TotalMilliseconds; 
+    
+    private static readonly DateTimeOffset startTime = DateTimeOffset.Now;
+
+    private static bool logTimeUntilImageDrawn = false;
 
     [STAThread]
     static int Main(string[] args)
@@ -27,6 +31,7 @@ public static class Program
             if (BitmapFileInfo.CommonFileExtensions.Contains(fileTypeExtension))
             {
                 CachedImageLoaderService.Instance.Preload(startFilePath);
+                logTimeUntilImageDrawn = true;
             }
         }
 
@@ -34,7 +39,7 @@ public static class Program
         {
             var applicationSettings = new SettingsService().LoadSettings();
             SetupLogging(applicationSettings);
-            Log.Debug($"Logging ready after {stopwatch.ElapsedMilliseconds} ms");
+            Log.Debug($"Logging ready after {ElapsedMilliseconds} ms");
             return applicationSettings;
         });
 
@@ -48,7 +53,7 @@ public static class Program
 
             var applicationSettings = loadSettingsAndSetupLoggingTask.GetAwaiter().GetResult();
 
-            Log.Debug($"Calling App constructor after {stopwatch.ElapsedMilliseconds} ms");
+            Log.Debug($"Calling App constructor after {ElapsedMilliseconds} ms");
 
             new App(applicationSettings);
         });
@@ -56,12 +61,12 @@ public static class Program
         return 0;
     }
 
-    public static void NotifyImageDrawn() // TODO remove
+    public static void NotifyImageDrawn()
     {
-        if (stopwatch.IsRunning)
+        if (logTimeUntilImageDrawn)
         {
-            stopwatch.Stop();
-            Log.Debug($"Image was drawn after {stopwatch.ElapsedMilliseconds} ms");
+            logTimeUntilImageDrawn = false;
+            Log.Debug($"Image was drawn after {ElapsedMilliseconds} ms");
         }
     }
 

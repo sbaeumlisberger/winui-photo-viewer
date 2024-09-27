@@ -952,20 +952,29 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy.
+        /// </summary>
+        internal static string MediaFileContextMenu_Copy {
+            get {
+                return ResourceManager.GetString("MediaFileContextMenu_Copy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy file path.
+        /// </summary>
+        internal static string MediaFileContextMenu_CopyPath {
+            get {
+                return ResourceManager.GetString("MediaFileContextMenu_CopyPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         internal static string MediaFileContextMenu_Delete {
             get {
                 return ResourceManager.GetString("MediaFileContextMenu_Delete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Copy.
-        /// </summary>
-        internal static string MediaFileContextMenu_Open {
-            get {
-                return ResourceManager.GetString("MediaFileContextMenu_Open", resourceCulture);
             }
         }
         
@@ -1506,15 +1515,6 @@ namespace PhotoViewer.App.Resources {
         internal static string OverviewPage_SelectionInfo {
             get {
                 return ResourceManager.GetString("OverviewPage_SelectionInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string OverviewPage_Title {
-            get {
-                return ResourceManager.GetString("OverviewPage_Title", resourceCulture);
             }
         }
         

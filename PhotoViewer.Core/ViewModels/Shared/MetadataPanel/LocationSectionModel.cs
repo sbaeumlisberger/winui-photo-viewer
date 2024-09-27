@@ -79,7 +79,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         var geoTag = allLocationEqual ? geoPoints.FirstOrDefault() : null;
         PlaceholderText = allLocationEqual
             ? Strings.MetadataPanel_LocationPlaceholder
-            : Strings.MetadataPanel_LocationPlaceholderMultipleValues;
+            : Strings.MetadataPanel_LocationPlaceholderDifferentValues;
 
         orginalLocation = new Location(addressTag?.ToAddress(), geoTag?.ToGeopoint());
         UpdateForLocation(orginalLocation);

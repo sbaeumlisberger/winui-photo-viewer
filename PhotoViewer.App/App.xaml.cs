@@ -66,7 +66,7 @@ public partial class App : Application
 
             var mainWindowModel = ViewModelFactory.CreateMainWindowModel();
 
-            Log.Debug($"backgroundTask completed in {stopwatch.ElapsedMilliseconds} ms");
+            Log.Debug($"OnLaunched background task completed in {stopwatch.ElapsedMilliseconds} ms");
 
             return (loadMediaFilesTask, mainWindowModel);
         });
