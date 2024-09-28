@@ -5,11 +5,13 @@ namespace PhotoViewer.Core.Models;
 
 public partial class ApplicationSettings : ObservableObject
 {
+    public static readonly TimeSpan DefaultDiashowTime = TimeSpan.FromSeconds(3);
+
     public AppTheme Theme { get; set; } = AppTheme.System;
     public bool ShowDeleteAnimation { get; set; } = true;
     public bool AutoOpenMetadataPanel { get; set; } = false;
     public bool AutoOpenDetailsBar { get; set; } = false;
-    public TimeSpan DiashowTime { get; set; } = TimeSpan.FromSeconds(3);
+    public TimeSpan DiashowTime { get; set; } = DefaultDiashowTime;
 
     public bool LinkRawFiles { get; set; } = true;
     public string RawFilesFolderName { get; set; } = "RAWs";

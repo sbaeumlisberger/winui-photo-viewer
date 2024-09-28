@@ -72,7 +72,8 @@
                     Text="{x:Bind res:Strings.SettingsPage_DiashowTimeLabel}"/>
                 <NumberBox 
                     Margin="0,4,0,0" HorizontalAlignment="Left" MinWidth="100" SpinButtonPlacementMode="Compact"                           
-                    Value="{x:Bind ViewModel.Settings.DiashowTime, Mode=TwoWay, Converter={StaticResource TimeSpanToDoubleConverter}}"/>
+                    Value="{x:Bind ViewModel.Settings.DiashowTime, Mode=TwoWay, Converter={StaticResource TimeSpanToDoubleConverter}}"
+                    Minimum="1" Maximum="3600"/>
 
                 <TextBlock 
                     Margin="0,32,0,8" 

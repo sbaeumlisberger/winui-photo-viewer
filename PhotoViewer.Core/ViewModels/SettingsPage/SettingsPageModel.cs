@@ -57,6 +57,10 @@ namespace PhotoViewer.Core.ViewModels
 
         private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (Settings.DiashowTime == TimeSpan.Zero)
+            {
+                Settings.DiashowTime = ApplicationSettings.DefaultDiashowTime;
+            }
             settingsService.SaveSettings(Settings);
             Messenger.Send(new SettingsChangedMessage(e.PropertyName));
         }

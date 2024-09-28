@@ -13,7 +13,7 @@ public partial class TimeSpanToDoubleConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        return value is double doubleValue ? TimeSpan.FromSeconds(doubleValue) : TimeSpan.Zero;
+        return value is double doubleValue && !double.IsNaN(doubleValue) ? TimeSpan.FromSeconds(doubleValue) : TimeSpan.Zero;
     }
 
 }
