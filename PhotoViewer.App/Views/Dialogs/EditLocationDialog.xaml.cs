@@ -94,7 +94,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
 
     private async void MapWebView_WebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
     {
-        var data = JsonSerializer.Deserialize<JsonNode>(args.WebMessageAsJson)!;
+        var data = JsonSerializer.Deserialize(args.WebMessageAsJson, PhotoViewerJsonSerializerContext.Default.JsonNode)!;
         string eventType = data["event"]!.GetValue<string>();
         if (eventType == "mapReady")
         {

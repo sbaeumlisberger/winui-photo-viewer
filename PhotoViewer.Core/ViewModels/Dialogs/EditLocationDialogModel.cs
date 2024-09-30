@@ -50,13 +50,16 @@ public partial class EditLocationDialogModel : ViewModelBase
 
     public async void OnMapClicked(double latitude, double longitude)
     {
+        double elevation = await locationService.FetchElevationDataAsync(latitude, longitude);
         var geopositon = new BasicGeoposition()
         {
             Latitude = latitude,
-            Longitude = longitude
+            Longitude = longitude,
+            Altitude = elevation
         };
         var geopoint = new Geopoint(geopositon, AltitudeReferenceSystem.Ellipsoid);
-        Location = await locationService.FindLocationAsync(geopoint);
+        var address = await locationService.FindAddressAsync(geopoint);
+        Location = new Location(address, new Geopoint(geopositon, AltitudeReferenceSystem.Ellipsoid));
     }
 
     public async Task<IReadOnlyList<Location>> FindLocationsAsync(string query)

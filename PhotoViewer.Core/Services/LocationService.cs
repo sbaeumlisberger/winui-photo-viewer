@@ -23,6 +23,8 @@ namespace PhotoViewer.Core.Services
 
         /// <summary>Returns the position of the specified address. If no position is found, null is returned.</summary>
         Task<Geopoint?> FindGeopointAsync(Address address);
+
+        Task<double> FetchElevationDataAsync(double latitude, double longitude);
     }
 
     /// <summary>A service to geocode and reverse-geocode location data via the Bing Maps REST Services.</summary>
@@ -35,7 +37,7 @@ namespace PhotoViewer.Core.Services
 
         private static string BingCultureCode => CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 
-        private static string MapServiceToken => AppData.MapServiceToken;
+        private static string MapServiceToken => CompileTimeConstants.BingMapsKey;
 
         public async Task<Location?> FindLocationAsync(Geopoint geopoint)
         {
@@ -96,6 +98,11 @@ namespace PhotoViewer.Core.Services
         {
             var locations = await FindLocationsAsync(address.ToString(), 1).ConfigureAwait(false);
             return locations.FirstOrDefault()?.Geopoint;
+        }
+
+        public async Task<double> FetchElevationDataAsync(double latitude, double longitude)
+        {
+            return (await FetchElevationDataAsync([new Geopoint(new BasicGeoposition() { Latitude = latitude, Longitude = longitude })])).First();
         }
 
         private async Task<List<Location>> ParseLocationsAsync(string response)

@@ -20,7 +20,7 @@ public class CompileTimeConstantsGenerator : IIncrementalGenerator
     private static void GenerateCode(SourceProductionContext context, ImmutableArray<ITypeSymbol?> _)
     {
         string source = $$"""
-           public static class CompileTimeConstants 
+           internal static class CompileTimeConstants 
            {
                public static string GMailPassword { get; } = "{{GetEnvironmentVariable(context, "PhotoViewerEMailPassword")}}";
                public static string BingMapsKey { get; } = "{{GetEnvironmentVariable(context, "PhotoViewerBingMapsKey")}}";

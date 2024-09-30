@@ -11,8 +11,6 @@ public static class AppData
 
     public static PackageVersion Version => Package.Current.Id.Version;
 
-    public static string MapServiceToken => CompileTimeConstants.BingMapsKey;
-
     public static readonly string PublicFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "PhotoViewer");
 
     public static ApplicationDataContainer DataContainer => ApplicationData.Current.LocalSettings;
