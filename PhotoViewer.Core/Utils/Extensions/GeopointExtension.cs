@@ -1,25 +1,17 @@
 ﻿using MetadataAPI.Data;
-using System.Globalization;
-using Windows.Devices.Geolocation;
+using PhotoViewer.Core.Models;
 
 namespace PhotoViewer.Core.Utils;
 
-public static class GeopointExtension
+public static class GeoPointExtension
 {
-    public static GeoTag ToGeoTag(this Geopoint geopoint)
+    public static GeoTag ToGeoTag(this GeoPoint geopoint)
     {
         return new GeoTag()
         {
-            Latitude = geopoint.Position.Latitude,
-            Longitude = geopoint.Position.Longitude,
-            Altitude = geopoint.Position.Altitude,
-            AltitudeReference = (AltitudeReference)geopoint.AltitudeReferenceSystem,
+            Latitude = geopoint.Latitude,
+            Longitude = geopoint.Longitude,
+            Altitude = geopoint.Altitude,
         };
-    }
-
-    public static string ToDecimalString(this Geopoint geopoint, int decimals = 6)
-    {
-        return geopoint.Position.Latitude.ToString("N" + decimals, CultureInfo.InvariantCulture)
-            + ", " + geopoint.Position.Longitude.ToString("N" + decimals, CultureInfo.InvariantCulture);
     }
 }

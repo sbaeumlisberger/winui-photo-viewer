@@ -5,24 +5,23 @@ using PhotoViewer.Core.Models;
 using System.Globalization;
 using System.Text.Json;
 using System.Web;
-using Windows.Devices.Geolocation;
 
 namespace PhotoViewer.Core.Services
 {
     /// <summary>A service to geocode and reverse-geocode location data.</summary>
     public interface ILocationService
     {
-        /// <summary>Returns the location of the specified position.</summary>
-        Task<Location?> FindLocationAsync(Geopoint geopoint);
+        /// <summary>Returns the location of the specified geographic point.</summary>
+        Task<Location?> FindLocationAsync(GeoPoint geoPoint);
 
         /// <summary>Retruns a list of locations found for the given query.</summary>
         Task<IReadOnlyList<Location>> FindLocationsAsync(string query, uint maxResults = 5);
 
-        /// <summary>Returns the nearest address of the specified position. If no address is found, null is returned.</summary>
-        Task<Address?> FindAddressAsync(Geopoint position);
+        /// <summary>Returns the nearest address of the specified geographic point. If no address is found, null is returned.</summary>
+        Task<Address?> FindAddressAsync(GeoPoint geoPoint);
 
-        /// <summary>Returns the position of the specified address. If no position is found, null is returned.</summary>
-        Task<Geopoint?> FindGeopointAsync(Address address);
+        /// <summary>Returns the geographic point of the specified address. If no geographic point is found, null is returned.</summary>
+        Task<GeoPoint?> FindGeoPointAsync(Address address);
     }
 
     public class LocationService : ILocationService
@@ -31,15 +30,10 @@ namespace PhotoViewer.Core.Services
 
         private static string ApiKey => CompileTimeConstants.HereApiKey;
 
-        public async Task<Location?> FindLocationAsync(Geopoint geopoint)
+        public async Task<Location?> FindLocationAsync(GeoPoint geoPoint)
         {
-            if (geopoint is null)
-            {
-                throw new ArgumentNullException(nameof(geopoint));
-            }
-
             var uri = new Uri("https://revgeocode.search.hereapi.com/v1/revgeocode" + ToQueryString(
-                ("at", ToCoordinatesParam(geopoint)),
+                ("at", ToCoordinatesParam(geoPoint)),
                 ("lang", Language),
                 ("apiKey", ApiKey)
             ));
@@ -79,16 +73,16 @@ namespace PhotoViewer.Core.Services
             return ParseLocations(response);
         }
 
-        public async Task<Address?> FindAddressAsync(Geopoint position)
+        public async Task<Address?> FindAddressAsync(GeoPoint geoPoint)
         {
-            var location = await FindLocationAsync(position).ConfigureAwait(false);
+            var location = await FindLocationAsync(geoPoint).ConfigureAwait(false);
             return location?.Address;
         }
 
-        public async Task<Geopoint?> FindGeopointAsync(Address address)
+        public async Task<GeoPoint?> FindGeoPointAsync(Address address)
         {
             var locations = await FindLocationsAsync(address.ToString(), 1).ConfigureAwait(false);
-            return locations.FirstOrDefault()?.Geopoint;
+            return locations.FirstOrDefault()?.GeoPoint;
         }
 
         private List<Location> ParseLocations(string response)
@@ -132,12 +126,11 @@ namespace PhotoViewer.Core.Services
 
             var positionProperty = entry.GetProperty("position");
 
-            var geoPosition = new BasicGeoposition();
-            geoPosition.Latitude = positionProperty.GetProperty("lat").GetDouble();
-            geoPosition.Longitude = positionProperty.GetProperty("lng").GetDouble();
-            var point = new Geopoint(geoPosition, AltitudeReferenceSystem.Unspecified);
+            double latitude = positionProperty.GetProperty("lat").GetDouble();
+            double longitude = positionProperty.GetProperty("lng").GetDouble();
+            var geoPoint = new GeoPoint(latitude, longitude);
 
-            return new Location(address, point);
+            return new Location(address, geoPoint);
         }
 
         private static string ToQueryString(params (string Key, string Value)[] parameters)
@@ -158,10 +151,10 @@ namespace PhotoViewer.Core.Services
             return string.Empty;
         }
 
-        private string ToCoordinatesParam(Geopoint geopoint)
+        private string ToCoordinatesParam(GeoPoint geopoint)
         {
-            string latitude = geopoint.Position.Latitude.ToString(CultureInfo.InvariantCulture);
-            string longitude = geopoint.Position.Longitude.ToString(CultureInfo.InvariantCulture);
+            string latitude = geopoint.Latitude.ToString(CultureInfo.InvariantCulture);
+            string longitude = geopoint.Longitude.ToString(CultureInfo.InvariantCulture);
             return latitude + "," + longitude;
         }
     }

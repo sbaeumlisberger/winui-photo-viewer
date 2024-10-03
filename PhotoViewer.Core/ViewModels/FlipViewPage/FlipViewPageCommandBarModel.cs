@@ -156,7 +156,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         Messenger.Send(new NavigateToPageMessage(typeof(SettingsPageModel)));
     }
 
-    private bool IsSupportedByBitmapEncoder(IBitmapFileInfo bitmapFileInfo) 
+    private bool IsSupportedByBitmapEncoder(IBitmapFileInfo bitmapFileInfo)
     {
         contentTypesSupportedByBitmapEncoder ??= BitmapEncoder.GetEncoderInformationEnumerator().SelectMany(info => info.MimeTypes).ToHashSet();
         return contentTypesSupportedByBitmapEncoder.Contains(bitmapFileInfo.ContentType);

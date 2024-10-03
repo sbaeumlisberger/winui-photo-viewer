@@ -15,8 +15,8 @@ namespace PhotoViewer.App;
 
 public static class Program
 {
-    private static int ElapsedMilliseconds => (int)(DateTimeOffset.Now - startTime).TotalMilliseconds; 
-    
+    private static int ElapsedMilliseconds => (int)(DateTimeOffset.Now - startTime).TotalMilliseconds;
+
     private static readonly DateTimeOffset startTime = DateTimeOffset.Now;
 
     private static bool logTimeUntilImageDrawn = false;

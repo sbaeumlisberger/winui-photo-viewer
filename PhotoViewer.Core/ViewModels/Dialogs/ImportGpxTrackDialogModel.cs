@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using Essentials.NET.Logging;
 using MetadataAPI;
-using MetadataAPI.Data;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.ViewModels;
@@ -34,10 +33,6 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
     private IStorageFile? SelectedFile { get; set; }
 
     public bool CanImport => SelectedFilePath != string.Empty;
-
-    public IReadOnlyList<AltitudeReference> AvailableAltitudeReferenceSystems { get; } = Enum.GetValues<AltitudeReference>();
-
-    public AltitudeReference AltitudeReferenceSystem { get; set; } = AltitudeReference.Ellipsoid;
 
     public Progress? Progress { get; private set; }
 
@@ -121,7 +116,7 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
 
         var result = await mediaFilesToProcess.Parallel(cancellationToken, progress).TryProcessAsync(async mediaFile =>
         {
-            if (await gpxService.TryApplyGpxTrackToFile(gpxTrack, mediaFile, AltitudeReferenceSystem))
+            if (await gpxService.TryApplyGpxTrackToFile(gpxTrack, mediaFile))
             {
                 modifiedFiles.Add(mediaFile);
             }

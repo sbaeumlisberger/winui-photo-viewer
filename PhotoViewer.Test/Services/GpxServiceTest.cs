@@ -102,7 +102,6 @@ public class GpxServiceTest
 
         Assert.Equal(52.52, gpxTrack.Points[0].Latitude);
         Assert.Equal(13.38, gpxTrack.Points[0].Longitude);
-        Assert.Equal(36, gpxTrack.Points[0].Ele);
         Assert.Equal(new DateTimeOffset(2011, 1, 13, 1, 1, 1, TimeSpan.Zero), gpxTrack.Points[0].Time);
     }
 
@@ -114,7 +113,6 @@ public class GpxServiceTest
         {
             Latitude = 40.124848,
             Longitude = -36.128498,
-            Ele = 358,
             Time = dateTaken,
         };
         var gpxTrack = new GpxTrack(new[] { gpxTrackPoint });
@@ -122,7 +120,7 @@ public class GpxServiceTest
         metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken).Returns(dateTaken);
         metadataService.GetMetadataAsync(file, MetadataProperties.GeoTag).Returns((GeoTag?)null);
 
-        bool applied = await gpxService.TryApplyGpxTrackToFile(gpxTrack, file, AltitudeReference.Ellipsoid);
+        bool applied = await gpxService.TryApplyGpxTrackToFile(gpxTrack, file);
 
         Assert.True(applied);
         await metadataService.Received().WriteMetadataAsync(file, MetadataProperties.GeoTag,
@@ -136,7 +134,7 @@ public class GpxServiceTest
         var file = Substitute.For<IBitmapFileInfo>();
         metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken).Returns((DateTime?)null);
 
-        bool applied = await gpxService.TryApplyGpxTrackToFile(gpxTrack, file, AltitudeReference.Ellipsoid);
+        bool applied = await gpxService.TryApplyGpxTrackToFile(gpxTrack, file);
 
         Assert.False(applied);
     }
@@ -144,8 +142,7 @@ public class GpxServiceTest
     private bool IsGeoTagEqualsGpxTrackPoint(GeoTag geoTag, GpxTrackPoint gpxTrackPoint)
     {
         return geoTag.Latitude == gpxTrackPoint.Latitude
-            && geoTag.Longitude == gpxTrackPoint.Longitude
-            && geoTag.Altitude == gpxTrackPoint.Ele;
+            && geoTag.Longitude == gpxTrackPoint.Longitude;
     }
 
 }

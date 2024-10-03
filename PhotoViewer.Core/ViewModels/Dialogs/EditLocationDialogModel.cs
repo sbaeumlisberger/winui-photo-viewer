@@ -4,7 +4,6 @@ using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using System.ComponentModel;
-using Windows.Devices.Geolocation;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -51,22 +50,17 @@ public partial class EditLocationDialogModel : ViewModelBase
 
     public async void OnMapClicked(double latitude, double longitude)
     {
-        var geopositon = new BasicGeoposition()
-        {
-            Latitude = latitude,
-            Longitude = longitude,
-        };
-        var geopoint = new Geopoint(geopositon);
+        var geoPoint = new GeoPoint(latitude, longitude);
 
         try
         {
-            var address = await locationService.FindAddressAsync(geopoint);
-            Location = new Location(address, geopoint);
+            var address = await locationService.FindAddressAsync(geoPoint);
+            Location = new Location(address, geoPoint);
         }
         catch (Exception ex)
         {
-            Log.Error("Failed to find address for geopoint", ex);           
-            Location = new Location(null, geopoint);
+            Log.Error("Failed to find address for geo point", ex);
+            Location = new Location(null, geoPoint);
         }
     }
 

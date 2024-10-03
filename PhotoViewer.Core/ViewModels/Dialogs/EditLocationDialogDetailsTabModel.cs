@@ -2,10 +2,8 @@
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
-using Windows.Devices.Geolocation;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -26,10 +24,6 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
     public string Longitude { get; set; } = string.Empty;
 
     public string Altitude { get; set; } = string.Empty;
-
-    public AltitudeReferenceSystem AltitudeReferenceSystem { get; set; } = AltitudeReferenceSystem.Unspecified;
-
-    public ReadOnlyCollection<AltitudeReferenceSystem> AvailableAltitudeReferenceSystems => Enum.GetValues<AltitudeReferenceSystem>().AsReadOnly();
 
     public bool CanSave { get; set; } = true;
 
@@ -72,11 +66,10 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
         Region = address?.Region ?? string.Empty;
         Country = address?.Country ?? string.Empty;
 
-        var geopoint = location?.Geopoint;
-        Latitude = geopoint?.Position.Latitude.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
-        Longitude = geopoint?.Position.Longitude.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
-        Altitude = geopoint?.Position.Altitude.ToString() ?? string.Empty;
-        AltitudeReferenceSystem = geopoint?.AltitudeReferenceSystem ?? AltitudeReferenceSystem.Unspecified;
+        var geopoint = location?.GeoPoint;
+        Latitude = geopoint?.Latitude.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+        Longitude = geopoint?.Longitude.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+        Altitude = geopoint?.Altitude.ToString() ?? string.Empty;
 
         CanSave = true;
 
@@ -107,7 +100,7 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
             };
         }
 
-        Geopoint? geopoint = null;
+        GeoPoint? geopoint = null;
 
         if (AnyFieldFilled(Latitude, Longitude, Altitude))
         {
@@ -117,12 +110,7 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
                 && longitude >= -180 && longitude <= 180
                 && (double.TryParse(Altitude, out double altitude) || string.IsNullOrEmpty(Altitude)))
             {
-                geopoint = new Geopoint(new BasicGeoposition()
-                {
-                    Latitude = latitude,
-                    Longitude = longitude,
-                    Altitude = altitude,
-                }, AltitudeReferenceSystem);
+                geopoint = new GeoPoint(latitude, longitude, altitude);
             }
             else
             {

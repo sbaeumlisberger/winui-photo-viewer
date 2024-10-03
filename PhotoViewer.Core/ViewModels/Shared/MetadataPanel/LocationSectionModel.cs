@@ -96,9 +96,9 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
     [RelayCommand(CanExecute = nameof(CanShowLocationOnMap))]
     private async Task ShowLocationOnMapAsync()
     {
-        var geopoint = completedLocation!.Geopoint!;
-        string latitude = geopoint.Position.Latitude.ToString(CultureInfo.InvariantCulture);
-        string longitude = geopoint.Position.Longitude.ToString(CultureInfo.InvariantCulture);
+        var geopoint = completedLocation!.GeoPoint!;
+        string latitude = geopoint.Latitude.ToString(CultureInfo.InvariantCulture);
+        string longitude = geopoint.Longitude.ToString(CultureInfo.InvariantCulture);
         string description = completedLocation?.Address?.ToString() ?? geopoint.ToDecimalString(); ;
         Uri uri = new Uri(@"bingmaps:?collection=point." + latitude + "_" + longitude + "_" + description + "&sty=a");
         await Launcher.LaunchUriAsync(uri, new LauncherOptions
@@ -160,7 +160,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         await WriteFilesAsync(async file =>
         {
             await metadataService.WriteMetadataAsync(file, MetadataProperties.Address, location?.Address?.ToAddressTag()).ConfigureAwait(false);
-            await metadataService.WriteMetadataAsync(file, MetadataProperties.GeoTag, location?.Geopoint?.ToGeoTag()).ConfigureAwait(false);
+            await metadataService.WriteMetadataAsync(file, MetadataProperties.GeoTag, location?.GeoPoint?.ToGeoTag()).ConfigureAwait(false);
         },
         processedFiles =>
         {
@@ -171,17 +171,17 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
 
     private void UpdateForLocation(Location location)
     {
-        CanShowLocationOnMap = location.Geopoint is not null;
+        CanShowLocationOnMap = location.GeoPoint is not null;
         DisplayText = CreateDisplayText(location);
     }
 
     private async Task<Location?> TryGetCompletedLocationAsync(Location location, CancellationToken cancellationToken)
     {
-        if (location.Geopoint is null && location.Address is not null)
+        if (location.GeoPoint is null && location.Address is not null)
         {
             try
             {
-                var geopoint = await locationService.FindGeopointAsync(location.Address);
+                var geopoint = await locationService.FindGeoPointAsync(location.Address);
                 cancellationToken.ThrowIfCancellationRequested();
                 return new Location(location.Address, geopoint);
             }
@@ -190,17 +190,17 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
                 Log.Error("Failed to find geo point for address " + location.Address.ToString(), ex);
             }
         }
-        else if (location.Address is null && location.Geopoint is not null)
+        else if (location.Address is null && location.GeoPoint is not null)
         {
             try
             {
-                var address = await locationService.FindAddressAsync(location.Geopoint);
+                var address = await locationService.FindAddressAsync(location.GeoPoint);
                 cancellationToken.ThrowIfCancellationRequested();
-                return new Location(address, location.Geopoint);
+                return new Location(address, location.GeoPoint);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                Log.Error("Failed to find address for geopoint " + location.Geopoint.ToDecimalString(), ex);
+                Log.Error("Failed to find address for geopoint " + location.GeoPoint.ToDecimalString(), ex);
             }
         }
         cancellationToken.ThrowIfCancellationRequested();
@@ -209,17 +209,17 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
 
     private string CreateDisplayText(Location location)
     {
-        if (location.Address is not null && location.Geopoint is not null)
+        if (location.Address is not null && location.GeoPoint is not null)
         {
-            return location.Address.ToString() + " (" + location.Geopoint.ToDecimalString() + ")";
+            return location.Address.ToString() + " (" + location.GeoPoint.ToDecimalString() + ")";
         }
         else if (location.Address is not null)
         {
             return location.Address.ToString();
         }
-        else if (location.Geopoint is not null)
+        else if (location.GeoPoint is not null)
         {
-            return location.Geopoint.ToDecimalString();
+            return location.GeoPoint.ToDecimalString();
         }
         else
         {

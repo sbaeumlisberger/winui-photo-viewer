@@ -15,7 +15,6 @@ using PhotoViewer.Core.Services;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
 using Windows.Graphics.Imaging;
 using Rect = Windows.Foundation.Rect;
 

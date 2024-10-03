@@ -11,7 +11,7 @@ internal interface IGpxService
 {
     Task<GpxTrack> ReadTrackFromGpxFileAsync(IStorageFile file);
 
-    Task<bool> TryApplyGpxTrackToFile(GpxTrack gpxTrack, IBitmapFileInfo file, AltitudeReference altitudeReference = AltitudeReference.Ellipsoid);
+    Task<bool> TryApplyGpxTrackToFile(GpxTrack gpxTrack, IBitmapFileInfo file);
 }
 
 internal class GpxService : IGpxService
@@ -49,11 +49,6 @@ internal class GpxService : IGpxService
                 trkpt.Latitude = double.Parse(trkptElement.Attribute("lat")!.Value, CultureInfo.InvariantCulture);
                 trkpt.Longitude = double.Parse(trkptElement.Attribute("lon")!.Value, CultureInfo.InvariantCulture);
 
-                if (trkptElement.Element(ns + "ele") is { } eleElement)
-                {
-                    trkpt.Ele = double.Parse(eleElement.Value, CultureInfo.InvariantCulture);
-                }
-
                 if (trkptElement.Element(ns + "time") is { } timeElement)
                 {
                     trkpt.Time = DateTimeOffset.Parse(timeElement.Value, CultureInfo.InvariantCulture);
@@ -65,7 +60,7 @@ internal class GpxService : IGpxService
         return new GpxTrack(trkpList);
     }
 
-    public async Task<bool> TryApplyGpxTrackToFile(GpxTrack gpxTrack, IBitmapFileInfo file, AltitudeReference altitudeReference)
+    public async Task<bool> TryApplyGpxTrackToFile(GpxTrack gpxTrack, IBitmapFileInfo file)
     {
         if (await metadataService.GetMetadataAsync(file, MetadataProperties.DateTaken) is { } dateTaken
             && gpxTrack.FindTrackPointForTimestamp(dateTaken) is { } gpxTrackPoint)
@@ -74,8 +69,6 @@ internal class GpxService : IGpxService
             {
                 Latitude = gpxTrackPoint.Latitude,
                 Longitude = gpxTrackPoint.Longitude,
-                Altitude = gpxTrackPoint.Ele,
-                AltitudeReference = altitudeReference,
             };
             var geoTagFromFile = await metadataService.GetMetadataAsync(file, MetadataProperties.GeoTag);
             if (geoTagFromGpx != geoTagFromFile)

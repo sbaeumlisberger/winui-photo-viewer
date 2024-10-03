@@ -6,16 +6,13 @@ using PhotoViewer.App.Utils;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Devices.Geolocation;
 
 namespace PhotoViewer.App.Views;
 
@@ -134,15 +131,15 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
     {
         locationShowedOnMap = location;
 
-        Geopoint? geopoint = null;
+        GeoPoint? geopoint = null;
 
-        if (location?.Geopoint != null)
+        if (location?.GeoPoint != null)
         {
-            geopoint = location.Geopoint;
+            geopoint = location.GeoPoint;
         }
         else if (location?.Address != null)
         {
-            geopoint = await new LocationService().FindGeopointAsync(location.Address);
+            geopoint = await new LocationService().FindGeoPointAsync(location.Address);
         }
 
         if (geopoint is null)
@@ -151,8 +148,8 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
             return;
         }
 
-        double latitude = geopoint.Position.Latitude;
-        double longitude = geopoint.Position.Longitude;
+        double latitude = geopoint.Latitude;
+        double longitude = geopoint.Longitude;
 
         string title = location?.Address?.ToString() ?? geopoint.ToDecimalString();
 
@@ -173,7 +170,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
         await mapWebView.ExecuteScriptAsync(script);
     }
 
-    private string FormatGeopoint(Geopoint? geopoint)
+    private string FormatGeopoint(GeoPoint? geopoint)
     {
         return geopoint != null ? geopoint.ToDecimalString() : "";
     }

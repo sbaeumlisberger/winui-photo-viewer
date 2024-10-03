@@ -1,4 +1,6 @@
 ﻿using Essentials.NET.Logging;
+using MetadataAPI;
+using MetadataAPI.Data;
 using Microsoft.Graphics.Canvas;
 using PhotoViewer.App.Exceptions;
 using PhotoViewer.App.Models;
@@ -8,12 +10,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using WIC;
-using Windows.Storage;
-using MetadataAPI;
 using Windows.Graphics.DirectX;
-using MetadataAPI.Data;
-using System;
-using Microsoft.UI.Xaml.Controls;
+using Windows.Storage;
 
 namespace PhotoViewer.App.Services;
 

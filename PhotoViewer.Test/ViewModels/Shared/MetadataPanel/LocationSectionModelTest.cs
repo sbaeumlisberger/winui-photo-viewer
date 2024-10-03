@@ -8,7 +8,6 @@ using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
-using Windows.Devices.Geolocation;
 using Xunit;
 
 namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
@@ -23,12 +22,7 @@ public class LocationSectionModelTest
         Country = "TestCountry"
     };
 
-    private static readonly Geopoint GeoPoint1 = new Geopoint(new BasicGeoposition()
-    {
-        Latitude = 40.124848,
-        Longitude = -36.128498,
-        Altitude = 358
-    });
+    private static readonly GeoPoint GeoPoint1 = new GeoPoint(40.124848, -36.128498, 358);
 
     private readonly IMetadataService metadataService = Substitute.For<IMetadataService>();
 
@@ -103,7 +97,7 @@ public class LocationSectionModelTest
     public void CompletesAddress_WhenFileHasOnlyGeoTag()
     {
         var metadata = new[] { CreateMetadataView(null, GeoPoint1) };
-        locationService.FindAddressAsync(Arg.Is<Geopoint>(arg => arg.Position == GeoPoint1.Position)).Returns(Address1);
+        locationService.FindAddressAsync(GeoPoint1).Returns(Address1);
 
         locationSectionModel.UpdateFilesChanged(null!, metadata);
 
@@ -116,7 +110,7 @@ public class LocationSectionModelTest
     public void CompletesGeopoint_WhenFileHasOnlyAddress()
     {
         var metadata = new[] { CreateMetadataView(Address1, null) };
-        locationService.FindGeopointAsync(Address1).Returns(GeoPoint1);
+        locationService.FindGeoPointAsync(Address1).Returns(GeoPoint1);
 
         locationSectionModel.UpdateFilesChanged(null!, metadata);
 
@@ -125,12 +119,12 @@ public class LocationSectionModelTest
         Assert.True(locationSectionModel.ShowLocationOnMapCommand.CanExecute(null));
     }
 
-    private MetadataView CreateMetadataView(Address? address, Geopoint? geoTag)
+    private MetadataView CreateMetadataView(Address? address, GeoPoint? geoPoint)
     {
         return new MetadataView(new Dictionary<string, object?>()
         {
             { MetadataProperties.Address.Identifier, address?.ToAddressTag() },
-            { MetadataProperties.GeoTag.Identifier, geoTag?.ToGeoTag() }
+            { MetadataProperties.GeoTag.Identifier, geoPoint?.ToGeoTag() }
         });
     }
 }
