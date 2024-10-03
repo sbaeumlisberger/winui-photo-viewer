@@ -56,7 +56,7 @@ public partial class EditLocationDialogModel : ViewModelBase
             Latitude = latitude,
             Longitude = longitude,
         };
-        var geopoint = new Geopoint(geopositon, AltitudeReferenceSystem.Ellipsoid);
+        var geopoint = new Geopoint(geopositon);
 
         try
         {
