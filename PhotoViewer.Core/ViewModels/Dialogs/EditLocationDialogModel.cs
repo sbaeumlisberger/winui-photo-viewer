@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using Essentials.NET.Logging;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
@@ -50,16 +51,23 @@ public partial class EditLocationDialogModel : ViewModelBase
 
     public async void OnMapClicked(double latitude, double longitude)
     {
-        double elevation = await locationService.FetchElevationDataAsync(latitude, longitude);
         var geopositon = new BasicGeoposition()
         {
             Latitude = latitude,
             Longitude = longitude,
-            Altitude = elevation
         };
         var geopoint = new Geopoint(geopositon, AltitudeReferenceSystem.Ellipsoid);
-        var address = await locationService.FindAddressAsync(geopoint);
-        Location = new Location(address, new Geopoint(geopositon, AltitudeReferenceSystem.Ellipsoid));
+
+        try
+        {
+            var address = await locationService.FindAddressAsync(geopoint);
+            Location = new Location(address, geopoint);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to find address for geopoint", ex);           
+            Location = new Location(null, geopoint);
+        }
     }
 
     public async Task<IReadOnlyList<Location>> FindLocationsAsync(string query)

@@ -23,7 +23,7 @@ public class CompileTimeConstantsGenerator : IIncrementalGenerator
            internal static class CompileTimeConstants 
            {
                public static string GMailPassword { get; } = "{{GetEnvironmentVariable(context, "PhotoViewerEMailPassword")}}";
-               public static string BingMapsKey { get; } = "{{GetEnvironmentVariable(context, "PhotoViewerBingMapsKey")}}";
+               public static string HereApiKey { get; } = "{{GetEnvironmentVariable(context, "PhotoViewerHereApiKey")}}";
            }
            """;
 
