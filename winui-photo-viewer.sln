@@ -9,16 +9,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoViewer.SourceGenerator
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoViewer.Core", "PhotoViewer.Core\PhotoViewer.Core.csproj", "{E51E3BA0-DFF9-4C0A-B8BC-F3DE13BBF9B1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC55FA8B-8266-4673-9BF1-248BD4CFD5FD}"
-	ProjectSection(SolutionItems) = preProject
-		PhotoViewerApp\.editorconfig = PhotoViewerApp\.editorconfig
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoViewer.Test", "PhotoViewer.Test\PhotoViewer.Test.csproj", "{6D517E50-A2E5-4FA9-B67E-C06B598522C3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThumbnailExtractor", "ThumbnailExtractor\ThumbnailExtractor.csproj", "{5950978A-D839-4E66-B633-BAC2301164E3}"
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "PhotoViewerAppPackage", "PhotoViewerAppPackage\PhotoViewerAppPackage.wapproj", "{EC6B5521-9D11-442D-ABB8-E34D9BB74D1C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1E00341E-803E-4B5A-8D49-1B007665180C}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
