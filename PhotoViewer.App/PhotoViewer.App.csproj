@@ -35,6 +35,7 @@
 		<None Remove="Controls\CanvasImageControl.xaml" />
 		<None Remove="Controls\ProgressControl.xaml" />
 		<None Remove="Controls\SelectionRect.xaml" />
+		<None Remove="NativeMethods.json" />
 		<None Remove="Views\ComparePage.xaml" />
 		<None Remove="Views\CompareView.xaml" />
 		<None Remove="Views\CropImageTool.xaml" />

@@ -103,12 +103,12 @@ public class DialogService
 
     private unsafe void ShowFileOpenPickerModel(FileOpenPickerModel2 dialogModel)
     {
-        PInvoke.CoCreateInstance(CLSID_FileOpenDialog, null, CLSCTX.CLSCTX_INPROC_SERVER, out IFileOpenDialog fileOpenDialog).ThrowOnFailure(); ;
+        PInvoke.CoCreateInstance(CLSID_FileOpenDialog, null, CLSCTX.CLSCTX_INPROC_SERVER, out IFileOpenDialog* fileOpenDialog).ThrowOnFailure(); ;
 
         if (dialogModel.InitialFolder is { } initialFolder)
         {
-            PInvoke.SHCreateItemFromParsingName(initialFolder, null, typeof(IShellItem).GUID, out object initialFolderShellItem).ThrowOnFailure();
-            fileOpenDialog.SetFolder((IShellItem)initialFolderShellItem);
+            PInvoke.SHCreateItemFromParsingName(initialFolder, null, typeof(IShellItem).GUID, out void* initialFolderShellItem).ThrowOnFailure();
+            fileOpenDialog->SetFolder((IShellItem*)initialFolderShellItem);
         }
 
         if (dialogModel.FileTypeFilter is { } fileTypeFilter)
@@ -123,16 +123,17 @@ public class DialogService
                     pszName = new PCWSTR(pfilterName),
                     pszSpec = new PCWSTR(pFilterPattern),
                 };
-                fileOpenDialog.SetFileTypes(1, &filterSpec);
+                fileOpenDialog->SetFileTypes(1, &filterSpec);
             }
         }
 
         try
         {
-            fileOpenDialog.Show(new HWND(windowHandle));
-            fileOpenDialog.GetResult(out IShellItem shellItem);
+            fileOpenDialog->Show(new HWND(windowHandle));
+            IShellItem* shellItem = null;
+            fileOpenDialog->GetResult(&shellItem);
             PWSTR filePathPWSTR = null;
-            shellItem.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, &filePathPWSTR);
+            shellItem->GetDisplayName(SIGDN.SIGDN_FILESYSPATH, &filePathPWSTR);
             dialogModel.FilePath = new string(filePathPWSTR);
             PInvoke.CoTaskMemFree(filePathPWSTR);
         }
