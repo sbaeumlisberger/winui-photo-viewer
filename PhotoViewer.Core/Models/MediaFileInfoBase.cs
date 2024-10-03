@@ -1,12 +1,12 @@
 ﻿using Essentials.NET;
 using Essentials.NET.Logging;
 using PhotoViewer.App.Utils;
+using System.IO.Hashing;
+using System.Text;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
-using System.IO.Hashing;
-using System.Text;
 
 namespace PhotoViewer.App.Models;
 

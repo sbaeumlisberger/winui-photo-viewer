@@ -2,7 +2,6 @@
 using PhotoViewer.App.Models;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
-using Windows.Storage.Streams;
 
 namespace PhotoViewer.Core.Services;
 

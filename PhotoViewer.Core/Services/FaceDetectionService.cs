@@ -1,13 +1,12 @@
-﻿using PhotoViewer.App.Models;
-using Essentials.NET.Logging;
+﻿using Essentials.NET.Logging;
+using Microsoft.Graphics.Canvas;
+using PhotoViewer.App.Models;
 using PhotoViewer.Core.Models;
+using System.Diagnostics;
+using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.FaceAnalysis;
-using Microsoft.Graphics.Canvas;
-using Windows.Foundation;
-using System.Diagnostics;
 using Windows.UI;
-using System.Threading;
 
 namespace PhotoViewer.Core.Services;
 

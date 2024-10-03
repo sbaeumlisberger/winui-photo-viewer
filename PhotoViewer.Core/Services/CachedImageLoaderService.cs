@@ -33,7 +33,7 @@ public class CachedImageLoaderService : ICachedImageLoaderService
     public void Preload(string filePath)
     {
         ulong id = MediaFileInfoBase.GetIdForFilePath(filePath);
-        preloadTask = cache.GetOrCreateAsync(id,  (_, cancellationToken) => imageLoaderService.LoadFromFileAsync(filePath, cancellationToken));
+        preloadTask = cache.GetOrCreateAsync(id, (_, cancellationToken) => imageLoaderService.LoadFromFileAsync(filePath, cancellationToken));
     }
 
     public async Task<IBitmapImageModel> LoadFromFileAsync(IBitmapFileInfo file, CancellationToken cancellationToken, bool reload = false)

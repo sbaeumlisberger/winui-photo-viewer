@@ -13,7 +13,7 @@ public class ErrorReportService
     {
         string subject = $"{AppData.ApplicationName} Error Report {DateTime.Now:g}";
         await SendMailAsync(subject, report).ConfigureAwait(false);
-        Log.Info("Error report sent successfully");       
+        Log.Info("Error report sent successfully");
     }
 
     public async Task SendCrashReportAsync(string report)

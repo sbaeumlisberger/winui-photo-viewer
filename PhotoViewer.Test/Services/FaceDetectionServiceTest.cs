@@ -1,12 +1,6 @@
-﻿using ABI.Windows.Foundation;
-using PhotoViewer.App.Models;
+﻿using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Xunit;
 

@@ -9,8 +9,8 @@ public class ErrorReportServiceTest
     public async Task SendErrorReport()
     {
         var errorReportService = new ErrorReportService();
-   
-        await errorReportService.SendErrorReportAsync("Test");    
+
+        await errorReportService.SendErrorReportAsync("Test");
     }
 
 }

@@ -33,7 +33,7 @@ public class ClipboardService : IClipboardService
         DataPackage dp = new DataPackage();
         dp.RequestedOperation = DataPackageOperation.Copy;
         dp.SetBitmap(RandomAccessStreamReference.CreateFromFile(bitmapFile));
-        dp.SetStorageItems([bitmapFile]); 
+        dp.SetStorageItems([bitmapFile]);
         Clipboard.SetContent(dp);
         Clipboard.Flush();
     }
