@@ -6,7 +6,6 @@ using System.Globalization;
 using System.Text.Json;
 using System.Web;
 using Windows.Devices.Geolocation;
-using Windows.Services.Maps;
 
 namespace PhotoViewer.Core.Services
 {
@@ -24,14 +23,8 @@ namespace PhotoViewer.Core.Services
 
         /// <summary>Returns the position of the specified address. If no position is found, null is returned.</summary>
         Task<Geopoint?> FindGeopointAsync(Address address);
-
-        Task<double?> FetchElevationDataAsync(double latitude, double longitude);
     }
 
-    /// <summary>A service to geocode and reverse-geocode location data via the Bing Maps REST Services.</summary>
-    /// <remarks>
-    /// This class is using the <see cref="MapService.ServiceToken"/> property to authenticate the REST requests.
-    /// </remarks>
     public class LocationService : ILocationService
     {
         private static string Language => ApplicationLanguages.Languages[0].ToString();
@@ -55,7 +48,7 @@ namespace PhotoViewer.Core.Services
 
             var httpClient = new HttpClient();
             var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
-            var locations = await ParseLocationsAsync(response).ConfigureAwait(false);
+            var locations = ParseLocations(response);
             return locations.FirstOrDefault(); ;
         }
 
@@ -83,7 +76,7 @@ namespace PhotoViewer.Core.Services
             var httpClient = new HttpClient();
             var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
 
-            return await ParseLocationsAsync(response).ConfigureAwait(false);
+            return ParseLocations(response);
         }
 
         public async Task<Address?> FindAddressAsync(Geopoint position)
@@ -98,33 +91,7 @@ namespace PhotoViewer.Core.Services
             return locations.FirstOrDefault()?.Geopoint;
         }
 
-        public async Task<double?> FetchElevationDataAsync(double latitude, double longitude)
-        {
-            var uri = new Uri("https://api.opentopodata.org/v1/eudem25m,mapzen" + ToQueryString(
-                ("locations", latitude.ToString(CultureInfo.InvariantCulture) + "," + longitude.ToString(CultureInfo.InvariantCulture))
-             ));
-
-            Log.Debug($"Sending request to {uri}");
-
-            var httpClient = new HttpClient();
-            var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
-            var json = JsonDocument.Parse(response);
-
-            var results = json.RootElement.GetProperty("results");
-
-            if (results.EnumerateArray().TryGetFirst(out var result))
-            {
-                if (result.TryGetProperty("elevation", out var elevationProperty) 
-                    && elevationProperty.TryGetDouble(out var elevation))
-                {
-                    return Math.Round(elevation);
-                }
-            }
-
-            return null;
-        }
-
-        private async Task<List<Location>> ParseLocationsAsync(string response)
+        private List<Location> ParseLocations(string response)
         {
             var locations = new List<Location>();
 
