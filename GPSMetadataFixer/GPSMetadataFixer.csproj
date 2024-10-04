@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MetadataAPI" Version="2.0.0-beta2" />
+		<PackageReference Include="MetadataAPI" Version="2.0.0" />
 	</ItemGroup>
 
 </Project>
