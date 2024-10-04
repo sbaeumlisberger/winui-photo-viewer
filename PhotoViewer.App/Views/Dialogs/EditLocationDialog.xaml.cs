@@ -52,6 +52,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
                             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                         }).addTo(map);
                         map.on('click', onMapClick);
+                        map.fitWorld();
                         window.chrome.webview.postMessage({ event: "mapReady" });
                     }
                     
@@ -74,7 +75,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
     public EditLocationDialog()
     {
         this.InitializeComponentMVVM();
-        updateSuggestionsThrottle = new Throttle<string>(TimeSpan.FromMilliseconds(30), UpdateSuggestionsAsync);
+        updateSuggestionsThrottle = new Throttle<string>(TimeSpan.FromMilliseconds(100), UpdateSuggestionsAsync);
     }
 
     async partial void ConnectToViewModel(EditLocationDialogModel viewModel)
