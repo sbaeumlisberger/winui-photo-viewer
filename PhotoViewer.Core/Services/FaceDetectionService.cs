@@ -80,13 +80,12 @@ internal class FaceDetectionService : IFaceDetectionService
 
         var renderTarget = new CanvasRenderTarget(device, newWidth, newHeight, canvasBitmap.Dpi);
 
-        // TODO
-        /**
-         Exception Info: System.AccessViolationException: Attempted to read or write protected memory. This is often an indication that other memory is corrupt.
-        Stack:
-           at ABI.System.IDisposable.global::System.IDisposable.Dispose()
-           at Microsoft.Graphics.Canvas.CanvasDrawingSession.Dispose()
-           at PhotoViewer.Core.Services.FaceDetectionService.ScaleCanvasBitmap(Microsoft.Graphics.Canvas.CanvasBitmap, Single)
+        /** TODO: System.AccessViolationException: Attempted to read or write protected memory. 
+         * This is often an indication that other memory is corrupt.
+         * Stack:
+         *  at ABI.System.IDisposable.global::System.IDisposable.Dispose()
+         *  at Microsoft.Graphics.Canvas.CanvasDrawingSession.Dispose()
+         *  at PhotoViewer.Core.Services.FaceDetectionService.ScaleCanvasBitmap(Microsoft.Graphics.Canvas.CanvasBitmap, Single)
          **/
 
         using (CanvasDrawingSession ds = renderTarget.CreateDrawingSession())

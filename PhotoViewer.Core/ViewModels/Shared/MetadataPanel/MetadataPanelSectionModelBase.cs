@@ -124,7 +124,7 @@ namespace PhotoViewer.Core.ViewModels
                 catch (Exception exception)
                 {
                     Log.Error("Error while writing files", exception);
-                    // TODO
+                    // TODO:
                     return false;
                 }
                 finally

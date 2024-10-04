@@ -134,7 +134,7 @@ public class ImageLoaderService : IImageLoaderService
 
     private async Task<IBitmapImageModel> LoadBitmapAsync(Stream fileStream, string displayName, CancellationToken cancellationToken)
     {
-
+        Log.Debug($"Load Bitmap for {displayName}");
         Stopwatch sw = Stopwatch.StartNew();
 
         MemoryStream memoryStream;
@@ -146,85 +146,57 @@ public class ImageLoaderService : IImageLoaderService
         else
         {
             memoryStream = new MemoryStream();
-            Log.Debug($"Read {displayName} into memory");
             await fileStream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             fileStream.Dispose();
             memoryStream.Position = 0;
-            cancellationToken.ThrowIfCancellationRequested();
-            Log.Debug("memoryStream created in " + sw.ElapsedMilliseconds + " ms");
-            sw.Restart();
         }
 
         var decoder = wic.CreateDecoderFromStream(memoryStream, WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
 
         ColorSpaceInfo colorSpace = GetColorSpaceInfo(decoder);
         cancellationToken.ThrowIfCancellationRequested();
-        Log.Debug("colorSpace loaded " + sw.ElapsedMilliseconds);
 
         var frame = decoder.GetFrame(0);
-        frame.GetSize(out int width, out int height);
-        Log.Debug("extracted bitmap size in " + sw.ElapsedMilliseconds + " ms");
+        var directXCompatibleBitmap = ConvertToDirectXCompatibleFormat(frame, out var directXPixelFormat);
+        var rotatedBitmap = ApplyOrientationFlag(directXCompatibleBitmap, frame, decoder);
+        byte[] pixels = rotatedBitmap.GetPixels();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        rotatedBitmap.GetSize(out int width, out int height);
 
         try
         {
-            Log.Debug($"Load CanvasBitmap for {displayName}");
-            sw.Restart();
-
-            var directXCompatibleBitmap = ConvertToDirectXCompatibleFormat(frame, out var directXPixelFormat);
-            //Log.Debug("Converted to DirectX compatible format  " + sw.ElapsedMilliseconds);
-
-            var rotatedBitmap = ApplyOrientationFlag(directXCompatibleBitmap, frame, decoder);
-            //Log.Debug("Orientation flag applied " + sw.ElapsedMilliseconds);
-
-            byte[] pixels = rotatedBitmap.GetPixels();
-            //Log.Debug("Got pixles " + sw.ElapsedMilliseconds);
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            rotatedBitmap.GetSize(out width, out height);
-
             var canvasBitmap = CanvasBitmap.CreateFromBytes(Device, pixels, width, height, directXPixelFormat);
-
             cancellationToken.ThrowIfCancellationRequested();
 
             sw.Stop();
-            Log.Debug("CanvasBitmap loaded in " + sw.ElapsedMilliseconds + " ms");
+            Log.Debug("Bitmap loaded in " + sw.ElapsedMilliseconds + " ms");
 
             return new CanvasBitmapImageModel(displayName, canvasBitmap, colorSpace);
         }
         catch (ArgumentException ex) when (ex.HResult == -2147024809)
         // TODO: find faster and better solution, but checking the canvas device (Device.MaximumBitmapSizeInPixels) is very slow (~100ms)
         {
-            Log.Debug($"Load CanvasVirtualBitmap for {displayName}");
+            Log.Debug($"Load {displayName} as CanvasVirtualBitmap");
             var canvasVirtualBitmap = await CanvasVirtualBitmap.LoadAsync(Device, memoryStream.AsRandomAccessStream()).AsTask(cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
+
+            sw.Stop();
+            Log.Debug("Bitmap loaded in " + sw.ElapsedMilliseconds + " ms");
+
             return new CanvasVirtualBitmapImageModel(displayName, canvasVirtualBitmap, colorSpace);
         }
     }
 
     private IWICBitmapSource ConvertToDirectXCompatibleFormat(IWICBitmapSource bitmap, out DirectXPixelFormat directXPixelFormat)
     {
-        //var wicPixelFormat = bitmap.GetPixelFormat();
-        //var allPixelFormats = typeof(WICPixelFormat).GetFields().ToDictionary(f => (Guid)f.GetValue(null)!, f => f.Name);
-        //Log.Debug($"WICPixelFormat: {allPixelFormats[wicPixelFormat]}");
-
+        // We are converting to the default format of Win2D (B8G8R8A8UIntNormalized)
         // see https://github.com/microsoft/Win2D/blob/52ef02a7cfbcb476c13d9b87860f429aff15c2b9/winrt/lib/images/CanvasBitmap.cpp#L266
         var targetWicPixelFormat = WICPixelFormat.WICPixelFormat32bppPBGRA;
         directXPixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized;
 
-        // TODO?
-        //if (FileFormatSupportsHdr(containerFormat))
-        //{
-        //    GUID frameFormat;
-        //    ThrowIfFailed(wicBitmapFrameDecode->GetPixelFormat(&frameFormat));
-
-        //    if (IsSupportedPixelFormat(device, frameFormat, GUID_WICPixelFormat64bppRGBA, DXGI_FORMAT_R16G16B16A16_UNORM) ||
-        //        IsSupportedPixelFormat(device, frameFormat, GUID_WICPixelFormat64bppRGBAHalf, DXGI_FORMAT_R16G16B16A16_FLOAT) ||
-        //        IsSupportedPixelFormat(device, frameFormat, GUID_WICPixelFormat128bppRGBAFloat, DXGI_FORMAT_R32G32B32A32_FLOAT))
-        //    {
-        //        targetPixelFormat = frameFormat;
-        //    }
-        //}
+        // alternative conversions would be required to better support HDR images
 
         var convertedBitmap = wic.CreateFormatConverter();
         convertedBitmap.Initialize(bitmap, targetWicPixelFormat, WICBitmapDitherType.WICBitmapDitherTypeNone, null, 0, WICBitmapPaletteType.WICBitmapPaletteTypeMedianCut);
