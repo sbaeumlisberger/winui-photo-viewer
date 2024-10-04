@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="48"
+   height="48"
+   viewBox="0 0 48.000001 48.000001"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:export-filename="C:\Users\Sebastian\Workspace\git\photo-viewer\PhotoViewer\PhotoViewerPackageProject\Assets\Icon-Color.png"
+   inkscape:export-xdpi="513.05518"
+   inkscape:export-ydpi="513.05518"
+   sodipodi:docname="Icon-Color.svg">
+  <defs
+     id="defs4">
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter867"
+       x="-0.020493051"
+       width="1.0409861"
+       y="-0.028955038"
+       height="1.0579101">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.39263512"
+         id="feGaussianBlur869" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="22.627417"
+     inkscape:cx="10.935498"
+     inkscape:cy="15.999485"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer2"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="3840"
+     inkscape:window-height="2050"
+     inkscape:window-x="-12"
+     inkscape:window-y="-12"
+     inkscape:window-maximized="1"
+     inkscape:snap-global="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3344"
+       empspacing="2" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Sky"
+     style="display:inline">
+    <rect
+       style="fill:#00aad4;stroke-width:1.00939322"
+       id="rect3719"
+       width="43.583309"
+       height="30.157154"
+       x="2.2904186"
+       y="8.9424973" />
+  </g>
+  <g
+     inkscape:label="Sun"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1004.3622)"
+     style="display:inline">
+    <ellipse
+       style="fill:#ffd42a;stroke-width:1.06761324"
+       id="path3714"
+       cx="10.652205"
+       cy="1021.2359"
+       rx="3.9892926"
+       ry="3.9999998" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Landscape"
+     style="display:inline">
+    <path
+       style="fill:#89a02c;stroke-width:1.01769412"
+       d="m 30.412635,18.056761 12.84702,18.248174 -25.507073,-0.01024 z"
+       id="path3357"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
+    <path
+       style="fill:#abc837;stroke-width:1.04734278"
+       d="m 6.4711684,36.315224 9.0490176,-12.078187 4.364016,5.971604 4.362535,6.085 -17.7755686,0.02168 z"
+       id="path3357-9"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="Border Shadow">
+    <path
+       style="display:inline;fill:#000000;filter:url(#filter867)"
+       d="M 1.1166089,24.046758 V 7.7745582 H 24.107922 47.099235 V 24.046758 40.318957 H 24.107922 1.1166089 Z m 44.6113751,0 V 9.1457582 H 24.107922 2.4878599 V 24.046758 38.947657 H 24.107922 45.727984 Z"
+       id="path3357-7-9"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccccccccccccc" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Border"
+     style="display:inline">
+    <path
+       style="fill:#f2f2f2"
+       d="M 1.0945113,24.040445 V 7.7682445 H 24.085824 47.077137 V 24.040445 40.312644 H 24.085824 1.0945113 Z m 44.6113747,0 V 9.1394445 H 24.085824 2.4657623 V 24.040445 38.941344 H 24.085824 45.705886 Z"
+       id="path3357-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccccccccccccc" />
+  </g>
+</svg>
