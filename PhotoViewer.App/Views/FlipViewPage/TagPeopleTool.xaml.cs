@@ -12,6 +12,7 @@ using Windows.Foundation;
 using Windows.System;
 
 namespace PhotoViewer.App.Views;
+
 public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleToolModel>
 {
     private const double DefaultFaceBoxSize = 100;
@@ -32,6 +33,7 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         viewModel.Subscribe(this, nameof(ViewModel.SelectionRectInPercent), ViewModel_SelectionRectChanged, initialCallback: true);
         viewModel.Subscribe(this, nameof(ViewModel.IsNameInputVisible), ViewModel_IsNameInputVisibleChanged, initialCallback: true);
         viewModel.Subscribe(this, nameof(ViewModel.UIScaleFactor), UpdateAutoSuggestBoxContainerPosition);
+        viewModel.Subscribe(this, nameof(ViewModel.IsSelectionEnabled), UpdateCursor);
     }
 
     partial void DisconnectFromViewModel(TagPeopleToolModel viewModel)
@@ -80,6 +82,18 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         selectionRect.SetBounds(new Rect(x, y, width, height));
     }
 
+    private void UpdateCursor()
+    {
+        if (ViewModel!.IsSelectionEnabled)
+        {
+            ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Cross);
+        }
+        else
+        {
+            ProtectedCursor = null;
+        }
+    }
+
     private void PeopleTag_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
         var element = (FrameworkElement)sender;
@@ -98,11 +112,6 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         {
             peopleTagVM.IsVisible = false;
         }
-    }
-
-    private void SelectionCanvas_Loaded(object sender, RoutedEventArgs e)
-    {
-        ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Cross);
     }
 
     private void SelectionCanvas_PointerPressed(object sender, PointerRoutedEventArgs args)
