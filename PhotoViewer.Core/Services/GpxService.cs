@@ -54,6 +54,11 @@ internal class GpxService : IGpxService
                     trkpt.Time = DateTimeOffset.Parse(timeElement.Value, CultureInfo.InvariantCulture);
                 }
 
+                if (trkptElement.Element(ns + "ele") is { } eleElement)
+                {
+                    trkpt.Ele = double.Parse(eleElement.Value, CultureInfo.InvariantCulture);
+                }
+
                 trkpList.Add(trkpt);
             }
         }
@@ -69,6 +74,7 @@ internal class GpxService : IGpxService
             {
                 Latitude = gpxTrackPoint.Latitude,
                 Longitude = gpxTrackPoint.Longitude,
+                Altitude = gpxTrackPoint.Ele,
             };
             var geoTagFromFile = await metadataService.GetMetadataAsync(file, MetadataProperties.GeoTag);
             if (geoTagFromGpx != geoTagFromFile)
