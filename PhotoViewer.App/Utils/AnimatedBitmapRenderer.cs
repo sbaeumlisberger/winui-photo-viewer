@@ -4,6 +4,7 @@ using PhotoViewer.App.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 
@@ -23,10 +24,18 @@ public class AnimatedBitmapRenderer : IDisposable
             if (value != isPlaying)
             {
                 isPlaying = value;
+
                 if (isPlaying)
                 {
                     currentFrameIndex = 0;
-                    _ = RenderAsync();
+                    cancellationTokenSource = new CancellationTokenSource();
+                    _ = RenderAsync(cancellationTokenSource.Token);
+                }
+                else 
+                {
+                    cancellationTokenSource?.Cancel();
+                    cancellationTokenSource?.Dispose();
+                    cancellationTokenSource = null;
                 }
             }
         }
@@ -40,7 +49,7 @@ public class AnimatedBitmapRenderer : IDisposable
 
     private int currentFrameIndex = 0;
 
-    private bool isDisposed;
+    private CancellationTokenSource? cancellationTokenSource;
 
     public AnimatedBitmapRenderer(IBitmapImageModel animatedBitmap)
     {
@@ -57,18 +66,20 @@ public class AnimatedBitmapRenderer : IDisposable
 
     public void Dispose()
     {
-        isDisposed = true;
+        cancellationTokenSource?.Cancel();
+        cancellationTokenSource?.Dispose();
+        cancellationTokenSource = null;
         FrameRendered = null;
         drawingSession.Dispose();
         RenderTarget.Dispose();
     }
 
-    private async Task RenderAsync()
+    private async Task RenderAsync(CancellationToken cancellationToken)
     {
         if (frames.Count > 1)
         {
             var stopwatch = new Stopwatch();
-            while (IsPlaying && !isDisposed)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 stopwatch.Restart();
                 double delay = RenderNextFrame();
