@@ -216,6 +216,13 @@ public sealed partial class BitmapViewer : UserControl
         double displayScale = canvasControl.Dpi / 96;
         var dstRectInPixels = new Rect(dstRect.X * displayScale, dstRect.Y * displayScale, dstRect.Width * displayScale, dstRect.Height * displayScale);
 
+        var interpolationMode = CanvasImageInterpolation.NearestNeighbor;
+
+        if(dstRectInPixels.Width < srcRect.Width || dstRectInPixels.Height < srcRect.Height)
+        {
+            interpolationMode = CanvasImageInterpolation.HighQualityCubic;
+        }
+
         if (sourceColorProfile is not null || outputColorProfile is not null)
         {
             using var colorProfileEffect = new ColorManagementEffect()
@@ -230,11 +237,11 @@ public sealed partial class BitmapViewer : UserControl
                 colorProfileEffect.Quality = ColorManagementEffectQuality.Best;
             }
 
-            drawingSession.DrawImage(colorProfileEffect, dstRectInPixels, srcRect, 1, CanvasImageInterpolation.NearestNeighbor);
+            drawingSession.DrawImage(colorProfileEffect, dstRectInPixels, srcRect, 1, interpolationMode);
         }
         else
         {
-            drawingSession.DrawImage(canvasImage, dstRectInPixels, srcRect, 1, CanvasImageInterpolation.NearestNeighbor);
+            drawingSession.DrawImage(canvasImage, dstRectInPixels, srcRect, 1, interpolationMode);
         }
 
         //Log.Debug("Image " + image.ID + " drawn");
