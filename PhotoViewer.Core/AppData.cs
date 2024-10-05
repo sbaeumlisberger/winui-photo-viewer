@@ -13,12 +13,13 @@ public static class AppData
 
     public static readonly string PublicFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "PhotoViewer");
 
-    public static ApplicationDataContainer DataContainer => ApplicationData.Current.LocalSettings;
+    public static readonly string PrivateFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PhotoViewer");
 
-    public static IStorageFolder PrivateFolder => ApplicationData.Current.LocalFolder;
+    public static ApplicationDataContainer DataContainer => ApplicationData.Current.LocalSettings;
 
     static AppData()
     {
         Directory.CreateDirectory(PublicFolder);
+        Directory.CreateDirectory(PrivateFolder);
     }
 }

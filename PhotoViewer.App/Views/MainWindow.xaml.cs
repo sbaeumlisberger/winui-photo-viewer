@@ -47,7 +47,7 @@ public sealed partial class MainWindow : Window
 
         this.InitializeComponent();
 
-        WindowManager.PersistenceStorage = new PersistentDictionary(Path.Combine(AppData.PublicFolder, "window.dat"));
+        WindowManager.PersistenceStorage = new PersistentDictionary(Path.Combine(AppData.PrivateFolder, "window.dat"));
         WindowManager.Get(this).PersistenceId = "MainWindow";
 
         AppWindow.Closing += AppWindow_Closing;
@@ -177,6 +177,37 @@ public sealed partial class MainWindow : Window
     {
         Log.Error("Navigation failed", e.Exception);
         e.Handled = true;
+    }
+
+    private async void Frame_Loaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            await ReportCrashAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to check or report application crash", ex);
+        }
+    }
+
+    private async Task ReportCrashAsync()
+    {
+        var errors = await Task.Run(() => new EventLogService().GetErrors());
+
+        if (errors.Count != 0)
+        {
+            var errorReportService = new ErrorReportService();
+
+            var crashReport = errorReportService.CreateReport(string.Join("\n\n", errors));
+
+            var dialog = new CrashReportDialog(crashReport);
+
+            if (await ShowDialogAsync(dialog) == ContentDialogResult.Primary)
+            {
+                await errorReportService.SendCrashReportAsync(crashReport);
+            }
+        }
     }
 
     private class PersistentDictionary : IDictionary<string, object>
@@ -318,37 +349,6 @@ public sealed partial class MainWindow : Window
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => dictionary.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => dictionary.GetEnumerator();
-    }
-
-    private async void Frame_Loaded(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            await ReportCrashAsync();
-        }
-        catch (Exception ex)
-        {
-            Log.Error("Failed to check or report application crash", ex);
-        }
-    }
-
-    private async Task ReportCrashAsync()
-    {
-        var errors = await Task.Run(() => new EventLogService().GetErrors());
-
-        if (errors.Count != 0)
-        {
-            var errorReportService = new ErrorReportService();
-
-            var crashReport = errorReportService.CreateReport(string.Join("\n\n", errors));
-
-            var dialog = new CrashReportDialog(crashReport);
-
-            if (await ShowDialogAsync(dialog) == ContentDialogResult.Primary)
-            {
-                await errorReportService.SendCrashReportAsync(crashReport);
-            }
-        }
     }
 
 }
