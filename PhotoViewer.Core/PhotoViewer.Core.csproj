@@ -9,6 +9,7 @@
 		<Nullable>enable</Nullable>
 		<Platforms>x86;x64;arm64</Platforms>
 		<IsAotCompatible>true</IsAotCompatible>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<ItemGroup>
