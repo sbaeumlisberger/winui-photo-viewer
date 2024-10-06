@@ -63,6 +63,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     public bool IsNotLoadingMoreFiles => !IsLoadingMoreFiles;
 
+    public string InfoMessage { get; private set; } = string.Empty;
+
     private readonly IDialogService dialogService;
 
     private readonly IMediaFilesLoaderService mediaFilesLoaderService;
@@ -167,12 +169,18 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     private async void OnReceiveMediaFilesDeletedMessage(MediaFilesDeletedMessage msg)
     {
+        if (SelectedItem is not null && msg.Files.SingleOrDefault() == SelectedItem)
+        {
+            ShowInfoMessage(string.Format(Strings.FileDeletedMessage, SelectedItem.FileName));
+        }
+
         if (settings.ShowDeleteAnimation && msg.Files.Contains(SelectedItem))
         {
             var asyncEventArgs = new AsyncEventArgs();
             DeleteAnimationRequested?.Invoke(this, asyncEventArgs);
             await asyncEventArgs.CompletionTask;
         }
+
         var selectedIndex = Items.IndexOf(SelectedItem!);
         var newItems = Items.Except(msg.Files).ToList();
         // change selection first to avoid reset of flip view control
@@ -369,5 +377,18 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
             var loadMediaFilesTask = mediaFilesLoaderService.LoadFolder(folder, config);
             Messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask));
         }
+    }
+
+    private void ShowInfoMessage(string message)
+    {
+        InfoMessage = message;
+
+        Task.Delay(3000).ContinueWith((_) => DispatchAsync(() =>
+        {
+            if (InfoMessage == message)
+            {
+                InfoMessage = string.Empty;
+            }
+        }));
     }
 }

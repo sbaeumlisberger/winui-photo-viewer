@@ -124,6 +124,15 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The file &quot;{0}&quot; has been deleted.
+        /// </summary>
+        public static string FileDeletedMessage {
+            get {
+                return ResourceManager.GetString("FileDeletedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occurred while reading the selected GPX file: {0}.
         /// </summary>
         public static string ImportGpxTrackDialog_GpxFileParseErrorMessage {

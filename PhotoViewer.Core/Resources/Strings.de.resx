@@ -237,4 +237,7 @@
   <data name="MetadataPanel_LocationPlaceholderDifferentValues" xml:space="preserve">
     <value>Unterschiedliche Werte</value>
   </data>
+  <data name="FileDeletedMessage" xml:space="preserve">
+    <value>Die Datei "{0}" wurde gelöscht</value>
+  </data>
 </root>

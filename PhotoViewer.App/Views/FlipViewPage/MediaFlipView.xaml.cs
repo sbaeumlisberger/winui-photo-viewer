@@ -149,4 +149,17 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
     {
         return isDiashowLoopActive ? Strings.MediaFlipView_DisableDiashowLoop : Strings.MediaFlipView_EnableDiashowLoop;
     }
+
+    private bool IsNotEmpty(string text) 
+    {
+        return !string.IsNullOrEmpty(text);
+    }
+
+    private async void InfoBar_LosingFocus(UIElement sender, LosingFocusEventArgs args)
+    {
+        if (!args.TrySetNewFocusedElement(flipView))
+        {
+            await flipView.TryFocusAsync();
+        }
+    }
 }

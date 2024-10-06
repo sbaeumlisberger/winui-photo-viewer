@@ -119,6 +119,16 @@
                 IsActive="{x:Bind ViewModel.ShowLoadingUI, Mode=OneWay}"/>
         </StackPanel>
 
+        <InfoBar 
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Margin="12"
+            Opacity="0.8"
+            Severity="Success"
+            IsOpen="{x:Bind IsNotEmpty(ViewModel.InfoMessage), Mode=OneWay}"
+            Message="{x:Bind ViewModel.InfoMessage, Mode=OneWay}"
+            LosingFocus="InfoBar_LosingFocus"/>
+
         <Grid
             x:Name="selectedItemIndicator"
             x:Load="False"
