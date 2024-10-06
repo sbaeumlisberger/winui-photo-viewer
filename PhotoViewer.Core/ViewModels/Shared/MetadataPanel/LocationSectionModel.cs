@@ -84,11 +84,10 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         orginalLocation = new Location(addressTag?.ToAddress(), geoTag?.ToGeopoint());
         UpdateForLocation(orginalLocation);
 
-        this.completedLocation = orginalLocation;
-        var completedLocation = await TryGetCompletedLocationAsync(orginalLocation, cancellationToken);
-        if (completedLocation is not null && completedLocation != orginalLocation)
+        completedLocation = await TryGetCompletedLocationAsync(orginalLocation, cancellationToken);
+
+        if (completedLocation != orginalLocation)
         {
-            this.completedLocation = completedLocation;
             UpdateForLocation(completedLocation);
         }
     }
@@ -99,7 +98,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         var geopoint = completedLocation!.GeoPoint!;
         string latitude = geopoint.Latitude.ToString(CultureInfo.InvariantCulture);
         string longitude = geopoint.Longitude.ToString(CultureInfo.InvariantCulture);
-        string description = completedLocation?.Address?.ToString() ?? geopoint.ToDecimalString(); ;
+        string description = completedLocation.Address?.ToString() ?? geopoint.ToDecimalString();
         Uri uri = new Uri(@"bingmaps:?collection=point." + latitude + "_" + longitude + "_" + description + "&sty=a");
         await Launcher.LaunchUriAsync(uri, new LauncherOptions
         {
@@ -175,7 +174,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         DisplayText = CreateDisplayText(location);
     }
 
-    private async Task<Location?> TryGetCompletedLocationAsync(Location location, CancellationToken cancellationToken)
+    private async Task<Location> TryGetCompletedLocationAsync(Location location, CancellationToken cancellationToken)
     {
         if (location.GeoPoint is null && location.Address is not null)
         {
@@ -204,7 +203,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
             }
         }
         cancellationToken.ThrowIfCancellationRequested();
-        return null;
+        return location;
     }
 
     private string CreateDisplayText(Location location)

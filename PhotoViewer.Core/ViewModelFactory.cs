@@ -47,7 +47,7 @@ public class ViewModelFactory : IViewModelFactory
     private readonly IImageLoaderService imageLoaderService = new ImageLoaderService(new GifImageLoaderService());
     private readonly ICachedImageLoaderService cachedImageLoaderService = CachedImageLoaderService.Instance;
     private readonly IDisplayRequestService displayRequestService = new DisplayRequestService();
-    private readonly ILocationService locationService = new LocationService();
+    private readonly ILocationService locationService = new CachedLocationService(new LocationService());
     private readonly ISettingsService settingService = new SettingsService();
     private readonly IPersonalizationService personalizationService = new PersonalizationService();
     private readonly IClipboardService clipboardService = new ClipboardService();

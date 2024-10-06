@@ -27,7 +27,7 @@ public class CachedImageLoaderService : ICachedImageLoaderService
     public CachedImageLoaderService(IImageLoaderService imageLoaderService)
     {
         this.imageLoaderService = imageLoaderService;
-        this.cache = new AsyncCache<ulong, IBitmapImageModel>(CacheSize, image => image.Dispose(), image => image.RequestUsage());
+        this.cache = new AsyncCache<ulong, IBitmapImageModel>(CacheSize, CacheSize, image => image.Dispose(), image => image.RequestUsage());
     }
 
     public void Preload(string filePath)
