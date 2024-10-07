@@ -6,9 +6,9 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core;
-using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using PhotoViewer.Core.ViewModels.Shared;
@@ -25,9 +25,9 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
 {
     public IReadOnlyList<IMediaFileInfo> SelectedItems { get; set; } = Array.Empty<IMediaFileInfo>();
 
-    public IAcceleratedCommand DeleteCommand { get; }
+    public bool CanRotate => SelectedItems.Count > 0 && SelectedItems.All(file => file is IBitmapFileInfo);
 
-    public bool CanRotate => SelectedItems.Any() && SelectedItems.All(file => file is IBitmapFileInfo);
+    public bool CanDelete => SelectedItems.Count > 0;
 
     public BackgroundTasksViewModel BackgroundTasks { get; }
 
@@ -41,13 +41,15 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
 
     private readonly IRotateBitmapService rotateBitmapService;
 
+    private readonly IDeleteFilesService deleteFilesService;
+
     private readonly ApplicationSettings settings;
 
     internal OverviewPageCommandBarModel(
         IMessenger messenger,
         IDialogService dialogService,
         IMediaFilesLoaderService mediaFilesLoaderService,
-        IDeleteFilesCommand deleteFilesCommand,
+        IDeleteFilesService deleteFilesService,
         IRotateBitmapService rotateBitmapService,
         IViewModelFactory viewModelFactory,
         ApplicationSettings settings) : base(messenger)
@@ -55,8 +57,8 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
         this.dialogService = dialogService;
         this.mediaFilesLoaderService = mediaFilesLoaderService;
         this.rotateBitmapService = rotateBitmapService;
-        this.settings = settings;
-        DeleteCommand = deleteFilesCommand;
+        this.deleteFilesService = deleteFilesService;
+        this.settings = settings;       
 
         BackgroundTasks = viewModelFactory.CreateBackgroundTasksViewModel();
 
@@ -79,6 +81,12 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
             await rotateBitmapService.RotateClockwise90DegreesAsync(bitmapFile).ConfigureAwait(false);
         });
         result.ProcessedElements.ForEach(bitmapFile => Messenger.Send(new BitmapModifiedMesssage(bitmapFile)));
+    }
+
+    [RelayCommand(CanExecute = nameof(CanDelete))]
+    private async Task DeleteAsync()
+    {
+        await deleteFilesService.DeleteFilesAsync(SelectedItems);
     }
 
     [RelayCommand]

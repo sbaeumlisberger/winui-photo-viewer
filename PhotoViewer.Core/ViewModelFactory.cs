@@ -42,7 +42,6 @@ public class ViewModelFactory : IViewModelFactory
     private readonly ApplicationSession applicationSession;
     private readonly IMediaFilesLoaderService mediaFilesLoaderService;
     private readonly IMetadataService metadataService = new MetadataService();
-    private readonly IDeleteMediaFilesService deleteMediaService = new DeleteMediaFilesService();
     private readonly IRotateBitmapService rotateBitmapService;
     private readonly IImageLoaderService imageLoaderService = new ImageLoaderService(new GifImageLoaderService());
     private readonly ICachedImageLoaderService cachedImageLoaderService = CachedImageLoaderService.Instance;
@@ -59,6 +58,7 @@ public class ViewModelFactory : IViewModelFactory
     private readonly ICropImageService cropImageService;
     private readonly IBackgroundTaskService backgroundTaskService = new BackgroundTaskService();
     private readonly SortService sortService = new SortService(new MetadataService());
+    private readonly IDeleteFilesService deleteFilesService;
 
     public ViewModelFactory(ApplicationSettings settings, IMessenger messenger, IMediaFilesLoaderService mediaFilesLoaderService)
     {
@@ -69,6 +69,7 @@ public class ViewModelFactory : IViewModelFactory
         applicationSession = new ApplicationSession(messenger);
         rotateBitmapService = new RotateBitmapService(metadataService);
         cropImageService = new CropImageService(messenger, metadataService);
+        deleteFilesService = new DeleteFilesService(messenger, dialogService, settingService, backgroundTaskService, settings);
     }
 
     public MainWindowModel CreateMainWindowModel()
@@ -121,10 +122,8 @@ public class ViewModelFactory : IViewModelFactory
               settings);
     }
 
-    public IFlipViewPageCommandBarModel CreateFlipViewPageCommandBarModel(
-        ICommand selectPreviousCommand, ICommand selectNextCommand)
+    public IFlipViewPageCommandBarModel CreateFlipViewPageCommandBarModel(ICommand selectPreviousCommand, ICommand selectNextCommand)
     {
-        var deleteFilesCommand = CreateDeleteFilesCommand();
         return new FlipViewPageCommandBarModel(
             messenger,
             dialogService,
@@ -134,7 +133,7 @@ public class ViewModelFactory : IViewModelFactory
             selectPreviousCommand,
             selectNextCommand,
             settings,
-            deleteFilesCommand);
+            deleteFilesService);
     }
 
     public IMetadataPanelModel CreateMetadataPanelModel(bool showTagPeopleOnPhotoButton)
@@ -160,12 +159,11 @@ public class ViewModelFactory : IViewModelFactory
 
     public IOverviewPageCommandBarModel CreateOverviewPageCommandBarModel()
     {
-        var deleteFilesCommand = CreateDeleteFilesCommand();
         return new OverviewPageCommandBarModel(
             messenger,
             dialogService,
             mediaFilesLoaderService,
-            deleteFilesCommand,
+            deleteFilesService,
             rotateBitmapService,
             this,
             settings);
@@ -173,19 +171,15 @@ public class ViewModelFactory : IViewModelFactory
 
     public IMediaFileContextMenuModel CreateMediaFileContextMenuModel(bool isRenameFilesEnabled = false)
     {
-        var deleteFilesCommand = CreateDeleteFilesCommand();
-        return CreateMediaFileContextMenuModel(deleteFilesCommand, isRenameFilesEnabled);
-    }
-
-    private IDeleteFilesCommand CreateDeleteFilesCommand()
-    {
-        return new DeleteFilesCommand(
+        return new MediaFileContextMenuModel(
             messenger,
-            deleteMediaService,
+            metadataService,
+            personalizationService,
+            rotateBitmapService,
             dialogService,
-            settingService,
-            backgroundTaskService,
-            settings);
+            clipboardService,
+            deleteFilesService,
+            isRenameFilesEnabled);
     }
 
     private IMediaFlipViewItemModel CreateMediaFlipViewItemModel(IMediaFileInfo mediaFile)
@@ -197,20 +191,6 @@ public class ViewModelFactory : IViewModelFactory
             IVectorGraphicFileInfo => new VectorGraphicFlipViewItemModel(mediaFile, this),
             _ => throw new Exception($"Unexcpected type of media file: {mediaFile.GetType()}")
         };
-    }
-
-    private IMediaFileContextMenuModel CreateMediaFileContextMenuModel(
-        IDeleteFilesCommand deleteFilesCommand, bool isRenameFilesEnabled = false)
-    {
-        return new MediaFileContextMenuModel(
-            messenger,
-            metadataService,
-            personalizationService,
-            rotateBitmapService,
-            dialogService,
-            clipboardService,
-            deleteFilesCommand,
-            isRenameFilesEnabled);
     }
 
     private BitmapFlipViewItemModel CreateBitmapFlipViewItemModel(IBitmapFileInfo bitmapFile)
@@ -225,8 +205,7 @@ public class ViewModelFactory : IViewModelFactory
 
     public ICompareViewModel CreateCompareViewModel(IObservableList<IBitmapFileInfo> bitmapFiles)
     {
-        var deleteFilesCommand = CreateDeleteFilesCommand();
-        return new CompareViewModel(bitmapFiles, settings, deleteFilesCommand, this);
+        return new CompareViewModel(bitmapFiles, settings, deleteFilesService, this);
     }
 
     public ICropImageToolModel CreateCropImageToolModel(IBitmapFileInfo bitmapFile)

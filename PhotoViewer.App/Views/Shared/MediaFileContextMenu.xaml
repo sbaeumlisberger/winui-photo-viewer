@@ -118,13 +118,11 @@
             <MenuFlyoutItem
                 Icon="Delete" 
                 Text="{x:Bind res:Strings.MediaFileContextMenu_Delete}"
-                Command="{x:Bind ViewModel.DeleteCommand, Mode=OneWay}"
-                CommandParameter="{x:Bind ViewModel.Files, Mode=OneWay}">
+                Command="{x:Bind ViewModel.DeleteCommand, Mode=OneWay}">
                 <MenuFlyoutItem.KeyboardAccelerators>
                     <KeyboardAccelerator 
                         IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}"
-                        Modifiers="{x:Bind ViewModel.DeleteCommand.AcceleratorModifiers}"
-                        Key="{x:Bind ViewModel.DeleteCommand.AcceleratorKey}"/>
+                        Key="Delete"/>
                 </MenuFlyoutItem.KeyboardAccelerators>
             </MenuFlyoutItem>
 

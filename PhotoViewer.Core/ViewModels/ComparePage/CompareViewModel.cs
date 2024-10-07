@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Essentials.NET;
 using PhotoViewer.App.Utils;
-using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using System.Collections.Specialized;
 
@@ -41,7 +41,7 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
 
     public bool ShowDeleteAnimation { get; }
 
-    private readonly IDeleteFilesCommand deleteFilesCommand;
+    private readonly IDeleteFilesService deleteFilesService;
 
     private readonly IViewModelFactory viewModelFactory;
 
@@ -52,12 +52,12 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
     public CompareViewModel(
         IObservableReadOnlyList<IBitmapFileInfo> bitmapFiles,
         ApplicationSettings settings,
-        IDeleteFilesCommand deleteFilesCommand,
+        IDeleteFilesService deleteFilesService,
         IViewModelFactory viewModelFactory)
     {
         BitmapFiles = bitmapFiles;
         ShowDeleteAnimation = settings.ShowDeleteAnimation;
-        this.deleteFilesCommand = deleteFilesCommand;
+        this.deleteFilesService = deleteFilesService;
         this.viewModelFactory = viewModelFactory;
 
         imageViewModelsCache = VirtualizedCollection.Create(CacheSize, CreateImageViewModel, viewModel => viewModel.Cleanup(), bitmapFiles);
@@ -114,7 +114,7 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
     [RelayCommand(CanExecute = nameof(CanDelete))]
     private async Task DeleteAsync()
     {
-        await deleteFilesCommand.ExecuteAsync(new List<IBitmapFileInfo>() { SelectedBitmapFile! });
+        await deleteFilesService.DeleteFilesAsync([SelectedBitmapFile!]);
     }
 
     public void OnViewChangedByUser(float zoomFactor, double horizontalOffset, double verticalOffset)

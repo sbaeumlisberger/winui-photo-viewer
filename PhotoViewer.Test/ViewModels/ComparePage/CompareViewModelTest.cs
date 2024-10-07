@@ -1,8 +1,8 @@
 ﻿using Essentials.NET;
 using NSubstitute;
 using PhotoViewer.Core;
-using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;
 using Xunit;
 
@@ -15,7 +15,7 @@ public class CompareViewModelTest
 
     private readonly ObservableList<IBitmapFileInfo> bitmapFiles = new ObservableList<IBitmapFileInfo>();
 
-    private readonly IDeleteFilesCommand deleteFilesCommand = Substitute.For<IDeleteFilesCommand>();
+    private readonly IDeleteFilesService deleteFilesCommand = Substitute.For<IDeleteFilesService>();
 
     private readonly IViewModelFactory viewModelFactory = Substitute.For<IViewModelFactory>();
 

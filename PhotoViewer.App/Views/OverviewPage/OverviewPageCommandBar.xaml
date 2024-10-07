@@ -39,10 +39,9 @@
     <AppBarButton 
         Icon="Delete" 
         Label="{x:Bind res:Strings.FlipViewPageCommandBar_DeleteButton}"
-        Command="{x:Bind ViewModel.DeleteCommand}"
-        CommandParameter="{x:Bind ViewModel.SelectedItems, Mode=OneWay}">
+        Command="{x:Bind ViewModel.DeleteCommand}">
         <AppBarButton.KeyboardAccelerators>
-            <KeyboardAccelerator Key="{x:Bind ViewModel.DeleteCommand.AcceleratorKey}"/>
+            <KeyboardAccelerator Key="Delete"/>
         </AppBarButton.KeyboardAccelerators>
     </AppBarButton>
     <AppBarButton Icon="View" Label="{x:Bind res:Strings.OverviewPageCommandBar_ViewButton}">

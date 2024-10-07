@@ -316,6 +316,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     private void CleanupItemModel(IMediaFlipViewItemModel itemModel)
     {
         Log.Info($"Cleanup ViewModel for {itemModel.MediaFile.DisplayName}");
+        itemModel.IsSelected = false;
         itemModel.Cleanup();
     }
 

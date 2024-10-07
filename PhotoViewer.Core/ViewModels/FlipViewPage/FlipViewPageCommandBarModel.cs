@@ -6,9 +6,9 @@ using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core;
-using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;
 using PhotoViewer.Core.ViewModels.Shared;
 using System.Windows.Input;
@@ -26,8 +26,6 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 {
     public IMediaFlipViewItemModel? SelectedItemModel { get; set; }
 
-    public IDeleteFilesCommand DeleteCommand { get; }
-
     public ICommand SelectPreviousCommand { get; }
 
     public ICommand SelectNextCommand { get; }
@@ -39,6 +37,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     public bool CanEditImage => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmapFileInfo && IsSupportedByBitmapEncoder(bitmapFileInfo);
 
     public bool CanRotate => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmap && rotateBitmapService.CanRotate(bitmap);
+    
+    public bool CanDelete => SelectedItemModel != null;
 
     private bool CanNavigateToComparePage => SelectedItemModel?.MediaFile is IBitmapFileInfo;
 
@@ -53,6 +53,8 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     private readonly IMediaFilesLoaderService mediaFilesLoaderService;
 
     private readonly IRotateBitmapService rotateBitmapService;
+    
+    private readonly IDeleteFilesService deleteFilesService;
 
     private readonly ApplicationSettings settings;
 
@@ -62,20 +64,20 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         IMessenger messenger,
         IDialogService dialogService,
         IMediaFilesLoaderService mediaFilesLoaderService,
-        IRotateBitmapService rotatePhotoService,
+        IRotateBitmapService rotateBitmapService,
         IViewModelFactory viewModelFactory,
         ICommand selectPreviousCommand,
         ICommand selectNextCommand,
         ApplicationSettings settings,
-        IDeleteFilesCommand deleteFilesCommand)
+        IDeleteFilesService deleteFilesService)
      : base(messenger)
     {
         this.dialogService = dialogService;
         this.mediaFilesLoaderService = mediaFilesLoaderService;
-        this.rotateBitmapService = rotatePhotoService;
+        this.rotateBitmapService = rotateBitmapService;
+        this.deleteFilesService = deleteFilesService;
         this.settings = settings;
 
-        DeleteCommand = deleteFilesCommand;
         SelectPreviousCommand = selectPreviousCommand;
         SelectNextCommand = selectNextCommand;
 
@@ -135,6 +137,12 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         {
             Log.Error($"Failed to rotate {bitmap.FilePath}", ex);
         }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanDelete))]
+    private async Task DeleteAsync()
+    {
+        await deleteFilesService.DeleteFilesAsync([SelectedItemModel!.MediaFile]);
     }
 
     [RelayCommand]

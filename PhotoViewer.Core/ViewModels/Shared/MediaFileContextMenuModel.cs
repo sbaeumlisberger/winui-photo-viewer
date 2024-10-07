@@ -5,7 +5,6 @@ using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
-using PhotoViewer.Core.Commands;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
@@ -47,8 +46,6 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
 
     public bool IsShowPropertiesItemVisible => Files.Count == 1;
 
-    public IAcceleratedCommand DeleteCommand { get; }
-
     private readonly IMetadataService metadataService;
 
     private readonly IPersonalizationService personalizationService;
@@ -59,6 +56,8 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
 
     private readonly IClipboardService clipboardService;
 
+    private readonly IDeleteFilesService deleteFilesService;
+
     private readonly bool isRenameFilesEnabled;
 
     internal MediaFileContextMenuModel(
@@ -68,7 +67,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
         IRotateBitmapService rotateBitmapService,
         IDialogService dialogService,
         IClipboardService clipboardService,
-        IDeleteFilesCommand deleteCommand,
+        IDeleteFilesService deleteFilesService,
         bool isRenameFilesEnabled) : base(messenger)
     {
         this.metadataService = metadataService;
@@ -76,24 +75,24 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
         this.rotateBitmapService = rotateBitmapService;
         this.dialogService = dialogService;
         this.clipboardService = clipboardService;
-        DeleteCommand = deleteCommand;
+        this.deleteFilesService = deleteFilesService;
         this.isRenameFilesEnabled = isRenameFilesEnabled;
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsEnabled))]
     private async Task OpenWithAsync()
     {
         await dialogService.ShowDialogAsync(new LaunchFileDialogModel(Files.First().StorageFile));
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsEnabled))]
     private void OpenInNewWindow()
     {
         var filePaths = Files.SelectMany(file => file.StorageFiles).Select(storageFile => storageFile.Path).ToList();
         Process.Start(Environment.ProcessPath!, filePaths);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsEnabled))]
     private void Copy()
     {
         if (Files.Count == 1 && Files.First() is BitmapFileInfo bitmapFile)
@@ -108,26 +107,26 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
     }
 
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsEnabled))]
     private void CopyPath()
     {
         clipboardService.CopyText(Files.First().FilePath);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsEnabled))]
     private async Task ShareAsync()
     {
         var storageFiles = Files.Select(file => file.StorageFile).ToList();
         await dialogService.ShowDialogAsync(new ShareDialogModel(storageFiles));
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsEnabled))]
     private async Task PrintAsync()
     {
         await dialogService.ShowDialogAsync(new PrintDialogModel());
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsEnabled))]
     private async Task SetDesktopBackgroundAsync()
     {
         try
@@ -145,7 +144,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsEnabled))]
     private async Task SetLockscreenBackgroundAsync()
     {
         try
@@ -163,7 +162,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsEnabled))]
     private async Task RotateAsync()
     {
         foreach (var bitmap in Files.OfType<IBitmapFileInfo>())
@@ -173,13 +172,19 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsEnabled))]
+    private async Task DeleteAsync()
+    {
+        await deleteFilesService.DeleteFilesAsync(Files);
+    }
+
+    [RelayCommand(CanExecute = nameof(IsEnabled))]
     private void Rename()
     {
         Messenger.Send(new ActivateRenameFileMessage(Files.First()));
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsEnabled))]
     private async Task ShowPropertiesAsync()
     {
         var dialogModel = new PropertiesDialogModel(metadataService, Files.First());

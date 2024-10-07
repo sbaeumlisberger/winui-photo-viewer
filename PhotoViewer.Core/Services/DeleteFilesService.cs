@@ -3,48 +3,38 @@ using Essentials.NET;
 using Essentials.NET.Logging;
 using PhotoViewer.App.Messages;
 using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
-using PhotoViewer.Core.Services;
-using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
-using System.Windows.Input;
-using Windows.System;
+using Windows.Storage;
 
-namespace PhotoViewer.Core.Commands;
+namespace PhotoViewer.Core.Services;
 
-public interface IDeleteFilesCommand : IAsyncCommand<IReadOnlyList<IMediaFileInfo>>, IAcceleratedCommand, ICommand { }
-
-public partial class DeleteFilesCommand : AsyncCommandBase<IReadOnlyList<IMediaFileInfo>>, IDeleteFilesCommand
+public interface IDeleteFilesService
 {
-    public VirtualKey AcceleratorKey => VirtualKey.Delete;
+    Task DeleteFilesAsync(IReadOnlyList<IMediaFileInfo> files);
+}
 
+public partial class DeleteFilesService : IDeleteFilesService
+{
     private readonly IMessenger messenger;
-    private readonly IDeleteMediaFilesService deleteMediaFilesService;
     private readonly IDialogService dialogService;
     private readonly ISettingsService settingsService;
     private readonly IBackgroundTaskService backgroundTaskService;
     private readonly ApplicationSettings settings;
 
-    internal DeleteFilesCommand(IMessenger messenger, IDeleteMediaFilesService deleteMediaService, IDialogService dialogService, ISettingsService settingsService, IBackgroundTaskService backgroundTaskService, ApplicationSettings settings)
+    internal DeleteFilesService(IMessenger messenger, IDialogService dialogService, ISettingsService settingsService, IBackgroundTaskService backgroundTaskService, ApplicationSettings settings)
     {
         this.messenger = messenger;
-        this.deleteMediaFilesService = deleteMediaService;
         this.dialogService = dialogService;
         this.settingsService = settingsService;
         this.backgroundTaskService = backgroundTaskService;
         this.settings = settings;
     }
 
-    protected override bool CanExecute(IReadOnlyList<IMediaFileInfo> parameter)
+    public async Task DeleteFilesAsync(IReadOnlyList<IMediaFileInfo> files)
     {
-        return parameter.Any();
-    }
-
-    protected override async Task OnExecuteAsync(IReadOnlyList<IMediaFileInfo> files)
-    {
-        Log.Info($"Execute delete files command for: {string.Join(", ", files.Select(file => file.DisplayName))}");
+        Log.Info($"Delete: {string.Join(", ", files.Select(file => file.DisplayName))}");
 
         bool deleteLinkedFiles = false;
 
@@ -58,10 +48,7 @@ public partial class DeleteFilesCommand : AsyncCommandBase<IReadOnlyList<IMediaF
             };
         }
 
-        var task = files.Parallel().TryProcessAsync(async file =>
-        {
-            await deleteMediaFilesService.DeleteMediaFileAsync(file, deleteLinkedFiles);
-        });
+        var task = files.Parallel().TryProcessAsync(file => DeleteMediaFileAsync(file, deleteLinkedFiles));
 
         backgroundTaskService.RegisterBackgroundTask(task);
 
@@ -103,6 +90,31 @@ public partial class DeleteFilesCommand : AsyncCommandBase<IReadOnlyList<IMediaF
         };
 
         await dialogService.ShowDialogAsync(failuresDialog);
+    }
+
+    private async Task DeleteMediaFileAsync(IMediaFileInfo media, bool deleteLinkedFiles)
+    {
+        if (deleteLinkedFiles)
+        {
+            foreach (var linkedFile in media.LinkedStorageFiles)
+            {
+                await DeleteStorageFileAsync(linkedFile).ConfigureAwait(false);
+            }
+        }
+
+        await DeleteStorageFileAsync(media.StorageFile).ConfigureAwait(false);
+    }
+
+    private async Task DeleteStorageFileAsync(IStorageFile file)
+    {
+        try
+        {
+            await file.DeleteAsync().AsTask().ConfigureAwait(false);
+        }
+        catch (FileNotFoundException)
+        {
+            // files does no longer exist
+        }
     }
 
 }
