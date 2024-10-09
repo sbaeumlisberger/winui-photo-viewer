@@ -4,7 +4,7 @@ using PhotoViewer.Core.Utils;
 using PropertyChanged;
 using System.ComponentModel;
 
-namespace PhotoViewer.App.Utils;
+namespace PhotoViewer.Core.Utils;
 
 public interface IViewModel : INotifyPropertyChanged
 {

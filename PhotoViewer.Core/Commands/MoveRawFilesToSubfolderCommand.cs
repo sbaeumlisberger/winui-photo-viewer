@@ -1,6 +1,7 @@
 ﻿using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
-using PhotoViewer.Core.ViewModels.Dialogs;
+using PhotoViewer.Core.ViewModels;
 using Windows.System;
 
 namespace PhotoViewer.Core.Commands;

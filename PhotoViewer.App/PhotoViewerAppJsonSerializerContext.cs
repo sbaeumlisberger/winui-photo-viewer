@@ -1,10 +1,10 @@
 ﻿using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
-namespace PhotoViewer.Core;
+namespace PhotoViewer.App;
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(JsonNode))]
-internal partial class PhotoViewerJsonSerializerContext : JsonSerializerContext
+internal partial class PhotoViewerAppJsonSerializerContext : JsonSerializerContext
 {
 }

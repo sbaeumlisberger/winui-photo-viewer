@@ -1,20 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
-using PhotoViewer.App.Messages;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils;
-using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
-using PhotoViewer.Core.ViewModels;
 using PhotoViewer.Core.ViewModels.Shared;
 using Windows.Storage;
 
-namespace PhotoViewer.App.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public interface IOverviewPageCommandBarModel : IViewModel
 {
@@ -58,7 +52,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
         this.mediaFilesLoaderService = mediaFilesLoaderService;
         this.rotateBitmapService = rotateBitmapService;
         this.deleteFilesService = deleteFilesService;
-        this.settings = settings;       
+        this.settings = settings;
 
         BackgroundTasks = viewModelFactory.CreateBackgroundTasksViewModel();
 

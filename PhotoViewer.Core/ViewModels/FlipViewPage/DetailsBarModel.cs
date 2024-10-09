@@ -3,16 +3,13 @@ using Essentials.NET;
 using Essentials.NET.Logging;
 using MetadataAPI;
 using MetadataAPI.Data;
-using PhotoViewer.App.Messages;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.ViewModels;
+using PhotoViewer.Core.Utils;
 using Windows.Foundation;
 
-namespace PhotoViewer.App.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public interface IDetailsBarModel : IViewModel
 {

@@ -1,5 +1,5 @@
-﻿using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils;
+﻿using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Utils;
 
 namespace PhotoViewer.Core.ViewModels;
 

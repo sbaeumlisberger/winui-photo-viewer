@@ -1,9 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using PhotoViewer.App.Models;
-using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;
 using Xunit;

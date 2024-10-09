@@ -1,21 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET.Logging;
-using PhotoViewer.App.Messages;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils;
-using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.ViewModels;
+using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels.Shared;
 using System.Windows.Input;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 
-namespace PhotoViewer.App.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public interface IFlipViewPageCommandBarModel : IViewModel
 {
@@ -37,7 +32,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     public bool CanEditImage => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmapFileInfo && IsSupportedByBitmapEncoder(bitmapFileInfo);
 
     public bool CanRotate => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmap && rotateBitmapService.CanRotate(bitmap);
-    
+
     public bool CanDelete => SelectedItemModel != null;
 
     private bool CanNavigateToComparePage => SelectedItemModel?.MediaFile is IBitmapFileInfo;
@@ -53,7 +48,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     private readonly IMediaFilesLoaderService mediaFilesLoaderService;
 
     private readonly IRotateBitmapService rotateBitmapService;
-    
+
     private readonly IDeleteFilesService deleteFilesService;
 
     private readonly ApplicationSettings settings;

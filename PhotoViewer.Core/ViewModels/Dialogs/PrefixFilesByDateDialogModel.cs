@@ -3,14 +3,12 @@ using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using Essentials.NET.Logging;
 using MetadataAPI;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 
-namespace PhotoViewer.Core.ViewModels.Dialogs;
+namespace PhotoViewer.Core.ViewModels;
 
 public partial class PrefixFilesByDateDialogModel : ViewModelBase
 {

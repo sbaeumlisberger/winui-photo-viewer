@@ -1,16 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using Essentials.NET.Logging;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils;
-using PhotoViewer.Core;
-using PhotoViewer.Core.ViewModels;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Utils;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace PhotoViewer.App.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemModel
 {

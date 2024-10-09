@@ -4,8 +4,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using PhotoViewer.App.Converters;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;

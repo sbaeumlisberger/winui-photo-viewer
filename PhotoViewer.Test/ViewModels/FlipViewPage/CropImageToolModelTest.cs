@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using NSubstitute;
-using PhotoViewer.App.ViewModels;
-using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;

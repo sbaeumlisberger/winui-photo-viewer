@@ -1,5 +1,4 @@
-﻿﻿using MetadataAPI;
-using MetadataAPI.Data;
+﻿using MetadataAPI;
 
 Console.WriteLine("GPSMetadataFixer started");
 
@@ -20,7 +19,7 @@ Parallel.ForEach(files, file =>
         byte? altitudeRef = (byte?)encoder.GetMetadata("System.GPS.AltitudeRef");
 
         if (altitudeRef is not null && altitudeRef != 0 && altitudeRef != 1)
-        {    
+        {
             Console.WriteLine($"Fix {file} (AltitudeRef={altitudeRef})");
 
             if (!dryRun)

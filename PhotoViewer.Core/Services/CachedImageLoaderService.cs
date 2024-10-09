@@ -1,6 +1,4 @@
 ﻿using Essentials.NET;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
 using PhotoViewer.Core.Models;
 
 namespace PhotoViewer.Core.Services;

@@ -1,6 +1,6 @@
 ﻿using Essentials.NET;
 
-namespace PhotoViewer.Core;
+namespace PhotoViewer.Core.Services;
 
 public class DialogRequestedEventArgs : AsyncEventArgs
 {

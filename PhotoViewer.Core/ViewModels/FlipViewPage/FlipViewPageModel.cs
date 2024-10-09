@@ -1,18 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using Essentials.NET.Logging;
-using PhotoViewer.App.Messages;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
-using PhotoViewer.App.Utils;
-using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
-using PhotoViewer.Core.ViewModels;
 using System.ComponentModel;
 
-namespace PhotoViewer.App.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public partial class FlipViewPageModel : ViewModelBase
 {

@@ -1,6 +1,5 @@
 ﻿using MetadataAPI;
 using MetadataAPI.Data;
-using PhotoViewer.App.Models;
 using WIC;
 using Windows.Foundation;
 using Windows.Storage;

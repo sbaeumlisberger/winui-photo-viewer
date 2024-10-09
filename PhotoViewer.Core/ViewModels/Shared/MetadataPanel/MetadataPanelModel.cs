@@ -3,13 +3,10 @@ using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using Essentials.NET.Logging;
 using MetadataAPI;
-using MetadataEditModule.ViewModel;
-using PhotoViewer.App.Messages;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Utils;
 using System.Collections.Immutable;
 
 namespace PhotoViewer.Core.ViewModels;

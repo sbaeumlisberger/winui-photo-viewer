@@ -1,5 +1,5 @@
-﻿using PhotoViewer.App.Models;
+﻿using PhotoViewer.Core.Models;
 
-namespace PhotoViewer.App.Messages;
+namespace PhotoViewer.Core.Messages;
 
 public record class MediaFilesDeletedMessage(IReadOnlyCollection<IMediaFileInfo> Files);

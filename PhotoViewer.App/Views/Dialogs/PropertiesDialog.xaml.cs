@@ -1,5 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
-using PhotoViewer.App.Utils;
+using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 
 namespace PhotoViewer.App.Views;

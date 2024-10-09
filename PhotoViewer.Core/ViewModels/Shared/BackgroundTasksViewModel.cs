@@ -1,6 +1,6 @@
-﻿using PhotoViewer.App.Utils;
-using PhotoViewer.Core.Resources;
+﻿using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Utils;
 using System.Collections.Specialized;
 
 namespace PhotoViewer.Core.ViewModels.Shared;

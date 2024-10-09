@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using PhotoViewer.App.Utils;
-using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Utils;
 
 namespace PhotoViewer.Core.ViewModels;
 

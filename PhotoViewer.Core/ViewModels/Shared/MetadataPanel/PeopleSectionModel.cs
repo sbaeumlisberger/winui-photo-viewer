@@ -3,8 +3,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using MetadataAPI;
 using MetadataAPI.Data;
-using PhotoViewer.App.Messages;
-using PhotoViewer.App.Models;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;

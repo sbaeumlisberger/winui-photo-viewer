@@ -1,6 +1,6 @@
 ﻿using Essentials.NET;
 using Essentials.NET.Logging;
-using PhotoViewer.App.Utils;
+using PhotoViewer.Core.Utils;
 using System.IO.Hashing;
 using System.Text;
 using Windows.Foundation;
@@ -8,7 +8,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 
-namespace PhotoViewer.App.Models;
+namespace PhotoViewer.Core.Models;
 
 public abstract class MediaFileInfoBase : IMediaFileInfo
 {

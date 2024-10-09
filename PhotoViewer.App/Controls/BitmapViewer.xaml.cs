@@ -7,9 +7,9 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using PhotoViewer.App.Models;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Views;
+using PhotoViewer.Core.Models;
 using System;
 using Windows.Foundation;
 
@@ -218,7 +218,7 @@ public sealed partial class BitmapViewer : UserControl
 
         var interpolationMode = CanvasImageInterpolation.NearestNeighbor;
 
-        if(dstRectInPixels.Width < srcRect.Width || dstRectInPixels.Height < srcRect.Height)
+        if (dstRectInPixels.Width < srcRect.Width || dstRectInPixels.Height < srcRect.Height)
         {
             interpolationMode = CanvasImageInterpolation.HighQualityCubic;
         }

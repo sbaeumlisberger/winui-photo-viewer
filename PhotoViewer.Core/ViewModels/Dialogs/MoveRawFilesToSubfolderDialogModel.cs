@@ -1,13 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Essentials.NET;
 using Essentials.NET.Logging;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using Windows.Storage;
 
-namespace PhotoViewer.Core.ViewModels.Dialogs;
+namespace PhotoViewer.Core.ViewModels;
 
 public partial class MoveRawFilesToSubfolderDialogModel : ViewModelBase
 {

@@ -2,12 +2,10 @@
 using MetadataAPI;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using PhotoViewer.App.ViewModels;
-using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.ViewModels.Dialogs;
+using PhotoViewer.Core.ViewModels;
 using System.Collections.Immutable;
 using Windows.Storage;
 using Xunit;

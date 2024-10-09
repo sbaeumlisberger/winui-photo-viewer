@@ -3,6 +3,7 @@ using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Display;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
+using PhotoViewer.Core.Utils;
 using System;
 using System.Threading.Tasks;
 using WinUIEx;

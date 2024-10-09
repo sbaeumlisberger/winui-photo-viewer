@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PhotoViewer.App.Views"
     xmlns:converters="using:PhotoViewer.App.Converters"
-    xmlns:models="using:PhotoViewer.App.Models"
+    xmlns:models="using:PhotoViewer.Core.Models"
     xmlns:res="using:PhotoViewer.App.Resources"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

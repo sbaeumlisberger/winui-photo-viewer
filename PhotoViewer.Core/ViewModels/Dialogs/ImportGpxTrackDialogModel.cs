@@ -3,9 +3,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using Essentials.NET.Logging;
 using MetadataAPI;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils;
-using PhotoViewer.App.ViewModels;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
@@ -14,7 +11,7 @@ using PhotoViewer.Core.Utils;
 using System.Collections.Concurrent;
 using Windows.Storage;
 
-namespace PhotoViewer.Core.ViewModels.Dialogs;
+namespace PhotoViewer.Core.ViewModels;
 
 public partial class ImportGpxTrackDialogModel : ViewModelBase
 {

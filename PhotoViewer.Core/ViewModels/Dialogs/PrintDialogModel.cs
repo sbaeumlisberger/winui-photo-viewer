@@ -1,3 +1,3 @@
-﻿namespace PhotoViewer.Core.ViewModels.Dialogs;
+﻿namespace PhotoViewer.Core.ViewModels;
 
 public class PrintDialogModel { }

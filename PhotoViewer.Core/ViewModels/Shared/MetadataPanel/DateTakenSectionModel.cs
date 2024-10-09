@@ -1,10 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using MetadataAPI;
-using PhotoViewer.App.Models;
 using PhotoViewer.Core.Messages;
+using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
-using PhotoViewer.Core.ViewModels.Dialogs;
 using System.Diagnostics;
 
 namespace PhotoViewer.Core.ViewModels;

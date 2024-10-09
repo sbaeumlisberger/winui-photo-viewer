@@ -1,5 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas;
-using PhotoViewer.App.Models;
+using PhotoViewer.Core.Models;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 

@@ -3,10 +3,11 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using PhotoViewer.App.Models;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Utils;
-using PhotoViewer.App.ViewModels;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels;
 using System;
 
 namespace PhotoViewer.App.Views;

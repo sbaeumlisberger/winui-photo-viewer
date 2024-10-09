@@ -1,5 +1,4 @@
-﻿using PhotoViewer.App.Models;
-using PhotoViewer.App.Services;
+﻿using PhotoViewer.Core.Services;
 
 namespace PhotoViewer.Core.Models;
 

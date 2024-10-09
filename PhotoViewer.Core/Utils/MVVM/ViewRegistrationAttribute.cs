@@ -1,4 +1,4 @@
-﻿namespace PhotoViewer.App.Utils;
+﻿namespace PhotoViewer.Core.Utils;
 
 public class ViewRegistrationAttribute : Attribute
 {

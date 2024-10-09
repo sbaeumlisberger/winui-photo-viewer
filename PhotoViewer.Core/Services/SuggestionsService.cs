@@ -32,7 +32,7 @@ namespace PhotoViewer.Core.Services
 
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
-            TypeInfoResolver = PhotoViewerJsonSerializerContext.Default,
+            TypeInfoResolver = PhotoViewerCoreJsonSerializerContext.Default,
             WriteIndented = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };

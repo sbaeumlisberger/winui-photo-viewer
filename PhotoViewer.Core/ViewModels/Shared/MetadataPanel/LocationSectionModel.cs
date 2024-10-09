@@ -3,20 +3,15 @@ using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using Essentials.NET.Logging;
 using MetadataAPI;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.ViewModels;
-using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
-using PhotoViewer.Core.ViewModels;
-using PhotoViewer.Core.ViewModels.Dialogs;
 using System.Globalization;
 using Windows.System;
 
-namespace MetadataEditModule.ViewModel;
+namespace PhotoViewer.Core.ViewModels;
 
 public partial class LocationSectionModel : MetadataPanelSectionModelBase
 {

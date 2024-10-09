@@ -1,6 +1,5 @@
 ﻿using Essentials.NET.Logging;
 using MetadataAPI;
-using PhotoViewer.App.Models;
 using PhotoViewer.Core.Models;
 using System.Runtime.CompilerServices;
 using WIC;

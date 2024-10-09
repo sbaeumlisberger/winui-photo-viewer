@@ -1,13 +1,10 @@
 ﻿using Essentials.NET;
 using Essentials.NET.Logging;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils;
-using PhotoViewer.Core;
+using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
-using PhotoViewer.Core.ViewModels;
 using Windows.Storage;
 
-namespace PhotoViewer.App.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipViewItemModel
 {

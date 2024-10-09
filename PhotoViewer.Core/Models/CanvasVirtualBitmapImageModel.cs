@@ -3,7 +3,7 @@ using Microsoft.Graphics.Canvas;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 
-namespace PhotoViewer.App.Models;
+namespace PhotoViewer.Core.Models;
 
 public class CanvasVirtualBitmapImageModel : ShareableDisposable, ICanvasVirtualBitmapImageModel
 {

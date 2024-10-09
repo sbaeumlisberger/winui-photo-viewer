@@ -1,7 +1,5 @@
 ﻿using Essentials.NET.Logging;
-using PhotoViewer.App.Models;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -9,7 +7,7 @@ using Windows.Storage;
 using Windows.Storage.Search;
 using FileAttributes = Windows.Storage.FileAttributes;
 
-namespace PhotoViewer.App.Services;
+namespace PhotoViewer.Core.Services;
 
 public record class LoadMediaFilesResult(List<IMediaFileInfo> MediaFiles, IMediaFileInfo? StartMediaFile);
 

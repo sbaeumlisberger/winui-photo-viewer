@@ -1,5 +1,5 @@
 ﻿using NSubstitute;
-using PhotoViewer.App.Models;
+using PhotoViewer.Core.Models;
 using Windows.Foundation;
 using Windows.Storage;
 using Xunit;

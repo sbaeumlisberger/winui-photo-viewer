@@ -1,7 +1,7 @@
 ﻿using Essentials.NET.Logging;
 using Windows.System.Display;
 
-namespace PhotoViewer.App.Services;
+namespace PhotoViewer.Core.Services;
 
 public interface IDisplayRequestService
 {

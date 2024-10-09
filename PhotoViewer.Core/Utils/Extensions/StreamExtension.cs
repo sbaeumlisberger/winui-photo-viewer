@@ -1,6 +1,6 @@
 ﻿using Windows.Storage.Streams;
 
-namespace PhotoViewer.App.Utils;
+namespace PhotoViewer.Core.Utils;
 
 public static class RandomAccessStreamExtension
 {

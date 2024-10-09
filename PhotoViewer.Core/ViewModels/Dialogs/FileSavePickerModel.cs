@@ -1,6 +1,6 @@
 ﻿using Windows.Storage;
 
-namespace PhotoViewer.App.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public sealed class FileSavePickerModel
 {

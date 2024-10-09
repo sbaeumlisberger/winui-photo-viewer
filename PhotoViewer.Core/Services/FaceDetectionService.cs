@@ -1,6 +1,5 @@
 ﻿using Essentials.NET.Logging;
 using Microsoft.Graphics.Canvas;
-using PhotoViewer.App.Models;
 using PhotoViewer.Core.Models;
 using System.Diagnostics;
 using Windows.Foundation;

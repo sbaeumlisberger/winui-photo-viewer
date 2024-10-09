@@ -1,4 +1,4 @@
-﻿using PhotoViewer.App.Models;
+﻿using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 
 namespace PhotoViewer.Core.Messages;

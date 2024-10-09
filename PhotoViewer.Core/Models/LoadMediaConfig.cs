@@ -1,4 +1,4 @@
-﻿namespace PhotoViewer.App.Models;
+﻿namespace PhotoViewer.Core.Models;
 
 public record class LoadMediaConfig
 (

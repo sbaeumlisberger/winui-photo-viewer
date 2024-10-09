@@ -1,8 +1,8 @@
 ﻿using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using PhotoViewer.App.Utils;
-using PhotoViewer.App.ViewModels;
+using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels;
 using System;
 using Windows.Foundation;
 

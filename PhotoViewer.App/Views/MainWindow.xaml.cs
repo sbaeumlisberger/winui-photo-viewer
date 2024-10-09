@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using PhotoViewer.App.Messages;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Views.Dialogs;
 using PhotoViewer.Core;

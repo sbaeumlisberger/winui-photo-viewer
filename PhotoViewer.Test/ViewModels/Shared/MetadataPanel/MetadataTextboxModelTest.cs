@@ -4,8 +4,6 @@ using MetadataAPI;
 using Microsoft.Extensions.Time.Testing;
 using NSubstitute;
 using NSubstitute.ReceivedExtensions;
-using PhotoViewer.App.Models;
-using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;

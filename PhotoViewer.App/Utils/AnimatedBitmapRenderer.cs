@@ -1,6 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.UI;
-using PhotoViewer.App.Models;
+using PhotoViewer.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,7 +31,7 @@ public class AnimatedBitmapRenderer : IDisposable
                     cancellationTokenSource = new CancellationTokenSource();
                     _ = RenderAsync(cancellationTokenSource.Token);
                 }
-                else 
+                else
                 {
                     cancellationTokenSource?.Cancel();
                     cancellationTokenSource?.Dispose();

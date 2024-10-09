@@ -1,16 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using Essentials.NET.Logging;
-using PhotoViewer.App.Messages;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils;
-using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
-using PhotoViewer.Core.ViewModels;
+using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Utils;
 
-namespace PhotoViewer.App.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public partial class OverviewPageModel : ViewModelBase
 {

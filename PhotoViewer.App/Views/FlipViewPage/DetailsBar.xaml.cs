@@ -1,8 +1,8 @@
 ﻿using Microsoft.UI.Xaml.Controls;
-using PhotoViewer.App.Models;
 using PhotoViewer.App.Resources;
-using PhotoViewer.App.Utils;
-using PhotoViewer.App.ViewModels;
+using PhotoViewer.Core.Models;
+using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels;
 
 namespace PhotoViewer.App.Views;
 

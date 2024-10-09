@@ -5,7 +5,7 @@
     xmlns:local="using:PhotoViewer.App.Views"
     xmlns:controls="using:PhotoViewer.App.Controls"
     xmlns:res="using:PhotoViewer.App.Resources"
-    xmlns:models="using:PhotoViewer.App.Models"
+    xmlns:models="using:PhotoViewer.Core.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">

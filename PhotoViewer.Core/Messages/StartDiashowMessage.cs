@@ -1,3 +1,3 @@
-﻿namespace PhotoViewer.App.Messages;
+﻿namespace PhotoViewer.Core.Messages;
 
 internal record class StartDiashowMessage();

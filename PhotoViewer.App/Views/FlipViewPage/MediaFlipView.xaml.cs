@@ -6,11 +6,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using PhotoViewer.App.Models;
 using PhotoViewer.App.Resources;
 using PhotoViewer.App.Utils;
-using PhotoViewer.App.ViewModels;
+using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels;
 using Windows.System;
 using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority;
 
@@ -150,7 +150,7 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         return isDiashowLoopActive ? Strings.MediaFlipView_DisableDiashowLoop : Strings.MediaFlipView_EnableDiashowLoop;
     }
 
-    private bool IsNotEmpty(string text) 
+    private bool IsNotEmpty(string text)
     {
         return !string.IsNullOrEmpty(text);
     }

@@ -2,10 +2,8 @@
 using MetadataAPI;
 using MetadataAPI.Data;
 using Microsoft.Graphics.Canvas;
-using PhotoViewer.App.Exceptions;
-using PhotoViewer.App.Models;
+using PhotoViewer.Core.Exceptions;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Services;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -13,7 +11,7 @@ using WIC;
 using Windows.Graphics.DirectX;
 using Windows.Storage;
 
-namespace PhotoViewer.App.Services;
+namespace PhotoViewer.Core.Services;
 
 public interface IImageLoaderService
 {

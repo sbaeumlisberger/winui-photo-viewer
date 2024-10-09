@@ -2,10 +2,9 @@
 using Essentials.NET.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
-using PhotoViewer.App.Utils;
-using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System;
 using System.ComponentModel;
@@ -114,7 +113,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
 
     private async void MapWebView_WebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
     {
-        var data = JsonSerializer.Deserialize(args.WebMessageAsJson, PhotoViewerJsonSerializerContext.Default.JsonNode)!;
+        var data = JsonSerializer.Deserialize(args.WebMessageAsJson, PhotoViewerAppJsonSerializerContext.Default.JsonNode)!;
         string eventType = data["event"]!.GetValue<string>();
         if (eventType == "mapReady")
         {

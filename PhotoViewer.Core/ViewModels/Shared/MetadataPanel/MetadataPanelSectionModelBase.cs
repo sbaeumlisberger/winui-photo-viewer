@@ -2,11 +2,10 @@
 using Essentials.NET;
 using Essentials.NET.Logging;
 using MetadataAPI;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
+using PhotoViewer.Core.Utils;
 using PropertyChanged;
 using System.Collections.Immutable;
 

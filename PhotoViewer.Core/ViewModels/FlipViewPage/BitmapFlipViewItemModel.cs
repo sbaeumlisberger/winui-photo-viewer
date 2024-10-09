@@ -1,12 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using PhotoViewer.App.Models;
-using PhotoViewer.App.Utils;
-using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.ViewModels;
+using PhotoViewer.Core.Utils;
 using System.ComponentModel;
 
-namespace PhotoViewer.App.ViewModels;
+namespace PhotoViewer.Core.ViewModels;
 
 public interface IBitmapFlipViewItemModel : IMediaFlipViewItemModel
 {
