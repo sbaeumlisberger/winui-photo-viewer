@@ -140,6 +140,11 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         }
     }
 
+    partial void OnUIScaleFactorChanged()
+    {
+        TaggedPeople.ForEach(vm => vm.UIScaleFactor = UIScaleFactor);
+    }
+
     private void HideSuggestedFaces()
     {
         suggestedFacesInPercent.Clear();
@@ -267,7 +272,13 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         var orientation = await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.Orientation);
         TaggedPeople = (await metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People))
              .Where(peopleTag => peopleTag.Rectangle is not null)
-             .Select(peopleTag => new PeopleTagViewModel(IsSelectionEnabled, peopleTag.Name, RotateRect(peopleTag.Rectangle!.Value.ToRect(), orientation)))
+             .Select(peopleTag => new PeopleTagViewModel()
+             {
+                 IsVisible = IsSelectionEnabled,
+                 Name = peopleTag.Name,
+                 FaceBox = RotateRect(peopleTag.Rectangle!.Value.ToRect(), orientation),
+                 UIScaleFactor = UIScaleFactor,
+             })
              .ToList();
     }
 

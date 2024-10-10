@@ -5,18 +5,13 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class PeopleTagViewModel : ObservableObject
 {
-    public string Name { get; }
+    public required string Name { get; init; }
 
-    public Rect FaceBox { get; }
+    public required Rect FaceBox { get; init; }
 
     public double FaceBoxCenterX => FaceBox.X + FaceBox.Width / 2;
 
-    public bool IsVisible { get; set; }
+    public required bool IsVisible { get; set; }
 
-    public PeopleTagViewModel(bool isVisible, string name, Rect rectangle)
-    {
-        IsVisible = isVisible;
-        Name = name;
-        FaceBox = rectangle;
-    }
+    public required float UIScaleFactor { get; set; } = 1;
 }

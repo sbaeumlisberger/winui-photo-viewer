@@ -38,10 +38,9 @@
                             Background="Transparent"
                             PointerEntered="PeopleTag_PointerEntered"
                             PointerExited="PeopleTag_PointerExited">
-                            <Rectangle  
+                            <controls:ScaleableRect              
                                 Visibility="{x:Bind IsVisible, Mode=OneWay}"
-                                Stroke="White"
-                                StrokeThickness="1"/>
+                                ScaleFactor="{x:Bind UIScaleFactor, Mode=OneWay}"/>
                         </controls:PercentagePlacement>
 
                         <controls:PercentagePlacement

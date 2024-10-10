@@ -1,7 +1,10 @@
+using Microsoft.UI;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
 using PhotoViewer.App.Controls;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Utils;
@@ -123,7 +126,6 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
             {
                 selectionStartTime = DateTime.Now;
                 ViewModel.OnUserStartedSelection();
-                selectionRect.SetBounds(new Rect(point.Position.X, point.Position.Y, 0, 0));
                 selectionRect.Visibility = Visibility.Visible;
                 selectionRect.HandOverPointerPressedEvent(args);
             }

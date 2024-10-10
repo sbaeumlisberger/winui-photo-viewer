@@ -29,6 +29,11 @@ public sealed partial class SelectionRect : UserControl
     public float UIScaleFactor { get => uiScaleFactor; set { uiScaleFactor = value; OnUIScaleFactorChanged(); } }
     private float uiScaleFactor = 1f;
 
+    private double CornerSize { get; } = 8;
+    private double StrokeThickness { get; } = 1;
+
+    private double CornerOffset => -CornerSize / 2;
+
     private readonly PointerEventHandler pointerReleasedEventHandler;
     private readonly PointerEventHandler pointerExitedEventHandler;
 
@@ -51,6 +56,8 @@ public sealed partial class SelectionRect : UserControl
 
     public void HandOverPointerPressedEvent(PointerRoutedEventArgs args)
     {
+        var position = args.GetCurrentPoint(canvas).Position;
+        SetBounds(new Rect(position.X, position.Y, 0, 0));
         OnPointerPressed(cornerRightBottom, args);
     }
 
@@ -359,5 +366,15 @@ public sealed partial class SelectionRect : UserControl
             nameof(rect) => InputSystemCursorShape.SizeAll,
             _ => throw new UnreachableException(),
         };
+    }
+
+    private double Add(double a, double b)
+    {
+        return a + b;
+    }
+
+    private double Substract(double a, double b)
+    {
+        return a - b;
     }
 }

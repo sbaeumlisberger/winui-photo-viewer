@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="PhotoViewer.App.Controls.ScaleableRect"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewer.App.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    SizeChanged="OnSizeChanged">
+
+    <UserControl.Resources>
+        <ScaleTransform x:Name="ScaleXTransform"/>
+        <ScaleTransform x:Name="ScaleYTransform"/>
+    </UserControl.Resources>
+
+    <Canvas>
+        <Rectangle  
+            x:Name="lineLeft"
+            Fill="White"
+            Width="1"
+            RenderTransform="{StaticResource ScaleXTransform}"
+            RenderTransformOrigin="0,0"/>
+        <Rectangle
+            x:Name="lineTop"
+            Fill="White"
+            Height="1"
+            RenderTransform="{StaticResource ScaleYTransform}"
+            RenderTransformOrigin="1,0"/>
+        <Rectangle 
+            x:Name="lineRight"
+            Fill="White"
+            Width="1"
+            RenderTransform="{StaticResource ScaleXTransform}"
+            RenderTransformOrigin="1,1"/>
+        <Rectangle 
+            x:Name="lineBottom"
+            Fill="White"                                         
+            Height="1"
+            RenderTransform="{StaticResource ScaleYTransform}"
+            RenderTransformOrigin="0,1"/>
+    </Canvas>
+</UserControl>

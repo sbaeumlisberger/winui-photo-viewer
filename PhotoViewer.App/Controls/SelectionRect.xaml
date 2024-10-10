@@ -7,14 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <x:Double x:Key="CornerSize">8</x:Double>
-        <x:Double x:Key="StrokeThickness">2</x:Double>
-    </UserControl.Resources>
+    <Canvas>
 
-    <Grid>
         <Rectangle
             x:Name="rect"
+            Width="{x:Bind Width, Mode=OneWay}" 
+            Height="{x:Bind Height, Mode=OneWay}"
             Fill="Transparent"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
@@ -23,9 +21,8 @@
 
         <Rectangle
             x:Name="borderLeft"           
-            Width="{StaticResource StrokeThickness}"         
-            HorizontalAlignment="Left"
-            VerticalAlignment="Stretch"
+            Width="{x:Bind StrokeThickness}" 
+            Height="{x:Bind Height, Mode=OneWay}"
             Fill="White"
             StrokeThickness="10"
             Stroke="Transparent"
@@ -33,10 +30,9 @@
             PointerPressed="OnPointerPressed"/>
 
         <Rectangle
-            x:Name="borderTop"    
-            Height="{StaticResource StrokeThickness}"          
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Top"
+            x:Name="borderTop"
+            Width="{x:Bind Width, Mode=OneWay}" 
+            Height="{x:Bind StrokeThickness}"          
             Fill="White"
             StrokeThickness="10"
             Stroke="Transparent"
@@ -45,9 +41,9 @@
 
         <Rectangle
             x:Name="borderRight"           
-            Width="{StaticResource StrokeThickness}"            
-            HorizontalAlignment="Right"
-            VerticalAlignment="Stretch"
+            Width="{x:Bind StrokeThickness}"
+            Height="{x:Bind Height, Mode=OneWay}"
+            Canvas.Left="{x:Bind Substract(Width, StrokeThickness), Mode=OneWay}"
             Fill="White"
             StrokeThickness="10"
             Stroke="Transparent"
@@ -56,10 +52,10 @@
             RenderTransformOrigin="1,1"/>
 
         <Rectangle
-            x:Name="borderBottom"           
-            Height="{StaticResource StrokeThickness}"         
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Bottom"
+            x:Name="borderBottom"
+            Width="{x:Bind Width, Mode=OneWay}"
+            Height="{x:Bind StrokeThickness}"      
+            Canvas.Top="{x:Bind Substract(Height, StrokeThickness), Mode=OneWay}"
             Fill="White"
             StrokeThickness="10"
             Stroke="Transparent"
@@ -67,69 +63,54 @@
             PointerPressed="OnPointerPressed"
             RenderTransformOrigin="1,1"/>
 
-        <Canvas 
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Width="{StaticResource CornerSize}"
-            Height="{StaticResource CornerSize}">
-            <Rectangle
-                x:Name="cornerLeftTop"
-                Width="{StaticResource CornerSize}"
-                Height="{StaticResource CornerSize}"    
-                Fill="White"
-                PointerEntered="OnPointerEntered"
-                PointerPressed="OnPointerPressed"
-                Stroke="Black"
-                RenderTransformOrigin="0,0"/>
-        </Canvas>
+        <Ellipse 
+            x:Name="cornerLeftTop"  
+            Canvas.Left="{x:Bind CornerOffset}"
+            Canvas.Top="{x:Bind CornerOffset}"
+            Width="{x:Bind CornerSize}"
+            Height="{x:Bind CornerSize}"
+            Fill="White"
+            Stroke="Black"
+            PointerEntered="OnPointerEntered"
+            PointerPressed="OnPointerPressed"
+            RenderTransformOrigin="0.5,0.5"/>
 
-        <Canvas  
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Width="{StaticResource CornerSize}"
-            Height="{StaticResource CornerSize}">
-            <Rectangle
-                x:Name="cornerRightTop"
-                Width="{StaticResource CornerSize}"
-                Height="{StaticResource CornerSize}"       
-                Fill="White"
-                PointerEntered="OnPointerEntered"
-                PointerPressed="OnPointerPressed"
-                Stroke="Black"
-                RenderTransformOrigin="1,0"/>
-        </Canvas>
+        <Ellipse 
+            x:Name="cornerRightTop"  
+            Canvas.Left="{x:Bind Add(Width, CornerOffset), Mode=OneWay}"
+            Canvas.Top="{x:Bind CornerOffset}"
+            Width="{x:Bind CornerSize}"
+            Height="{x:Bind CornerSize}" 
+            Fill="White"
+            Stroke="Black"
+            PointerEntered="OnPointerEntered"
+            PointerPressed="OnPointerPressed"
+            RenderTransformOrigin="0.5,0.5"/>
 
-        <Canvas             
-            HorizontalAlignment="Left"
-            VerticalAlignment="Bottom"
-            Width="{StaticResource CornerSize}"
-            Height="{StaticResource CornerSize}">
-            <Rectangle
-                x:Name="cornerLeftBottom"
-                Width="{StaticResource CornerSize}"
-                Height="{StaticResource CornerSize}" 
-                Fill="White"
-                PointerEntered="OnPointerEntered"
-                PointerPressed="OnPointerPressed"
-                Stroke="Black"
-                RenderTransformOrigin="0,1"/>
-        </Canvas>
+        <Ellipse 
+            x:Name="cornerLeftBottom"   
+            Canvas.Left="{x:Bind CornerOffset}"
+            Canvas.Top="{x:Bind Add(Height, CornerOffset), Mode=OneWay}"
+            Width="{x:Bind CornerSize}"
+            Height="{x:Bind CornerSize}" 
+            Fill="White"
+            Stroke="Black"
+            PointerEntered="OnPointerEntered"
+            PointerPressed="OnPointerPressed"
+            RenderTransformOrigin="0.5,0.5"/>
 
-        <Canvas             
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
-            Width="{StaticResource CornerSize}"
-            Height="{StaticResource CornerSize}">
-            <Rectangle
-                x:Name="cornerRightBottom"
-                Width="{StaticResource CornerSize}"
-                Height="{StaticResource CornerSize}"
-                Fill="White"
-                PointerEntered="OnPointerEntered"
-                PointerPressed="OnPointerPressed"
-                Stroke="Black"
-                RenderTransformOrigin="1,1"/>
-        </Canvas>
+        <Ellipse 
+            x:Name="cornerRightBottom"   
+            Canvas.Left="{x:Bind Add(Width, CornerOffset), Mode=OneWay}"
+            Canvas.Top="{x:Bind Add(Height, CornerOffset), Mode=OneWay}"
+            Width="{x:Bind CornerSize}"
+            Height="{x:Bind CornerSize}" 
+            Fill="White"
+            Stroke="Black"
+            PointerEntered="OnPointerEntered"
+            PointerPressed="OnPointerPressed"
+            RenderTransformOrigin="0.5,0.5"/>
+        
+    </Canvas>
 
-    </Grid>
 </UserControl>

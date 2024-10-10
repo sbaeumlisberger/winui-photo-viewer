@@ -33,8 +33,50 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+		<PackageReference Include="MetadataAPI" Version="2.0.0" />
+		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
+		<PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.106">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
+		<PackageReference Include="WIC.DotNet" Version="2.0.0" />
+		<PackageReference Include="WinUIEx" Version="2.4.2" />
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.5" />
+		<Manifest Include="$(ApplicationManifest)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\PhotoViewer.Core\PhotoViewer.Core.csproj" />
+		<ProjectReference Include="..\PhotoViewer.SourceGenerators\PhotoViewer.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+
+	<!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
+       Tools extension to be activated for this project even if the Windows App SDK Nuget
+       package has not yet been restored -->
+	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
+		<ProjectCapability Include="Msix" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PRIResource Include="Resources\Strings.de.resx" />
+		<PRIResource Include="Resources\Strings.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
+		</PRIResource>
+		<Compile Update="Resources\Strings.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Strings.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>	
+
+	<ItemGroup>
 		<None Remove="Controls\CanvasImageControl.xaml" />
 		<None Remove="Controls\ProgressControl.xaml" />
+		<None Remove="Controls\ScaleableRect.xaml" />
 		<None Remove="Controls\SelectionRect.xaml" />
 		<None Remove="NativeMethods.json" />
 		<None Remove="Views\ComparePage.xaml" />
@@ -70,42 +112,6 @@
 		<None Remove="Views\TagPeopleTool.xaml" />
 		<None Remove="Views\VectorGraphicFlipViewItem.xaml" />
 		<None Remove="Views\VideoFlipViewItem.xaml" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
-		<PackageReference Include="MetadataAPI" Version="2.0.0" />
-		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
-		<PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.106">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
-		<PackageReference Include="WIC.DotNet" Version="2.0.0" />
-		<PackageReference Include="WinUIEx" Version="2.4.2" />
-		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.5" />
-		<Manifest Include="$(ApplicationManifest)" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PRIResource Include="Resources\Strings.de.resx" />
-		<PRIResource Include="Resources\Strings.resx">
-			<Generator>ResXFileCodeGenerator</Generator>
-			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
-		</PRIResource>
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\PhotoViewer.Core\PhotoViewer.Core.csproj" />
-		<ProjectReference Include="..\PhotoViewer.SourceGenerators\PhotoViewer.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-	</ItemGroup>
-
-	<!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
-       Tools extension to be activated for this project even if the Windows App SDK Nuget
-       package has not yet been restored -->
-	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
-		<ProjectCapability Include="Msix" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -180,7 +186,7 @@
 		<Page Update="Views\OverviewPage.xaml">
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 			<SubType>Designer</SubType>
-		</Page>
+		</Page>		
 		<Page Update="Views\FlipViewPageCommandBar.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
@@ -205,23 +211,15 @@
 		<Page Update="Controls\SelectionRect.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Page Update="Controls\ProgressControl.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Controls\CanvasImageControl.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
-		<None Update="Resources\Strings.tt">
-			<Generator>TextTemplatingFileGenerator</Generator>
-			<LastGenOutput>Strings.cs</LastGenOutput>
-		</None>
+		<Page Update="Controls\ScaleableRect.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Views\Shared\SortAppBarButton.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
@@ -249,30 +247,6 @@
 		<Page Update="Views\Dialogs\ShiftDatenTakenDialog.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
-		<Compile Update="Resources\Strings.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Strings.tt</DependentUpon>
-		</Compile>
-		<Compile Update="Resources\Strings.Designer.cs">
-		  <DesignTime>True</DesignTime>
-		  <AutoGen>True</AutoGen>
-		  <DependentUpon>Strings.resx</DependentUpon>
-		</Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-		<CustomAdditionalCompileInputs Remove="Views\ComparePage.xaml" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Resource Remove="Views\ComparePage.xaml" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Views\ComparePage\" />
-		<Folder Include="Views\SettingsPage\" />
-		<Folder Include="Views\OverviewPage\" />
 	</ItemGroup>
 
 	<ItemGroup>
