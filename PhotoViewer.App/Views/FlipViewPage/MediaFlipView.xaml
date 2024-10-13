@@ -124,9 +124,9 @@
             VerticalAlignment="Bottom"
             Margin="12"
             Opacity="0.8"
-            Severity="Success"
-            IsOpen="{x:Bind IsNotEmpty(ViewModel.InfoMessage), Mode=OneWay}"
-            Message="{x:Bind ViewModel.InfoMessage, Mode=OneWay}"
+            Severity="Informational"
+            IsOpen="{x:Bind ViewModel.InfoBarModel.IsOpen, Mode=OneWay}"
+            Message="{x:Bind ViewModel.InfoBarModel.Message, Mode=OneWay}"
             LosingFocus="InfoBar_LosingFocus"/>
 
         <Grid

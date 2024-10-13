@@ -58,7 +58,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     public bool IsNotLoadingMoreFiles => !IsLoadingMoreFiles;
 
-    public string InfoMessage { get; private set; } = string.Empty;
+    public InfoBarModel InfoBarModel { get; } = new InfoBarModel();
 
     private readonly IDialogService dialogService;
 
@@ -166,7 +166,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     {
         if (SelectedItem is not null && msg.Files.SingleOrDefault() == SelectedItem)
         {
-            ShowInfoMessage(string.Format(Strings.FileDeletedMessage, SelectedItem.FileName));
+            InfoBarModel.ShowMessage(string.Format(Strings.FileDeletedMessage, SelectedItem.FileName));
         }
 
         if (settings.ShowDeleteAnimation && msg.Files.Contains(SelectedItem))
@@ -373,18 +373,5 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
             var loadMediaFilesTask = mediaFilesLoaderService.LoadFolder(folder, config);
             Messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask));
         }
-    }
-
-    private void ShowInfoMessage(string message)
-    {
-        InfoMessage = message;
-
-        Task.Delay(3000).ContinueWith((_) => DispatchAsync(() =>
-        {
-            if (InfoMessage == message)
-            {
-                InfoMessage = string.Empty;
-            }
-        }));
     }
 }
