@@ -97,14 +97,7 @@ public partial class PeopleTaggingPageModel : ViewModelBase
     {
         if (e.PropertyName == nameof(NameSearch))
         {
-            if (string.IsNullOrEmpty(NameSearch))
-            {
-                AllPeopleNames = peopleSuggestionsService.GetAll();
-            }
-            else
-            {
-                AllPeopleNames = peopleSuggestionsService.FindMatches(NameSearch, [], int.MaxValue);
-            }
+            AllPeopleNames = peopleSuggestionsService.GetAll(NameSearch);          
         }
     }
 

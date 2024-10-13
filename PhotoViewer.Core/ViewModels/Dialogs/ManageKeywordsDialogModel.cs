@@ -7,6 +7,7 @@ namespace PhotoViewer.Core.ViewModels;
 public partial class ManageKeywordsDialogModel : ViewModelBase
 {
     public IReadOnlyList<string> Keywords { get; set; } = new List<string>();
+    public string SearchText { get; set; } = string.Empty;
 
     private readonly ISuggestionsService suggestionsService;
     private readonly IDialogService dialogService;
@@ -17,6 +18,11 @@ public partial class ManageKeywordsDialogModel : ViewModelBase
         this.dialogService = dialogService;
 
         Keywords = suggestionsService.GetAll();
+    }
+
+    partial void OnSearchTextChanged()
+    {
+        Keywords = suggestionsService.GetAll(SearchText);       
     }
 
     [RelayCommand]

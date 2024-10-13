@@ -882,4 +882,10 @@
   <data name="MediaFileContextMenu_CopyPath" xml:space="preserve">
     <value>Copy file path</value>
   </data>
+  <data name="ManageKeywordsDialog_SearchBoxPlaceholder" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="ManagePeopleDialog_SearchBoxPlaceholder" xml:space="preserve">
+    <value>Search</value>
+  </data>
 </root>

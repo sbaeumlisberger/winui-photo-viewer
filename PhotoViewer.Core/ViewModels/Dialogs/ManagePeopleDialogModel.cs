@@ -8,6 +8,8 @@ public partial class ManagePeopleDialogModel : ViewModelBase
 {
     public IReadOnlyList<string> PeopleNames { get; set; } = new List<string>();
 
+    public string SearchText { get; set; } = string.Empty;
+
     private readonly ISuggestionsService suggestionsService;
     private readonly IDialogService dialogService;
 
@@ -17,6 +19,11 @@ public partial class ManagePeopleDialogModel : ViewModelBase
         this.dialogService = dialogService;
 
         PeopleNames = suggestionsService.GetAll();
+    }
+
+    partial void OnSearchTextChanged()
+    {
+        PeopleNames = suggestionsService.GetAll(SearchText);
     }
 
     [RelayCommand]

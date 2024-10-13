@@ -7,7 +7,7 @@ namespace PhotoViewer.Core.Services
 {
     public interface ISuggestionsService
     {
-        List<string> GetAll();
+        List<string> GetAll(string? query = null);
 
         List<string> GetRecent(ICollection<string>? exclude = null, int max = 12);
 
@@ -51,8 +51,16 @@ namespace PhotoViewer.Core.Services
             filePathRecent = Path.Combine(AppData.PublicFolder, id + "-recent.json");
             Task.Run(LoadSuggestionsAsync);
         }
-        public List<string> GetAll()
+
+        public List<string> GetAll(string? query)
         {
+            if(!string.IsNullOrEmpty(query))
+            {
+                return suggestions
+                    .Where(suggestion => suggestion.Contains(query, StringComparison.CurrentCultureIgnoreCase))
+                    .OrderBy(suggestion => suggestion)
+                    .ToList();
+            }
             return suggestions.OrderBy(suggestion => suggestion).ToList();
         }
 

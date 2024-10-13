@@ -13,18 +13,24 @@
     DefaultButton="Close">
 
     <StackPanel Width="400" Spacing="8">
-
-        <StackPanel Orientation="Horizontal" Spacing="4">
-            <Button 
-                Content="{x:Bind res:Strings.ManagePeopleDialog_ExportButton}"
-                Command="{x:Bind ViewModel.ExportCommand}"/>
-            <Button
-                Content="{x:Bind res:Strings.ManagePeopleDialog_ImportButton}"
-                Command="{x:Bind ViewModel.ImportCommand}"/>
-            <Button 
-                Content="{x:Bind res:Strings.ManagePeopleDialog_ResetButton}"
-                Command="{x:Bind ViewModel.ResetCommand}"/>
-        </StackPanel>
+        <Grid>
+            <StackPanel Orientation="Horizontal" Spacing="4">
+                <Button 
+                    Content="{x:Bind res:Strings.ManagePeopleDialog_ExportButton}"
+                    Command="{x:Bind ViewModel.ExportCommand}"/>
+                <Button
+                    Content="{x:Bind res:Strings.ManagePeopleDialog_ImportButton}"
+                    Command="{x:Bind ViewModel.ImportCommand}"/>
+                <Button 
+                    Content="{x:Bind res:Strings.ManagePeopleDialog_ResetButton}"
+                    Command="{x:Bind ViewModel.ResetCommand}"/>
+            </StackPanel>
+            <TextBox
+                HorizontalAlignment="Right"
+                Width="160"
+                PlaceholderText="{x:Bind res:Strings.ManagePeopleDialog_SearchBoxPlaceholder}"
+                Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
 
         <ListView Height="300" ItemsSource="{x:Bind ViewModel.PeopleNames, Mode=OneWay}">
             <ListView.ItemTemplate>

@@ -889,6 +889,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        internal static string ManageKeywordsDialog_SearchBoxPlaceholder {
+            get {
+                return ResourceManager.GetString("ManageKeywordsDialog_SearchBoxPlaceholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Manage Keywords.
         /// </summary>
         internal static string ManageKeywordsDialog_Title {
@@ -939,6 +948,15 @@ namespace PhotoViewer.App.Resources {
         internal static string ManagePeopleDialog_ResetButton {
             get {
                 return ResourceManager.GetString("ManagePeopleDialog_ResetButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        internal static string ManagePeopleDialog_SearchBoxPlaceholder {
+            get {
+                return ResourceManager.GetString("ManagePeopleDialog_SearchBoxPlaceholder", resourceCulture);
             }
         }
         
