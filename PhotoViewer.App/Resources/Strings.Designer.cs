@@ -2356,6 +2356,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Forget suggestion.
+        /// </summary>
+        internal static string TagPeopleTool_ForgetSuggestion {
+            get {
+                return ResourceManager.GetString("TagPeopleTool_ForgetSuggestion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter name.
         /// </summary>
         internal static string TagPeopleTool_NamePlaceholder {

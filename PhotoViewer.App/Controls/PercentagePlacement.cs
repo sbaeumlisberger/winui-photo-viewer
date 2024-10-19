@@ -6,14 +6,14 @@ namespace PhotoViewer.App.Controls;
 
 internal partial class PercentagePlacement : ContentPresenter
 {
-    public static readonly DependencyProperty PercentageXProperty = DependencyPropertyHelper<PercentagePlacement>.Register(nameof(PercentageX), typeof(double), 0d, (obj, args) => obj.UpdateBounds());
-    public static readonly DependencyProperty PercentageYProperty = DependencyPropertyHelper<PercentagePlacement>.Register(nameof(PercentageY), typeof(double), 0d, (obj, args) => obj.UpdateBounds());
-    public static readonly DependencyProperty PercentageWidthProperty = DependencyPropertyHelper<PercentagePlacement>.Register(nameof(PercentageWidth), typeof(double), double.NaN, (obj, args) => obj.UpdateBounds());
-    public static readonly DependencyProperty PercentageHeightProperty = DependencyPropertyHelper<PercentagePlacement>.Register(nameof(PercentageHeight), typeof(double), double.NaN, (obj, args) => obj.UpdateBounds());
+    public static readonly DependencyProperty PercentageXProperty = DependencyPropertyHelper<PercentagePlacement>.Register(nameof(PercentageX), 0d, (obj, args) => obj.UpdateBounds());
+    public static readonly DependencyProperty PercentageYProperty = DependencyPropertyHelper<PercentagePlacement>.Register(nameof(PercentageY), 0d, (obj, args) => obj.UpdateBounds());
+    public static readonly DependencyProperty PercentageWidthProperty = DependencyPropertyHelper<PercentagePlacement>.Register(nameof(PercentageWidth), double.NaN, (obj, args) => obj.UpdateBounds());
+    public static readonly DependencyProperty PercentageHeightProperty = DependencyPropertyHelper<PercentagePlacement>.Register(nameof(PercentageHeight), double.NaN, (obj, args) => obj.UpdateBounds());
 
-    public static readonly DependencyProperty CenterXProperty = DependencyPropertyHelper<PercentagePlacement>.Register(nameof(CenterX), typeof(bool), false, (obj, args) => obj.UpdateBounds());
+    public static readonly DependencyProperty CenterXProperty = DependencyPropertyHelper<PercentagePlacement>.Register(nameof(CenterX), false, (obj, args) => obj.UpdateBounds());
 
-    public static readonly DependencyProperty FitParentProperty = DependencyPropertyHelper<PercentagePlacement>.Register(nameof(FitParent), typeof(bool), false, (obj, args) => obj.UpdateBounds());
+    public static readonly DependencyProperty FitParentProperty = DependencyPropertyHelper<PercentagePlacement>.Register(nameof(FitParent), false, (obj, args) => obj.UpdateBounds());
 
     public double PercentageX { get => (double)GetValue(PercentageXProperty); set => SetValue(PercentageXProperty, value); }
     public double PercentageY { get => (double)GetValue(PercentageYProperty); set => SetValue(PercentageYProperty, value); }

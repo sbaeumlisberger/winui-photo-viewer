@@ -16,7 +16,7 @@ namespace PhotoViewer.App.Controls;
 public sealed partial class CanvasImageControl : UserControl
 {
     public static readonly DependencyProperty CanvasImageProperty = DependencyPropertyHelper<CanvasImageControl>
-        .Register(nameof(CanvasImage), typeof(ICanvasImage), null, (s, e) => s.CanvasImageProperty_Changed());
+        .Register<ICanvasImage?>(nameof(CanvasImage), null, (s, e) => s.CanvasImageProperty_Changed());
 
     public ICanvasImage? CanvasImage { get => (ICanvasImage?)GetValue(CanvasImageProperty); set => SetValue(CanvasImageProperty, value); }
 

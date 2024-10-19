@@ -7,15 +7,15 @@ namespace PhotoViewer.App.Utils;
 
 public class DependencyPropertyHelper<TDependencyObject>
 {
-    public static DependencyProperty Register(string propertyName, Type propertyType, object? defaultValue = null)
+    public static DependencyProperty Register<T>(string propertyName, T defaultValue)
     {
-        return DependencyProperty.Register(propertyName, typeof(TDependencyObject), propertyType, new PropertyMetadata(defaultValue));
+        return DependencyProperty.Register(propertyName, typeof(TDependencyObject), typeof(T), new PropertyMetadata(defaultValue));
     }
 
-    public static DependencyProperty Register(string propertyName, Type propertyType, object? defaultValue, Action<TDependencyObject, DependencyPropertyChangedEventArgs> propertyChangedCallback)
+    public static DependencyProperty Register<T>(string propertyName, T defaultValue, Action<TDependencyObject, DependencyPropertyChangedEventArgs> propertyChangedCallback)
     {
         var metadata = new PropertyMetadata(defaultValue, (obj, args) => propertyChangedCallback((TDependencyObject)(object)obj, args));
-        return DependencyProperty.Register(propertyName, typeof(TDependencyObject), propertyType, metadata);
+        return DependencyProperty.Register(propertyName, typeof(TDependencyObject), typeof(T), metadata);
     }
 
     public static DependencyProperty RegisterAttached<TProperty>(TProperty defaultValue, [CallerMemberName] string propertyName = "")

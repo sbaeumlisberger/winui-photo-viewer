@@ -197,48 +197,27 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
         double autoSuggestBoxContainerWidth = autoSuggestBoxContainer.ActualWidth * ViewModel.UIScaleFactor;
 
         double left = selectionRectBounds.GetCenterX() - autoSuggestBoxContainerWidth / 2;
-        left = Math.Clamp(left, 0, selectionCanvas.ActualWidth - autoSuggestBoxContainerWidth);
+        double maxLeft = Math.Max(0, selectionCanvas.ActualWidth - autoSuggestBoxContainerWidth);
+        left = Math.Clamp(left, 0, maxLeft);
         Canvas.SetLeft(autoSuggestBoxContainer, left);
 
         if (selectionRectBounds.GetCenterY() < selectionCanvas.ActualHeight / 2)
         {
             Canvas.SetTop(autoSuggestBoxContainer, selectionRectBounds.Top + selectionRectBounds.Height);
-            AutoSuggestBoxExtension.SetSuggestionListDirection(autoSuggestBox, SuggestionListDirection.Down);
+            autoSuggestBox.SuggestionListDirection = SuggestionListDirection.Bottom;
             autoSuggestBoxContainer.RenderTransformOrigin = new Point(0, 0);
         }
         else
         {
             Canvas.SetTop(autoSuggestBoxContainer, selectionRectBounds.Top - autoSuggestBoxContainer.ActualHeight);
-            AutoSuggestBoxExtension.SetSuggestionListDirection(autoSuggestBox, SuggestionListDirection.Up);
+            autoSuggestBox.SuggestionListDirection = SuggestionListDirection.Top;
             autoSuggestBoxContainer.RenderTransformOrigin = new Point(0, 1);
         }
     }
 
-    private void AutoSuggestBox_TextChanged(AutoSuggestBox autoSuggestBox, AutoSuggestBoxTextChangedEventArgs args)
+    private void AutoSuggestBox_SuggestionsRequested(AutoSuggestionBox autoSuggestBox, EventArgs args)
     {
-        if (args.Reason != AutoSuggestionBoxTextChangeReason.SuggestionChosen)
-        {
-            autoSuggestBox.ItemsSource = ViewModel!.FindSuggestions(autoSuggestBox.Text);
-        }
-    }
-
-    private void AutoSuggestBox_GettingFocus(UIElement sender, GettingFocusEventArgs args)
-    {
-        var autoSuggestBox = (AutoSuggestBox)sender;
-
-        if (!autoSuggestBox.IsSuggestionListOpen)
-        {
-            if (autoSuggestBox.Text == string.Empty)
-            {
-                autoSuggestBox.ItemsSource = ViewModel!.GetRecentSuggestions();
-            }
-            else
-            {
-                autoSuggestBox.ItemsSource = ViewModel!.FindSuggestions(autoSuggestBox.Text);
-            }
-
-            DispatcherQueue.TryEnqueue(() => autoSuggestBox.IsSuggestionListOpen = true);
-        }
+        autoSuggestBox.ItemsSource = ViewModel!.FindSuggestions(autoSuggestBox.Text);
     }
 
     private void AutoSuggestBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
@@ -253,20 +232,6 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
             ViewModel!.ExitPeopleTagging();
             e.Handled = true;
         }
-    }
-
-    private void AutoSuggestBox_KeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (!string.IsNullOrEmpty(autoSuggestBox.Text)
-            && (e.Key == VirtualKey.Left || e.Key == VirtualKey.Right))
-        {
-            e.Handled = true; // prevent bubble to flip view
-        }
-    }
-
-    private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-    {
-        sender.RunWhenTextChanged(args.QueryText, () => ViewModel!.AddPersonCommand.TryExecute());
     }
 
     private void FocusAutoSuggestBox()
@@ -322,5 +287,12 @@ public sealed partial class TagPeopleTool : UserControl, IMVVMControl<TagPeopleT
                 await flipView.TryFocusAsync();
             }
         }
+    }
+
+    private async void RemoveSuggestionButton_Click(object sender, RoutedEventArgs e)
+    {
+        string suggestion = (string)((FrameworkElement)sender).DataContext;
+        await ViewModel!.RemoveSuggestionAsync(suggestion);
+        autoSuggestBox.ItemsSource = ViewModel!.FindSuggestions(autoSuggestBox.Text);
     }
 }

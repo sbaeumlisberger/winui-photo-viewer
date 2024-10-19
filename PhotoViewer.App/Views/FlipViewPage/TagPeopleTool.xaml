@@ -130,20 +130,41 @@
                     Orientation="Horizontal"
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                     CornerRadius="4">
-                    <AutoSuggestBox
+                    <controls:AutoSuggestionBox
                         x:Name="autoSuggestBox"                                         
-                        MinWidth="200"                        
-                        CornerRadius="4,0,0,4"
-                        Text="{x:Bind ViewModel.AutoSuggestBoxText, Mode=TwoWay}"                          
-                        TextChanged="AutoSuggestBox_TextChanged"
-                        GettingFocus="AutoSuggestBox_GettingFocus"
+                        MinWidth="200"
+                        MaxWidth="400"
+                        Text="{x:Bind ViewModel.AutoSuggestBoxText, Mode=TwoWay}"
                         LosingFocus="AutoSuggestBox_LosingFocus"
-                        PlaceholderText="{x:Bind res:Strings.TagPeopleTool_NamePlaceholder}"
-                        QuerySubmitted="AutoSuggestBox_QuerySubmitted"
-                        utils:AutoSuggestBoxExtension.IsSuggestionListOverflowEnabled="True"                      
-                        PreviewKeyDown="AutoSuggestBox_PreviewKeyDown" 
-                        KeyDown="AutoSuggestBox_KeyDown"
-                        QueryIcon="Accept"/>
+                        PlaceholderText="{x:Bind res:Strings.TagPeopleTool_NamePlaceholder}"                                   
+                        PreviewKeyDown="AutoSuggestBox_PreviewKeyDown"
+                        SuggestionsRequested="AutoSuggestBox_SuggestionsRequested"
+                        SubmitCommand="{x:Bind ViewModel.AddPersonCommand}">
+                        <controls:AutoSuggestionBox.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{x:Bind}"/>
+                                    <HyperlinkButton 
+                                        Grid.Column="1" 
+                                        Margin="4,0,0,0"
+                                        Padding="2"
+                                        ToolTipService.ToolTip="{x:Bind res:Strings.TagPeopleTool_ForgetSuggestion}" 
+                                        ToolTipService.Placement="Mouse"
+                                        AllowFocusOnInteraction="False"
+                                        Click="RemoveSuggestionButton_Click">
+                                        <FontIcon 
+                                            FontFamily="Segoe MDL2 Assets" 
+                                            FontSize="12" 
+                                            Glyph="&#xE107;"/>
+                                    </HyperlinkButton>                                    
+                                </Grid>
+                            </DataTemplate>
+                        </controls:AutoSuggestionBox.ItemTemplate>
+                    </controls:AutoSuggestionBox>
                 </StackPanel>
             </Grid>
 

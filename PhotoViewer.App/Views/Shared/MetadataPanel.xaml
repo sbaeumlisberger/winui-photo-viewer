@@ -105,7 +105,7 @@
                         Text="{x:Bind res:Strings.MetadataPanel_NoFilesSelected}"/>
                 </StackPanel>
 
-                <StackPanel  Margin="0,16,0,0" Visibility="{x:Bind ViewModel.IsUnsupportedFilesMessageVisibile, Mode=OneWay}" Spacing="8">                 
+                <StackPanel Margin="0,16,0,0" Visibility="{x:Bind ViewModel.IsUnsupportedFilesMessageVisibile, Mode=OneWay}" Spacing="8">
                     <TextBlock                     
                         TextWrapping="WrapWholeWords"
                         Text="{x:Bind res:Strings.MetadataPanel_AnyFileNotSupported}"/>
@@ -160,7 +160,7 @@
                         ItemsSource="{x:Bind ViewModel.PeopleSectionModel.People, Mode=OneWay}" 
                         Style="{StaticResource ItemWithCountListView}"
                         SelectionMode="Extended"
-                        SelectionChanged="PeopleListView_SelectionChanged">             
+                        SelectionChanged="PeopleListView_SelectionChanged">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="viewModels:ItemWithCountModel">
                                 <local:ItemWithCount>
@@ -182,15 +182,12 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <AutoSuggestBox       
+                        <controls:AutoSuggestionBox       
+                            x:Name="peopleAutoSuggestBox"
                             Text="{x:Bind ViewModel.PeopleSectionModel.AutoSuggestBoxText, Mode=TwoWay}"                          
-                            TextChanged="PeopleAutoSuggestBox_TextChanged"
-                            GotFocus="PeopleAutoSuggestBox_GotFocus"
+                            SuggestionsRequested="PeopleAutoSuggestBox_SuggestionsRequested"
                             PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddPersonPlaceholder}"
-                            utils:AutoSuggestBoxExtension.IsSuggestionListOverflowEnabled="True"
-                            QuerySubmitted="PeopleAutoSuggestBox_QuerySubmitted"
-                            QueryIcon="Accept">
-                        </AutoSuggestBox>
+                            SubmitCommand="{x:Bind ViewModel.PeopleSectionModel.AddPersonCommand}"/>
                         <ProgressBar 
                             IsIndeterminate="{x:Bind ViewModel.PeopleSectionModel.IsWriting, Mode=OneWay}"
                             VerticalAlignment="Bottom"
@@ -201,7 +198,7 @@
                             VerticalAlignment="Stretch"                            
                             Command="{x:Bind ViewModel.PeopleSectionModel.ManagePeopleSuggestionsCommand}"
                             ToolTipService.ToolTip="{x:Bind res:Strings.MetadataPanel_ManagePeopleSuggestionsButtonTooltip}">
-                            <FontIcon FontSize="14" FontFamily="Segoe Fluent Icons" Glyph="&#xE115;" /> 
+                            <FontIcon FontSize="14" FontFamily="Segoe Fluent Icons" Glyph="&#xE115;" />
                         </HyperlinkButton>
                     </Grid>
                     <StackPanel Margin="0,6,0,0" Orientation="Horizontal" Spacing="4">
@@ -214,7 +211,7 @@
                             Content="{x:Bind res:Strings.MetadataPanel_PeopleTaggingPageButton}"
                             Command="{x:Bind ViewModel.PeopleSectionModel.OpenBatchViewCommand}"/>
                     </StackPanel>
-                
+
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_KeywordsHeader}" Style="{StaticResource HeaderStyle}"/>
                     <ListView 
                         ItemsSource="{x:Bind ViewModel.KeywordsSectionModel.Keywords, Mode=OneWay}" 
@@ -246,15 +243,12 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <AutoSuggestBox
+                        <controls:AutoSuggestionBox
+                            x:Name="keywordAutoSuggestBox"
                             Text="{x:Bind ViewModel.KeywordsSectionModel.AutoSuggestBoxText, Mode=TwoWay}"
-                            TextChanged="KeywordAutoSuggestBox_TextChanged"
-                            GotFocus="KeywordAutoSuggestBox_GotFocus"
-                            PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddKeywordPlaceholder}"   
-                            utils:AutoSuggestBoxExtension.IsSuggestionListOverflowEnabled="True"
-                            QuerySubmitted="KeywordAutoSuggestBox_QuerySubmitted"
-                            QueryIcon="Accept">                          
-                        </AutoSuggestBox>
+                            SuggestionsRequested="KeywordAutoSuggestBox_SuggestionsRequested"
+                            PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddKeywordPlaceholder}"
+                            SubmitCommand="{x:Bind ViewModel.KeywordsSectionModel.AddKeywordCommand}"/>
                         <ProgressBar 
                             IsIndeterminate="{x:Bind ViewModel.KeywordsSectionModel.IsWriting, Mode=OneWay}"
                             VerticalAlignment="Bottom"
@@ -291,7 +285,7 @@
                         utils:EnterKeyExtension.Command="{x:Bind ViewModel.CopyrightTextboxModel.ConfirmCommand}"/>
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.CopyrightTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
-                    <TextBlock Text="{x:Bind res:Strings.MetadataPanel_DateTakenHeader}" Style="{StaticResource HeaderStyle}"/>                                       
+                    <TextBlock Text="{x:Bind res:Strings.MetadataPanel_DateTakenHeader}" Style="{StaticResource HeaderStyle}"/>
                     <StackPanel
                         Spacing="4"
                         Visibility="{x:Bind ViewModel.DateTakenSectionModel.IsSingleValue, Mode=OneWay}">
@@ -319,12 +313,12 @@
                             Text="{x:Bind ViewModel.DateTakenSectionModel.RangeText, Mode=OneWay}"/>
                         <Button
                             Content="{x:Bind res:Strings.MetadataPanel_ShiftDateTakenButton}"
-                            Command="{x:Bind ViewModel.DateTakenSectionModel.ShiftDateTakenCommand}"/>                   
+                            Command="{x:Bind ViewModel.DateTakenSectionModel.ShiftDateTakenCommand}"/>
                     </StackPanel>
                 </StackPanel>
-                
+
             </StackPanel>
-            
+
         </ScrollViewer>
 
     </Grid>

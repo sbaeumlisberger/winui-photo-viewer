@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="PhotoViewer.App.Controls.AutoSuggestionBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PhotoViewer.App.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="AutoCompleteBox_Loaded">
+
+    <Grid>
+        <TextBox 
+            x:Name="textBox"
+            Style="{StaticResource AutoSuggestBoxTextBoxStyle}"
+            CornerRadius="4"
+            HorizontalContentAlignment="Left"
+            Text="{x:Bind Text, Mode=OneWay}"
+            TextChanged="TextBox_TextChanged"
+            PlaceholderText="{x:Bind PlaceholderText, Mode=OneWay}"
+            GotFocus="TextBox_GotFocus"
+            LostFocus="TextBox_LostFocus"
+            PreviewKeyDown="TextBox_KeyDown"
+            SizeChanged="TextBox_SizeChanged"/>
+
+        <Popup
+            x:Name="popup"
+            IsOpen="{x:Bind IsSuggestionListOpen, Mode=OneWay}"
+            MaxHeight="360">
+            <ListView
+                x:Name="suggestionsList"
+                Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}"
+                ItemTemplate="{x:Bind ItemTemplate, Mode=OneWay}"
+                IsItemClickEnabled="True"
+                ItemClick="SuggestionsList_ItemClick"
+                SizeChanged="SuggestionsList_SizeChanged"
+                BorderThickness="1"
+                BorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}"
+                Translation="0,0,32"
+                CornerRadius="4">
+                <ListView.Shadow>
+                    <ThemeShadow />
+                </ListView.Shadow>
+            </ListView>
+        </Popup>
+    </Grid>
+</UserControl>

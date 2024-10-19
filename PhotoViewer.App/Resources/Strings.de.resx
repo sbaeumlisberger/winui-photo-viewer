@@ -888,4 +888,7 @@
   <data name="ManagePeopleDialog_SearchBoxPlaceholder" xml:space="preserve">
     <value>Suchen</value>
   </data>
+  <data name="TagPeopleTool_ForgetSuggestion" xml:space="preserve">
+    <value>Vorschlag vergessen</value>
+  </data>
 </root>

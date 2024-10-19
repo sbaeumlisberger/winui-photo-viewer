@@ -62,11 +62,6 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
         return suggestionsService.FindMatches(query);
     }
 
-    public IReadOnlyList<string> GetRecentSuggestions()
-    {
-        return suggestionsService.GetRecent();
-    }
-
     private List<ItemWithCountModel> CreateListItemModels(IReadOnlyList<MetadataView> metadata)
     {
         return metadata

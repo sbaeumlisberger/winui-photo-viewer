@@ -6,7 +6,7 @@ namespace PhotoViewer.App.Controls;
 
 public sealed partial class ScaleableRect : UserControl
 {
-    public static readonly DependencyProperty ScaleFactorProperty = DependencyPropertyHelper<ScaleableRect>.Register(nameof(ScaleFactor), typeof(float), 1f, (obj, e) => obj.OnScaleFactorChanged());
+    public static readonly DependencyProperty ScaleFactorProperty = DependencyPropertyHelper<ScaleableRect>.Register(nameof(ScaleFactor), 1f, (obj, e) => obj.OnScaleFactorChanged());
 
     public float ScaleFactor { get => (float)GetValue(ScaleFactorProperty); set => SetValue(ScaleFactorProperty, value); }
 

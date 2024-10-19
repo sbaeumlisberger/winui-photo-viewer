@@ -37,8 +37,8 @@
 		<PackageReference Include="MetadataAPI" Version="2.0.0" />
 		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
 		<PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.106">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
@@ -71,9 +71,10 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>Strings.resx</DependentUpon>
 		</Compile>
-	</ItemGroup>	
+	</ItemGroup>
 
 	<ItemGroup>
+		<None Remove="Controls\AutoSuggestionBox.xaml" />
 		<None Remove="Controls\CanvasImageControl.xaml" />
 		<None Remove="Controls\ProgressControl.xaml" />
 		<None Remove="Controls\ScaleableRect.xaml" />
@@ -186,7 +187,7 @@
 		<Page Update="Views\OverviewPage.xaml">
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 			<SubType>Designer</SubType>
-		</Page>		
+		</Page>
 		<Page Update="Views\FlipViewPageCommandBar.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
@@ -218,7 +219,7 @@
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Controls\ScaleableRect.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\Shared\SortAppBarButton.xaml">
 			<Generator>MSBuild:Compile</Generator>
@@ -245,6 +246,9 @@
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\Dialogs\ShiftDatenTakenDialog.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Controls\AutoSuggestionBox.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 	</ItemGroup>

@@ -169,11 +169,6 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         return suggestionsService.FindMatches(text, exclude: TaggedPeople.Select(x => x.Name).ToList());
     }
 
-    public IReadOnlyList<string> GetRecentSuggestions()
-    {
-        return suggestionsService.GetRecent(exclude: TaggedPeople.Select(x => x.Name).ToList());
-    }
-
     public void TrySelectNextDetectedFace()
     {
         if (suggestedFacesInPercent.Any())
@@ -199,6 +194,12 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     {
         IsUserSelecting = false;
     }
+
+    public async Task RemoveSuggestionAsync(string suggestion)
+    {
+        await suggestionsService.RemoveSuggestionAsync(suggestion);
+    }
+
 
     [RelayCommand]
     private async Task AddPersonAsync()
@@ -357,6 +358,5 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     {
         return nameof(TagPeopleToolModel) + "(" + bitmapFile.DisplayName + ")";
     }
-
 }
 
