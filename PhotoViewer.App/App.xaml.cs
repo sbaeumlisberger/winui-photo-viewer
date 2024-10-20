@@ -2,6 +2,7 @@
 using Essentials.NET.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Windows.Globalization;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Views.Dialogs;
 using PhotoViewer.Core;
@@ -16,7 +17,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Globalization;
 using Windows.Storage;
 using StringsApp = PhotoViewer.App.Resources.Strings;
 using StringsCore = PhotoViewer.Core.Resources.Strings;
