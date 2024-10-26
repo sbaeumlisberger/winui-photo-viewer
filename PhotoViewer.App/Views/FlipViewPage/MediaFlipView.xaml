@@ -123,10 +123,17 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
             Margin="12"
-            Severity="Informational"
+            Severity="{x:Bind ViewModel.InfoBarModel.Severity, Mode=OneWay}"
             IsOpen="{x:Bind ViewModel.InfoBarModel.IsOpen, Mode=OneWay}"
             Message="{x:Bind ViewModel.InfoBarModel.Message, Mode=OneWay}"
-            LosingFocus="InfoBar_LosingFocus"/>
+            LosingFocus="InfoBar_LosingFocus">
+            <InfoBar.ActionButton>
+                <Button
+                    Visibility="{x:Bind ViewModel.InfoBarModel.ShowActionButton, Mode=OneWay}"
+                    Content="{x:Bind ViewModel.InfoBarModel.CommandLabel, Mode=OneWay}" 
+                    Command="{x:Bind ViewModel.InfoBarModel.Command, Mode=OneWay}"/>
+            </InfoBar.ActionButton>
+        </InfoBar>
 
         <Grid
             x:Name="selectedItemIndicator"

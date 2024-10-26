@@ -35,7 +35,12 @@ internal class ApplicationSession : IApplicationSession
         messenger.Register<MediaFilesDeletedMessage>(this, msg =>
         {
             msg.Files.ForEach(file => files.Remove(file));
-        });
+        }); 
+        
+        messenger.Register<MediaFileRestoredMessage>(this, msg =>
+        {
+            files.Insert(msg.Index, msg.File);
+        });       
 
         messenger.Register<FilesSortedMessage>(this, msg =>
         {

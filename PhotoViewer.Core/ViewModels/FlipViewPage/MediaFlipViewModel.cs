@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using Essentials.NET.Logging;
+using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
@@ -66,6 +67,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     private readonly Func<IMediaFileInfo, IMediaFlipViewItemModel> mediaFlipViewItemModelFactory;
 
+    private readonly IFileSystemService fileSystemService;
+
     private readonly ApplicationSettings settings;
 
     private bool isSelectionChangedByDiashowLoop = false;
@@ -74,15 +77,19 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     private readonly VirtualizedCollection<IMediaFileInfo, IMediaFlipViewItemModel> itemModelsCache;
 
+    private (IMediaFileInfo File, int Index)? lastDeletedFileInfo;
+
     internal MediaFlipViewModel(
         IMessenger messenger,
         IDialogService dialogService,
         IMediaFilesLoaderService mediaFilesLoaderService,
+        IFileSystemService fileSystemService,
         Func<IMediaFileInfo, IMediaFlipViewItemModel> mediaFlipViewItemModelFactory,
         ApplicationSettings settings) : base(messenger)
     {
         this.dialogService = dialogService;
         this.mediaFilesLoaderService = mediaFilesLoaderService;
+        this.fileSystemService = fileSystemService;
         this.mediaFlipViewItemModelFactory = mediaFlipViewItemModelFactory;
         this.settings = settings;
 
@@ -113,7 +120,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     protected override void OnCleanup()
     {
-        itemModelsCache.Clear();
+        itemModelsCache.ClearCache();
         diashowLoopCancellationTokenSource?.Cancel();
     }
 
@@ -166,7 +173,9 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     {
         if (SelectedItem is not null && msg.Files.SingleOrDefault() == SelectedItem)
         {
-            InfoBarModel.ShowMessage(string.Format(Strings.FileDeletedMessage, SelectedItem.FileName));
+            InfoBarModel.ShowMessage(string.Format(Strings.FileDeletedMessage, SelectedItem.DisplayName),
+                command: RestoreLastDeletedFileCommand, commandLabel: "Restore");
+            lastDeletedFileInfo = (SelectedItem, SelectedIndex);
         }
 
         if (settings.ShowDeleteAnimation && msg.Files.Contains(SelectedItem))
@@ -374,4 +383,35 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
             Messenger.Send(new MediaFilesLoadingMessage(loadMediaFilesTask));
         }
     }
+
+    [RelayCommand]
+    private async Task RestoreLastDeletedFileAsync()
+    {
+        var lastDeletedFileInfo = this.lastDeletedFileInfo!.Value;
+
+        try
+        {
+            InfoBarModel.HideMessage();
+
+            await Task.Run(() => 
+            { 
+                foreach (var storageFile in lastDeletedFileInfo.File.StorageFiles)
+                {
+                    fileSystemService.Restore(storageFile);
+                }
+            });
+
+            Items.Insert(lastDeletedFileInfo.Index, lastDeletedFileInfo.File);
+
+            Messenger.Send(new MediaFileRestoredMessage(lastDeletedFileInfo.File, lastDeletedFileInfo.Index));
+
+            InfoBarModel.ShowMessage($"File {lastDeletedFileInfo.File.DisplayName} restored");
+        }
+        catch (Exception e)
+        {
+            Log.Error("Failed to restore file", e);
+            InfoBarModel.ShowMessage($"Could not restore {lastDeletedFileInfo.File.DisplayName}", InfoBarSeverity.Error);
+        }
+    }
+
 }

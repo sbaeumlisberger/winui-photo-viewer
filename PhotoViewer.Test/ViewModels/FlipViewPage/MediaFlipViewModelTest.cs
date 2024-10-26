@@ -28,7 +28,7 @@ public class MediaFlipViewModelTest
             return mock;
         };
 
-        mediaFlipViewModel = new MediaFlipViewModel(messenger, null!, null!, itemModelFactory, new ApplicationSettings());
+        mediaFlipViewModel = new MediaFlipViewModel(messenger, null!, null!, null!, itemModelFactory, new ApplicationSettings());
     }
 
     [Fact]

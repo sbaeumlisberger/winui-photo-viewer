@@ -56,6 +56,7 @@ public class ViewModelFactory : IViewModelFactory
     private readonly IBackgroundTaskService backgroundTaskService = new BackgroundTaskService();
     private readonly SortService sortService = new SortService(new MetadataService());
     private readonly IDeleteFilesService deleteFilesService;
+    private readonly IFileSystemService fileSystemService = new FileSystemService();
 
     public ViewModelFactory(ApplicationSettings settings, IMessenger messenger, IMediaFilesLoaderService mediaFilesLoaderService)
     {
@@ -115,6 +116,7 @@ public class ViewModelFactory : IViewModelFactory
               messenger,
               dialogService,
               mediaFilesLoaderService,
+              fileSystemService,
               CreateMediaFlipViewItemModel,
               settings);
     }

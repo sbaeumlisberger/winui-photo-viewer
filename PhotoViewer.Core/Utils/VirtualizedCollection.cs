@@ -20,6 +20,8 @@ internal class VirtualizedCollection<TKey, TValue> where TKey : notnull
 
     private IObservableReadOnlyList<TKey> keys;
 
+    private TKey? selectedItem;
+
     private readonly int cacheSizePerSide;
 
     private readonly Func<TKey, TValue> load;
@@ -34,7 +36,7 @@ internal class VirtualizedCollection<TKey, TValue> where TKey : notnull
         this.keys.CollectionChanged += Keys_CollectionChanged;
     }
 
-    public void Clear()
+    public void ClearCache()
     {
         cache.Values.ForEach(cleanup);
         cache.Clear();
@@ -45,15 +47,32 @@ internal class VirtualizedCollection<TKey, TValue> where TKey : notnull
         this.keys.CollectionChanged -= Keys_CollectionChanged;
         this.keys = keys;
         this.keys.CollectionChanged += Keys_CollectionChanged;
-        CleanupCachedValuesWithoutKey();
+        UpdateCache();
     }
 
     public TValue? SetSelectedItem(TKey? selectedItem)
     {
+        this.selectedItem = selectedItem;
+        UpdateCache();
+        return selectedItem is not null ? GetValue(selectedItem) : default;
+    }
+
+    public TValue GetValue(TKey key)
+    {
+        return cache[key];
+    }
+
+    private void Keys_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        UpdateCache();
+    }
+
+    private void UpdateCache() 
+    {
         if (selectedItem is null)
         {
-            Clear();
-            return default;
+            ClearCache();
+            return;
         }
         else
         {
@@ -77,19 +96,7 @@ internal class VirtualizedCollection<TKey, TValue> where TKey : notnull
                 cleanup(cache[key]);
                 cache.Remove(key);
             }
-
-            return cache[selectedItem];
         }
-    }
-
-    public TValue GetValue(TKey key)
-    {
-        return cache[key];
-    }
-
-    private void Keys_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        CleanupCachedValuesWithoutKey();
     }
 
     private List<TKey> GetKeysToCache(TKey selectedItem)
@@ -98,16 +105,5 @@ internal class VirtualizedCollection<TKey, TValue> where TKey : notnull
         int skipCount = Math.Max(index - cacheSizePerSide, 0);
         int takeCount = Math.Min(cacheSizePerSide, index) + 1 + cacheSizePerSide;
         return keys.Skip(skipCount).Take(takeCount).ToList();
-    }
-
-    private void CleanupCachedValuesWithoutKey()
-    {
-        var keysToCleanup = cache.Keys.Except(keys).ToList();
-
-        foreach (var key in keysToCleanup)
-        {
-            cleanup(cache[key]);
-            cache.Remove(key);
-        };
     }
 }

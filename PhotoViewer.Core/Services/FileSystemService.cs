@@ -1,5 +1,6 @@
 ﻿using Windows.Storage;
 using Windows.Storage.Search;
+using WindowsRecylceBin;
 
 namespace PhotoViewer.Core.Services;
 
@@ -14,6 +15,8 @@ public interface IFileSystemService
     Task<IStorageFile?> TryGetFileAsync(string path);
 
     bool Exists(string path);
+
+    void Restore(IStorageFile file);
 }
 
 public class FileSystemService : IFileSystemService
@@ -49,5 +52,10 @@ public class FileSystemService : IFileSystemService
     public bool Exists(string path)
     {
         return File.Exists(path);
+    }
+
+    public void Restore(IStorageFile file)
+    {
+        RecycleBin.ForCurrentUser().Restore(file.Path);
     }
 }

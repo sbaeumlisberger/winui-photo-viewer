@@ -67,7 +67,7 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
     protected override void OnCleanup()
     {
         BitmapFiles.CollectionChanged -= BitmapFiles_CollectionChanged;
-        imageViewModelsCache.Clear();
+        imageViewModelsCache.ClearCache();
     }
 
     private IImageViewModel CreateImageViewModel(IBitmapFileInfo bitmapFile)
