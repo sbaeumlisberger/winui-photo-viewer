@@ -163,49 +163,46 @@ public sealed partial class AutoSuggestionBox : UserControl
 
     private void TextBox_KeyDown(object sender, KeyRoutedEventArgs e)
     {
-        if (IsSuggestionListOpen)
+        if (e.Key == VirtualKey.Enter)
         {
-            if (e.Key == VirtualKey.Down)
-            {
-                e.Handled = true;
+            e.Handled = true;
+            IsSuggestionListOpen = false;
+            Submit();
+        }
+        else if (e.Key == VirtualKey.Down && IsSuggestionListOpen)
+        {
+            e.Handled = true;
 
-                if (suggestionsList.SelectedIndex < suggestionsList.Items.Count - 1)
-                {
-                    suggestionsList.SelectedIndex++;
-                }
-                else
-                {
-                    suggestionsList.SelectedIndex = -1;
-                }
-
-                OnSelectedSuggestionChanged();
-            }
-            else if (e.Key == VirtualKey.Up)
+            if (suggestionsList.SelectedIndex < suggestionsList.Items.Count - 1)
             {
-                e.Handled = true;
-
-                if (suggestionsList.SelectedIndex > -1)
-                {
-                    suggestionsList.SelectedIndex--;
-                }
-                else
-                {
-                    suggestionsList.SelectedIndex = suggestionsList.Items.Count - 1;
-                }
-
-                OnSelectedSuggestionChanged();
+                suggestionsList.SelectedIndex++;
             }
-            else if (e.Key == VirtualKey.Enter)
+            else
             {
-                e.Handled = true;
-                IsSuggestionListOpen = false;
-                Submitted?.Invoke(this, EventArgs.Empty);
+                suggestionsList.SelectedIndex = -1;
             }
-            else if (e.Key == VirtualKey.Escape)
+
+            OnSelectedSuggestionChanged();
+        }
+        else if (e.Key == VirtualKey.Up && IsSuggestionListOpen)
+        {
+            e.Handled = true;
+
+            if (suggestionsList.SelectedIndex > -1)
             {
-                e.Handled = IsSuggestionListOpen;
-                IsSuggestionListOpen = false;
+                suggestionsList.SelectedIndex--;
             }
+            else
+            {
+                suggestionsList.SelectedIndex = suggestionsList.Items.Count - 1;
+            }
+
+            OnSelectedSuggestionChanged();
+        }
+        else if (e.Key == VirtualKey.Escape && IsSuggestionListOpen)
+        {
+            e.Handled = IsSuggestionListOpen;
+            IsSuggestionListOpen = false;
         }
     }
 
@@ -238,7 +235,7 @@ public sealed partial class AutoSuggestionBox : UserControl
         Submit();
     }
 
-    private void Submit() 
+    private void Submit()
     {
         IsSuggestionListOpen = false;
 
