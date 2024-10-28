@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
+using Essentials.NET.Logging;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
@@ -80,6 +81,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
     [RelayCommand(CanExecute = nameof(CanDelete))]
     private async Task DeleteAsync()
     {
+        Log.Debug($"Delete [{string.Join(", ", SelectedItems.Select(item => item.DisplayName))}] via command bar");
         await deleteFilesService.DeleteFilesAsync(SelectedItems);
     }
 

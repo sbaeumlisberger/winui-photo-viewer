@@ -137,6 +137,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     [RelayCommand(CanExecute = nameof(CanDelete))]
     private async Task DeleteAsync()
     {
+        Log.Debug($"Delete {SelectedItemModel!.MediaFile.DisplayName} via command bar");
         await deleteFilesService.DeleteFilesAsync([SelectedItemModel!.MediaFile]);
     }
 

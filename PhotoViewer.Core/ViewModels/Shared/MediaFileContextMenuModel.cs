@@ -170,6 +170,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
     [RelayCommand(CanExecute = nameof(IsEnabled))]
     private async Task DeleteAsync()
     {
+        Log.Debug($"Delete [{string.Join(", ", Files.Select(file => file.DisplayName))}] via context menu");
         await deleteFilesService.DeleteFilesAsync(Files);
     }
 

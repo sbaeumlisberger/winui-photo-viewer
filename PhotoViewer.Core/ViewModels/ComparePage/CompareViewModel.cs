@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Essentials.NET;
+using Essentials.NET.Logging;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
@@ -113,6 +114,7 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
     [RelayCommand(CanExecute = nameof(CanDelete))]
     private async Task DeleteAsync()
     {
+        Log.Debug($"Delete {SelectedBitmapFile!.DisplayName} via command bar");
         await deleteFilesService.DeleteFilesAsync([SelectedBitmapFile!]);
     }
 
