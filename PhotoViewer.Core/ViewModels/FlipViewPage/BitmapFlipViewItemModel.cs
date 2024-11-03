@@ -38,6 +38,7 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
         MediaFile = bitmapFile;
         ContextMenuModel = viewModelFactory.CreateMediaFileContextMenuModel();
         ContextMenuModel.Files = new[] { bitmapFile };
+        ContextMenuModel.IsEnabled = IsOverlayVisible;
 
         ImageViewModel = viewModelFactory.CreateImageViewModel(bitmapFile);
         ImageViewModel.PropertyChanged += ImageViewModel_PropertyChanged;

@@ -40,6 +40,12 @@ public class BitmapFlipViewItemModelTest
     }
 
     [Fact]
+    public void ContextMenuIsDisabledByDefault() 
+    {
+        contextMenuMock.Received().IsEnabled = false;
+    }
+
+    [Fact]
     public void ImageIsPassedToTagPeopleTool()
     {
         var image = Substitute.For<IBitmapImageModel>();
