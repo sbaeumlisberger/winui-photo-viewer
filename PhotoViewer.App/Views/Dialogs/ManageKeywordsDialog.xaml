@@ -12,9 +12,15 @@
     CloseButtonText="{x:Bind res:Strings.ManageKeywordsDialog_CloseButton}"
     DefaultButton="Close">
 
-    <StackPanel Width="400" Spacing="8">
+    <StackPanel Spacing="8">
+        <Border Width="600"/>
 
-        <Grid>
+        <Grid ColumnSpacing="32">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
             <StackPanel Orientation="Horizontal" Spacing="4">
                 <Button 
                     Content="{x:Bind res:Strings.ManageKeywordsDialog_ExportButton}"
@@ -26,9 +32,9 @@
                     Content="{x:Bind res:Strings.ManageKeywordsDialog_ResetButton}"
                     Command="{x:Bind ViewModel.ResetCommand}"/>
             </StackPanel>
-            <TextBox 
-                HorizontalAlignment="Right"
-                Width="160"
+            
+            <TextBox
+                Grid.Column="1"
                 PlaceholderText="{x:Bind res:Strings.ManageKeywordsDialog_SearchBoxPlaceholder}"
                 Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>

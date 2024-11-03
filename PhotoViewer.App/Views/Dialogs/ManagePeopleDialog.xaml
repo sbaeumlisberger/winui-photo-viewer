@@ -12,8 +12,15 @@
     CloseButtonText="{x:Bind res:Strings.ManagePeopleDialog_CloseButton}"
     DefaultButton="Close">
 
-    <StackPanel Width="400" Spacing="8">
-        <Grid>
+    <StackPanel Spacing="8">
+        <Border Width="600"/>
+
+        <Grid ColumnSpacing="32">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
             <StackPanel Orientation="Horizontal" Spacing="4">
                 <Button 
                     Content="{x:Bind res:Strings.ManagePeopleDialog_ExportButton}"
@@ -25,9 +32,9 @@
                     Content="{x:Bind res:Strings.ManagePeopleDialog_ResetButton}"
                     Command="{x:Bind ViewModel.ResetCommand}"/>
             </StackPanel>
+
             <TextBox
-                HorizontalAlignment="Right"
-                Width="160"
+                Grid.Column="1"
                 PlaceholderText="{x:Bind res:Strings.ManagePeopleDialog_SearchBoxPlaceholder}"
                 Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
