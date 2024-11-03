@@ -49,7 +49,7 @@ public partial class ManagePeopleDialogModel : ViewModelBase
     {
         var filePickerModel = new FileSavePickerModel()
         {
-            SuggestedFileName = "keywords.json",
+            SuggestedFileName = "people.json",
             FileTypeChoices = new() { { "JSON", new[] { ".json" } } }
         };
 
