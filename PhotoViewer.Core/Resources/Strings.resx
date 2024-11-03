@@ -240,4 +240,7 @@
   <data name="FileDeletedMessage" xml:space="preserve">
     <value>The file "{0}" has been deleted</value>
   </data>
+  <data name="RestoreDeletedFileLabel" xml:space="preserve">
+    <value>Restore</value>
+  </data>
 </root>

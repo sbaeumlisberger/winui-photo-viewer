@@ -322,6 +322,15 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restore.
+        /// </summary>
+        public static string RestoreDeletedFileLabel {
+            get {
+                return ResourceManager.GetString("RestoreDeletedFileLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to save image.
         /// </summary>
         public static string SaveImageFailedDialog_Title {

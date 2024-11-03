@@ -174,7 +174,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         if (SelectedItem is not null && msg.Files.Count == 1 && msg.Files.Single() == SelectedItem)
         {
             InfoBarModel.ShowMessage(string.Format(Strings.FileDeletedMessage, SelectedItem.DisplayName),
-                command: RestoreLastDeletedFileCommand, commandLabel: "Restore");
+                command: RestoreLastDeletedFileCommand, commandLabel: Strings.RestoreDeletedFileLabel);
             lastDeletedFileInfo = (SelectedItem, SelectedIndex);
         }
 
