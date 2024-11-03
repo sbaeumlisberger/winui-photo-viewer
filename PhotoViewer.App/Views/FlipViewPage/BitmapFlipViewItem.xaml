@@ -9,13 +9,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
+    <Grid x:Name="content" x:Load="False">
         <local:MediaFileContextMenuHolder 
             x:Name="mediaFileContextMenuHolder"
             DataContext="{x:Bind ViewModel.ContextMenuModel, Mode=OneWay}"/>
-    </UserControl.Resources>
 
-    <Grid x:Name="content" x:Load="False">
         <controls:BitmapViewer 
             x:Name="bitmapViewer"
             BitmapImage="{x:Bind ViewModel.ImageViewModel.Image, Mode=OneWay}" 
