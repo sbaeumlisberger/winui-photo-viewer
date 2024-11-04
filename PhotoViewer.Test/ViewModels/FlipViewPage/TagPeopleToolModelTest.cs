@@ -374,7 +374,7 @@ public class TagPeopleToolModelTest
         metadataService.GetMetadataAsync(bitmapFile, MetadataProperties.People).Returns(peopleTags ?? new List<PeopleTag>());
         await tagPeopleToolModel.InitializeAsync();
         tagPeopleToolModel.BitmapImage = exampleBitmapImage;
-        await Task.Run(() => { }); // ensure async processing of BitmapImage setter is completed
+        await tagPeopleToolModel.ProcessBitmapImageTask;
         tagPeopleToolModel.IsEnabled = enbaled;
     }
 

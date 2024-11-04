@@ -48,6 +48,8 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
     public Rect SelectionRectInPercent { get; set; } = Rect.Empty;
 
+    public Task ProcessBitmapImageTask { get; private set; } = Task.CompletedTask;
+
     private readonly ISuggestionsService suggestionsService;
 
     private readonly IMetadataService metadataService;
@@ -114,7 +116,12 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         }
     }
 
-    async partial void OnBitmapImageChanged()
+    partial void OnBitmapImageChanged()
+    {
+        ProcessBitmapImageTask = ProcessBitmapImageAsync();
+    }
+
+    private async Task ProcessBitmapImageAsync() 
     {
         await DetectFacesAsync();
 
