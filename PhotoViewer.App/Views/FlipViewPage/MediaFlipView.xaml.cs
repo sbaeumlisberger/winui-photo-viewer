@@ -81,6 +81,13 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         {
             // update view model when selection was changed by the user
             ViewModel!.Select((IMediaFileInfo?)flipView.SelectedItem);
+
+            if (ViewModel.SelectedItem is not null)
+            {
+                var container = (FlipViewItem)flipView.ContainerFromItem(flipView.SelectedItem);
+                var flipViewItem = (FrameworkElement)((Border)container.ContentTemplateRoot).Child;
+                flipViewItem.DataContext = ViewModel.TryGetItemModel(ViewModel.SelectedItem);
+            }
         }
         else if (ViewModel!.SelectedItem != null && flipView.SelectedItem != ViewModel.SelectedItem)
         {
