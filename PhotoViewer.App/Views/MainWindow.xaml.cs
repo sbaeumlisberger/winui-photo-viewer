@@ -3,7 +3,9 @@ using Essentials.NET.Logging;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using PhotoViewer.App.Services;
 using PhotoViewer.App.Views.Dialogs;
@@ -22,6 +24,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.System;
+using Windows.UI;
 using WinUIEx;
 
 namespace PhotoViewer.App;
@@ -79,6 +82,37 @@ public sealed partial class MainWindow : Window
         dialog.XamlRoot = frame.XamlRoot;
         dialog.RequestedTheme = frame.RequestedTheme;
         return await dialog.ShowAsync();
+    }
+
+    public async Task<T> ShowDialogAsync<T>(FrameworkElement dialog, Func<Task<T>> getResultFunction)
+    {
+        dialog.HorizontalAlignment = HorizontalAlignment.Center;
+        dialog.VerticalAlignment = VerticalAlignment.Center;
+
+        var overlayContent = new Border();
+        overlayContent.Background = new SolidColorBrush(Color.FromArgb(150, 0, 0, 0));
+        overlayContent.Width = Content.ActualSize.X;
+        overlayContent.Height = Content.ActualSize.Y;
+        overlayContent.Child = dialog;
+        SizeChanged += Window_SizeChanged;
+
+        void Window_SizeChanged(object sender, WindowSizeChangedEventArgs args)
+        {
+            overlayContent.Width = Content.ActualSize.X;
+            overlayContent.Height = Content.ActualSize.Y;
+        }
+
+        var overlayPopup = new Popup();
+        overlayPopup.XamlRoot = Content.XamlRoot;
+        overlayPopup.Child = overlayContent;
+        overlayPopup.IsOpen = true;
+
+        var result = await getResultFunction();
+        
+        overlayPopup.IsOpen = false;
+        SizeChanged -= Window_SizeChanged;     
+
+        return result;
     }
 
     private void ViewModel_DialogRequested(object? sender, DialogRequestedEventArgs e)

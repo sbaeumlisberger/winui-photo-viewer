@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET.Logging;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.Globalization;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Views.Dialogs;
@@ -177,7 +176,7 @@ public partial class App : Application
             {
                 var dialog = new UnhandledExceptionDialog(args.Message, report);
 
-                var dialogResult = await Window.ShowDialogAsync(dialog);
+                var dialogResult = await Window.ShowDialogAsync(dialog, dialog.GetResultAsync);
 
                 if (dialog.IsSendErrorReportChecked)
                 {
@@ -191,7 +190,7 @@ public partial class App : Application
                     }
                 }
 
-                if (dialogResult == ContentDialogResult.Primary)
+                if (dialogResult == UnhandledExceptionDialogResult.Exit)
                 {
                     Log.Info("User decided to exit application after unhandled exception ");
                     Exit();
