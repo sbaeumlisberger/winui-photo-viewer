@@ -31,8 +31,8 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button HorizontalAlignment="Stretch" Content="Exit Application" Click="ExitButton_Click"/>
-            <Button Grid.Column="1" HorizontalAlignment="Stretch" Content="Ignore Error" Click="IgnoreButton_Click"/>
+            <Button Style="{ThemeResource PrimaryDialogButtonStyle}" HorizontalAlignment="Stretch" Content="Exit Application" Click="ExitButton_Click"/>
+            <Button Grid.Column="1" Style="{ThemeResource DialogButtonStyle}" HorizontalAlignment="Stretch" Content="Ignore Error" Click="IgnoreButton_Click"/>
         </Grid>
     </Grid>   
 

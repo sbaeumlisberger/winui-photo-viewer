@@ -107,10 +107,12 @@ public sealed partial class MainWindow : Window
         overlayPopup.Child = overlayContent;
         overlayPopup.IsOpen = true;
 
+        DispatcherQueue.TryEnqueue(() => dialog.Focus(FocusState.Programmatic));
+
         var result = await getResultFunction();
-        
+
         overlayPopup.IsOpen = false;
-        SizeChanged -= Window_SizeChanged;     
+        SizeChanged -= Window_SizeChanged;
 
         return result;
     }
