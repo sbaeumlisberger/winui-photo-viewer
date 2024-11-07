@@ -25,7 +25,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.6" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
-		<PackageReference Include="NSubstitute" Version="5.1.0" />
+		<PackageReference Include="NSubstitute" Version="5.3.0" />
 		<PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.17">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

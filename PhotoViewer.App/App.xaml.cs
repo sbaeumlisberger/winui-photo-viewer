@@ -168,7 +168,7 @@ public partial class App : Application
         {
             isUnhandeldExceptionDialogShown = true;
 
-            var errorReportService = new ErrorReportService();
+            var errorReportService = new ErrorReportService(Package.Current.Id.Version, new EventLogService());
 
             string report = await errorReportService.CreateErrorReportAsync();
 

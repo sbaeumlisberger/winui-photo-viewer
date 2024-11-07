@@ -3,13 +3,18 @@ using Windows.Foundation.Collections;
 
 namespace PhotoViewer.Core.Services;
 
-public class EventLogService
+public interface IEventLogService
+{
+    List<string> GetErrorsSinceLastCheck();
+}
+
+public class EventLogService : IEventLogService
 {
     private const string LastCheckTimestampKey = "EventLogLastCheckTimestamp";
 
     private readonly IPropertySet appData = AppData.DataContainer.Values;
 
-    public List<string> GetErrors()
+    public List<string> GetErrorsSinceLastCheck()
     {
         var errors = new List<string>();
 
@@ -17,7 +22,7 @@ public class EventLogService
 
         string query = $"*["
             + $"System/Level={(int)StandardEventLevel.Error}"
-            + $" and System[TimeCreated[@SystemTime >= '{lastCheckTimestamp.UtcDateTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ")}']]"
+            + $" and System[TimeCreated[@SystemTime >= '{lastCheckTimestamp.UtcDateTime:yyyy-MM-ddTHH:mm:ss.fffffffZ}']]"
             + "]";
 
         var eventLogQuery = new EventLogQuery("Application", PathType.LogName, query) { ReverseDirection = true };

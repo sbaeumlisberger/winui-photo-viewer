@@ -9,6 +9,16 @@ namespace PhotoViewer.Core.Services;
 
 public class ErrorReportService
 {
+    private readonly PackageVersion appVersion;
+
+    private readonly IEventLogService eventLogService;
+
+    public ErrorReportService(PackageVersion appVersion, IEventLogService eventLogService)
+    {
+        this.appVersion = appVersion;
+        this.eventLogService = eventLogService;
+    }
+
     public async Task SendErrorReportAsync(string report)
     {
         string subject = $"{AppData.ApplicationName} Error Report {DateTime.Now:g}";
@@ -31,14 +41,38 @@ public class ErrorReportService
         return CreateReport(log);
     }
 
-    public string CreateReport(string message)
+    public async Task<string?> CreateCrashReportAsync()
     {
-        var version = Package.Current.Id.Version;
+        var errors = eventLogService.GetErrorsSinceLastCheck();
+
+        if (errors.Count == 0)
+        {
+            return null;
+        }
+
+        string log;
+
+        if (FindLogFileFromCrash() is string logFileFromCrash)
+        {
+            log = await File.ReadAllTextAsync(logFileFromCrash);
+        }
+        else
+        {
+            log = "no log file found";
+        }
+
+        string reportBody = string.Join("\n\n", [.. errors, log]);
+
+        return CreateReport(reportBody);
+    }
+
+    private string CreateReport(string body)
+    {
         var bodyBuilder = new StringBuilder();
-        bodyBuilder.AppendLine("App Version: " + version.Major + "." + version.Minor + "." + version.Build);
+        bodyBuilder.AppendLine("App Version: " + appVersion.Major + "." + appVersion.Minor + "." + appVersion.Build);
         bodyBuilder.AppendLine("OS Version: " + Environment.OSVersion.VersionString);
         bodyBuilder.AppendLine();
-        bodyBuilder.AppendLine(message);
+        bodyBuilder.AppendLine(body);
         return bodyBuilder.ToString();
     }
 
@@ -54,6 +88,34 @@ public class ErrorReportService
         emailMessage.Body = body;
 
         await smtpClient.SendMailAsync(emailMessage).ConfigureAwait(false);
+    }
+
+    private string? FindLogFileFromCrash()
+    {
+        var fileAppender = Log.Logger.Appenders.OfType<FileAppender>().First();
+        string[] nonArchivedLogsFiles = Directory.GetFiles(fileAppender.LogFolderPath, "*.txt");
+
+        string? logFileFromCrash = nonArchivedLogsFiles
+            .OrderByDescending(filePath => filePath)
+            .SkipWhile(filePath => filePath != fileAppender.LogFilePath)
+            .FirstOrDefault(filePath => !IsFileInUse(filePath));
+
+        return logFileFromCrash;
+
+        static bool IsFileInUse(string filePath)
+        {
+            try
+            {
+                using (File.OpenWrite(filePath))
+                {
+                    return false;
+                }
+            }
+            catch (Exception e) when (e.HResult == unchecked((int)0x80070020))
+            {
+                return true;
+            }
+        }
     }
 
 }

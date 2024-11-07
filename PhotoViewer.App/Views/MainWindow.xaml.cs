@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using PhotoViewer.App.Services;
+using PhotoViewer.App.Utils;
 using PhotoViewer.App.Views.Dialogs;
 using PhotoViewer.Core;
 using PhotoViewer.Core.Messages;
@@ -22,6 +23,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI;
@@ -214,11 +216,11 @@ public sealed partial class MainWindow : Window
         e.Handled = true;
     }
 
-    private async void Frame_Loaded(object sender, RoutedEventArgs e)
+    private void Frame_Loaded(object sender, RoutedEventArgs e)
     {
         try
         {
-            await ReportCrashAsync();
+            Task.Run(ReportCrashAsync);
         }
         catch (Exception ex)
         {
@@ -228,20 +230,19 @@ public sealed partial class MainWindow : Window
 
     private async Task ReportCrashAsync()
     {
-        var errors = await Task.Run(() => new EventLogService().GetErrors());
+        var errorReportService = new ErrorReportService(Package.Current.Id.Version, new EventLogService());
 
-        if (errors.Count != 0)
+        if (await errorReportService.CreateCrashReportAsync() is string crashReport)
         {
-            var errorReportService = new ErrorReportService();
-
-            var crashReport = errorReportService.CreateReport(string.Join("\n\n", errors));
-
-            var dialog = new CrashReportDialog(crashReport);
-
-            if (await ShowDialogAsync(dialog) == ContentDialogResult.Primary)
+            await DispatcherQueue.DispatchAsync(async () =>
             {
-                await errorReportService.SendCrashReportAsync(crashReport);
-            }
+                var dialog = new CrashReportDialog(crashReport);
+
+                if (await ShowDialogAsync(dialog) == ContentDialogResult.Primary)
+                {
+                    await errorReportService.SendCrashReportAsync(crashReport);
+                }
+            });
         }
     }
 
