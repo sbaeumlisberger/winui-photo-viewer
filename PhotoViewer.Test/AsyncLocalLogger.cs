@@ -7,17 +7,14 @@ internal class AsyncLocalLogger : ILogger
 {
     public static AsyncLocalLogger Instance { get; } = new AsyncLocalLogger();
 
+    public ILogger? Logger { get => logger.Value; set => logger.Value = value!; }
+
     private readonly AsyncLocal<ILogger> logger = new AsyncLocal<ILogger>();
 
     public IReadOnlyList<ILogAppender> Appenders => logger.Value?.Appenders ?? Array.Empty<ILogAppender>();
 
     private AsyncLocalLogger()
     {
-    }
-
-    public void SetLogger(ILogger logger)
-    {
-        this.logger.Value = logger;
     }
 
     public void Dispose()

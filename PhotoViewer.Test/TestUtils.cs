@@ -85,13 +85,17 @@ internal static class TestUtils
         };
     }
 
-    internal static void SetLogger(ILogger logger)
+    internal static IDisposable RegisterLogger(ILogger logger)
     {
         if (Log.Logger != AsyncLocalLogger.Instance)
         {
             Log.Configure(AsyncLocalLogger.Instance);
         }
 
-        AsyncLocalLogger.Instance.SetLogger(logger);
+        var previousLogger = AsyncLocalLogger.Instance.Logger;
+
+        AsyncLocalLogger.Instance.Logger = logger;
+
+        return new DelegatingDisposable(() => AsyncLocalLogger.Instance.Logger = previousLogger);
     }
 }

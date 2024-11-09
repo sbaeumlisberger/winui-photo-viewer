@@ -27,7 +27,7 @@ public class ErrorReportServiceTest
     {
         eventLogService.GetErrorsSinceLastCheck().Returns(["error"]);
         string logFolderPath = TestUtils.CreateTestFolder();
-        TestUtils.SetLogger(new Logger([new FileAppender(logFolderPath)]));
+        using var _ = TestUtils.RegisterLogger(new Logger([new FileAppender(logFolderPath)]));
 
         string? report = await errorReportService.CreateCrashReportAsync();
 
@@ -40,7 +40,7 @@ public class ErrorReportServiceTest
     {
         eventLogService.GetErrorsSinceLastCheck().Returns(["error"]);
         string logFolderPath = TestUtils.CreateTestFolder();
-        TestUtils.SetLogger(new Logger([new FileAppender(logFolderPath)]));
+        using var _ = TestUtils.RegisterLogger(new Logger([new FileAppender(logFolderPath)]));
         Log.Info("make sure the current log exists");
 
         CreateLogFile(logFolderPath, DateTimeOffset.Now.AddMinutes(-7), "log of crash");
@@ -56,7 +56,7 @@ public class ErrorReportServiceTest
         // archived files
         CreateArchivedLogFile(logFolderPath, DateTimeOffset.Now.AddMinutes(-5), "archived log");
         CreateArchivedLogFile(logFolderPath, DateTimeOffset.Now.AddMinutes(-10), "archived log");
-         
+
         string? report = await errorReportService.CreateCrashReportAsync();
 
         string expectedReport = "error\n\nlog of crash";
