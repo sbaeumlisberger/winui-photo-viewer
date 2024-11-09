@@ -33,7 +33,6 @@ public class MetadataTextboxModelTest
     public MetadataTextboxModelTest()
     {
         using var _ = synchronizationContextMock.Apply();
-        Log.Configure(Substitute.For<ILogger>());
         metadataPropertyMock.Identifier.Returns("test-property");
         metadataTextboxModel = new MetadataTextboxModel(messenger, metadataServiceMock, dialogService, backgroundTaskService, metadataPropertyMock, timeProvider);
         TestUtils.CheckSynchronizationContextOfPropertyChangedEvents(metadataTextboxModel, synchronizationContextMock);
@@ -68,7 +67,7 @@ public class MetadataTextboxModelTest
         await metadataTextboxModel.LastWriteFilesTask;
 
         Assert.False(metadataTextboxModel.IsWriting);
-        await metadataServiceMock.ReceivedOnce().WriteMetadataAsync(fileMock, metadataPropertyMock, "some value");
+        await metadataServiceMock.Received(Quantity.Exactly(1)).WriteMetadataAsync(fileMock, metadataPropertyMock, "some value");
     }
 
     [Fact]
@@ -96,7 +95,7 @@ public class MetadataTextboxModelTest
             .WriteMetadataAsync(fileMock, metadataPropertyMock, "some value 01");
         await metadataServiceMock.DidNotReceive()
             .WriteMetadataAsync(fileMock, metadataPropertyMock, "some value 02");
-        await metadataServiceMock.ReceivedOnce()
+        await metadataServiceMock.Received(Quantity.Exactly(1))
             .WriteMetadataAsync(fileMock, metadataPropertyMock, "some value 03");
     }
 

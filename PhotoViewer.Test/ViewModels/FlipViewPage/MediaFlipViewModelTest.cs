@@ -19,8 +19,6 @@ public class MediaFlipViewModelTest
 
     public MediaFlipViewModelTest()
     {
-        Log.Configure(Substitute.For<ILogger>());
-
         itemModelFactory = (mediaFile) =>
         {
             var mock = Substitute.For<IMediaFlipViewItemModel>();

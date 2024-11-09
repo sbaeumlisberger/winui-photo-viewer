@@ -1,7 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET;
+using Essentials.NET.Logging;
 using NSubstitute;
 using NSubstitute.Core;
-using NSubstitute.ReceivedExtensions;
 using PhotoViewer.Core.Models;
 using System.ComponentModel;
 using Windows.Storage;
@@ -84,10 +85,13 @@ internal static class TestUtils
         };
     }
 
-    public static T ReceivedOnce<T>(this T substitute) where T : class
+    internal static void SetLogger(ILogger logger)
     {
-#pragma warning disable NS5000
-        return substitute.Received(Quantity.Exactly(1));
-#pragma warning restore NS5000
+        if (Log.Logger != AsyncLocalLogger.Instance)
+        {
+            Log.Configure(AsyncLocalLogger.Instance);
+        }
+
+        AsyncLocalLogger.Instance.SetLogger(logger);
     }
 }

@@ -33,8 +33,6 @@ public class DetailsBarModelTest
 
     public DetailsBarModelTest()
     {
-        Log.Configure(Substitute.For<ILogger>());
-
         Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
 
         bitmapFile = Substitute.For<IBitmapFileInfo>();
