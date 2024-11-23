@@ -83,9 +83,9 @@ public class AnimatedBitmapRenderer : IDisposable
                 stopwatch.Restart();
                 var frame = frames[currentFrameIndex];
                 RenderFrame(frame);
-                MoveToNextFrame();
                 stopwatch.Stop();
                 await Task.Delay((int)Math.Max(frame.Delay - stopwatch.ElapsedMilliseconds, 0));
+                MoveToNextFrame();
             }
         }
     }

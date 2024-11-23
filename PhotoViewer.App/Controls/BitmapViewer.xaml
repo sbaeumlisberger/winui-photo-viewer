@@ -9,18 +9,15 @@
     mc:Ignorable="d">
 
     <Grid>
-        <win2d:CanvasControl 
-            x:Name="canvasControl" 
-            Draw="CanvasControl_Draw"/>
+        <Image x:Name="imageControl" Stretch="Uniform"/>
         <ScrollViewer 
             x:Name="scrollViewer"
-            UseLayoutRounding="False"
             MinZoomFactor="1"
             MaxZoomFactor="100"
             ViewChanged="ScrollViewer_ViewChanged">
             <Grid 
-                x:Name="dummy" 
                 Background="Transparent"
+                x:Name="scrollDummy"
                 DoubleTapped="Dummy_DoubleTapped">
                 <ContentPresenter x:Name="contentPresenter"/>
             </Grid>
