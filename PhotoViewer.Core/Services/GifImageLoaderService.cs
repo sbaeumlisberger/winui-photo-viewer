@@ -56,7 +56,7 @@ public class GifImageLoaderService : IGifImageLoaderService
 
     private double ExtractDelay(BitmapPropertySet bitmapProperties)
     {
-        var delayInMilliseconds = 30.0;
+        double delayInMilliseconds = 100;
         if (bitmapProperties.TryGetValue(DelayPropertyKey, out var delayProperty) && delayProperty.Type == PropertyType.UInt16)
         {
             var delayInHundredths = (ushort)delayProperty.Value;

@@ -27,7 +27,6 @@ public class AnimatedBitmapRenderer : IDisposable
 
                 if (isPlaying)
                 {
-                    currentFrameIndex = 0;
                     cancellationTokenSource = new CancellationTokenSource();
                     _ = RenderAsync(cancellationTokenSource.Token);
                 }
@@ -82,28 +81,18 @@ public class AnimatedBitmapRenderer : IDisposable
             while (!cancellationToken.IsCancellationRequested)
             {
                 stopwatch.Restart();
-                double delay = RenderNextFrame();
+                var frame = frames[currentFrameIndex];
+                RenderFrame(frame);
+                MoveToNextFrame();
                 stopwatch.Stop();
-                await Task.Delay((int)Math.Max(delay - stopwatch.ElapsedMilliseconds, 0));
+                await Task.Delay((int)Math.Max(frame.Delay - stopwatch.ElapsedMilliseconds, 0));
             }
         }
     }
 
-    private double RenderNextFrame()
-    {
-        if (currentFrameIndex < frames.Count - 1)
-        {
-            currentFrameIndex++;
-        }
-        else
-        {
-            currentFrameIndex = 0;
-            drawingSession.Clear(Colors.Transparent);
-        }
-
-        var frame = frames[currentFrameIndex];
-
-        if (frame.RequiresClear)
+    private void RenderFrame(IBitmapFrameModel frame)
+    { 
+        if (currentFrameIndex == 0 || frame.RequiresClear)
         {
             drawingSession.Clear(Colors.Transparent);
         }
@@ -112,8 +101,18 @@ public class AnimatedBitmapRenderer : IDisposable
         drawingSession.Flush();
 
         FrameRendered?.Invoke(this, EventArgs.Empty);
+    }
 
-        return frame.Delay;
+    private void MoveToNextFrame()
+    {
+        if (currentFrameIndex < frames.Count - 1)
+        {
+            currentFrameIndex++;
+        }
+        else
+        {
+            currentFrameIndex = 0;
+        }
     }
 
 }
