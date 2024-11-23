@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using System;
 using Windows.Foundation;
-using Windows.System;
 
 namespace PhotoViewer.App.Views;
 
@@ -26,21 +25,24 @@ internal static class ScrollViewerExtension
     private class AdvancedScrollViewerZoomBehaviour
     {
 
-        private ScrollViewer scrollViewer;
+        private readonly ScrollViewer scrollViewer;
 
         private uint pointerId;
 
         private Point lastPointerPosition;
 
+        private bool isViewChangeInProgess = false;
+
         public AdvancedScrollViewerZoomBehaviour(ScrollViewer scrollViewer)
         {
             this.scrollViewer = scrollViewer;
-            scrollViewer.ZoomMode = ZoomMode.Enabled;
+            scrollViewer.ZoomMode = ZoomMode.Disabled;
             scrollViewer.HorizontalScrollMode = ScrollMode.Enabled;
             scrollViewer.VerticalScrollMode = ScrollMode.Enabled;
             scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
             scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             scrollViewer.PointerWheelChanged += ScrollViewer_PointerWheelChanged;
+            scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
 
             var content = (UIElement)scrollViewer.Content;
             content.PointerWheelChanged += ScrollViewer_PointerWheelChanged;
@@ -50,10 +52,16 @@ internal static class ScrollViewerExtension
             scrollViewer.Unloaded += ScrollViewer_Unloaded;
         }
 
+        private void ScrollViewer_ViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
+        {
+            isViewChangeInProgess = false;
+        }
+
         private void ScrollViewer_Unloaded(object sender, RoutedEventArgs e)
         {
             scrollViewer.Unloaded -= ScrollViewer_Unloaded;
             scrollViewer.PointerWheelChanged -= ScrollViewer_PointerWheelChanged;
+            scrollViewer.ViewChanged -= ScrollViewer_ViewChanged;
             var content = (UIElement)scrollViewer.Content;
             content.PointerWheelChanged -= ScrollViewer_PointerWheelChanged;
             content.PointerPressed -= Content_PointerPressed;
@@ -62,12 +70,14 @@ internal static class ScrollViewerExtension
 
         private void ScrollViewer_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
         {
-            if (e.KeyModifiers == VirtualKeyModifiers.Control)
+            e.Handled = true;
+
+            if (isViewChangeInProgess)
             {
-                return; // skip because of default zoom behavior
+                return;
             }
 
-            e.Handled = true;
+            isViewChangeInProgess = true;
 
             var content = (UIElement)scrollViewer.Content;
 
@@ -90,7 +100,12 @@ internal static class ScrollViewerExtension
             double horizontalOffset = scrollViewer.HorizontalOffset + x * zoomDelta;
             double verticalOffset = scrollViewer.VerticalOffset + y * zoomDelta;
 
-            scrollViewer.ChangeView(horizontalOffset, verticalOffset, zoomFactor);
+            bool doesViewChange = scrollViewer.ChangeView(horizontalOffset, verticalOffset, zoomFactor, true);
+
+            if (!doesViewChange)
+            {
+                isViewChangeInProgess = false;
+            }
         }
 
         private void Content_PointerPressed(object sender, PointerRoutedEventArgs e)
