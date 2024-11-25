@@ -66,10 +66,10 @@
             </ResourceDictionary.MergedDictionaries>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="PageBackgroundBrush" Color="White"/>
+                    <SolidColorBrush x:Key="PhotoViewerPageBackgroundBrush" Color="White"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="PageBackgroundBrush" Color="Black"/>
+                    <SolidColorBrush x:Key="PhotoViewerPageBackgroundBrush" Color="Black"/>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>

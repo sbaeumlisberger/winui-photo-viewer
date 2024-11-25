@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"  
     Style="{StaticResource DefaultCommandBarStyle}"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
     DefaultLabelPosition="Collapsed">
 
     <CommandBar.Content>

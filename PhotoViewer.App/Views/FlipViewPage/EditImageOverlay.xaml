@@ -13,13 +13,13 @@
 
     <Grid
         Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}"
-        Background="{ThemeResource PageBackgroundBrush}">
+        Background="{ThemeResource PhotoViewerPageBackgroundBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Padding="16" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid Padding="16" Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>

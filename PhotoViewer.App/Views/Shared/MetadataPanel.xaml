@@ -15,7 +15,7 @@
 
     <Grid 
         Width="320"
-        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+        Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
         Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
 
         <Grid.Resources>

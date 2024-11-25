@@ -11,7 +11,7 @@
     <RelativePanel
         Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}"
         Padding="4"
-        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
+        Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" >
         
         <TextBlock 
             RelativePanel.AlignLeftWithPanel="True" 

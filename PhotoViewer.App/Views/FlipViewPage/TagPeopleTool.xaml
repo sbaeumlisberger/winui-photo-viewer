@@ -52,7 +52,7 @@
                             RenderTransformOrigin="0.5,0"
                             RenderTransform="{StaticResource UIScaleTransform}">
                             <Border                                 
-                                Background="{ThemeResource PageBackgroundBrush}"
+                                Background="{ThemeResource PhotoViewerPageBackgroundBrush}"
                                 Margin="0,4,0,0"
                                 Padding="8,2,8,4"
                                 CornerRadius="4">
@@ -128,7 +128,7 @@
                 <StackPanel
                     Margin="0,8,0,8"     
                     Orientation="Horizontal"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
                     CornerRadius="4">
                     <controls:AutoSuggestionBox
                         x:Name="autoSuggestBox"                                         

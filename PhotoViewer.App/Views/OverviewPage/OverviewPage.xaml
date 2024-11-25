@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Name="uc"
-    Background="{ThemeResource PageBackgroundBrush}">
+    Background="{ThemeResource PhotoViewerPageBackgroundBrush}">
 
     <Page.Resources>
         <local:MediaFileContextMenuHolder x:Name="mediaFileContextMenuHolder" DataContext="{x:Bind ViewModel.ContextMenuModel}"/>
