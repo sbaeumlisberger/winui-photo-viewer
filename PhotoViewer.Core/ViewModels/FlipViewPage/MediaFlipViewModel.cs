@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using Essentials.NET.Logging;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
@@ -131,6 +132,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
             ShowLoadingUI = true;
 
             SetFiles(Array.Empty<IMediaFileInfo>());
+            lastDeletedFileInfo = null;
 
             bool preview = false;
 
@@ -403,14 +405,20 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
             Items.Insert(lastDeletedFileInfo.Index, lastDeletedFileInfo.File);
 
+            if (SelectedItem is null)
+            {
+                UpdateFlipViewItemModels(lastDeletedFileInfo.File);
+                SelectedItem = lastDeletedFileInfo.File;
+            }
+
             Messenger.Send(new MediaFileRestoredMessage(lastDeletedFileInfo.File, lastDeletedFileInfo.Index));
 
-            InfoBarModel.ShowMessage($"File {lastDeletedFileInfo.File.DisplayName} restored");
+            InfoBarModel.ShowMessage(string.Format(Strings.FileRestoredMessage, lastDeletedFileInfo.File.DisplayName));
         }
         catch (Exception e)
         {
             Log.Error("Failed to restore file", e);
-            InfoBarModel.ShowMessage($"Could not restore {lastDeletedFileInfo.File.DisplayName}", InfoBarSeverity.Error);
+            InfoBarModel.ShowMessage(string.Format(Strings.RestoreFileFailedMessage, lastDeletedFileInfo.File.DisplayName), InfoBarSeverity.Error);
         }
     }
 

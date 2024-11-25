@@ -243,4 +243,10 @@
   <data name="RestoreDeletedFileLabel" xml:space="preserve">
     <value>Restore</value>
   </data>
+  <data name="FileRestoredMessage" xml:space="preserve">
+    <value>The file "{0}" has been restored successfully</value>
+  </data>
+  <data name="RestoreFileFailedMessage" xml:space="preserve">
+    <value>The file "{0}" could not be restored</value>
+  </data>
 </root>

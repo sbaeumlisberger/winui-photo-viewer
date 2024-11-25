@@ -35,16 +35,27 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
     partial void ConnectToViewModel(MediaFlipViewModel viewModel)
     {
         viewModel.DeleteAnimationRequested += ViewModel_DeleteAnimationRequested;
+        viewModel.Subscribe(this, nameof(viewModel.SelectedItem), ViewModel_SelectedItemChanged);
     }
 
     partial void DisconnectFromViewModel(MediaFlipViewModel viewModel)
     {
         viewModel.DeleteAnimationRequested -= ViewModel_DeleteAnimationRequested;
+        viewModel.UnsubscribeAll(this);
     }
 
     private void ViewModel_DeleteAnimationRequested(object? sender, AsyncEventArgs e)
     {
         e.AddTask(DeleteStoryboard.RunAsync());
+    }
+
+    private void ViewModel_SelectedItemChanged()
+    {
+        if (ViewModel!.SelectedItem is not null && flipView.ContainerFromItem(ViewModel.SelectedItem) is ContentControl container)
+        {
+            var flipViewItem = (FrameworkElement)((Border)container.ContentTemplateRoot).Child;
+            flipViewItem.DataContext = ViewModel.TryGetItemModel(ViewModel.SelectedItem);
+        }
     }
 
     private void FlipView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -81,12 +92,6 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         {
             // update view model when selection was changed by the user
             ViewModel!.Select((IMediaFileInfo?)flipView.SelectedItem);
-
-            if (ViewModel.SelectedItem is not null && flipView.ContainerFromItem(ViewModel.SelectedItem) is ContentControl container)
-            {
-                var flipViewItem = (FrameworkElement)((Border)container.ContentTemplateRoot).Child;
-                flipViewItem.DataContext = ViewModel.TryGetItemModel(ViewModel.SelectedItem);
-            }
         }
         else if (ViewModel!.SelectedItem != null && flipView.SelectedItem != ViewModel.SelectedItem)
         {

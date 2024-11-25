@@ -133,6 +133,15 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The file &quot;{0}&quot; has been restored successfully.
+        /// </summary>
+        public static string FileRestoredMessage {
+            get {
+                return ResourceManager.GetString("FileRestoredMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occurred while reading the selected GPX file: {0}.
         /// </summary>
         public static string ImportGpxTrackDialog_GpxFileParseErrorMessage {
@@ -327,6 +336,15 @@ namespace PhotoViewer.Core.Resources {
         public static string RestoreDeletedFileLabel {
             get {
                 return ResourceManager.GetString("RestoreDeletedFileLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file &quot;{0}&quot; could not be restored.
+        /// </summary>
+        public static string RestoreFileFailedMessage {
+            get {
+                return ResourceManager.GetString("RestoreFileFailedMessage", resourceCulture);
             }
         }
         
