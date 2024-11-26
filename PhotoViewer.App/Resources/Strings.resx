@@ -190,19 +190,19 @@
     <value>Continue</value>
   </data>
   <data name="DeleteSingleRawFilesDialog_ErrorMessage" xml:space="preserve">
-    <value>Not all RAW files could be deleted. The following errors occurred:</value>
+    <value>Not all raw files could be deleted. The following errors occurred:</value>
   </data>
   <data name="DeleteSingleRawFilesDialog_InProgressMessage" xml:space="preserve">
-    <value>Single RAW files are deleted.</value>
+    <value>Single raw files are deleted.</value>
   </data>
   <data name="DeleteSingleRawFilesDialog_SuccessMessage" xml:space="preserve">
-    <value>All single RAW files were successfully deleted.</value>
+    <value>All single raw files were successfully deleted.</value>
   </data>
   <data name="DeleteSingleRawFilesDialog_Title" xml:space="preserve">
-    <value>Delete single RAW files</value>
+    <value>Delete single raw files</value>
   </data>
   <data name="DeleteSingleRawFilesUICommand_Label" xml:space="preserve">
-    <value>Delete single RAW files</value>
+    <value>Delete single raw files</value>
   </data>
   <data name="DetailsBar_ColorSpaceAdobeRGB" xml:space="preserve">
     <value>Adobe RGB color space</value>
@@ -517,16 +517,16 @@
     <value>Not all files could be moved. The following errors occurred:</value>
   </data>
   <data name="MoveRawFilesToSubfolderDialog_InProgressMessage" xml:space="preserve">
-    <value>Moving RAW files to subfolder.</value>
+    <value>Moving raw files to subfolder.</value>
   </data>
   <data name="MoveRawFilesToSubfolderDialog_SuccessMessage" xml:space="preserve">
-    <value>All RAW files were successfully moved to a subfolder.</value>
+    <value>All raw files were successfully moved to a subfolder.</value>
   </data>
   <data name="MoveRawFilesToSubfolderDialog_Title" xml:space="preserve">
-    <value>Move RAW files to subfolder.</value>
+    <value>Move raw files to subfolder.</value>
   </data>
   <data name="MoveRawFilesToSubfolderUICommand_Label" xml:space="preserve">
-    <value>Move RAW files to subfolder</value>
+    <value>Move raw files to subfolder</value>
   </data>
   <data name="PrefixFilesByDateDialog_ConfirmationMessage" xml:space="preserve">
     <value>Do you really want to rename all files sorted by date taken with a sequential number as prefix?</value>
@@ -730,7 +730,7 @@
     <value>Enable debug log (requires restart)</value>
   </data>
   <data name="SettingsPage_LinkRawFilesDescripiton" xml:space="preserve">
-    <value>Normal and raw image files are shown as one file</value>
+    <value>Raw files and normal image files, such as jpeg files, are displayed as one file.</value>
   </data>
   <data name="SettingsPage_LinkRawFilesHeader" xml:space="preserve">
     <value>Link raw files</value>
@@ -745,7 +745,7 @@
     <value>Open log file</value>
   </data>
   <data name="SettingsPage_RawFilesFolderNameDescription" xml:space="preserve">
-    <value>Specifies the name of a subfolder to search for raw files</value>
+    <value>Specifies the name of a subfolder to search for raw files.</value>
   </data>
   <data name="SettingsPage_RawFilesFolderNameHeader" xml:space="preserve">
     <value>Folder name for raw files</value>

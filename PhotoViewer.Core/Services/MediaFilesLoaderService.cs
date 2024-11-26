@@ -37,7 +37,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
         {
             var files = await fileSystemService.ListFilesAsync(storageFolder).ConfigureAwait(false);
 
-            if (!string.IsNullOrEmpty(config.RAWsFolderName))
+            if (config.LinkRAWs && !string.IsNullOrEmpty(config.RAWsFolderName))
             {
                 string rawsFolderPath = Path.Combine(storageFolder.Path, config.RAWsFolderName);
 
@@ -119,7 +119,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             }
         }
 
-        if (!string.IsNullOrEmpty(config.RAWsFolderName))
+        if (config.LinkRAWs && !string.IsNullOrEmpty(config.RAWsFolderName))
         {
             string? directory = Path.GetDirectoryName(startMediaFile?.FilePath);
 

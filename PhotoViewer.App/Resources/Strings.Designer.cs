@@ -277,7 +277,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Not all RAW files could be deleted. The following errors occurred:.
+        ///   Looks up a localized string similar to Not all raw files could be deleted. The following errors occurred:.
         /// </summary>
         internal static string DeleteSingleRawFilesDialog_ErrorMessage {
             get {
@@ -286,7 +286,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single RAW files are deleted..
+        ///   Looks up a localized string similar to Single raw files are deleted..
         /// </summary>
         internal static string DeleteSingleRawFilesDialog_InProgressMessage {
             get {
@@ -295,7 +295,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All single RAW files were successfully deleted..
+        ///   Looks up a localized string similar to All single raw files were successfully deleted..
         /// </summary>
         internal static string DeleteSingleRawFilesDialog_SuccessMessage {
             get {
@@ -304,7 +304,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete single RAW files.
+        ///   Looks up a localized string similar to Delete single raw files.
         /// </summary>
         internal static string DeleteSingleRawFilesDialog_Title {
             get {
@@ -313,7 +313,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete single RAW files.
+        ///   Looks up a localized string similar to Delete single raw files.
         /// </summary>
         internal static string DeleteSingleRawFilesUICommand_Label {
             get {
@@ -1447,7 +1447,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Moving RAW files to subfolder..
+        ///   Looks up a localized string similar to Moving raw files to subfolder..
         /// </summary>
         internal static string MoveRawFilesToSubfolderDialog_InProgressMessage {
             get {
@@ -1456,7 +1456,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All RAW files were successfully moved to a subfolder..
+        ///   Looks up a localized string similar to All raw files were successfully moved to a subfolder..
         /// </summary>
         internal static string MoveRawFilesToSubfolderDialog_SuccessMessage {
             get {
@@ -1465,7 +1465,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Move RAW files to subfolder..
+        ///   Looks up a localized string similar to Move raw files to subfolder..
         /// </summary>
         internal static string MoveRawFilesToSubfolderDialog_Title {
             get {
@@ -1474,7 +1474,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Move RAW files to subfolder.
+        ///   Looks up a localized string similar to Move raw files to subfolder.
         /// </summary>
         internal static string MoveRawFilesToSubfolderUICommand_Label {
             get {
@@ -2131,7 +2131,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Normal and raw image files are shown as one file.
+        ///   Looks up a localized string similar to Raw files and normal image files, such as jpeg files, are displayed as one file..
         /// </summary>
         internal static string SettingsPage_LinkRawFilesDescripiton {
             get {
@@ -2176,7 +2176,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Specifies the name of a subfolder to search for raw files.
+        ///   Looks up a localized string similar to Specifies the name of a subfolder to search for raw files..
         /// </summary>
         internal static string SettingsPage_RawFilesFolderNameDescription {
             get {

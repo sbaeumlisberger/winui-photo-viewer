@@ -193,16 +193,16 @@
     <value>Es konnten nicht alle RAW-Dateien gelöscht werden. Folgende Fehler sind aufgetreten:</value>
   </data>
   <data name="DeleteSingleRawFilesDialog_InProgressMessage" xml:space="preserve">
-    <value>Einzelne RAW-Dateien werden gelöscht.</value>
+    <value>Einzelne Raw-Dateien werden gelöscht.</value>
   </data>
   <data name="DeleteSingleRawFilesDialog_SuccessMessage" xml:space="preserve">
-    <value>Alle einzelne RAW-Dateien wurden erfolgreich gelöscht.</value>
+    <value>Alle einzelne Raw-Dateien wurden erfolgreich gelöscht.</value>
   </data>
   <data name="DeleteSingleRawFilesDialog_Title" xml:space="preserve">
-    <value>Einzelne RAW-Dateien löschen</value>
+    <value>Einzelne Raw-Dateien löschen</value>
   </data>
   <data name="DeleteSingleRawFilesUICommand_Label" xml:space="preserve">
-    <value>Einzelne RAW-Dateien löschen</value>
+    <value>Einzelne Raw-Dateien löschen</value>
   </data>
   <data name="DetailsBar_ColorSpaceAdobeRGB" xml:space="preserve">
     <value>Adobe-RGB-Farbraum</value>
@@ -508,7 +508,7 @@
     <value>Titel hinzufügen</value>
   </data>
   <data name="MoveRawFilesToSubfolderDialog_ConfirmationMessage" xml:space="preserve">
-    <value>Möchten Sie wirklich alle RAW-Dateien in einen Unterordner verschieben?</value>
+    <value>Möchten Sie wirklich alle Raw-Dateien in einen Unterordner verschieben?</value>
   </data>
   <data name="MoveRawFilesToSubfolderDialog_Continue" xml:space="preserve">
     <value>Fortfahren</value>
@@ -517,16 +517,16 @@
     <value>Es konnten nicht alle Dateien verschoben werden. Folgende Fehler sind aufgetreten:</value>
   </data>
   <data name="MoveRawFilesToSubfolderDialog_InProgressMessage" xml:space="preserve">
-    <value>RAW-Dateien werden in Unterordner verschoben.</value>
+    <value>Raw-Dateien werden in Unterordner verschoben.</value>
   </data>
   <data name="MoveRawFilesToSubfolderDialog_SuccessMessage" xml:space="preserve">
-    <value>Alle RAW-Dateien wurden erfolgreich in einen Unterordner verschoben.</value>
+    <value>Alle Raw-Dateien wurden erfolgreich in einen Unterordner verschoben.</value>
   </data>
   <data name="MoveRawFilesToSubfolderDialog_Title" xml:space="preserve">
-    <value>RAW-Dateien in Unterordner verschieben.</value>
+    <value>Raw-Dateien in Unterordner verschieben.</value>
   </data>
   <data name="MoveRawFilesToSubfolderUICommand_Label" xml:space="preserve">
-    <value>RAW-Dateien in Unterordner verschieben</value>
+    <value>Raw-Dateien in Unterordner verschieben</value>
   </data>
   <data name="PrefixFilesByDateDialog_ConfirmationMessage" xml:space="preserve">
     <value>Möchten Sie wirklich alle Dateien sortiert nach Aufnahmedatum mit einer fortlaufenden Nummer als Präfix umbenennen?</value>
@@ -730,7 +730,7 @@
     <value>Debug Log aktivieren (erfodert Neustart)</value>
   </data>
   <data name="SettingsPage_LinkRawFilesDescripiton" xml:space="preserve">
-    <value>Normale Dateien und Raw-Dateien werden als eine Datei angezeigt</value>
+    <value>Raw-Dateien und normale Bilddateien, wie z.B. jpeg-Dateien, werden als eine Datei angezeigt.</value>
   </data>
   <data name="SettingsPage_LinkRawFilesHeader" xml:space="preserve">
     <value>Raw-Dateien verlinken</value>
@@ -745,7 +745,7 @@
     <value>Logdatei öffnen</value>
   </data>
   <data name="SettingsPage_RawFilesFolderNameDescription" xml:space="preserve">
-    <value>Spezifziert den Namen für einen Unterordner der nach Raw-Dateien durchsucht wird</value>
+    <value>Spezifziert den Namen für einen Unterordner der nach Raw-Dateien durchsucht wird.</value>
   </data>
   <data name="SettingsPage_RawFilesFolderNameHeader" xml:space="preserve">
     <value>Ordnername für Raw-Dateien</value>
