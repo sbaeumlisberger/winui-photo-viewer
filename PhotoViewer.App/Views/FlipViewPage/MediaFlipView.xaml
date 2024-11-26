@@ -123,21 +123,28 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
             Margin="12"
-            Opacity="0.8" 
             Severity="{x:Bind ViewModel.InfoBarModel.Severity, Mode=OneWay}"
             IsOpen="{x:Bind ViewModel.InfoBarModel.IsOpen, Mode=OneWay}"
             Message="{x:Bind ViewModel.InfoBarModel.Message, Mode=OneWay}"
             LosingFocus="InfoBar_LosingFocus">
             <InfoBar.Resources>
                 <ResourceDictionary>
-                    <ResourceDictionary.ThemeDictionaries>
-                        <ResourceDictionary x:Key="Light">
-                            <SolidColorBrush x:Key="InfoBarInformationalSeverityBackgroundBrush" Color="#F3F3F3"/>
-                        </ResourceDictionary>
-                        <ResourceDictionary x:Key="Dark">
-                            <SolidColorBrush x:Key="InfoBarInformationalSeverityBackgroundBrush" Color="#202020"/>
-                        </ResourceDictionary>
-                    </ResourceDictionary.ThemeDictionaries>
+                    <SolidColorBrush 
+                        x:Key="InfoBarInformationalSeverityBackgroundBrush" 
+                        Color="{ThemeResource SystemFillColorSolidAttentionBackground}"
+                        Opacity="0.8"/>
+                    <SolidColorBrush 
+                        x:Key="InfoBarSuccessSeverityBackgroundBrush" 
+                        Color="{ThemeResource SystemFillColorSuccessBackground}"
+                        Opacity="0.8"/>
+                    <SolidColorBrush                         
+                        x:Key="InfoBarWarningSeverityBackgroundBrush"
+                        Color="{ThemeResource SystemFillColorCautionBackground}" 
+                        Opacity="0.8"/>
+                    <SolidColorBrush 
+                        x:Key="InfoBarErrorSeverityBackgroundBrush"
+                        Color="{ThemeResource SystemFillColorCriticalBackground}" 
+                        Opacity="0.8"/>
                 </ResourceDictionary>
             </InfoBar.Resources>
             <InfoBar.ActionButton>
