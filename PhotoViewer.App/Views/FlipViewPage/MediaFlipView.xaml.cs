@@ -53,6 +53,8 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
     {
         if (ViewModel!.SelectedItem is not null && flipView.ContainerFromItem(ViewModel.SelectedItem) is ContentControl container)
         {
+            container.MinHeight = flipView.ActualHeight;
+
             var flipViewItem = (FrameworkElement)((Border)container.ContentTemplateRoot).Child;
             flipViewItem.DataContext = ViewModel.TryGetItemModel(ViewModel.SelectedItem);
         }
@@ -166,6 +168,14 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         if (!args.TrySetNewFocusedElement(flipView))
         {
             await flipView.TryFocusAsync();
+        }
+    }
+
+    private void FlipView_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (flipView.ContainerFromItem(flipView.SelectedItem) is FrameworkElement container)
+        {
+            container.MinHeight = e.NewSize.Height;
         }
     }
 }

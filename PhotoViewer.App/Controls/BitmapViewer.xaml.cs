@@ -336,7 +336,7 @@ public sealed partial class BitmapViewer : UserControl
     private void Debug(string message)
     {
 #if DEBUG
-        Log.Debug($"BitmapViewer({debugId}): {message}");
+        //Log.Debug($"BitmapViewer({debugId}): {message}");
 #endif
     }
 

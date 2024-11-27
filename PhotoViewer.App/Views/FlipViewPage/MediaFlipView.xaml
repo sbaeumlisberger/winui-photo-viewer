@@ -32,7 +32,8 @@
             Background="{x:Bind ToFlipViewBackground(ViewModel.IsDiashowActive), Mode=OneWay}"
             Tapped="FlipView_Tapped"
             KeyDown="FlipView_KeyDown"
-            LosingFocus="FlipView_LosingFocus">
+            LosingFocus="FlipView_LosingFocus"
+            SizeChanged="FlipView_SizeChanged">
             <FlipView.ItemTemplateSelector>
                 <local:MediaFlipViewItemTemplateSelector>
                     <local:MediaFlipViewItemTemplateSelector.BitmapFileInfoTemplate>
