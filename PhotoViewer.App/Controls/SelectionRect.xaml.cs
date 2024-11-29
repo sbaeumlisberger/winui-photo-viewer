@@ -34,11 +34,7 @@ public sealed partial class SelectionRect : UserControl
 
     private double CornerOffset => -CornerSize / 2;
 
-    private readonly PointerEventHandler pointerReleasedEventHandler;
-    private readonly PointerEventHandler pointerExitedEventHandler;
-
-    private Canvas? canvas;
-    private UIElement? root;
+    private Canvas? Canvas => Parent as Canvas;
 
     private FrameworkElement? activeElement;
     private Point startPointerPosition;
@@ -46,60 +42,32 @@ public sealed partial class SelectionRect : UserControl
 
     public SelectionRect()
     {
-        pointerReleasedEventHandler = new PointerEventHandler(Root_PointerReleased);
-        pointerExitedEventHandler = new PointerEventHandler(Root_PointerExited);
-        Loaded += SelectionRect_Loaded;
-        Unloaded += SelectionRect_Unloaded;
         InitializeComponent();
-        OnUIScaleFactorChanged();
     }
 
     public void HandOverPointerPressedEvent(PointerRoutedEventArgs args)
     {
-        var position = args.GetCurrentPoint(canvas).Position;
+        var position = args.GetCurrentPoint(Canvas).Position;
         SetBounds(new Rect(position.X, position.Y, 0, 0));
         OnPointerPressed(cornerRightBottom, args);
     }
 
     private void SelectionRect_Loaded(object sender, RoutedEventArgs e)
     {
-        canvas = (Canvas)Parent;
-        canvas.PointerMoved += Canvas_PointerMoved;
-
-        root = XamlRoot.Content;
-        root.AddHandler(PointerReleasedEvent, pointerReleasedEventHandler, true);
-        root.AddHandler(PointerExitedEvent, pointerExitedEventHandler, true);
-
         OnAspectRadioChanged();
         OnUIScaleFactorChanged();
     }
 
-    private void SelectionRect_Unloaded(object sender, RoutedEventArgs e)
-    {
-        if (canvas != null)
-        {
-            canvas.PointerMoved -= Canvas_PointerMoved;
-            canvas = null;
-        }
-
-        if (root != null)
-        {
-            root.RemoveHandler(PointerReleasedEvent, pointerReleasedEventHandler);
-            root.RemoveHandler(PointerExitedEvent, pointerExitedEventHandler);
-            root = null;
-        }
-    }
-
     private void OnAspectRadioChanged()
     {
-        if (canvas is null || double.IsNaN(Width) || double.IsNaN(Height))
+        if (Canvas is null || double.IsNaN(Width) || double.IsNaN(Height))
         {
             return;
         }
 
         if (TryGetAspectRadioAsDouble() is double aspectRadio)
         {
-            if (canvas.ActualHeight < canvas.ActualWidth)
+            if (Canvas.ActualHeight < Canvas.ActualWidth)
             {
                 Width = (double)aspectRadio * Height;
             }
@@ -163,25 +131,15 @@ public sealed partial class SelectionRect : UserControl
     private void OnPointerPressed(object sender, PointerRoutedEventArgs args)
     {
         args.Handled = true;
-        activeElement = (FrameworkElement)sender;
+        CapturePointer(args.Pointer);
+        activeElement = (FrameworkElement)sender;        
         ProtectedCursor = InputSystemCursor.Create(GetCursorShapeForElement(activeElement));
-        startPointerPosition = args.GetCurrentPoint(canvas).Position;
+        startPointerPosition = args.GetCurrentPoint(Canvas).Position;
         startBounds = GetBounds();
-        XamlRoot.Content.PointerReleased += OnPointerReleased;
         InteractionStarted?.Invoke(this, EventArgs.Empty);
     }
 
-    private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
-    {
-        EndInteraction();
-    }
-
-    private void Root_PointerReleased(object sender, PointerRoutedEventArgs e)
-    {
-        EndInteraction();
-    }
-
-    private void Root_PointerExited(object sender, PointerRoutedEventArgs e)
+    private void OnPointerCaptureLost(object sender, PointerRoutedEventArgs e)
     {
         EndInteraction();
     }
@@ -193,12 +151,11 @@ public sealed partial class SelectionRect : UserControl
             activeElement = null;
             startPointerPosition = default;
             startBounds = default;
-            XamlRoot.Content.PointerReleased -= OnPointerReleased;
             InteractionEnded?.Invoke(this, EventArgs.Empty);
         }
     }
 
-    private void Canvas_PointerMoved(object sender, PointerRoutedEventArgs args)
+    private void OnPointerMoved(object sender, PointerRoutedEventArgs args)
     {
         if (activeElement is null)
         {
@@ -207,20 +164,20 @@ public sealed partial class SelectionRect : UserControl
 
         args.Handled = true;
 
-        Point currentPointerPosition = args.GetCurrentPoint(canvas).Position;
+        Point currentPointerPosition = args.GetCurrentPoint(Canvas).Position;
         currentPointerPosition.X = Math.Max(0, currentPointerPosition.X);
-        currentPointerPosition.X = Math.Min(canvas!.ActualWidth, currentPointerPosition.X);
+        currentPointerPosition.X = Math.Min(Canvas!.ActualWidth, currentPointerPosition.X);
         currentPointerPosition.Y = Math.Max(0, currentPointerPosition.Y);
-        currentPointerPosition.Y = Math.Min(canvas.ActualHeight, currentPointerPosition.Y);
+        currentPointerPosition.Y = Math.Min(Canvas.ActualHeight, currentPointerPosition.Y);
 
         if (activeElement.Name == rect.Name)
         {
             double newRectX = startBounds.X + currentPointerPosition.X - startPointerPosition.X;
             newRectX = Math.Max(newRectX, 0);
-            newRectX = Math.Min(newRectX, canvas.ActualWidth - startBounds.Width);
+            newRectX = Math.Min(newRectX, Canvas.ActualWidth - startBounds.Width);
             double newRectY = startBounds.Y + currentPointerPosition.Y - startPointerPosition.Y;
             newRectY = Math.Max(newRectY, 0);
-            newRectY = Math.Min(newRectY, canvas.ActualHeight - startBounds.Height);
+            newRectY = Math.Min(newRectY, Canvas.ActualHeight - startBounds.Height);
             SetBounds(new Rect(newRectX, newRectY, startBounds.Width, startBounds.Height));
         }
         else
@@ -235,7 +192,7 @@ public sealed partial class SelectionRect : UserControl
             }
             else if (activeElement.Name == nameof(borderTop))
             {
-                double maxHeight = aspectRadio is null ? canvas.ActualHeight : canvas.ActualWidth / (double)aspectRadio;
+                double maxHeight = aspectRadio is null ? Canvas.ActualHeight : Canvas.ActualWidth / (double)aspectRadio;
                 double height = Math.Min(MathUtils.Diff(startBounds.Bottom, currentPointerPosition.Y), maxHeight);
                 double width = aspectRadio is null ? startBounds.Width : height * (double)aspectRadio;
                 double y = currentPointerPosition.Y < startBounds.Bottom ? startBounds.Bottom - height : startBounds.Bottom;
@@ -250,7 +207,7 @@ public sealed partial class SelectionRect : UserControl
             }
             else if (activeElement.Name == nameof(borderRight))
             {
-                double maxWidth = aspectRadio is null ? canvas.ActualWidth : canvas.ActualHeight * (double)aspectRadio;
+                double maxWidth = aspectRadio is null ? Canvas.ActualWidth : Canvas.ActualHeight * (double)aspectRadio;
                 double width = Math.Min(MathUtils.Diff(startBounds.Left, currentPointerPosition.X), maxWidth);
                 double height = aspectRadio is null ? startBounds.Height : width / (double)aspectRadio;
                 double x = currentPointerPosition.X < startBounds.Left ? startBounds.Left - width : startBounds.Left;
@@ -265,7 +222,7 @@ public sealed partial class SelectionRect : UserControl
             }
             else if (activeElement.Name == nameof(borderBottom))
             {
-                double maxHeight = aspectRadio is null ? canvas.ActualHeight : canvas.ActualWidth / (double)aspectRadio;
+                double maxHeight = aspectRadio is null ? Canvas.ActualHeight : Canvas.ActualWidth / (double)aspectRadio;
                 double height = Math.Min(MathUtils.Diff(startBounds.Top, currentPointerPosition.Y), maxHeight);
                 double width = aspectRadio is null ? startBounds.Width : height * (double)aspectRadio;
                 double y = currentPointerPosition.Y < startBounds.Top ? startBounds.Top - height : startBounds.Top;
@@ -280,7 +237,7 @@ public sealed partial class SelectionRect : UserControl
             }
             else if (activeElement.Name == nameof(borderLeft))
             {
-                double maxWidth = aspectRadio is null ? canvas.ActualWidth : canvas.ActualHeight * (double)aspectRadio;
+                double maxWidth = aspectRadio is null ? Canvas.ActualWidth : Canvas.ActualHeight * (double)aspectRadio;
                 double width = Math.Min(MathUtils.Diff(startBounds.Right, currentPointerPosition.X), maxWidth);
                 double height = aspectRadio is null ? startBounds.Height : width / (double)aspectRadio;
                 double x = currentPointerPosition.X < startBounds.Right ? startBounds.Right - width : startBounds.Right;
