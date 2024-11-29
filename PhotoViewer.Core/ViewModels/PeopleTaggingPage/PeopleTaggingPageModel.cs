@@ -114,7 +114,7 @@ public partial class PeopleTaggingPageModel : ViewModelBase
             var peopleTags = await metadataService.GetMetadataAsync(file, MetadataProperties.People);
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (peopleTags.Count != 0)
+            if (peopleTags.Count == 0)
             {
                 await DetectFacesAsync(imageLoaderService, file, cancellationToken).ConfigureAwait(false);
             }
