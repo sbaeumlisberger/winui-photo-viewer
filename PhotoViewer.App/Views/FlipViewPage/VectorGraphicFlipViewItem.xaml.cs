@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using PhotoViewer.App.Controls;
 using PhotoViewer.App.Utils;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
@@ -47,7 +48,14 @@ public sealed partial class VectorGraphicFlipViewItem : UserControl, IMVVMContro
         {
             if (ViewModel!.IsDiashowActive)
             {
-                scrollViewer.ChangeView(0, 0, 1);
+                scrollViewer.ChangeView(0, 0, 1, true);
+            }
+        }
+        else if (e.PropertyName == nameof(ViewModel.IsSelected))
+        {
+            if (!ViewModel!.IsSelected)
+            {
+                scrollViewer.ChangeView(0, 0, 1, true);
             }
         }
     }

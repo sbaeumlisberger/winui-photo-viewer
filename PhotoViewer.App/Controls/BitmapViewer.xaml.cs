@@ -119,7 +119,7 @@ public sealed partial class BitmapViewer : UserControl
 
         if (scrollViewer.ZoomFactor != 1)
         {
-            scrollViewer.ChangeView(0, 0, 1);
+            scrollViewer.ChangeView(0, 0, 1, true);
         }
 
         UpdateScrollDummy();

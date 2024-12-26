@@ -24,24 +24,30 @@ internal static class ScrollViewerExtension
 
     private class AdvancedScrollViewerZoomBehaviour
     {
-
         private readonly ScrollViewer scrollViewer;
+
+        private readonly PointerEventHandler pointerWheelChangedEventHandler;
 
         private uint pointerId;
 
         private Point lastPointerPosition;
 
-        private bool isViewChangeInProgess = false;
+        private bool isViewChangeInProgress = false;
+
+        private DateTimeOffset lastChangeViewCallTimestamp = DateTimeOffset.MinValue;
 
         public AdvancedScrollViewerZoomBehaviour(ScrollViewer scrollViewer)
         {
             this.scrollViewer = scrollViewer;
+
+            pointerWheelChangedEventHandler = new PointerEventHandler(ScrollViewer_PointerWheelChanged);
+
             scrollViewer.ZoomMode = ZoomMode.Disabled;
             scrollViewer.HorizontalScrollMode = ScrollMode.Enabled;
             scrollViewer.VerticalScrollMode = ScrollMode.Enabled;
             scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
             scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-            scrollViewer.PointerWheelChanged += ScrollViewer_PointerWheelChanged;
+            scrollViewer.AddHandler(UIElement.PointerWheelChangedEvent, pointerWheelChangedEventHandler, true);
             scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
 
             var content = (UIElement)scrollViewer.Content;
@@ -52,15 +58,10 @@ internal static class ScrollViewerExtension
             scrollViewer.Unloaded += ScrollViewer_Unloaded;
         }
 
-        private void ScrollViewer_ViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
-        {
-            isViewChangeInProgess = false;
-        }
-
         private void ScrollViewer_Unloaded(object sender, RoutedEventArgs e)
         {
             scrollViewer.Unloaded -= ScrollViewer_Unloaded;
-            scrollViewer.PointerWheelChanged -= ScrollViewer_PointerWheelChanged;
+            scrollViewer.RemoveHandler(UIElement.PointerWheelChangedEvent, pointerWheelChangedEventHandler);
             scrollViewer.ViewChanged -= ScrollViewer_ViewChanged;
             var content = (UIElement)scrollViewer.Content;
             content.PointerWheelChanged -= ScrollViewer_PointerWheelChanged;
@@ -72,19 +73,23 @@ internal static class ScrollViewerExtension
         {
             e.Handled = true;
 
-            if (isViewChangeInProgess)
+            // sometimes the ViewChanged event is not fired, so the flag has to be reset manually after a certain time  
+            if (DateTimeOffset.Now > lastChangeViewCallTimestamp + TimeSpan.FromMilliseconds(500))
+            {
+                isViewChangeInProgress = false;
+            }
+
+            if (isViewChangeInProgress)
             {
                 return;
             }
 
-            isViewChangeInProgess = true;
+            var point = e.GetCurrentPoint((UIElement)sender);
 
-            var content = (UIElement)scrollViewer.Content;
+            int delta = point.Properties.MouseWheelDelta;
 
-            int delta = e.GetCurrentPoint(content).Properties.MouseWheelDelta;
-
-            double x = e.GetCurrentPoint(content).Position.X;
-            double y = e.GetCurrentPoint(content).Position.Y;
+            double x = point.Position.X;
+            double y = point.Position.Y;
 
             float zoomFactor = 0;
             if (delta < 0)
@@ -100,12 +105,13 @@ internal static class ScrollViewerExtension
             double horizontalOffset = scrollViewer.HorizontalOffset + x * zoomDelta;
             double verticalOffset = scrollViewer.VerticalOffset + y * zoomDelta;
 
-            bool doesViewChange = scrollViewer.ChangeView(horizontalOffset, verticalOffset, zoomFactor, true);
+            isViewChangeInProgress = scrollViewer.ChangeView(horizontalOffset, verticalOffset, zoomFactor, true);
+            lastChangeViewCallTimestamp = DateTimeOffset.Now;
+        }
 
-            if (!doesViewChange)
-            {
-                isViewChangeInProgess = false;
-            }
+        private void ScrollViewer_ViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
+        {
+            isViewChangeInProgress = false;
         }
 
         private void Content_PointerPressed(object sender, PointerRoutedEventArgs e)

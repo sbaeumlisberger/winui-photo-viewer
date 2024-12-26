@@ -48,7 +48,7 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
     {
         if (!ViewModel!.IsSelected)
         {
-            bitmapViewer.ScrollViewer.ChangeView(0, 0, 1);
+            bitmapViewer.ScrollViewer.ChangeView(0, 0, 1, true);
         }
     }
 
