@@ -9,7 +9,7 @@
 	<Identity
 	  Name="0ea2fe07-2b84-45b5-8887-6da1918642b3"
 	  Publisher="C=DE, CN=Sebastian Bäumlisberger"
-	  Version="5.3.3.0" />
+	  Version="5.3.4.0" />
 
 	<Properties>
 		<DisplayName>Universe Photos</DisplayName>
