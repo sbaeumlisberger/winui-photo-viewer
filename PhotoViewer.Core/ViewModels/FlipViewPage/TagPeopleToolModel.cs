@@ -232,9 +232,9 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
             return;
         }
 
-        var faceRect = ReverseRotateRect(SelectionRectInPercent, orientation);
+        var faceRect = PeopleTagUtil.ToFaceRect(SelectionRectInPercent, orientation);
 
-        people.Add(new PeopleTag(personName, new FaceRect(faceRect.X, faceRect.Y, faceRect.Width, faceRect.Height)));
+        people.Add(new PeopleTag(personName, faceRect));
 
         try
         {
@@ -288,18 +288,6 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
                  UIScaleFactor = UIScaleFactor,
              })
              .ToList();
-    }
-
-    private Rect ReverseRotateRect(Rect rect, PhotoOrientation orientation)
-    {
-        return orientation switch
-        {
-            PhotoOrientation.Normal or PhotoOrientation.Unspecified => rect,
-            PhotoOrientation.Rotate90 => new Rect(1 - rect.Bottom, rect.X, rect.Height, rect.Width),
-            PhotoOrientation.Rotate180 => new Rect(1 - rect.Right, 1 - rect.Bottom, rect.Width, rect.Height),
-            PhotoOrientation.Rotate270 => new Rect(rect.Y, 1 - rect.Right, rect.Height, rect.Width),
-            _ => throw new NotSupportedException("Unsupported orientation: " + orientation),
-        };
     }
 
     private Rect RotateRect(Rect rect, PhotoOrientation orientation)

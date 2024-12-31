@@ -79,8 +79,10 @@ public partial class PeopleTaggingPageModel : ViewModelBase
         {
             foreach (var face in SelectedFaces)
             {
+                var orientation = await metadataService.GetMetadataAsync(face.File, MetadataProperties.Orientation);
                 var peopleTags = await metadataService.GetMetadataAsync(face.File, MetadataProperties.People);
-                peopleTags.Append(new PeopleTag(name, face.FaceRectInPercent)).ToArray();
+                var faceRect = PeopleTagUtil.ToFaceRect(face.FaceRectInPercent, orientation);
+                peopleTags = peopleTags.Append(new PeopleTag(name, faceRect)).ToList();
                 await metadataService.WriteMetadataAsync(face.File, MetadataProperties.People, peopleTags);
                 DetectedFaces.Remove(face);
                 await peopleSuggestionsService.AddSuggestionAsync(name);
@@ -97,7 +99,7 @@ public partial class PeopleTaggingPageModel : ViewModelBase
     {
         if (e.PropertyName == nameof(NameSearch))
         {
-            AllPeopleNames = peopleSuggestionsService.GetAll(NameSearch);          
+            AllPeopleNames = peopleSuggestionsService.GetAll(NameSearch);
         }
     }
 
@@ -178,13 +180,13 @@ public partial class PeopleTaggingPageModel : ViewModelBase
         });
     }
 
-    private FaceRect ToFaceRectInPercent(BitmapBounds rect, BitmapSize bitmapSize)
+    private Rect ToFaceRectInPercent(BitmapBounds rect, BitmapSize bitmapSize)
     {
-        return new FaceRect(
-            rect.X / bitmapSize.Width,
-            rect.Y / bitmapSize.Height,
-            rect.Width / bitmapSize.Width,
-            rect.Height / bitmapSize.Height);
+        return new Rect(
+            rect.X / (double)bitmapSize.Width,
+            rect.Y / (double)bitmapSize.Height,
+            rect.Width / (double)bitmapSize.Width,
+            rect.Height / (double)bitmapSize.Height);
     }
 
     private Rect ExtendFaceBox(BitmapBounds faceBox, double factor, BitmapSize imageSize)

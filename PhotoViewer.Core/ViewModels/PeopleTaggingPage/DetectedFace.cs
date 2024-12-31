@@ -1,11 +1,11 @@
-﻿using MetadataAPI.Data;
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using PhotoViewer.Core.Models;
+using Windows.Foundation;
 
 namespace PhotoViewer.Core.ViewModels;
 
 public record DetectedFace(
-    FaceRect FaceRectInPercent,
+    Rect FaceRectInPercent,
     ICanvasImage FaceImage,
     IBitmapFileInfo File,
     CanvasBitmap SourceImage);
