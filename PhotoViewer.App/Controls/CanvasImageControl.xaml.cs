@@ -10,6 +10,7 @@ using PhotoViewer.App.Utils;
 using System;
 using System.Diagnostics;
 using System.Numerics;
+using Windows.Foundation;
 
 namespace PhotoViewer.App.Controls;
 
@@ -108,13 +109,16 @@ public sealed partial class CanvasImageControl : UserControl
         }
         try
         {
-            var scaledImage = new ScaleEffect()
-            {
-                Source = CanvasImage,
-                Scale = new Vector2((float)scaleFactor),
-            };
+            var imageBounds = CanvasImage.GetBounds(CanvasDevice.GetSharedDevice());
 
-            args.DrawingSession.DrawImage(scaledImage);
+            float width = (float)(imageBounds.Width * scaleFactor);
+            float height = (float)(imageBounds.Height * scaleFactor);
+            float x = (float)((canvasControl!.Width - width) / 2);
+            float y = (float)((canvasControl!.Height - height) / 2);
+
+            var dstRect = new Rect(x, y, width, height);
+
+            args.DrawingSession.DrawImage(CanvasImage, dstRect, imageBounds, 1, CanvasImageInterpolation.HighQualityCubic);
         }
         catch (Exception ex)
         {
