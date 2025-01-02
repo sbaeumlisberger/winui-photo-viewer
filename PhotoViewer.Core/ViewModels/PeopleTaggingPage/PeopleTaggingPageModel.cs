@@ -12,7 +12,6 @@ using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Graphics.Imaging;
 using Rect = Windows.Foundation.Rect;
 
@@ -73,7 +72,7 @@ public partial class PeopleTaggingPageModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task NameSelected(string name)
+    private async Task NameSelectedAsync(string name)
     {
         try
         {
@@ -99,7 +98,14 @@ public partial class PeopleTaggingPageModel : ViewModelBase
     {
         if (e.PropertyName == nameof(NameSearch))
         {
-            AllPeopleNames = peopleSuggestionsService.GetAll(NameSearch);
+            var allPeopleNames = peopleSuggestionsService.GetAll(NameSearch);
+
+            if (!string.IsNullOrEmpty(NameSearch) && !allPeopleNames.Contains(NameSearch))
+            {
+                allPeopleNames.Add(NameSearch);
+            }
+
+            AllPeopleNames = allPeopleNames;      
         }
     }
 
