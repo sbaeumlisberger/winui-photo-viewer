@@ -20,25 +20,25 @@ public interface IDetailsBarModel : IViewModel
 
 public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 {
-    public IMediaFlipViewItemModel? SelectedItemModel { get; set; }
+    public partial IMediaFlipViewItemModel? SelectedItemModel { get; set; }
 
-    public bool IsVisible { get; set; } = false;
+    public partial bool IsVisible { get; set; } = false;
 
     public bool ShowNoInformationAvailableMessage => SelectedItemModel == null;
 
-    public string DateFormatted { get; private set; } = string.Empty;
+    public partial string DateFormatted { get; private set; } = string.Empty;
 
-    public string FileName { get; private set; } = string.Empty;
+    public partial string FileName { get; private set; } = string.Empty;
 
-    public bool ShowColorProfileIndicator { get; private set; } = false;
+    public partial bool ShowColorProfileIndicator { get; private set; } = false;
 
-    public ColorSpaceType ColorSpaceType { get; private set; } = ColorSpaceType.NotSpecified;
+    public partial ColorSpaceType ColorSpaceType { get; private set; } = ColorSpaceType.NotSpecified;
 
-    public string SizeInPixels { get; private set; } = string.Empty;
+    public partial string SizeInPixels { get; private set; } = string.Empty;
 
-    public string CameraDetails { get; private set; } = string.Empty;
+    public partial string CameraDetails { get; private set; } = string.Empty;
 
-    public string FileSize { get; private set; } = string.Empty;
+    public partial string FileSize { get; private set; } = string.Empty;
 
     private readonly IMetadataService metadataService;
 

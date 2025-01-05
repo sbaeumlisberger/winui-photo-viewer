@@ -6,8 +6,8 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class ManageKeywordsDialogModel : ViewModelBase
 {
-    public IReadOnlyList<string> Keywords { get; set; } = new List<string>();
-    public string SearchText { get; set; } = string.Empty;
+    public partial IReadOnlyList<string> Keywords { get; set; } = new List<string>();
+    public partial string SearchText { get; set; } = string.Empty;
 
     private readonly ISuggestionsService suggestionsService;
     private readonly IDialogService dialogService;

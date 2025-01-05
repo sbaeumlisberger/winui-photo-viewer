@@ -29,7 +29,11 @@ public class ObservableObjectBase : ObservableObject
         subscriptions
             .Where(subscription => subscription.PropertyName == e.PropertyName)
             .ForEach(subscription => subscription.Callback());
+
+        _NotifyComputedPropertyChanged(e.PropertyName);
     }
+
+    protected virtual void _NotifyComputedPropertyChanged(string? propertyName) { }
 
     public Subsciption Subscribe(object subscriber, string propertyName, Action callback, bool initialCallback = false)
     {

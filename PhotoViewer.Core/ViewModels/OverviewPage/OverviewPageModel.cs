@@ -15,13 +15,13 @@ public partial class OverviewPageModel : ViewModelBase
 
     public IMediaFileContextMenuModel ContextMenuModel { get; }
 
-    public IObservableReadOnlyList<IMediaFileInfo> Items { get; private set; } = new ObservableList<IMediaFileInfo>();
+    public partial IObservableReadOnlyList<IMediaFileInfo> Items { get; private set; } = new ObservableList<IMediaFileInfo>();
 
-    public IReadOnlyList<IMediaFileInfo> SelectedItems { get; set; } = Array.Empty<IMediaFileInfo>();
+    public partial IReadOnlyList<IMediaFileInfo> SelectedItems { get; set; } = Array.Empty<IMediaFileInfo>();
 
     public IOverviewPageCommandBarModel OverviewPageCommandBarModel { get; }
 
-    public bool ShowLoadingUI { get; set; } = false;
+    public partial bool ShowLoadingUI { get; set; } = false;
 
     private readonly IViewModelFactory viewModelFactory;
 

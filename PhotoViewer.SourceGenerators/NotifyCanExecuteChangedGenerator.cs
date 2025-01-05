@@ -44,7 +44,7 @@ public class NotifyCanExecuteChangedGenerator : IIncrementalGenerator
         {
             if (GenerateCodeForClass(classSymbol) is string code)
             {
-                context.AddSource($"{Utils.GetFullName(classSymbol)}.g.cs", code);
+                context.AddSource($"{Utils.GetFullName(classSymbol)}.NotifyCanExecuteChanged.g.cs", code);
             }
         }
     }

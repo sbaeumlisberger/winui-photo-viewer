@@ -7,9 +7,9 @@ namespace PhotoViewer.Core.ViewModels.Shared;
 
 public partial class BackgroundTasksViewModel : ViewModelBase
 {
-    public bool ShowProgressIndicator { get; private set; } = false;
+    public partial bool ShowProgressIndicator { get; private set; } = false;
 
-    public string StatusText { get; private set; } = "";
+    public partial string StatusText { get; private set; } = "";
 
     private readonly IBackgroundTaskService backgroundTaskService;
 

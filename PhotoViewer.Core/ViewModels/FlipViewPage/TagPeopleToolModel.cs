@@ -26,27 +26,27 @@ public interface ITagPeopleToolModel : IViewModel
 
 public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 {
-    public bool IsEnabled { get; set; } = false;
+    public partial bool IsEnabled { get; set; } = false;
 
-    public bool IsTagPeopleToolActive { get; private set; } = false;
+    public partial bool IsTagPeopleToolActive { get; private set; } = false;
 
     public bool IsSelectionEnabled => IsTagPeopleToolActive && IsEnabled;
 
-    public bool IsUserSelecting { get; private set; } = false;
+    public partial bool IsUserSelecting { get; private set; } = false;
 
     public bool IsNameInputVisible => !IsUserSelecting && !SelectionRectInPercent.IsEmpty;
 
-    public IBitmapImageModel? BitmapImage { get; set; }
+    public partial IBitmapImageModel? BitmapImage { get; set; }
 
-    public float UIScaleFactor { get; set; } = 1;
+    public partial float UIScaleFactor { get; set; } = 1;
 
-    public IReadOnlyList<PeopleTagViewModel> TaggedPeople { get; set; } = [];
+    public partial IReadOnlyList<PeopleTagViewModel> TaggedPeople { get; set; } = [];
 
     public IObservableReadOnlyList<Rect> SuggestedFaces => suggestedFacesInPercent;
 
-    public string AutoSuggestBoxText { get; set; } = string.Empty;
+    public partial string AutoSuggestBoxText { get; set; } = string.Empty;
 
-    public Rect SelectionRectInPercent { get; set; } = Rect.Empty;
+    public partial Rect SelectionRectInPercent { get; set; } = Rect.Empty;
 
     public Task ProcessBitmapImageTask { get; private set; } = Task.CompletedTask;
 

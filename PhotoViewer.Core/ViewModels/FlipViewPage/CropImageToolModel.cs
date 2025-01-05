@@ -29,75 +29,33 @@ public enum AspectRadioMode
 
 public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
 {
-    public float UIScaleFactor { get; set; } = 1;
+    public partial float UIScaleFactor { get; set; } = 1;
 
-    public bool IsEnabled { get; set; }
+    public partial bool IsEnabled { get; set; }
 
-    public bool IsActive { get; private set; }
+    public partial bool IsActive { get; private set; }
 
-    public SizeInt32 ImageSizeInPixels { get; private set; } = default;
+    public partial SizeInt32 ImageSizeInPixels { get; private set; } = default;
 
-    public RectInt32 SelectionInPixels { get; set; } = default;
+    public RectInt32 SelectionInPixels => new RectInt32((int)SelectionXInPixels, (int)SelectionYInPixels, (int)SelectionWidthInPixels, (int)SelectionHeightInPixels);
 
-    public double SelectionWidthInPixels
-    {
-        get => SelectionInPixels.Width;
-        set
-        {
-            if (AspectRadio != Size.Empty)
-            {
-                double aspectRadio = AspectRadio.Width / AspectRadio.Height;
-                SelectionInPixels = new RectInt32(
-                    SelectionInPixels.X,
-                    SelectionInPixels.Y,
-                    (int)value,
-                    (int)Math.Round(value / aspectRadio));
-            }
-            else
-            {
-                SelectionInPixels = new RectInt32(
-                    SelectionInPixels.X,
-                    SelectionInPixels.Y,
-                    (int)value,
-                    SelectionInPixels.Height);
-            }
-        }
-    }
+    public partial double SelectionXInPixels { get; set; }
 
-    public double SelectionHeightInPixels
-    {
-        get => SelectionInPixels.Height;
-        set
-        {
-            if (AspectRadio != Size.Empty)
-            {
-                double aspectRadio = AspectRadio.Width / AspectRadio.Height;
-                SelectionInPixels = new RectInt32(
-                    SelectionInPixels.X,
-                    SelectionInPixels.Y,
-                    (int)Math.Round(value * aspectRadio),
-                    (int)value);
-            }
-            else
-            {
-                SelectionInPixels = new RectInt32(
-                    SelectionInPixels.X,
-                    SelectionInPixels.Y,
-                    SelectionInPixels.Width,
-                    (int)value);
-            }
-        }
-    }
+    public partial double SelectionYInPixels { get; set; }
+
+    public partial double SelectionWidthInPixels { get; set; }
+
+    public partial double SelectionHeightInPixels { get; set; }
 
     public ReadOnlyCollection<AspectRadioMode> AvailableAspectRadioModes = Enum.GetValues<AspectRadioMode>().AsReadOnly();
 
-    public AspectRadioMode AspectRadioMode { get; set; } = AspectRadioMode.Orginal;
+    public partial AspectRadioMode AspectRadioMode { get; set; } = AspectRadioMode.Orginal;
 
     public bool IsFixedAspectRadio => AspectRadioMode == AspectRadioMode.Fixed;
 
-    public double AspectRadioWidth { get; set; } = 3;
+    public partial double AspectRadioWidth { get; set; } = 3;
 
-    public double AspectRadioHeight { get; set; } = 2;
+    public partial double AspectRadioHeight { get; set; } = 2;
 
     public Size AspectRadio => AspectRadioMode == AspectRadioMode.Fixed
         ? new Size(AspectRadioWidth, AspectRadioHeight)
@@ -105,7 +63,7 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
             ? new Size(ImageSizeInPixels.Width, ImageSizeInPixels.Height)
             : Size.Empty;
 
-    public bool CanSave => SelectionInPixels.Width >= 1 && SelectionInPixels.Height >= 1;
+    public bool CanSave => SelectionWidthInPixels >= 1 && SelectionHeightInPixels >= 1;
 
     private readonly ICropImageService cropImageService;
 
@@ -156,6 +114,24 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
             ResetSelection();
         }
     }
+
+    partial void OnSelectionWidthInPixelsChanged()
+    {
+        if (AspectRadio != Size.Empty)
+        {
+            double aspectRadio = AspectRadio.Width / AspectRadio.Height;
+            SelectionHeightInPixels = (int)Math.Round(SelectionWidthInPixels / aspectRadio);
+        }
+    }
+
+    partial void OnSelectionHeightInPixelsChanged()
+    {
+        if (AspectRadio != Size.Empty)
+        {
+            double aspectRadio = AspectRadio.Width / AspectRadio.Height;
+            SelectionWidthInPixels = (int)Math.Round(SelectionHeightInPixels * aspectRadio);
+        }
+    }    
 
     private async Task LoadImageSizeAsync()
     {
@@ -228,10 +204,9 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
 
     private void ResetSelection()
     {
-        SelectionInPixels = new RectInt32(
-            (int)Math.Round(ImageSizeInPixels.Width * 0.1d),
-            (int)Math.Round(ImageSizeInPixels.Height * 0.1d),
-            (int)Math.Round(ImageSizeInPixels.Width * 0.8d),
-            (int)Math.Round(ImageSizeInPixels.Height * 0.8d));
+        SelectionXInPixels = Math.Round(ImageSizeInPixels.Width * 0.1d);
+        SelectionYInPixels = Math.Round(ImageSizeInPixels.Height * 0.1d);
+        SelectionWidthInPixels = Math.Round(ImageSizeInPixels.Width * 0.8d);
+        SelectionHeightInPixels = Math.Round(ImageSizeInPixels.Height * 0.8d);
     }
 }

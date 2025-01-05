@@ -14,13 +14,13 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 {
     public IMediaFileInfo MediaFile { get; }
 
-    public bool IsSelected { get; set; }
+    public partial bool IsSelected { get; set; }
 
-    public bool IsDiashowActive { get; set; }
+    public partial bool IsDiashowActive { get; set; }
 
     public Task PlaybackCompletedTask => playbackCompletionSource.Task;
 
-    public MediaPlayer? MediaPlayer { get; private set; }
+    public partial MediaPlayer? MediaPlayer { get; private set; }
 
     public bool IsContextMenuEnabeld => IsSelected && !IsDiashowActive;
 

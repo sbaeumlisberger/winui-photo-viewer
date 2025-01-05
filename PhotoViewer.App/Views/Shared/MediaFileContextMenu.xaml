@@ -49,7 +49,7 @@
             <MenuFlyoutItem 
                 Icon="Print" Text="{x:Bind res:Strings.MediaFileContextMenu_Print}"
                 Command="{x:Bind ViewModel.PrintCommand, Mode=OneWay}"
-                Visibility="{x:Bind ViewModel.IsPrinItemVisible, Mode=OneWay}">
+                Visibility="{x:Bind ViewModel.IsPrintItemVisible, Mode=OneWay}">
                 <MenuFlyoutItem.KeyboardAccelerators>
                     <KeyboardAccelerator Modifiers="Control" Key="P"/>
                 </MenuFlyoutItem.KeyboardAccelerators>

@@ -17,21 +17,21 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
 
     public IMediaFileInfo MediaFile { get; }
 
-    public string DisplayName { get; private set; }
+    public partial string DisplayName { get; private set; }
 
-    public string NewName { get; set; }
+    public partial string NewName { get; set; }
 
-    public double ThumbnailSize { get; private set; } = 160;
+    public partial double ThumbnailSize { get; private set; } = 160;
 
-    public bool HasKeywords { get; private set; } = false;
+    public partial bool HasKeywords { get; private set; } = false;
 
-    public bool HasPeopleTags { get; private set; } = false;
+    public partial bool HasPeopleTags { get; private set; } = false;
 
-    public bool HasLocation { get; private set; } = false;
+    public partial bool HasLocation { get; private set; } = false;
 
-    public int Rating { get; private set; } = 0;
+    public partial int Rating { get; private set; } = 0;
 
-    public bool IsRenaming { get; private set; } = false;
+    public partial bool IsRenaming { get; private set; } = false;
 
     public bool IsNotRenaming => !IsRenaming;
 

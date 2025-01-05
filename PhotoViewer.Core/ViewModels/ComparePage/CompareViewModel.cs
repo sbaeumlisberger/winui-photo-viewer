@@ -29,9 +29,9 @@ public partial class CompareViewModel : ViewModelBase, ICompareViewModel
 
     public IObservableReadOnlyList<IBitmapFileInfo> BitmapFiles { get; }
 
-    public IBitmapFileInfo? SelectedBitmapFile { get; set; }
+    public partial IBitmapFileInfo? SelectedBitmapFile { get; set; }
 
-    public IImageViewModel? ImageViewModel { get; private set; }
+    public partial IImageViewModel? ImageViewModel { get; private set; }
 
     public bool CanSelectPrevious => SelectedBitmapFile != null && SelectedBitmapFile != BitmapFiles.First();
 

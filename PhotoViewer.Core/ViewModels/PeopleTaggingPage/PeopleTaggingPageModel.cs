@@ -21,13 +21,13 @@ public partial class PeopleTaggingPageModel : ViewModelBase
 {
     public ObservableList<DetectedFace> DetectedFaces { get; } = [];
 
-    public IReadOnlyList<DetectedFace> SelectedFaces { get; set; } = [];
+    public partial IReadOnlyList<DetectedFace> SelectedFaces { get; set; } = [];
 
-    public IReadOnlyList<string> RecentPeopleNames { get; set; } = [];
+    public partial IReadOnlyList<string> RecentPeopleNames { get; set; } = [];
 
-    public IReadOnlyList<string> AllPeopleNames { get; set; } = [];
+    public partial IReadOnlyList<string> AllPeopleNames { get; set; } = [];
 
-    public string NameSearch { get; set; } = string.Empty;
+    public partial string NameSearch { get; set; } = string.Empty;
 
     private readonly IFaceDetectionService faceDetectionService;
 

@@ -10,17 +10,17 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
 {
-    public bool IsNotPresent { get; private set; }
+    public partial bool IsNotPresent { get; private set; }
 
-    public bool IsSingleValue { get; private set; }
+    public partial bool IsSingleValue { get; private set; }
 
-    public bool IsRange { get; private set; }
+    public partial bool IsRange { get; private set; }
 
-    public DateTimeOffset? Date { get; set; }
+    public partial DateTimeOffset? Date { get; set; }
 
-    public TimeSpan? Time { get; set; }
+    public partial TimeSpan? Time { get; set; }
 
-    public string RangeText { get; private set; } = "";
+    public partial string RangeText { get; private set; } = "";
 
     private readonly IMetadataService metadataService;
 

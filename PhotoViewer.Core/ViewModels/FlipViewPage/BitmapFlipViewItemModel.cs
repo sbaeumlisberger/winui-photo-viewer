@@ -14,9 +14,9 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
 {
     public IMediaFileInfo MediaFile { get; }
 
-    public bool IsSelected { get; set; } = false;
+    public partial bool IsSelected { get; set; } = false;
 
-    public bool IsDiashowActive { get; set; }
+    public partial bool IsDiashowActive { get; set; }
 
     public IImageViewModel ImageViewModel { get; }
 

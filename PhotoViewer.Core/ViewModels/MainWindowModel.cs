@@ -12,9 +12,9 @@ public partial class MainWindowModel : ViewModelBase
 {
     public event EventHandler<DialogRequestedEventArgs>? DialogRequested;
 
-    public string Title { get; private set; } = AppData.ApplicationName;
+    public partial string Title { get; private set; } = AppData.ApplicationName;
 
-    public AppTheme Theme { get; private set; }
+    public partial AppTheme Theme { get; private set; }
 
     private readonly DropOutStack<object> navigationStateStack = new DropOutStack<object>(20);
 

@@ -15,29 +15,29 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class PropertiesDialogModel : ViewModelBase
 {
-    public string FileName { get; private set; } = string.Empty;
+    public partial string FileName { get; private set; } = string.Empty;
 
-    public string FilePath { get; private set; } = string.Empty;
+    public partial string FilePath { get; private set; } = string.Empty;
 
-    public string FileSize { get; private set; } = string.Empty;
+    public partial string FileSize { get; private set; } = string.Empty;
 
-    public string DateTaken { get; private set; } = string.Empty;
+    public partial string DateTaken { get; private set; } = string.Empty;
 
-    public string Dimensions { get; private set; } = string.Empty;
+    public partial string Dimensions { get; private set; } = string.Empty;
 
-    public string Orientation { get; private set; } = string.Empty;
+    public partial string Orientation { get; private set; } = string.Empty;
 
-    public string Camera { get; private set; } = string.Empty;
+    public partial string Camera { get; private set; } = string.Empty;
 
-    public string FNumber { get; private set; } = string.Empty;
+    public partial string FNumber { get; private set; } = string.Empty;
 
-    public string ShutterSpeed { get; private set; } = string.Empty;
+    public partial string ShutterSpeed { get; private set; } = string.Empty;
 
-    public string ISO { get; private set; } = string.Empty;
+    public partial string ISO { get; private set; } = string.Empty;
 
-    public string FocalLength { get; private set; } = string.Empty;
+    public partial string FocalLength { get; private set; } = string.Empty;
 
-    private bool CanShowInFileExlorer { get; set; } = false;
+    private partial bool CanShowInFileExlorer { get; set; } = false;
 
     private readonly IMetadataService metadataService;
 

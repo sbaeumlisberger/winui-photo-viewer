@@ -7,19 +7,19 @@ public partial class ApplicationSettings : ObservableObject
 {
     public static readonly TimeSpan DefaultDiashowTime = TimeSpan.FromSeconds(3);
 
-    public AppTheme Theme { get; set; } = AppTheme.System;
-    public bool ShowDeleteAnimation { get; set; } = true;
-    public bool AutoOpenMetadataPanel { get; set; } = false;
-    public bool AutoOpenDetailsBar { get; set; } = false;
-    public TimeSpan DiashowTime { get; set; } = DefaultDiashowTime;
+    public partial AppTheme Theme { get; set; } = AppTheme.System;
+    public partial bool ShowDeleteAnimation { get; set; } = true;
+    public partial bool AutoOpenMetadataPanel { get; set; } = false;
+    public partial bool AutoOpenDetailsBar { get; set; } = false;
+    public partial TimeSpan DiashowTime { get; set; } = DefaultDiashowTime;
 
-    public bool LinkRawFiles { get; set; } = true;
-    public string RawFilesFolderName { get; set; } = "RAWs";
-    public DeleteLinkedFilesOption DeleteLinkedFilesOption { get; set; } = DeleteLinkedFilesOption.Ask;
+    public partial bool LinkRawFiles { get; set; } = true;
+    public partial string RawFilesFolderName { get; set; } = "RAWs";
+    public partial DeleteLinkedFilesOption DeleteLinkedFilesOption { get; set; } = DeleteLinkedFilesOption.Ask;
 
-    public bool IncludeVideos { get; set; } = true;
+    public partial bool IncludeVideos { get; set; } = true;
 
-    public bool IsDebugLogEnabled { get; set; } = true;
+    public partial bool IsDebugLogEnabled { get; set; } = true;
 
     public ApplicationSettings()
     {

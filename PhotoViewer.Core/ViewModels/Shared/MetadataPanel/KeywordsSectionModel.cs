@@ -13,7 +13,7 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
 {
     public IObservableReadOnlyList<ItemWithCountModel> Keywords => keywords;
 
-    public string AutoSuggestBoxText { get; set; } = string.Empty;
+    public partial string AutoSuggestBoxText { get; set; } = string.Empty;
 
     private bool CanAddKeyword => !string.IsNullOrWhiteSpace(AutoSuggestBoxText) && !IsWriting;
 
@@ -52,7 +52,7 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
         }
     }
 
-    partial void OnIsWritingChanged()
+    protected override void OnIsWritingChangedOverride()
     {
         OnPropertyChanged(nameof(CanAddKeyword));
     }

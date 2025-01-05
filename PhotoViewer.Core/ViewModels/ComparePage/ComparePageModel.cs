@@ -13,9 +13,9 @@ public partial class ComparePageModel : ViewModelBase
     public ICompareViewModel Left { get; }
     public ICompareViewModel Right { get; }
 
-    public bool IsLinkView { get; private set; } = true;
+    public partial bool IsLinkView { get; private set; } = true;
 
-    private readonly IObservableList<IBitmapFileInfo> bitmapFiles = new ObservableList<IBitmapFileInfo>();
+    private readonly ObservableList<IBitmapFileInfo> bitmapFiles = new ObservableList<IBitmapFileInfo>();
 
     public ComparePageModel(IApplicationSession session, IMessenger messenger, IViewModelFactory viewModelFactory) : base(messenger)
     {

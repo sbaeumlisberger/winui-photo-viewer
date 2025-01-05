@@ -9,15 +9,15 @@ namespace PhotoViewer.Core.ViewModels.Shared;
 
 public partial class SortMenuModel : ViewModelBase
 {
-    public bool IsSortedByFileName { get; set; }
+    public partial bool IsSortedByFileName { get; set; }
 
-    public bool IsSortedByFileSize { get; set; }
+    public partial bool IsSortedByFileSize { get; set; }
 
-    public bool IsSortedByDateTaken { get; set; }
+    public partial bool IsSortedByDateTaken { get; set; }
 
-    public bool IsSortedAscending { get; set; }
+    public partial bool IsSortedAscending { get; set; }
 
-    public bool IsSortedDescending { get; set; }
+    public partial bool IsSortedDescending { get; set; }
 
     private readonly SortService sortService;
 

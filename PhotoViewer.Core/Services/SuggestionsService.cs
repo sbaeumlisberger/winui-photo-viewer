@@ -30,12 +30,11 @@ namespace PhotoViewer.Core.Services
     {
         private const int MaxRecentCount = 20;
 
-        private static readonly JsonSerializerOptions JsonOptions = new()
+        private static readonly PhotoViewerCoreJsonSerializerContext JsonSerializerContext = new PhotoViewerCoreJsonSerializerContext(new JsonSerializerOptions()
         {
-            TypeInfoResolver = PhotoViewerCoreJsonSerializerContext.Default,
             WriteIndented = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        };
+        });
 
         private readonly string filePathSuggestions;
 
@@ -113,7 +112,7 @@ namespace PhotoViewer.Core.Services
         public async Task ImportFromFileAsync(IStorageFile file)
         {
             using var stream = File.OpenRead(file.Path);
-            var suggestionsJsonObject = await JsonSerializer.DeserializeAsync<SuggestionsJsonObject>(stream, JsonOptions);
+            var suggestionsJsonObject = await JsonSerializer.DeserializeAsync(stream, JsonSerializerContext.SuggestionsJsonObject);
             suggestions = suggestionsJsonObject!.Values.ToHashSet();
             await PersistSuggestionsAsync();
         }
@@ -122,7 +121,7 @@ namespace PhotoViewer.Core.Services
         {
             var suggestionsJsonObject = new SuggestionsJsonObject(suggestions.ToList());
             using var stream = File.Open(file.Path, FileMode.Create);
-            await JsonSerializer.SerializeAsync(stream, suggestionsJsonObject, JsonOptions);
+            await JsonSerializer.SerializeAsync(stream, suggestionsJsonObject, JsonSerializerContext.SuggestionsJsonObject);
         }
 
         private async Task LoadSuggestionsAsync()
@@ -130,13 +129,13 @@ namespace PhotoViewer.Core.Services
             if (File.Exists(filePathSuggestions))
             {
                 using var stream = File.OpenRead(filePathSuggestions);
-                var suggestionsJsonObject = await JsonSerializer.DeserializeAsync<SuggestionsJsonObject>(stream, JsonOptions);
+                var suggestionsJsonObject = await JsonSerializer.DeserializeAsync(stream, JsonSerializerContext.SuggestionsJsonObject);
                 suggestions = suggestionsJsonObject!.Values.ToHashSet();
             }
             if (File.Exists(filePathRecent))
             {
                 using var stream = File.OpenRead(filePathRecent);
-                var recentJsonObject = await JsonSerializer.DeserializeAsync<SuggestionsJsonObject>(stream, JsonOptions);
+                var recentJsonObject = await JsonSerializer.DeserializeAsync(stream, JsonSerializerContext.SuggestionsJsonObject);
                 recent = recentJsonObject!.Values;
             }
         }
@@ -145,14 +144,14 @@ namespace PhotoViewer.Core.Services
         {
             var suggestionsJsonObject = new SuggestionsJsonObject(suggestions.ToList());
             using var stream = File.Open(filePathSuggestions, FileMode.Create);
-            await JsonSerializer.SerializeAsync(stream, suggestionsJsonObject, JsonOptions);
+            await JsonSerializer.SerializeAsync(stream, suggestionsJsonObject, JsonSerializerContext.SuggestionsJsonObject);
         }
 
         private async Task PersistRecentAsync()
         {
             var recentJsonObject = new SuggestionsJsonObject(recent.ToList());
             using var stream = File.Open(filePathRecent, FileMode.Create);
-            await JsonSerializer.SerializeAsync(stream, recentJsonObject, JsonOptions);
+            await JsonSerializer.SerializeAsync(stream, recentJsonObject, JsonSerializerContext.SuggestionsJsonObject);
         }
 
         public async Task ResetAsync()

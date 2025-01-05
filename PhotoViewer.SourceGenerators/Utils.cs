@@ -13,6 +13,11 @@ internal static class Utils
         return symbol.ToDisplayString(symbolDisplayFormat);
     }
 
+    public static string GetNamespaceDeclaration(ISymbol symbol)
+    {
+        return GetNamespace(symbol) is string @namespace ? $"namespace {@namespace};" : "";
+    }
+
     public static string? GetNamespace(ISymbol symbol)
     {
         if (symbol.ContainingNamespace is { } containingNamespace
@@ -88,4 +93,36 @@ internal static class Utils
             new DiagnosticDescriptor(id, message, message, "", diagnosticSeverity, true), location));
     }
 
+    public static string ToFullyQualifiedTypeString(ITypeSymbol typeSymbol)
+    {
+        return typeSymbol.ToDisplayString(new SymbolDisplayFormat(
+            globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Included,
+            typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+            genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
+            miscellaneousOptions:
+                SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers |
+                SymbolDisplayMiscellaneousOptions.UseSpecialTypes |
+                SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier));
+    }
+    public static string GeneratePartialClass(ITypeSymbol classSymbol, string content)
+    { 
+        return GeneratePartialClass(classSymbol, content.Split('\n'));
+    }
+
+    public static string GeneratePartialClass(ITypeSymbol classSymbol, IEnumerable<string> content)
+    {
+        string sourceCode = $$"""
+            partial class {{classSymbol.Name}} 
+            {
+                {{Indent(1, content)}}
+            }
+            """;
+
+        if (classSymbol.ContainingSymbol is ITypeSymbol containingType)
+        {
+            return GeneratePartialClass(containingType, sourceCode.Split('\n'));
+        }
+
+        return sourceCode;
+    }
 }

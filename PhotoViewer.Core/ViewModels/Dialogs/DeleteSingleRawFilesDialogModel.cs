@@ -10,18 +10,17 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class DeleteSingleRawFilesDialogModel : ViewModelBase
 {
+    public partial bool ShowConfirmation { get; private set; } = true;
 
-    public bool ShowConfirmation { get; private set; } = true;
+    public partial bool ShowProgress { get; private set; } = false;
 
-    public bool ShowProgress { get; private set; } = false;
+    public partial bool ShowErrorMessage { get; private set; } = false;
 
-    public bool ShowErrorMessage { get; private set; } = false;
+    public partial bool ShowSuccessMessage { get; private set; } = false;
 
-    public bool ShowSuccessMessage { get; private set; } = false;
+    public partial IReadOnlyList<string> Errors { get; private set; } = Array.Empty<string>();
 
-    public IReadOnlyList<string> Errors { get; private set; } = Array.Empty<string>();
-
-    public Progress? Progress { get; set; }
+    public partial Progress? Progress { get; set; }
 
     private IReadOnlyCollection<IMediaFileInfo> mediaFiles;
 

@@ -22,21 +22,21 @@ public interface IMetadataPanelModel : IViewModel
 
 public partial class MetadataPanelModel : ViewModelBase, IMetadataPanelModel
 {
-    public bool IsVisible { get; set; } = false;
+    public partial bool IsVisible { get; set; } = false;
 
-    public bool IsLoading { get; set; } = false;
+    public partial bool IsLoading { get; set; } = false;
 
     public bool IsLoaded => !IsLoading;
 
-    public bool IsErrorOccured { get; set; } = false;
+    public partial bool IsErrorOccured { get; set; } = false;
 
-    public bool IsNoFilesSelectedMessageVisible { get; private set; } = true;
+    public partial bool IsNoFilesSelectedMessageVisible { get; private set; } = true;
 
-    public bool IsInputVisible { get; private set; } = false;
+    public partial bool IsInputVisible { get; private set; } = false;
 
-    public bool IsUnsupportedFilesMessageVisibile { get; private set; } = false;
+    public partial bool IsUnsupportedFilesMessageVisibile { get; private set; } = false;
 
-    public bool ShowSelectOnlySupportedFilesButton { get; private set; } = false;
+    public partial bool ShowSelectOnlySupportedFilesButton { get; private set; } = false;
 
     public MetadataTextboxModel TitleTextboxModel { get; }
     public LocationSectionModel LocationSectionModel { get; }
@@ -47,7 +47,7 @@ public partial class MetadataPanelModel : ViewModelBase, IMetadataPanelModel
     public MetadataTextboxModel CopyrightTextboxModel { get; }
     public DateTakenSectionModel DateTakenSectionModel { get; }
 
-    public IReadOnlyList<IMediaFileInfo> Files { get; set; } = Array.Empty<IMediaFileInfo>();
+    public partial IReadOnlyList<IMediaFileInfo> Files { get; set; } = Array.Empty<IMediaFileInfo>();
 
     private IImmutableList<IBitmapFileInfo> supportedFiles = ImmutableList<IBitmapFileInfo>.Empty;
 

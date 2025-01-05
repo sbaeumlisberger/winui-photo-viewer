@@ -11,21 +11,21 @@ public partial class EditLocationDialogDetailsTabModel : ViewModelBase
 {
     public event EventHandler<Location?>? LocationChanged;
 
-    public string Street { get; set; } = string.Empty;
+    public partial string Street { get; set; } = string.Empty;
 
-    public string City { get; set; } = string.Empty;
+    public partial string City { get; set; } = string.Empty;
 
-    public string Region { get; set; } = string.Empty;
+    public partial string Region { get; set; } = string.Empty;
 
-    public string Country { get; set; } = string.Empty;
+    public partial string Country { get; set; } = string.Empty;
 
-    public string Latitude { get; set; } = string.Empty;
+    public partial string Latitude { get; set; } = string.Empty;
 
-    public string Longitude { get; set; } = string.Empty;
+    public partial string Longitude { get; set; } = string.Empty;
 
-    public string Altitude { get; set; } = string.Empty;
+    public partial string Altitude { get; set; } = string.Empty;
 
-    public bool CanSave { get; set; } = true;
+    public partial bool CanSave { get; set; } = true;
 
     private bool CanCopyCoordinates => Latitude.Trim() != string.Empty && Longitude.Trim() != string.Empty;
 

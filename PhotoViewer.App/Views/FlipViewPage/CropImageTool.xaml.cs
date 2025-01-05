@@ -84,27 +84,30 @@ public sealed partial class CropImageTool : UserControl, IMVVMControl<CropImageT
     {
         toolbar.Opacity = 0;
         toolbar.IsHitTestVisible = false;
+
+        selectionXNumberBox.IsEnabled = false;
+        selectionYNumberBox.IsEnabled = false;
     }
 
     private void SelectionRect_InteractionEnded(SelectionRect sender, EventArgs args)
     {
         toolbar.Opacity = 1;
         toolbar.IsHitTestVisible = true;
+
+        selectionXNumberBox.IsEnabled = true;
+        selectionYNumberBox.IsEnabled = true;
     }
 
     private void SelectionRect_BoundsChanging(SelectionRect sender, SelectionRect.BoundsChangingEventArgs args)
     {
         var imageSizeInPixels = ViewModel!.ImageSizeInPixels;
 
-        var selectionInPixels = new RectInt32(
-            (int)Math.Round(args.NewBounds.X / selectionCanvas.ActualWidth * imageSizeInPixels.Width),
-            (int)Math.Round(args.NewBounds.Y / selectionCanvas.ActualHeight * imageSizeInPixels.Height),
-            (int)Math.Max(1, Math.Round(args.NewBounds.Width / selectionCanvas.ActualWidth * imageSizeInPixels.Width)),
-            (int)Math.Max(1, Math.Round(args.NewBounds.Height / selectionCanvas.ActualHeight * imageSizeInPixels.Height)));
+        ViewModel.SelectionXInPixels = Math.Round(args.NewBounds.X / selectionCanvas.ActualWidth * imageSizeInPixels.Width);
+        ViewModel.SelectionYInPixels = Math.Round(args.NewBounds.Y / selectionCanvas.ActualHeight * imageSizeInPixels.Height);
+        ViewModel.SelectionWidthInPixels = Math.Max(1, Math.Round(args.NewBounds.Width / selectionCanvas.ActualWidth * imageSizeInPixels.Width));
+        ViewModel.SelectionHeightInPixels = Math.Max(1, Math.Round(args.NewBounds.Height / selectionCanvas.ActualHeight * imageSizeInPixels.Height));
 
-        ViewModel.SelectionInPixels = selectionInPixels;
-
-        var adjustedSelectionRectBounds = CalculateSelectionRectBounds(selectionInPixels, imageSizeInPixels);
+        var adjustedSelectionRectBounds = CalculateSelectionRectBounds(ViewModel.SelectionInPixels, imageSizeInPixels);
 
         args.NewBounds = adjustedSelectionRectBounds;
     }

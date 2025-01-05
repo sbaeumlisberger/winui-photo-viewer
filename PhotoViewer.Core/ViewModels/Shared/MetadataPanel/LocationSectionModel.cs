@@ -15,11 +15,11 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class LocationSectionModel : MetadataPanelSectionModelBase
 {
-    public string DisplayText { get; private set; } = "";
+    public partial string DisplayText { get; private set; } = "";
 
-    public string PlaceholderText { get; private set; } = Strings.MetadataPanel_LocationPlaceholder;
+    public partial string PlaceholderText { get; private set; } = Strings.MetadataPanel_LocationPlaceholder;
 
-    private bool CanShowLocationOnMap { get; set; } = false;
+    private partial bool CanShowLocationOnMap { get; set; } = false;
 
     private Location? orginalLocation;
     private Location? completedLocation;

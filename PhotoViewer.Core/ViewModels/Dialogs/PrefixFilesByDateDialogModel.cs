@@ -12,14 +12,14 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class PrefixFilesByDateDialogModel : ViewModelBase
 {
-    public bool ShowConfirmation { get; private set; } = true;
-    public bool ShowProgress { get; private set; } = false;
-    public bool ShowErrorMessage { get; private set; } = false;
-    public bool ShowSuccessMessage { get; private set; } = false;
+    public partial bool ShowConfirmation { get; private set; } = true;
+    public partial bool ShowProgress { get; private set; } = false;
+    public partial bool ShowErrorMessage { get; private set; } = false;
+    public partial bool ShowSuccessMessage { get; private set; } = false;
 
-    public Progress? Progress { get; private set; }
+    public partial Progress? Progress { get; private set; }
 
-    public IReadOnlyList<string> Errors { get; private set; } = new List<string>();
+    public partial IReadOnlyList<string> Errors { get; private set; } = new List<string>();
 
 
     private readonly IReadOnlyCollection<IMediaFileInfo> mediaFiles;

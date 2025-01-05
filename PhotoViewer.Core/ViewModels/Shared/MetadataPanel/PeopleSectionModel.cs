@@ -15,15 +15,15 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 {
     public IObservableReadOnlyList<ItemWithCountModel> People => people;
 
-    public string AutoSuggestBoxText { get; set; } = string.Empty;
+    public partial string AutoSuggestBoxText { get; set; } = string.Empty;
 
     public bool IsTagPeopleOnPhotoButtonVisible { get; }
 
-    public bool IsTagPeopleOnPhotoButtonChecked { get; private set; }
+    public partial bool IsTagPeopleOnPhotoButtonChecked { get; private set; }
 
     private bool CanAddPerson => !string.IsNullOrWhiteSpace(AutoSuggestBoxText) && !IsWriting;
 
-    public IList<string> SelectedPeopleNames { get; set; } = [];
+    public partial IList<string> SelectedPeopleNames { get; set; } = [];
 
     private readonly ObservableList<ItemWithCountModel> people = new();
 
@@ -65,7 +65,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
         people.MatchTo(CreateItemModels(metadata));
     }
 
-    partial void OnIsWritingChanged()
+    protected override void OnIsWritingChangedOverride()
     {
         OnPropertyChanged(nameof(CanAddPerson));
     }

@@ -26,7 +26,7 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
     }
     private string text = string.Empty;
 
-    public bool HasMultipleValues { get; private set; }
+    public partial bool HasMultipleValues { get; private set; }
 
     private bool dirty = false;
 

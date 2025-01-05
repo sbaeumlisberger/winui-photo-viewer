@@ -9,7 +9,7 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class EditLocationDialogModel : ViewModelBase
 {
-    public Location? Location { get; set; }
+    public partial Location? Location { get; set; }
 
     public EditLocationDialogDetailsTabModel Details { get; }
 

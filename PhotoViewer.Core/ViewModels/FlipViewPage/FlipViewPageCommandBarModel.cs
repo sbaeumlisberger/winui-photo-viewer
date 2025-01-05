@@ -19,7 +19,7 @@ public interface IFlipViewPageCommandBarModel : IViewModel
 
 public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageCommandBarModel
 {
-    public IMediaFlipViewItemModel? SelectedItemModel { get; set; }
+    public partial IMediaFlipViewItemModel? SelectedItemModel { get; set; }
 
     public ICommand SelectPreviousCommand { get; }
 

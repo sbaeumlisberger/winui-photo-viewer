@@ -26,13 +26,13 @@ public interface IImageViewModel : IViewModel
 
 public partial class ImageViewModel : ViewModelBase, IImageViewModel
 {
-    public IBitmapImageModel? Image { get; private set; }
+    public partial IBitmapImageModel? Image { get; private set; }
 
-    public bool IsLoading { get; private set; } = false;
+    public partial bool IsLoading { get; private set; } = false;
 
-    public bool IsLoadingImageFailed { get; private set; } = false;
+    public partial bool IsLoadingImageFailed { get; private set; } = false;
 
-    public string ErrorMessage { get; private set; } = string.Empty;
+    public partial string ErrorMessage { get; private set; } = string.Empty;
 
     private readonly ICachedImageLoaderService imageService;
 

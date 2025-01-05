@@ -9,15 +9,15 @@ public partial class InfoBarModel : ViewModelBase
 {
     private static readonly TimeSpan DefaultMessageDuration = TimeSpan.FromSeconds(3);
 
-    public string Message { get; private set; } = string.Empty;
+    public partial string Message { get; private set; } = string.Empty;
 
     public bool IsOpen => !string.IsNullOrEmpty(Message);
 
-    public InfoBarSeverity Severity { get; private set; } = InfoBarSeverity.Informational;
+    public partial InfoBarSeverity Severity { get; private set; } = InfoBarSeverity.Informational;
 
-    public ICommand? Command { get; private set; }
+    public partial ICommand? Command { get; private set; }
 
-    public string? CommandLabel { get; private set; }
+    public partial string? CommandLabel { get; private set; }
 
     public bool ShowActionButton => Command != null;
 

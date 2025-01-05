@@ -10,13 +10,13 @@ public partial class VectorGraphicFlipViewItemModel : ViewModelBase, IMediaFlipV
 {
     public IMediaFileInfo MediaFile { get; }
 
-    public bool IsSelected { get; set; } = false;
+    public partial bool IsSelected { get; set; } = false;
 
-    public bool IsDiashowActive { get; set; } = false;
+    public partial bool IsDiashowActive { get; set; } = false;
 
-    public string? Content { get; private set; }
+    public partial string? Content { get; private set; }
 
-    public bool IsLoadingFailed { get; private set; } = false;
+    public partial bool IsLoadingFailed { get; private set; } = false;
 
     public bool IsContextMenuEnabeld => IsSelected && !IsDiashowActive;
 

@@ -23,28 +23,28 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class EditImageOverlayModel : ViewModelBase
 {
-    public class EditSettings : ObservableObject
+    public partial class EditSettings : ObservableObject
     {
         /// <summary>-100 to 100</summary>
-        public double Brightness { get; set; }
+        public partial double Brightness { get; set; }
 
         /// <summary>-100 to 100</summary>
-        public double Highlights { get; set; }
+        public partial double Highlights { get; set; }
 
         /// <summary>-100 to 100</summary>
-        public double Shadows { get; set; }
+        public partial double Shadows { get; set; }
 
         /// <summary>-100 to 100</summary>
-        public double Contrast { get; set; }
+        public partial double Contrast { get; set; }
 
         /// <summary>-100 to 100</summary>
-        public double Saturation { get; set; }
+        public partial double Saturation { get; set; }
 
         /// <summary>-100 to 100</summary>
-        public double Temperature { get; set; }
+        public partial double Temperature { get; set; }
 
         /// <summary>0 to 100</summary>
-        public double Sharpen { get; set; }
+        public partial double Sharpen { get; set; }
 
         public bool HasChanges => Brightness != 0
                                   || Highlights != 0
@@ -66,15 +66,15 @@ public partial class EditImageOverlayModel : ViewModelBase
         }
     }
 
-    public bool IsVisible { get; set; }
+    public partial bool IsVisible { get; set; }
 
-    public IBitmapFileInfo? File { get; set; }
+    public partial IBitmapFileInfo? File { get; set; }
 
-    public IBitmapImageModel? Image { get; set; }
+    public partial IBitmapImageModel? Image { get; set; }
 
     public EditSettings Settings { get; } = new EditSettings();
 
-    public IBitmapImageModel? RenderResult { get; private set; }
+    public partial IBitmapImageModel? RenderResult { get; private set; }
 
     private readonly IDialogService dialogService;
 

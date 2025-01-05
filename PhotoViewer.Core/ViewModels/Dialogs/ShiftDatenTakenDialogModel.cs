@@ -12,22 +12,22 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class ShiftDatenTakenDialogModel : ViewModelBase
 {
-    public bool ShowInput { get; private set; } = true;
-    public bool ShowProgress { get; private set; } = false;
-    public bool ShowResult { get; private set; } = false;
+    public partial bool ShowInput { get; private set; } = true;
+    public partial bool ShowProgress { get; private set; } = false;
+    public partial bool ShowResult { get; private set; } = false;
 
-    public int Days { get; set; }
-    public int Hours { get; set; }
-    public int Minutes { get; set; }
-    public int Seconds { get; set; }
+    public partial int Days { get; set; }
+    public partial int Hours { get; set; }
+    public partial int Minutes { get; set; }
+    public partial int Seconds { get; set; }
 
-    public Progress? Progress { get; private set; }
+    public partial Progress? Progress { get; private set; }
 
-    public IReadOnlyList<string> Errors { get; private set; } = new List<string>();
+    public partial IReadOnlyList<string> Errors { get; private set; } = new List<string>();
 
-    public bool IsCompletedSuccessfully { get; private set; } = false;
+    public partial bool IsCompletedSuccessfully { get; private set; } = false;
 
-    public bool IsCompletedWithErrors { get; private set; } = false;
+    public partial bool IsCompletedWithErrors { get; private set; } = false;
 
     private readonly IMessenger messenger;
 

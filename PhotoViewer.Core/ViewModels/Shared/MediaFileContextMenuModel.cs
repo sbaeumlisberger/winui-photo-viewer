@@ -19,15 +19,15 @@ public interface IMediaFileContextMenuModel : IViewModel
 
 public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContextMenuModel
 {
-    public IReadOnlyList<IMediaFileInfo> Files { get; set; } = Array.Empty<IMediaFileInfo>();
+    public partial IReadOnlyList<IMediaFileInfo> Files { get; set; } = Array.Empty<IMediaFileInfo>();
 
-    public bool IsEnabled { get; set; } = true;
+    public partial bool IsEnabled { get; set; } = true;
 
     public bool IsOpenWithItemVisible => Files.Count == 1;
 
     public bool IsCopyPathItemVisible => Files.Count == 1;
 
-    public bool IsPrinItemVisible => Files.All(file => file is IBitmapFileInfo);
+    public bool IsPrintItemVisible => Files.All(file => file is IBitmapFileInfo);
 
     public bool IsSetAsItemVisible => Files.Count == 1 && personalizationService.IsFileExtensionSupported(Files.First().FileExtension);
 

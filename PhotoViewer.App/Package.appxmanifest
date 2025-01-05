@@ -9,7 +9,7 @@
   <Identity
     Name="universe-photos-dev"
     Publisher="C=DE, CN=Sebastian Bäumlisberger"
-    Version="5.1.0.0" />
+    Version="0.0.0.0" />
 
   <Properties>
     <DisplayName>Universe Photos Dev</DisplayName>

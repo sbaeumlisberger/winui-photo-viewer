@@ -17,25 +17,25 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
 {
     public string Title { get; }
 
-    public bool ShowFileSelection { get; private set; } = true;
+    public partial bool ShowFileSelection { get; private set; } = true;
 
-    public bool ShowProgress { get; private set; } = false;
+    public partial bool ShowProgress { get; private set; } = false;
 
-    public bool ShowErrorMessage { get; private set; } = false;
+    public partial bool ShowErrorMessage { get; private set; } = false;
 
-    public bool ShowSuccessMessage { get; private set; } = false;
+    public partial bool ShowSuccessMessage { get; private set; } = false;
 
     public string SelectedFilePath => SelectedFile?.Path ?? string.Empty;
 
-    private IStorageFile? SelectedFile { get; set; }
+    private partial IStorageFile? SelectedFile { get; set; }
 
     public bool CanImport => SelectedFilePath != string.Empty;
 
-    public Progress? Progress { get; private set; }
+    public partial Progress? Progress { get; private set; }
 
-    public int UpdatedFilesCount { get; private set; } = 0;
+    public partial int UpdatedFilesCount { get; private set; } = 0;
 
-    public IReadOnlyList<string> Errors { get; private set; } = Array.Empty<string>();
+    public partial IReadOnlyList<string> Errors { get; private set; } = Array.Empty<string>();
 
     private readonly IDialogService dialogService;
 

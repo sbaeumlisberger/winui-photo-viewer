@@ -4,17 +4,17 @@ namespace PhotoViewer.Core.Utils;
 
 public partial class Progress : ObservableObjectBase, IProgress<double>
 {
-    public bool CanCancel { get; private set; } = false;
+    public partial bool CanCancel { get; private set; } = false;
 
-    public double Value { get; private set; } = 0;
+    public partial double Value { get; private set; } = 0;
 
-    public TimeSpan? EstimatedTimeRemaining { get; private set; }
+    public partial TimeSpan? EstimatedTimeRemaining { get; private set; }
 
-    public bool IsActive { get; private set; } = true;
+    public partial bool IsActive { get; private set; } = true;
 
-    public bool IsCompleted { get; private set; } = false;
+    public partial bool IsCompleted { get; private set; } = false;
 
-    public bool IsFailed { get; private set; } = false;
+    public partial bool IsFailed { get; private set; } = false;
 
     private readonly CancellationTokenSource? cts;
 
@@ -22,7 +22,7 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
 
     private readonly DateTime startTime = DateTime.Now;
 
-    private readonly object lockObject = new object();
+    private readonly Lock lockObject = new Lock();
 
     private readonly SynchronizationContext? synchronizationContext = SynchronizationContext.Current;
 

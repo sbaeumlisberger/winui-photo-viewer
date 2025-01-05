@@ -18,7 +18,7 @@ public interface IOverviewPageCommandBarModel : IViewModel
 
 public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageCommandBarModel
 {
-    public IReadOnlyList<IMediaFileInfo> SelectedItems { get; set; } = Array.Empty<IMediaFileInfo>();
+    public partial IReadOnlyList<IMediaFileInfo> SelectedItems { get; set; } = Array.Empty<IMediaFileInfo>();
 
     public bool CanRotate => SelectedItems.Count > 0 && SelectedItems.All(file => file is IBitmapFileInfo);
 

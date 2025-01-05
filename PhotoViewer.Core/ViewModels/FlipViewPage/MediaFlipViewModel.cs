@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using Essentials.NET.Logging;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using PhotoViewer.Core.Messages;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
@@ -30,15 +29,15 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     private static readonly int CacheSize = 2;
 
-    public ObservableList<IMediaFileInfo> Items { get; private set; } = new ObservableList<IMediaFileInfo>();
+    public partial ObservableList<IMediaFileInfo> Items { get; private set; } = new ObservableList<IMediaFileInfo>();
 
     public IReadOnlyCollection<IMediaFlipViewItemModel> ItemModels => itemModelsCache.Values;
 
-    public IMediaFileInfo? SelectedItem { get; private set; }
+    public partial IMediaFileInfo? SelectedItem { get; private set; }
 
-    public IMediaFlipViewItemModel? SelectedItemModel { get; private set; }
+    public partial IMediaFlipViewItemModel? SelectedItemModel { get; private set; }
 
-    public int SelectedIndex { get; private set; } = -1;
+    public partial int SelectedIndex { get; private set; } = -1;
 
     public bool ShowNoItemsUI => !ShowLoadingUI && SelectedIndex == -1;
 
@@ -46,17 +45,17 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     public bool CanSelectNext => SelectedIndex < Items.Count - 1;
 
-    public bool IsDiashowActive { get; private set; } = false;
+    public partial bool IsDiashowActive { get; private set; } = false;
 
-    public bool IsDiashowLoopActive { get; private set; } = false;
+    public partial bool IsDiashowLoopActive { get; private set; } = false;
 
     public int SelectedItemNumber => SelectedIndex + 1;
 
     public bool ShowSelectedItemIndicator => SelectedIndex != -1 && !IsDiashowActive;
 
-    public bool ShowLoadingUI { get; private set; }
+    public partial bool ShowLoadingUI { get; private set; }
 
-    public bool IsLoadingMoreFiles { get; private set; }
+    public partial bool IsLoadingMoreFiles { get; private set; }
 
     public bool IsNotLoadingMoreFiles => !IsLoadingMoreFiles;
 
@@ -87,7 +86,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         IFileSystemService fileSystemService,
         Func<IMediaFileInfo, IMediaFlipViewItemModel> mediaFlipViewItemModelFactory,
         ApplicationSettings settings) : base(messenger)
-    {
+    {       
         this.dialogService = dialogService;
         this.mediaFilesLoaderService = mediaFilesLoaderService;
         this.fileSystemService = fileSystemService;

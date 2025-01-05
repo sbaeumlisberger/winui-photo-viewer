@@ -25,11 +25,11 @@ public partial class FlipViewPageModel : ViewModelBase
     public EditImageOverlayModel EditImageOverlayModel => editImageOverlayModel ?? CreateEditImageOverlayModel();
     private EditImageOverlayModel? editImageOverlayModel;
 
-    public bool ShowUI { get; private set; } = true;
+    public partial bool ShowUI { get; private set; } = true;
 
-    public bool ShowDetailsBarOnStartup { get; private set; } = false;
+    public bool ShowDetailsBarOnStartup { get; } = false;
 
-    public bool ShowMetadataPanelOnStartup { get; private set; } = false;
+    public bool ShowMetadataPanelOnStartup { get; } = false;
 
 
     private readonly ApplicationSession session;

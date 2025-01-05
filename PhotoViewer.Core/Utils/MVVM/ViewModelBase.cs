@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using PhotoViewer.Core.Utils;
-using PropertyChanged;
 using System.ComponentModel;
 
 namespace PhotoViewer.Core.Utils;
@@ -13,7 +12,6 @@ public interface IViewModel : INotifyPropertyChanged
 
 public class ViewModelBase : ObservableObjectBase, IViewModel
 {
-    [DoNotNotify]
     internal Task LastDispatchTask { get; private set; } = Task.CompletedTask;
 
     protected IMessenger Messenger { get; }
@@ -37,15 +35,12 @@ public class ViewModelBase : ObservableObjectBase, IViewModel
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
-        _NotifyCanExecuteChanged(e.PropertyName);
-        _InvokeOnPropertyChangedMethod(e.PropertyName);
-
         base.OnPropertyChanged(e);
+
+        _NotifyCanExecuteChanged(e.PropertyName);
     }
 
     protected virtual void _NotifyCanExecuteChanged(string? propertyName) { }
-
-    protected virtual void _InvokeOnPropertyChangedMethod(string? propertyName) { }
 
     protected void Register<TMessage>(Action<TMessage> messageHandler) where TMessage : class
     {
