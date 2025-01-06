@@ -107,6 +107,12 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
     private void FlipViewItemBorder_Loaded(object sender, RoutedEventArgs e)
     {
         FocusSelectedItem();
+
+        if (VisualTreeUtil.FindParent<FlipViewItem>((Border)sender) is { } container)
+        {
+            container.MinWidth = flipView.ActualWidth;
+            container.MinHeight = flipView.ActualHeight;
+        }
     }
 
     private void FocusSelectedItem()
@@ -173,9 +179,10 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
 
     private void FlipView_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        if (flipView.ContainerFromItem(flipView.SelectedItem) is FrameworkElement container)
+        foreach (FrameworkElement container in flipView.ItemsPanelRoot.Children)
         {
-            container.MinHeight = e.NewSize.Height;
+            container.MinWidth = flipView.ActualWidth;
+            container.MinHeight = flipView.ActualHeight;
         }
     }
 }
