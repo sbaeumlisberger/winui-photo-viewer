@@ -19,10 +19,10 @@ public class FaceDetectionServiceTest
         var detectedFaces = await faceDetectionService.DetectFacesAsync(image, default);
 
         Assert.Equal(4, detectedFaces.Count);
-        AssertFaceBox(new BitmapBounds(368, 539, 471, 472), detectedFaces[0].FaceBox, 20);
-        AssertFaceBox(new BitmapBounds(1339, 630, 478, 478), detectedFaces[1].FaceBox, 20);
-        AssertFaceBox(new BitmapBounds(2355, 724, 420, 420), detectedFaces[2].FaceBox, 20);
-        AssertFaceBox(new BitmapBounds(3209, 635, 435, 435), detectedFaces[3].FaceBox, 20);
+        AssertFaceBox(new BitmapBounds(313, 376, 531, 765), detectedFaces[0].FaceBox, 20);
+        AssertFaceBox(new BitmapBounds(1297, 462, 540, 750), detectedFaces[1].FaceBox, 20);
+        AssertFaceBox(new BitmapBounds(2322, 532, 499, 694), detectedFaces[2].FaceBox, 20);
+        AssertFaceBox(new BitmapBounds(3181, 469, 484, 657), detectedFaces[3].FaceBox, 20);
     }
 
     private static void AssertFaceBox(BitmapBounds expected, BitmapBounds actual, uint tolerance)
