@@ -8,6 +8,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary>
+                    <TextTrimming x:Key="MenuFlyoutItemTextTrimming">None</TextTrimming>
                     <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                         <Setter Property="Padding" Value="12,6,12,6"/>
                         <Setter Property="Margin" Value="0"/>
