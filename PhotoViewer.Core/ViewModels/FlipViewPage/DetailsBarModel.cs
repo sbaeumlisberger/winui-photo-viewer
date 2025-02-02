@@ -163,7 +163,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 
                 FileName = itemModel.MediaFile.DisplayName;
 
-                if (itemModel.MediaFile is IBitmapFileInfo bitmapFile && bitmapFile.IsMetadataSupported)
+                if (itemModel.MediaFile is IBitmapFileInfo bitmapFile && bitmapFile.IsReadMetadataSupported)
                 {
                     await UpdateFromMetadataAsync(bitmapFile, cancellationToken);
                 }

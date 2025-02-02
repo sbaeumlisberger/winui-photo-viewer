@@ -61,7 +61,7 @@ public partial class PropertiesDialogModel : ViewModelBase
 
         FilePath = mediaFileInfo.FilePath;
 
-        if (mediaFileInfo is IBitmapFileInfo bitmapFileInfo && bitmapFileInfo.IsMetadataSupported)
+        if (mediaFileInfo is IBitmapFileInfo bitmapFileInfo && bitmapFileInfo.IsReadMetadataSupported)
         {
             try
             {

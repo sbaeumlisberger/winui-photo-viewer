@@ -49,7 +49,7 @@ internal class MetadataService : IMetadataService
 
     public Task<MetadataView> GetMetadataAsync(IBitmapFileInfo bitmap)
     {
-        if (!bitmap.IsMetadataSupported)
+        if (!bitmap.IsReadMetadataSupported)
         {
             throw new NotSupportedException("The file format does not support any metadata.");
         }

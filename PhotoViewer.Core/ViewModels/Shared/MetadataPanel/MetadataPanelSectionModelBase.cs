@@ -108,7 +108,13 @@ public abstract partial class MetadataPanelSectionModelBase : ViewModelBase
                     await DispatchAsync(() => IsWriting = true);
                 }
 
-                var result = await files.Parallel(cancellationToken).TryProcessAsync(processFile);
+                var result = await files.Parallel(cancellationToken, callback: (args) =>
+                {
+                    if (args.Exception is not null)
+                    {
+                        Log.Error($"Error while writing metadata for file {args.Element.FilePath}", args.Exception);
+                    }
+                }).TryProcessAsync(processFile);
 
                 onComplete(result.ProcessedElements);
 
@@ -127,7 +133,7 @@ public abstract partial class MetadataPanelSectionModelBase : ViewModelBase
             catch (Exception exception)
             {
                 Log.Error("Error while writing files", exception);
-                // TODO:
+                await ShowWriteMetadataFailedDialog(exception);
                 return false;
             }
             finally
@@ -146,6 +152,15 @@ public abstract partial class MetadataPanelSectionModelBase : ViewModelBase
         {
             Title = Strings.WriteMetadataFailedDialog_Title,
             Message = string.Join("\n", processingResult.Failures.Select(failure => failure.Element.FileName + ": " + failure.Exception.Message))
+        });
+    }
+
+    private async Task ShowWriteMetadataFailedDialog(Exception exception)
+    {
+        await dialogService.ShowDialogAsync(new MessageDialogModel()
+        {
+            Title = Strings.WriteMetadataFailedDialog_Title,
+            Message = exception.Message,
         });
     }
 }

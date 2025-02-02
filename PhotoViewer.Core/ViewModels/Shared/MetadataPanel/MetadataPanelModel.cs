@@ -24,6 +24,10 @@ public partial class MetadataPanelModel : ViewModelBase, IMetadataPanelModel
 {
     public partial bool IsVisible { get; set; } = false;
 
+    public partial bool IsReadonly { get; set; } = false;
+
+    public bool IsNotReadonly => !IsReadonly;
+
     public partial bool IsLoading { get; set; } = false;
 
     public bool IsLoaded => !IsLoading;
@@ -123,12 +127,14 @@ public partial class MetadataPanelModel : ViewModelBase, IMetadataPanelModel
     {
         IsLoading = true;
 
-        supportedFiles = Files.OfType<IBitmapFileInfo>().Where(file => file.IsMetadataSupported).ToImmutableList();
+        supportedFiles = Files.OfType<IBitmapFileInfo>().Where(file => file.IsReadMetadataSupported).ToImmutableList();
         bool allFilesSupported = supportedFiles.Count == Files.Count;
 
         IsNoFilesSelectedMessageVisible = Files.Count == 0;
         IsUnsupportedFilesMessageVisibile = Files.Count > 0 && !allFilesSupported;
         ShowSelectOnlySupportedFilesButton = Files.Count > 1 && !allFilesSupported;
+
+        IsReadonly = supportedFiles.Any(file => !file.IsMetadataSupported);
 
         if (supportedFiles.Count > 0 && allFilesSupported)
         {

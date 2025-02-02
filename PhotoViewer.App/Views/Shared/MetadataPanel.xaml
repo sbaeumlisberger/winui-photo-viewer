@@ -127,7 +127,8 @@
                     <TextBox
                         Text="{x:Bind ViewModel.TitleTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.TitleTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_TitlePlaceholder), Mode=OneWay}"
-                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.TitleTextboxModel.ConfirmCommand}"/>
+                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.TitleTextboxModel.ConfirmCommand}"
+                        IsReadOnly="{x:Bind ViewModel.IsReadonly, Mode=OneWay}"/>
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.TitleTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_LocationHeader}" Style="{StaticResource HeaderStyle}"/>
@@ -140,7 +141,8 @@
                             Command="{x:Bind ViewModel.LocationSectionModel.ShowLocationOnMapCommand}"/>
                         <SplitButton 
                             Content="{x:Bind res:Strings.MetadataPanel_EditLocationButton}"
-                            Command="{x:Bind ViewModel.LocationSectionModel.EditLocationCommand}">
+                            Command="{x:Bind ViewModel.LocationSectionModel.EditLocationCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsNotReadonly, Mode=OneWay}">
                             <SplitButton.Flyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem 
@@ -187,7 +189,8 @@
                             Text="{x:Bind ViewModel.PeopleSectionModel.AutoSuggestBoxText, Mode=TwoWay}"                          
                             SuggestionsRequested="PeopleAutoSuggestBox_SuggestionsRequested"
                             PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddPersonPlaceholder}"
-                            SubmitCommand="{x:Bind ViewModel.PeopleSectionModel.AddPersonCommand}"/>
+                            SubmitCommand="{x:Bind ViewModel.PeopleSectionModel.AddPersonCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsNotReadonly, Mode=OneWay}"/>
                         <ProgressBar 
                             IsIndeterminate="{x:Bind ViewModel.PeopleSectionModel.IsWriting, Mode=OneWay}"
                             VerticalAlignment="Bottom"
@@ -206,7 +209,8 @@
                             Content="{x:Bind res:Strings.MetadataPanel_TagPeopleOnPhoto}"
                             Visibility="{x:Bind ViewModel.PeopleSectionModel.IsTagPeopleOnPhotoButtonVisible}"
                             Command="{x:Bind ViewModel.PeopleSectionModel.ToggleTagPeopleOnPhotoCommand}"                       
-                            IsChecked="{x:Bind ViewModel.PeopleSectionModel.IsTagPeopleOnPhotoButtonChecked, Mode=OneWay}"/>
+                            IsChecked="{x:Bind ViewModel.PeopleSectionModel.IsTagPeopleOnPhotoButtonChecked, Mode=OneWay}"
+                            IsEnabled="{x:Bind ViewModel.IsNotReadonly, Mode=OneWay}"/>
                         <Button
                             Content="{x:Bind res:Strings.MetadataPanel_PeopleTaggingPageButton}"
                             Command="{x:Bind ViewModel.PeopleSectionModel.OpenBatchViewCommand}"/>
@@ -248,7 +252,8 @@
                             Text="{x:Bind ViewModel.KeywordsSectionModel.AutoSuggestBoxText, Mode=TwoWay}"
                             SuggestionsRequested="KeywordAutoSuggestBox_SuggestionsRequested"
                             PlaceholderText="{x:Bind res:Strings.MetadataPanel_AddKeywordPlaceholder}"
-                            SubmitCommand="{x:Bind ViewModel.KeywordsSectionModel.AddKeywordCommand}"/>
+                            SubmitCommand="{x:Bind ViewModel.KeywordsSectionModel.AddKeywordCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsNotReadonly, Mode=OneWay}"/>
                         <ProgressBar 
                             IsIndeterminate="{x:Bind ViewModel.KeywordsSectionModel.IsWriting, Mode=OneWay}"
                             VerticalAlignment="Bottom"
@@ -267,7 +272,8 @@
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <controls:RatingControl
                             HorizontalAlignment="Left"
-                            Rating="{x:Bind ViewModel.RatingSectionModel.Rating, Mode=TwoWay}"/>
+                            Rating="{x:Bind ViewModel.RatingSectionModel.Rating, Mode=TwoWay}"
+                            IsEnabled="{x:Bind ViewModel.IsNotReadonly, Mode=OneWay}"/>
                         <ProgressRing Width="24" Height="24" IsActive="{x:Bind ViewModel.RatingSectionModel.IsWriting, Mode=OneWay}"/>
                     </StackPanel>
 
@@ -275,14 +281,16 @@
                     <TextBox
                         Text="{x:Bind ViewModel.AuthorTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.TitleTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_AuthorPlaceholder), Mode=OneWay}"     
-                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.AuthorTextboxModel.ConfirmCommand}"/>
+                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.AuthorTextboxModel.ConfirmCommand}"
+                        IsReadOnly="{x:Bind ViewModel.IsReadonly, Mode=OneWay}"/>
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.AuthorTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_CopyrightHeader}" Style="{StaticResource HeaderStyle}"/>
                     <TextBox
                         Text="{x:Bind ViewModel.CopyrightTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.CopyrightTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_CopyrightPlaceholder), Mode=OneWay}"
-                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.CopyrightTextboxModel.ConfirmCommand}"/>
+                        utils:EnterKeyExtension.Command="{x:Bind ViewModel.CopyrightTextboxModel.ConfirmCommand}"
+                        IsReadOnly="{x:Bind ViewModel.IsReadonly, Mode=OneWay}"/>
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.CopyrightTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
                     <TextBlock Text="{x:Bind res:Strings.MetadataPanel_DateTakenHeader}" Style="{StaticResource HeaderStyle}"/>
@@ -290,9 +298,11 @@
                         Spacing="4"
                         Visibility="{x:Bind ViewModel.DateTakenSectionModel.IsSingleValue, Mode=OneWay}">
                         <DatePicker
-                            SelectedDate="{x:Bind ViewModel.DateTakenSectionModel.Date, Mode=TwoWay}"/>
+                            SelectedDate="{x:Bind ViewModel.DateTakenSectionModel.Date, Mode=TwoWay}"
+                            IsEnabled="{x:Bind ViewModel.IsNotReadonly, Mode=OneWay}"/>
                         <controls:TimePickerControl
-                            Time="{x:Bind ViewModel.DateTakenSectionModel.Time, Mode=TwoWay}"/>
+                            Time="{x:Bind ViewModel.DateTakenSectionModel.Time, Mode=TwoWay}"
+                            IsEnabled="{x:Bind ViewModel.IsNotReadonly, Mode=OneWay}"/>
                         <ProgressBar 
                             IsIndeterminate="{x:Bind ViewModel.DateTakenSectionModel.IsWriting, Mode=OneWay}"
                             Background="Transparent"/>

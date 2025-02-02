@@ -10,6 +10,9 @@ namespace PhotoViewer.Core.Models;
 public interface IBitmapFileInfo : IMediaFileInfo
 {
     bool IsMetadataSupported { get; }
+
+    bool IsReadMetadataSupported { get; }
+
     void LinkStorageFile(IStorageFile storageFile);
 }
 
@@ -50,6 +53,8 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
 
     public bool IsMetadataSupported { get; }
 
+    public bool IsReadMetadataSupported { get; }
+
     public override IReadOnlyList<IStorageFile> LinkedStorageFiles => linkedStorageFiles;
 
     private readonly List<IStorageFile> linkedStorageFiles = new List<IStorageFile>();
@@ -59,6 +64,7 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
     public BitmapFileInfo(IStorageFile file) : base(file)
     {
         IsMetadataSupported = JpegFileExtensions.Contains(FileExtension.ToLower()) || TiffFileExtensions.Contains(FileExtension.ToLower());
+        IsReadMetadataSupported = IsMetadataSupported || HeifFileExtensions.Contains(FileExtension.ToLower());
     }
 
     public void LinkStorageFile(IStorageFile storageFile)
