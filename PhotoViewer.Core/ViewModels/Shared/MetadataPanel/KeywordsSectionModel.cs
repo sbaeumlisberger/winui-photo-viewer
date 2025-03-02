@@ -48,7 +48,7 @@ public partial class KeywordsSectionModel : MetadataPanelSectionModelBase
     {
         if (metadataProperty == MetadataProperties.Keywords)
         {
-            keywords.MatchTo(CreateListItemModels(metadata));
+            keywords.SyncWith(CreateListItemModels(metadata));
         }
     }
 

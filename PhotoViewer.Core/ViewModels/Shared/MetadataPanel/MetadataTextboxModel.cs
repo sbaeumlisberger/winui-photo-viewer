@@ -28,8 +28,6 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 
     public partial bool HasMultipleValues { get; private set; }
 
-    private bool dirty = false;
-
     private readonly IMetadataService metadataService;
 
     private readonly IMetadataProperty metadataProperty;
@@ -82,7 +80,7 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
 
     protected override void OnMetadataModified(IReadOnlyList<MetadataView> metadata, IMetadataProperty metadataProperty)
     {
-        if (metadataProperty == this.metadataProperty && !dirty)
+        if (metadataProperty == this.metadataProperty && !writeDebouncer.IsExecutionPending && !IsWriting)
         {
             Update(metadata);
         }
@@ -122,11 +120,11 @@ public partial class MetadataTextboxModel : MetadataPanelSectionModelBase
     /// <summary>
     /// e.g. enter key pressed
     /// </summary>
-    [RelayCommand(AllowConcurrentExecutions = true)]
-    private async Task ConfirmAsync()
+    [RelayCommand]
+    public void Confirm()
     {
-        Log.Debug("ConfirmAsync invoked");
-        await writeDebouncer.Flush();
+        Log.Debug("Confirm invoked");
+        writeDebouncer.Flush();
     }
 
     private void OnTextChangedExternal()

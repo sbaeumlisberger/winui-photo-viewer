@@ -8,6 +8,7 @@ using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.ViewModels;
 using System.Collections.Immutable;
+using System.IO;
 using Xunit;
 
 namespace PhotoViewer.Test.ViewModels.Shared.MetadataPanel;
@@ -159,6 +160,37 @@ public class MetadataTextboxModelTest
         Assert.Equal("value from other file", metadataTextboxModel.Text);
         timeProvider.Advance(MetadataTextboxModel.DebounceTime);
         await metadataServiceMock.DidNotReceive().WriteMetadataAsync(file, metadataPropertyMock, Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task DoesNotSentPropertyChangedEventsForTextPropertyWhileUserTypes()
+    {
+        using var _ = synchronizationContextMock.Apply();
+        var file = Substitute.For<IBitmapFileInfo>();
+        var metadataView = CreateMetadataView("");
+        metadataTextboxModel.UpdateFilesChanged([file], [metadataView]);
+        var propertyChangedEvents = TestUtils.CapturePropertyChangedEvents(metadataTextboxModel, nameof(metadataTextboxModel.Text));
+
+        var tsc = new TaskCompletionSource();
+        metadataServiceMock
+            .WriteMetadataAsync(file, metadataPropertyMock, Arg.Any<string>())
+            .Returns(tsc.Task)
+            .AndDoes(call => metadataView.Source[metadataPropertyMock.Identifier] = call.ArgAt<string>(2));
+
+        metadataTextboxModel.Text = "a";
+
+        timeProvider.Advance(MetadataTextboxModel.DebounceTime);
+
+        metadataTextboxModel.Text = "ab";
+
+        tsc.SetResult();
+
+        await metadataTextboxModel.LastWriteFilesTask;
+
+        metadataTextboxModel.UpdateMetadataModified(metadataPropertyMock);
+
+        Assert.Equal("ab", metadataTextboxModel.Text);
+        Assert.Equal(2, propertyChangedEvents.Count);
     }
 
     // TODO test error handling

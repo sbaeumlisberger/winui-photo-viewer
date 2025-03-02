@@ -62,7 +62,7 @@ public partial class PeopleSectionModel : MetadataPanelSectionModelBase
 
     protected override void OnMetadataModified(IReadOnlyList<MetadataView> metadata, IMetadataProperty metadataProperty)
     {
-        people.MatchTo(CreateItemModels(metadata));
+        people.SyncWith(CreateItemModels(metadata));
     }
 
     protected override void OnIsWritingChangedOverride()

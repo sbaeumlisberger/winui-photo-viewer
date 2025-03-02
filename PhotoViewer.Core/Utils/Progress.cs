@@ -33,7 +33,7 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
     public Progress(CancellationTokenSource? cts = null, TimeProvider? timeProvider = null)
     {
         this.cts = cts;
-        updateThrottle = new Throttle(TimeSpan.FromMilliseconds(30), UpdateAsync, true, timeProvider);
+        updateThrottle = new Throttle(TimeSpan.FromMilliseconds(30), UpdateAsync, false, timeProvider);
         CanCancel = cts != null;
     }
 

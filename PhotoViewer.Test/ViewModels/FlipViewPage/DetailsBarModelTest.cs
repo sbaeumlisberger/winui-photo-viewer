@@ -39,7 +39,7 @@ public class DetailsBarModelTest
         bitmapFile.DisplayName.Returns("Test File.jpg");
         bitmapFile.GetFileSizeAsync().Returns(3_534_172UL);
         bitmapFile.GetSizeInPixelsAsync().Returns(new Size(4912, 3264));
-        bitmapFile.IsMetadataSupported.Returns(true);
+        bitmapFile.IsReadMetadataSupported.Returns(true);
         var metadata = new MetadataView(new Dictionary<string, object?>()
         {
             { MetadataProperties.DateTaken.Identifier, new DateTime(2020, 10, 07, 15, 44, 23) },

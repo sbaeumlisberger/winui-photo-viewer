@@ -161,7 +161,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     {
         if (TaggedPeople.IsEmpty())
         {
-            suggestedFacesInPercent.MatchTo(detectedFaceRectsInPercent);
+            suggestedFacesInPercent.SyncWith(detectedFaceRectsInPercent);
         }
         TrySelectNextDetectedFace();
     }

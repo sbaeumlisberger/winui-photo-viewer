@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using Castle.Components.DictionaryAdapter;
+using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET;
 using Essentials.NET.Logging;
 using NSubstitute;
@@ -66,6 +67,19 @@ internal static class TestUtils
     {
         var events = new List<string?>();
         obj.PropertyChanged += (_, e) => events.Add(e.PropertyName);
+        return events;
+    }
+
+    internal static List<PropertyChangedEventArgs> CapturePropertyChangedEvents(INotifyPropertyChanged obj, string propertyName)
+    {
+        var events = new List<PropertyChangedEventArgs>();
+        obj.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == propertyName)
+            {
+                events.Add(e);
+            }
+        };
         return events;
     }
 
