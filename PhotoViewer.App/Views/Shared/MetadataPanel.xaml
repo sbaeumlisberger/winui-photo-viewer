@@ -128,6 +128,7 @@
                         Text="{x:Bind ViewModel.TitleTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.TitleTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_TitlePlaceholder), Mode=OneWay}"
                         utils:EnterKeyExtension.Command="{x:Bind ViewModel.TitleTextboxModel.ConfirmCommand}"
+                        LostFocus="{x:Bind ViewModel.TitleTextboxModel.Confirm}"
                         IsReadOnly="{x:Bind ViewModel.IsReadonly, Mode=OneWay}"/>
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.TitleTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
@@ -282,6 +283,7 @@
                         Text="{x:Bind ViewModel.AuthorTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.TitleTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_AuthorPlaceholder), Mode=OneWay}"     
                         utils:EnterKeyExtension.Command="{x:Bind ViewModel.AuthorTextboxModel.ConfirmCommand}"
+                        LostFocus="{x:Bind ViewModel.AuthorTextboxModel.Confirm}"
                         IsReadOnly="{x:Bind ViewModel.IsReadonly, Mode=OneWay}"/>
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.AuthorTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
@@ -290,6 +292,7 @@
                         Text="{x:Bind ViewModel.CopyrightTextboxModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         PlaceholderText="{x:Bind ResolvePlaceholder(ViewModel.CopyrightTextboxModel.HasMultipleValues, res:Strings.MetadataPanel_CopyrightPlaceholder), Mode=OneWay}"
                         utils:EnterKeyExtension.Command="{x:Bind ViewModel.CopyrightTextboxModel.ConfirmCommand}"
+                        LostFocus="{x:Bind ViewModel.CopyrightTextboxModel.Confirm}"
                         IsReadOnly="{x:Bind ViewModel.IsReadonly, Mode=OneWay}"/>
                     <ProgressBar IsIndeterminate="{x:Bind ViewModel.CopyrightTextboxModel.IsWriting, Mode=OneWay}" Background="Transparent"/>
 
