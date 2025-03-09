@@ -3,7 +3,7 @@ using Windows.System;
 
 namespace PhotoViewer.Core.Utils;
 
-public interface IAcceleratedCommand : ICommand
+public interface IKeyboardAcceleratedCommand : ICommand
 {
     public VirtualKey AcceleratorKey { get; }
 

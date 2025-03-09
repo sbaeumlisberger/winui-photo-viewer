@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PhotoViewer.App.Views"    
     xmlns:converters="using:PhotoViewer.App.Converters"
+    xmlns:utils="using:PhotoViewer.App.Utils"
     xmlns:res="using:PhotoViewer.App.Resources"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -17,6 +18,13 @@
                 Storyboard.TargetName="flipView" />
         </Storyboard>
     </UserControl.Resources>
+
+    <UserControl.KeyboardAccelerators>
+        <utils:CommandKeyboardAccelerator 
+            Modifiers="{x:Bind ViewModel.RestoreLastDeletedFileKeyboardAccelerator.Modifiers}" 
+            Key="{x:Bind ViewModel.RestoreLastDeletedFileKeyboardAccelerator.Key}"
+            Command="{x:Bind ViewModel.RestoreLastDeletedFileCommand}"/>  
+    </UserControl.KeyboardAccelerators>
 
     <Grid>
         <FlipView
@@ -124,9 +132,9 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
             Margin="12"
-            Severity="{x:Bind ViewModel.InfoBarModel.Severity, Mode=OneWay}"
+            Severity="{x:Bind ViewModel.InfoBarModel.Message.Severity, Mode=OneWay}"
             IsOpen="{x:Bind ViewModel.InfoBarModel.IsOpen, Mode=OneWay}"
-            Message="{x:Bind ViewModel.InfoBarModel.Message, Mode=OneWay}"
+            Message="{x:Bind ViewModel.InfoBarModel.Message.Text, Mode=OneWay}"
             LosingFocus="InfoBar_LosingFocus">
             <InfoBar.Resources>
                 <ResourceDictionary>
@@ -150,9 +158,15 @@
             </InfoBar.Resources>
             <InfoBar.ActionButton>
                 <Button
-                    Visibility="{x:Bind ViewModel.InfoBarModel.ShowActionButton, Mode=OneWay}"
-                    Content="{x:Bind ViewModel.InfoBarModel.CommandLabel, Mode=OneWay}" 
-                    Command="{x:Bind ViewModel.InfoBarModel.Command, Mode=OneWay}"/>
+                    Visibility="{x:Bind ViewModel.InfoBarModel.Message.ShowActionButton, Mode=OneWay}"
+                    Content="{x:Bind ViewModel.InfoBarModel.Message.CommandLabel, Mode=OneWay}" 
+                    Command="{x:Bind ViewModel.InfoBarModel.Message.Command, Mode=OneWay}">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator 
+                            Modifiers="{x:Bind ViewModel.InfoBarModel.Message.CommandKeyboardAccelerator.Modifiers, Mode=OneWay}" 
+                            Key="{x:Bind ViewModel.InfoBarModel.Message.CommandKeyboardAccelerator.Key, Mode=OneWay}" />
+                    </Button.KeyboardAccelerators>
+                </Button>
             </InfoBar.ActionButton>
         </InfoBar>
 

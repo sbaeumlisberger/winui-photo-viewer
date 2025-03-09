@@ -5,11 +5,11 @@ namespace PhotoViewer.Core.ViewModels.Shared;
 
 public partial class ToolsMenuModel : ViewModelBase
 {
-    public IAcceleratedCommand MoveRawFilesToSubfolderCommand { get; }
-    public IAcceleratedCommand DeleteSingleRawFilesCommand { get; }
-    public IAcceleratedCommand ShiftDatenTakenCommand { get; }
-    public IAcceleratedCommand ImportGpxTrackCommand { get; }
-    public IAcceleratedCommand PrefixFilesByDateCommand { get; }
+    public IKeyboardAcceleratedCommand MoveRawFilesToSubfolderCommand { get; }
+    public IKeyboardAcceleratedCommand DeleteSingleRawFilesCommand { get; }
+    public IKeyboardAcceleratedCommand ShiftDatenTakenCommand { get; }
+    public IKeyboardAcceleratedCommand ImportGpxTrackCommand { get; }
+    public IKeyboardAcceleratedCommand PrefixFilesByDateCommand { get; }
 
     internal ToolsMenuModel(
         IMoveRawFilesToSubfolderCommand moveRawFilesToSubfolderCommand,

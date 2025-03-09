@@ -17,7 +17,7 @@ public sealed partial class ToolsAppBarButton : AppBarButton, IMVVMControl<Tools
         // register all keyboard accelerators on the button,
         // because in the menu flyout they are not working
 
-        IAcceleratedCommand[] commands = [
+        IKeyboardAcceleratedCommand[] commands = [
             viewModel.MoveRawFilesToSubfolderCommand,
             viewModel.DeleteSingleRawFilesCommand,
             viewModel.ShiftDatenTakenCommand,

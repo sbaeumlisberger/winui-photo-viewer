@@ -1,40 +1,45 @@
 ﻿using Essentials.NET;
 using Microsoft.UI.Xaml.Controls;
 using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels.Shared;
 using System.Windows.Input;
 
 namespace PhotoViewer.Core.ViewModels;
 
 public partial class InfoBarModel : ViewModelBase
 {
+    public class InforBarMessage
+    {
+        public required string Text { get; init; }
+
+        public InfoBarSeverity Severity { get; init; } = InfoBarSeverity.Informational;
+
+        public ICommand? Command { get; init; }
+
+        public string? CommandLabel { get; init; }
+
+        public KeyboardAcceleratorViewModel? CommandKeyboardAccelerator { get; init; }
+
+        public bool ShowActionButton => Command != null;
+    }
+
     private static readonly TimeSpan DefaultMessageDuration = TimeSpan.FromSeconds(3);
 
-    public partial string Message { get; private set; } = string.Empty;
+    public partial InforBarMessage? Message { get; private set; }
 
-    public bool IsOpen => !string.IsNullOrEmpty(Message);
-
-    public partial InfoBarSeverity Severity { get; private set; } = InfoBarSeverity.Informational;
-
-    public partial ICommand? Command { get; private set; }
-
-    public partial string? CommandLabel { get; private set; }
-
-    public bool ShowActionButton => Command != null;
+    public bool IsOpen => Message is not null;
 
     private ITimer? timer;
 
-    public void ShowMessage(string message, InfoBarSeverity severity = InfoBarSeverity.Informational, ICommand? command = null, string? commandLabel = null)
+    public void ShowMessage(InforBarMessage message)
     {
         Message = message;
-        Severity = severity;
-        Command = command;
-        CommandLabel = commandLabel;
 
         if (timer is null)
         {
             timer = TimeProvider.System.CreateTimer(DefaultMessageDuration, () =>
             {
-                DispatchAsync(() => { Message = string.Empty; });
+                DispatchAsync(() => { Message = null; });
             });
         }
         else
@@ -43,10 +48,15 @@ public partial class InfoBarModel : ViewModelBase
         }
     }
 
+    public void ShowMessage(string text, InfoBarSeverity severity = InfoBarSeverity.Informational)
+    {
+        ShowMessage(new InforBarMessage() { Text = text, Severity = severity });
+    }
+
     public void HideMessage()
     {
-        Message = string.Empty;
         timer?.Stop();
+        Message = null;
     }
 }
 

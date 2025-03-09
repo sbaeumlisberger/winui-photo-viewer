@@ -8,9 +8,11 @@ using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Resources;
 using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
+using PhotoViewer.Core.ViewModels.Shared;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using Windows.Storage;
+using Windows.System;
 
 namespace PhotoViewer.Core.ViewModels;
 
@@ -61,6 +63,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
 
     public InfoBarModel InfoBarModel { get; } = new InfoBarModel();
 
+    public KeyboardAcceleratorViewModel RestoreLastDeletedFileKeyboardAccelerator { get; } = new(VirtualKeyModifiers.Control, VirtualKey.Z);
+
     private readonly IDialogService dialogService;
 
     private readonly IMediaFilesLoaderService mediaFilesLoaderService;
@@ -86,7 +90,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         IFileSystemService fileSystemService,
         Func<IMediaFileInfo, IMediaFlipViewItemModel> mediaFlipViewItemModelFactory,
         ApplicationSettings settings) : base(messenger)
-    {       
+    {
         this.dialogService = dialogService;
         this.mediaFilesLoaderService = mediaFilesLoaderService;
         this.fileSystemService = fileSystemService;
@@ -174,8 +178,13 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     {
         if (SelectedItem is not null && msg.Files.Count == 1 && msg.Files.Single() == SelectedItem)
         {
-            InfoBarModel.ShowMessage(string.Format(Strings.FileDeletedMessage, SelectedItem.DisplayName),
-                command: RestoreLastDeletedFileCommand, commandLabel: Strings.RestoreDeletedFileLabel);
+            InfoBarModel.ShowMessage(new InfoBarModel.InforBarMessage()
+            {
+                Text = string.Format(Strings.FileDeletedMessage, SelectedItem.DisplayName),
+                Command = RestoreLastDeletedFileCommand,
+                CommandLabel = Strings.RestoreDeletedFileLabel,
+                CommandKeyboardAccelerator = RestoreLastDeletedFileKeyboardAccelerator
+            });
             lastDeletedFileInfo = (SelectedItem, SelectedIndex);
         }
 
@@ -385,17 +394,22 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(AllowConcurrentExecutions = false)]
     private async Task RestoreLastDeletedFileAsync()
     {
-        var lastDeletedFileInfo = this.lastDeletedFileInfo!.Value;
+        if (this.lastDeletedFileInfo is null) 
+        {
+            return; 
+        }
+
+        var lastDeletedFileInfo = this.lastDeletedFileInfo.Value;
 
         try
         {
             InfoBarModel.HideMessage();
 
-            await Task.Run(() => 
-            { 
+            await Task.Run(() =>
+            {
                 foreach (var storageFile in lastDeletedFileInfo.File.StorageFiles)
                 {
                     fileSystemService.Restore(storageFile);
@@ -413,6 +427,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
             Messenger.Send(new MediaFileRestoredMessage(lastDeletedFileInfo.File, lastDeletedFileInfo.Index));
 
             InfoBarModel.ShowMessage(string.Format(Strings.FileRestoredMessage, lastDeletedFileInfo.File.DisplayName));
+
+            this.lastDeletedFileInfo = null;
         }
         catch (Exception e)
         {

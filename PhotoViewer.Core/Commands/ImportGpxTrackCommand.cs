@@ -7,7 +7,7 @@ using Windows.System;
 
 namespace PhotoViewer.Core.Commands;
 
-internal interface IImportGpxTrackCommand : IAcceleratedCommand { }
+internal interface IImportGpxTrackCommand : IKeyboardAcceleratedCommand { }
 
 internal partial class ImportGpxTrackCommand : AsyncCommandBase, IImportGpxTrackCommand
 {

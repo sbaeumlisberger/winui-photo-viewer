@@ -7,7 +7,7 @@ using Windows.System;
 
 namespace PhotoViewer.Core.Commands;
 
-internal interface IPrefixFilesByDateCommand : IAcceleratedCommand { }
+internal interface IPrefixFilesByDateCommand : IKeyboardAcceleratedCommand { }
 
 internal partial class PrefixFilesByDateCommand : AsyncCommandBase, IPrefixFilesByDateCommand
 {

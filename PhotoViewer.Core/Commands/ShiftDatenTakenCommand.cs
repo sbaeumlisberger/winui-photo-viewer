@@ -7,7 +7,7 @@ using Windows.System;
 
 namespace PhotoViewer.Core.Commands;
 
-internal interface IShiftDatenTakenCommand : IAcceleratedCommand { }
+internal interface IShiftDatenTakenCommand : IKeyboardAcceleratedCommand { }
 
 internal partial class ShiftDatenTakenCommand : AsyncCommandBase, IShiftDatenTakenCommand
 {

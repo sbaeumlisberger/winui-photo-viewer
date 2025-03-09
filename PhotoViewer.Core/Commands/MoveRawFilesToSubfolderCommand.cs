@@ -6,7 +6,7 @@ using Windows.System;
 
 namespace PhotoViewer.Core.Commands;
 
-internal interface IMoveRawFilesToSubfolderCommand : IAcceleratedCommand { }
+internal interface IMoveRawFilesToSubfolderCommand : IKeyboardAcceleratedCommand { }
 
 internal partial class MoveRawFilesToSubfolderCommand : AsyncCommandBase, IMoveRawFilesToSubfolderCommand
 {

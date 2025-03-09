@@ -7,7 +7,7 @@ using Windows.System;
 
 namespace PhotoViewer.Core.Commands;
 
-internal interface IDeleteSingleRawFilesCommand : IAcceleratedCommand { }
+internal interface IDeleteSingleRawFilesCommand : IKeyboardAcceleratedCommand { }
 
 internal partial class DeleteSingleRawFilesCommand : AsyncCommandBase, IDeleteSingleRawFilesCommand
 {
