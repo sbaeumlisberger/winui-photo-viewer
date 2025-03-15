@@ -9,7 +9,9 @@
     mc:Ignorable="d">
 
     <Grid>
-        <Image x:Name="imageControl" Stretch="Uniform"/>
+        <win2d:CanvasControl 
+            x:Name="canvasControl" 
+            Draw="CanvasControl_Draw"/>
         <ScrollViewer 
             x:Name="scrollViewer"
             MinZoomFactor="1"

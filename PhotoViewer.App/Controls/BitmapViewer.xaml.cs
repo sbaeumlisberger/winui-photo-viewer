@@ -3,7 +3,6 @@ using Essentials.NET.Logging;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -40,8 +39,6 @@ public sealed partial class BitmapViewer : UserControl
     private readonly Guid debugId = Guid.NewGuid();
 #endif    
 
-    private CanvasImageSource? canvas;
-
     public BitmapViewer()
     {
         this.InitializeComponent();
@@ -49,8 +46,6 @@ public sealed partial class BitmapViewer : UserControl
         scrollViewer.EnableAdvancedZoomBehaviour();
 
         Unloaded += BitmapViewer_Unloaded;
-        Loaded += BitmapViewer_Loaded;
-        SizeChanged += BitmapViewer_SizeChanged;
 
         this.RegisterPropertyChangedCallbackSafely(IsEnabledProperty, OnIsEnabledChanged);
         this.RegisterPropertyChangedCallbackSafely(BitmapImageProperty, OnBitmapImageChanged);
@@ -64,56 +59,21 @@ public sealed partial class BitmapViewer : UserControl
     {
         animatedBitmapRenderer.DisposeSafely(() => animatedBitmapRenderer = null);
 
-        imageControl.Source = null;
-        canvas = null;
+        canvasControl.RemoveFromVisualTree();
+        canvasControl = null;
 
         colorProfileProvider.ColorProfileLoaded -= ColorProfileProvider_ColorProfileLoaded;
     }
 
-    private void BitmapViewer_Loaded(object sender, RoutedEventArgs e)
-    {
-        Debug($"Loaded -> update scroll dummy and create canvas");
-        UpdateScrollDummy();
-        CreateCanvas();
-    }
-
-    private void BitmapViewer_SizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        if (IsLoaded)
-        {
-            Debug("SizeChanged -> update scroll dummy and create new canvas");
-            UpdateScrollDummy();
-            CreateCanvas();
-        }
-    }
-
-    private void CreateCanvas()
-    {
-        if (ActualWidth == 0 || ActualHeight == 0)
-        {
-            Debug("Do not create canvas because width or heigt is zero");
-            return;
-        }
-
-        uint canvasWidthInPixels = (uint)Math.Floor(ActualWidth * XamlRoot.RasterizationScale);
-        uint canvasHeightInPixels = (uint)Math.Floor(ActualHeight * XamlRoot.RasterizationScale);
-
-        canvas = new CanvasImageSource(CanvasDevice.GetSharedDevice(), canvasWidthInPixels, canvasHeightInPixels, 96);
-
-        imageControl.Source = canvas;
-
-        InvalidateCanvas();
-    }
-
     private void ColorProfileProvider_ColorProfileLoaded(object? sender, EventArgs e)
     {
-        Debug($"ColorProfileLoaded -> invalidate canvas");
+        Debug("ColorProfileLoaded -> invalidate canvas");
         InvalidateCanvas();
     }
 
     private void OnBitmapImageChanged(DependencyObject sender, DependencyProperty dp)
     {
-        Debug($"OnBitmapImageChanged ({BitmapImage}) -> update scroll dummy and invalidate canvas");
+        Debug($"OnBitmapImageChanged ({BitmapImage}) -> invalidate canvas");
 
         animatedBitmapRenderer.DisposeSafely(() => animatedBitmapRenderer = null);
 
@@ -121,8 +81,6 @@ public sealed partial class BitmapViewer : UserControl
         {
             scrollViewer.ChangeView(0, 0, 1, true);
         }
-
-        UpdateScrollDummy();
 
         if (BitmapImage != null && BitmapImage.Frames.Count > 1)
         {
@@ -138,9 +96,7 @@ public sealed partial class BitmapViewer : UserControl
 
     private void OnIsScaleUpEnabeldChanged(DependencyObject sender, DependencyProperty dp)
     {
-        Debug($"OnIsScaleUpEnabeldChanged -> update scroll dummy and invalidate canvas");
-
-        UpdateScrollDummy();
+        Debug("OnIsScaleUpEnabeldChanged -> invalidate canvas");
         InvalidateCanvas();
     }
 
@@ -160,34 +116,24 @@ public sealed partial class BitmapViewer : UserControl
     private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
     {
         Debug($"ScrollViewer_ViewChanged -> invalidate canvas");
-
         InvalidateCanvas();
         ViewChanged?.Invoke(this, e);
     }
 
     private void InvalidateCanvas()
     {
+        canvasControl.Invalidate();
+    }
+
+    private void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+    {
         try
         {
-            if (canvas is null)
-            {
-                Debug("Canvas is not initialized yet, skip drawing");
-                return;
-            }
-
-            if (double.IsNaN(scrollDummy.Width) || double.IsNaN(scrollDummy.Height))
-            {
-                Debug("Scroll dummy is not initialized yet, skip drawing");
-                return;
-            }
-
             if (!colorProfileProvider.IsInitialized)
             {
                 Debug("Color profile provider is not initialized yet, skip drawing");
                 return;
             }
-
-            using var drawingSession = canvas.CreateDrawingSession(Colors.Transparent);
 
             if (BitmapImage is null)
             {
@@ -195,7 +141,11 @@ public sealed partial class BitmapViewer : UserControl
                 return;
             }
 
-            DrawImageToCanvas(canvas, drawingSession, BitmapImage);
+            UpdateScrollDummy(BitmapImage);
+
+            using var drawingSession = args.DrawingSession;
+
+            DrawImageToCanvas(drawingSession, BitmapImage);
         }
         catch (Exception ex)
         {
@@ -203,30 +153,12 @@ public sealed partial class BitmapViewer : UserControl
         }
     }
 
-    private void UpdateScrollDummy()
+    private void UpdateScrollDummy(IBitmapImageModel bitmapImage)
     {
-        if (XamlRoot is null)
-        {
-            Debug("Skip updating scroll dummy because XamlRoot is null");
-            return;
-        }
-
-        if (ActualWidth == 0 || ActualHeight == 0)
-        {
-            Debug("Skip updating scroll dummy because width or height is zero");
-            return;
-        }
-
-        if (BitmapImage is null)
-        {
-            Debug("Skip updating scroll dummy because BitmapImage is null");
-            return;
-        }
-
         double displayScale = XamlRoot.RasterizationScale;
 
-        double imageWidthInDIPs = BitmapImage.SizeInPixels.Width / displayScale;
-        double imageHeightInDIPs = BitmapImage.SizeInPixels.Height / displayScale;
+        double imageWidthInDIPs = bitmapImage.SizeInPixels.Width / displayScale;
+        double imageHeightInDIPs = bitmapImage.SizeInPixels.Height / displayScale;
 
         double imageAspectRadio = imageWidthInDIPs / imageHeightInDIPs;
         double canvasAspectRadio = ActualWidth / ActualHeight;
@@ -243,17 +175,17 @@ public sealed partial class BitmapViewer : UserControl
         }
     }
 
-    private void DrawImageToCanvas(CanvasImageSource canvas, CanvasDrawingSession drawingSession, IBitmapImageModel image)
+    private void DrawImageToCanvas(CanvasDrawingSession drawingSession, IBitmapImageModel image)
     {
         double displayScale = XamlRoot.RasterizationScale;
 
         double extentWidthInPixels = Math.Round(scrollDummy.Width * displayScale * scrollViewer.ZoomFactor);
         double extentHeightInPixels = Math.Round(scrollDummy.Height * displayScale * scrollViewer.ZoomFactor);
 
-        double dstWidth = Math.Min(extentWidthInPixels, canvas.SizeInPixels.Width);
-        double dstHeight = Math.Min(extentHeightInPixels, canvas.SizeInPixels.Height);
-        double dstX = Math.Round((canvas.SizeInPixels.Width - dstWidth) / 2d);
-        double dstY = Math.Round((canvas.SizeInPixels.Height - dstHeight) / 2d);
+        double dstWidth = Math.Min(extentWidthInPixels, Math.Round(canvasControl.ActualWidth * displayScale));
+        double dstHeight = Math.Min(extentHeightInPixels, Math.Round(canvasControl.ActualHeight * displayScale));
+        double dstX = Math.Round((canvasControl.ActualWidth * displayScale - dstWidth) / 2d);
+        double dstY = Math.Round((canvasControl.ActualHeight * displayScale - dstHeight) / 2d);
         Rect dstRectInPixels = new Rect(dstX, dstY, dstWidth, dstHeight);
 
         double srcWidth = Math.Round(image.SizeInPixels.Width * (dstWidth / extentWidthInPixels));
@@ -267,8 +199,11 @@ public sealed partial class BitmapViewer : UserControl
         DrawImageWithColorManagement(drawingSession, image, dstRectInPixels, srcRectInPixels);
     }
 
-    private void DrawImageWithColorManagement(CanvasDrawingSession drawingSession, IBitmapImageModel image, Rect dstRect, Rect srcRect)
+    private void DrawImageWithColorManagement(CanvasDrawingSession drawingSession, IBitmapImageModel image, Rect dstRectInPixels, Rect srcRectInPixels)
     {
+        drawingSession.Units = CanvasUnits.Pixels;
+        drawingSession.Antialiasing = CanvasAntialiasing.Aliased;
+
         ColorManagementProfile? sourceColorProfile = null;
 
         if (image.ColorSpace.Profile is byte[] colorProfileBytes)
@@ -282,7 +217,7 @@ public sealed partial class BitmapViewer : UserControl
 
         var interpolationMode = CanvasImageInterpolation.NearestNeighbor;
 
-        if (dstRect.Width < srcRect.Width || dstRect.Height < srcRect.Height)
+        if (dstRectInPixels.Width < srcRectInPixels.Width || dstRectInPixels.Height < srcRectInPixels.Height)
         {
             interpolationMode = CanvasImageInterpolation.HighQualityCubic;
         }
@@ -301,11 +236,11 @@ public sealed partial class BitmapViewer : UserControl
                 colorProfileEffect.Quality = ColorManagementEffectQuality.Best;
             }
 
-            drawingSession.DrawImage(colorProfileEffect, dstRect, srcRect, 1, interpolationMode);
+            drawingSession.DrawImage(colorProfileEffect, dstRectInPixels, srcRectInPixels, 1, interpolationMode);
         }
         else
         {
-            drawingSession.DrawImage(canvasImage, dstRect, srcRect, 1, interpolationMode);
+            drawingSession.DrawImage(canvasImage, dstRectInPixels, srcRectInPixels, 1, interpolationMode);
         }
 
         //Log.Debug("Image " + image.ID + " drawn");
@@ -339,5 +274,4 @@ public sealed partial class BitmapViewer : UserControl
         //Log.Debug($"BitmapViewer({debugId}): {message}");
 #endif
     }
-
 }
