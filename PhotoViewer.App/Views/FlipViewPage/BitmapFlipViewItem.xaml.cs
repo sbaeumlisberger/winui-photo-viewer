@@ -44,17 +44,17 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
         viewModel.UnsubscribeAll(this);
     }
 
-    private void OnIsSelectedChanged()
+    private void OnIsSelectedChanged(BitmapFlipViewItemModel viewModel)
     {
-        if (!ViewModel!.IsSelected)
+        if (!viewModel.IsSelected)
         {
             bitmapViewer.ScrollViewer.ChangeView(0, 0, 1, true);
         }
     }
 
-    private void OnIsDiashowActiveChanged()
+    private void OnIsDiashowActiveChanged(BitmapFlipViewItemModel viewModel)
     {
-        if (ViewModel!.IsDiashowActive)
+        if (viewModel.IsDiashowActive)
         {
             bitmapViewer.ScrollViewer.ChangeView(0, 0, 1);
         }

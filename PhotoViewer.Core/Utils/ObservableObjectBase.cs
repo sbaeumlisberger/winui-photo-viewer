@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace PhotoViewer.Core.Utils;
 
-public class ObservableObjectBase : ObservableObject
+public partial class ObservableObjectBase : ObservableObject
 {
     public record class Subsciption
     {
