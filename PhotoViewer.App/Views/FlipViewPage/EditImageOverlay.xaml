@@ -15,7 +15,7 @@
         Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}"
         Background="{ThemeResource PhotoViewerPageBackgroundBrush}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="320"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 

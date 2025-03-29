@@ -46,7 +46,7 @@ public class TagPeopleToolModelTest
     {
         examplePeopleTags = new() { examplePeopleTag1, examplePeopleTag2, examplePeopleTag3 };
 
-        exampleBitmapImage.SizeInDIPs.Returns(new Size(2000, 1000));
+        exampleBitmapImage.SizeInPixels.Returns(new Size(2000, 1000));
 
         exampleDetectedFaces = new List<DetectedFaceModel>()
         {

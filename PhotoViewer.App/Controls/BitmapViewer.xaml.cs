@@ -1,8 +1,10 @@
 ﻿using Essentials.NET;
 using Essentials.NET.Logging;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -37,7 +39,7 @@ public sealed partial class BitmapViewer : UserControl
 
 #if DEBUG
     private readonly Guid debugId = Guid.NewGuid();
-#endif    
+#endif
 
     public BitmapViewer()
     {
@@ -155,10 +157,8 @@ public sealed partial class BitmapViewer : UserControl
 
     private void UpdateScrollDummy(IBitmapImageModel bitmapImage)
     {
-        double displayScale = XamlRoot.RasterizationScale;
-
-        double imageWidthInDIPs = bitmapImage.SizeInPixels.Width / displayScale;
-        double imageHeightInDIPs = bitmapImage.SizeInPixels.Height / displayScale;
+        double imageWidthInDIPs = PixelsToDips(bitmapImage.SizeInPixels.Width);
+        double imageHeightInDIPs = PixelsToDips(bitmapImage.SizeInPixels.Height);
 
         double imageAspectRadio = imageWidthInDIPs / imageHeightInDIPs;
         double canvasAspectRadio = ActualWidth / ActualHeight;
@@ -177,21 +177,25 @@ public sealed partial class BitmapViewer : UserControl
 
     private void DrawImageToCanvas(CanvasDrawingSession drawingSession, IBitmapImageModel image)
     {
-        double displayScale = XamlRoot.RasterizationScale;
+        double extendWidthInDIPs = scrollDummy.Width * scrollViewer.ZoomFactor;
+        double extendHeightInDIPs = scrollDummy.Height * scrollViewer.ZoomFactor;
 
-        double extentWidthInPixels = Math.Round(scrollDummy.Width * displayScale * scrollViewer.ZoomFactor);
-        double extentHeightInPixels = Math.Round(scrollDummy.Height * displayScale * scrollViewer.ZoomFactor);
+        double extentWidthInPixels = DipsToPixels(extendWidthInDIPs);
+        double extentHeightInPixels = DipsToPixels(extendHeightInDIPs);
 
-        double dstWidth = Math.Min(extentWidthInPixels, Math.Round(canvasControl.ActualWidth * displayScale));
-        double dstHeight = Math.Min(extentHeightInPixels, Math.Round(canvasControl.ActualHeight * displayScale));
-        double dstX = Math.Round((canvasControl.ActualWidth * displayScale - dstWidth) / 2d);
-        double dstY = Math.Round((canvasControl.ActualHeight * displayScale - dstHeight) / 2d);
+        double canvasWidthInPixels = DipsToPixels(canvasControl.ActualWidth);
+        double canvasHeightInPixels = DipsToPixels(canvasControl.ActualHeight);
+
+        double dstWidth = Math.Min(extentWidthInPixels, canvasWidthInPixels);
+        double dstHeight = Math.Min(extentHeightInPixels, canvasHeightInPixels);
+        double dstX = (canvasWidthInPixels - dstWidth) / 2d;
+        double dstY = (canvasHeightInPixels - dstHeight) / 2d;
         Rect dstRectInPixels = new Rect(dstX, dstY, dstWidth, dstHeight);
 
         double srcWidth = Math.Round(image.SizeInPixels.Width * (dstWidth / extentWidthInPixels));
         double srcHeight = Math.Round(image.SizeInPixels.Height * (dstHeight / extentHeightInPixels));
-        double srcX = Math.Round(image.SizeInPixels.Width * (scrollViewer.HorizontalOffset / Math.Max(1, scrollViewer.ExtentWidth)));
-        double srcY = Math.Round(image.SizeInPixels.Height * (scrollViewer.VerticalOffset / Math.Max(1, scrollViewer.ExtentHeight)));
+        double srcX = Math.Round(image.SizeInPixels.Width * (scrollViewer.HorizontalOffset / extendWidthInDIPs));
+        double srcY = Math.Round(image.SizeInPixels.Height * (scrollViewer.VerticalOffset / extendHeightInDIPs));
         srcX = Math.Min(srcX, image.SizeInPixels.Width - srcWidth);
         srcY = Math.Min(srcY, image.SizeInPixels.Height - srcHeight);
         Rect srcRectInPixels = new Rect(srcX, srcY, srcWidth, srcHeight);
@@ -204,15 +208,6 @@ public sealed partial class BitmapViewer : UserControl
         drawingSession.Units = CanvasUnits.Pixels;
         drawingSession.Antialiasing = CanvasAntialiasing.Aliased;
 
-        ColorManagementProfile? sourceColorProfile = null;
-
-        if (image.ColorSpace.Profile is byte[] colorProfileBytes)
-        {
-            sourceColorProfile = ColorManagementProfile.CreateCustom(colorProfileBytes);
-        }
-
-        var outputColorProfile = colorProfileProvider.ColorProfile;
-
         ICanvasImage canvasImage = animatedBitmapRenderer != null ? animatedBitmapRenderer.RenderTarget : image.CanvasImage;
 
         var interpolationMode = CanvasImageInterpolation.NearestNeighbor;
@@ -222,13 +217,12 @@ public sealed partial class BitmapViewer : UserControl
             interpolationMode = CanvasImageInterpolation.HighQualityCubic;
         }
 
-        if (sourceColorProfile is not null || outputColorProfile is not null)
+        if (colorProfileProvider.ColorProfile is not null)
         {
             using var colorProfileEffect = new ColorManagementEffect()
             {
                 Source = canvasImage,
-                SourceColorProfile = sourceColorProfile,
-                OutputColorProfile = outputColorProfile
+                OutputColorProfile = colorProfileProvider.ColorProfile
             };
 
             if (ColorManagementEffect.IsBestQualitySupported(drawingSession.Device))
@@ -273,5 +267,15 @@ public sealed partial class BitmapViewer : UserControl
 #if DEBUG
         //Log.Debug($"BitmapViewer({debugId}): {message}");
 #endif
+    }
+
+    private double PixelsToDips(uint pixels)
+    {
+        return pixels / XamlRoot.RasterizationScale;
+    }
+
+    private int DipsToPixels(double dips)
+    {
+        return (int)Math.Round(dips * XamlRoot.RasterizationScale);
     }
 }

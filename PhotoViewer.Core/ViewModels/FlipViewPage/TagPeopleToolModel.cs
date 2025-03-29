@@ -121,7 +121,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         ProcessBitmapImageTask = ProcessBitmapImageAsync();
     }
 
-    private async Task ProcessBitmapImageAsync() 
+    private async Task ProcessBitmapImageAsync()
     {
         await DetectFacesAsync();
 
@@ -327,17 +327,17 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
 
                 var detectedFaceRectsInPercent = new List<Rect>();
 
-                var imageSize = bitmapImage.SizeInDIPs;
+                var imageSize = bitmapImage.SizeInPixels;
 
                 foreach (var face in detectedFaces)
                 {
                     var faceBox = face.FaceBox;
 
                     detectedFaceRectsInPercent.Add(new Rect(
-                        faceBox.X / imageSize.Width,
-                        faceBox.Y / imageSize.Height,
-                        faceBox.Width / imageSize.Width,
-                        faceBox.Height / imageSize.Height));
+                        faceBox.X / (double)imageSize.Width,
+                        faceBox.Y / (double)imageSize.Height,
+                        faceBox.Width / (double)imageSize.Width,
+                        faceBox.Height / (double)imageSize.Height));
                 }
 
                 this.detectedFaceRectsInPercent = detectedFaceRectsInPercent;

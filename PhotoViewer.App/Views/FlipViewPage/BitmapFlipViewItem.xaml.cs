@@ -5,6 +5,7 @@ using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System;
 using Windows.Foundation;
+using Windows.Graphics.Imaging;
 
 namespace PhotoViewer.App.Views;
 
@@ -98,12 +99,12 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
             return;
         }
 
-        Size imageSize = ViewModel.ImageViewModel.Image.SizeInDIPs;
+        BitmapSize imageSizeInPixels = ViewModel.ImageViewModel.Image.SizeInPixels;
 
         double rasterizationScale = bitmapViewer.XamlRoot.RasterizationScale;
-        Size viewSize = new Size(bitmapViewer.ActualWidth * rasterizationScale, bitmapViewer.ActualHeight * rasterizationScale);
+        Size viewSizeInPixels = new Size(bitmapViewer.ActualWidth * rasterizationScale, bitmapViewer.ActualHeight * rasterizationScale);
 
-        var imageToViewFactor = Math.Min(Math.Min(viewSize.Width / imageSize.Width, viewSize.Height / imageSize.Height), 1);
+        var imageToViewFactor = Math.Min(Math.Min(viewSizeInPixels.Width / imageSizeInPixels.Width, viewSizeInPixels.Height / imageSizeInPixels.Height), 1);
 
         zoomTextBlock.Text = Math.Round(imageToViewFactor * zoomFactor * 100) + " %";
         zoomTextBlockContainer!.Visibility = Visibility.Visible;

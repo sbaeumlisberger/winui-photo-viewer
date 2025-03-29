@@ -1,6 +1,5 @@
 ﻿using Essentials.NET;
 using Microsoft.Graphics.Canvas;
-using Windows.Foundation;
 using Windows.Graphics.Imaging;
 
 namespace PhotoViewer.Core.Models;
@@ -17,8 +16,6 @@ public class CanvasVirtualBitmapImageModel : ShareableDisposable, ICanvasVirtual
 
     public IReadOnlyList<IBitmapFrameModel> Frames { get; }
 
-    public Size SizeInDIPs { get; }
-
     public BitmapSize SizeInPixels { get; }
 
     public ColorSpaceInfo ColorSpace { get; }
@@ -29,7 +26,6 @@ public class CanvasVirtualBitmapImageModel : ShareableDisposable, ICanvasVirtual
         Device = canvasVirtualBitmap.Device;
         CanvasVirtualBitmap = canvasVirtualBitmap;
         Frames = Array.Empty<IBitmapFrameModel>();
-        SizeInDIPs = canvasVirtualBitmap.Size;
         SizeInPixels = canvasVirtualBitmap.SizeInPixels;
         ColorSpace = colorSpace;
     }

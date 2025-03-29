@@ -173,7 +173,7 @@ public class ImageLoaderService : IImageLoaderService
 
             return new CanvasBitmapImageModel(displayName, canvasBitmap, colorSpace);
         }
-        catch (ArgumentException ex) when (ex.HResult == -2147024809)
+        catch (ArgumentException ex) when (ex.HResult == unchecked((int)0x80070057))
         // TODO: find faster and better solution, but checking the canvas device (Device.MaximumBitmapSizeInPixels) is very slow (~100ms)
         {
             Log.Debug($"Load {displayName} as CanvasVirtualBitmap");
@@ -253,7 +253,7 @@ public class ImageLoaderService : IImageLoaderService
                .FirstOrDefault(cc => cc.GetType() == WICColorContextType.WICColorContextExifColorSpace)
                ?.GetExifColorSpace();
 
-        if (exifColorSpace == ExifColorSpace.SRGB || exifColorSpace == ExifColorSpace.Uncalibrated)
+        if (exifColorSpace == ExifColorSpace.SRGB)
         {
             return ColorSpaceType.SRGB;
         }
