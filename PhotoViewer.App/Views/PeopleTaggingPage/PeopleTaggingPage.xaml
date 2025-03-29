@@ -71,6 +71,13 @@
             </GridView.ItemTemplate>
         </GridView>
 
+        <TextBlock 
+            Grid.Column="1" 
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Visibility="{x:Bind ViewModel.ShowNoMorePeopleDetectedMessage, Mode=OneWay}"
+            Text="{x:Bind res:Strings.PeopleTaggingPage_NoMorePeopleDetectedMessage}"/>
+
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

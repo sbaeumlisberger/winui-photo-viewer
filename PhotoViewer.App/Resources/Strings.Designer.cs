@@ -1591,6 +1591,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No more people detected.
+        /// </summary>
+        internal static string PeopleTaggingPage_NoMorePeopleDetectedMessage {
+            get {
+                return ResourceManager.GetString("PeopleTaggingPage_NoMorePeopleDetectedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Recently tagged people.
         /// </summary>
         internal static string PeopleTaggingPage_RecentPeople {

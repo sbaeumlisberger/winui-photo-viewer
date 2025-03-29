@@ -19,6 +19,8 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class PeopleTaggingPageModel : ViewModelBase
 {
+    public partial bool ShowNoMorePeopleDetectedMessage { get; private set; } = false;
+
     public ObservableList<DetectedFace> DetectedFaces { get; } = [];
 
     public partial IReadOnlyList<DetectedFace> SelectedFaces { get; set; } = [];
@@ -84,6 +86,7 @@ public partial class PeopleTaggingPageModel : ViewModelBase
                 peopleTags = peopleTags.Append(new PeopleTag(name, faceRect)).ToList();
                 await metadataService.WriteMetadataAsync(face.File, MetadataProperties.People, peopleTags);
                 DetectedFaces.Remove(face);
+                ShowNoMorePeopleDetectedMessage = DetectedFaces.Count == 0;
                 await peopleSuggestionsService.AddSuggestionAsync(name);
                 RecentPeopleNames = peopleSuggestionsService.GetRecent();
             }
@@ -129,6 +132,8 @@ public partial class PeopleTaggingPageModel : ViewModelBase
         });
         stopwatch.Stop();
         Log.Debug($"Completed Face Detection in {stopwatch.ElapsedMilliseconds} ms");
+
+        ShowNoMorePeopleDetectedMessage = DetectedFaces.Count == 0;
     }
 
     private async Task DetectFacesAsync(IImageLoaderService imageLoaderService, IBitmapFileInfo bitmapFile, CancellationToken cancellationToken)

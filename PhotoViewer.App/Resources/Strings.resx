@@ -891,4 +891,7 @@
   <data name="TagPeopleTool_ForgetSuggestion" xml:space="preserve">
     <value>Forget suggestion</value>
   </data>
+  <data name="PeopleTaggingPage_NoMorePeopleDetectedMessage" xml:space="preserve">
+    <value>No more people detected</value>
+  </data>
 </root>
