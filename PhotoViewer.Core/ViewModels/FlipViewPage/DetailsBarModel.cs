@@ -171,7 +171,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
                 {
                     var date = await itemModel.MediaFile.GetDateModifiedAsync();
                     cancellationToken.ThrowIfCancellationRequested();
-                    DateFormatted = date.ToString("g");
+                    DateFormatted = date.ToLocalTime().ToString("g");
                 }
 
                 ulong fileSize = await itemModel.MediaFile.GetFileSizeAsync();
@@ -213,7 +213,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
 
         var date = metadata.Get(MetadataProperties.DateTaken) ?? (await bitmapFile.GetDateModifiedAsync());
         cancellationToken.ThrowIfCancellationRequested();
-        DateFormatted = date.ToString("g");
+        DateFormatted = date.ToLocalTime().ToString("g");
 
         CameraDetails = GetCameraDetails(metadata);
     }
