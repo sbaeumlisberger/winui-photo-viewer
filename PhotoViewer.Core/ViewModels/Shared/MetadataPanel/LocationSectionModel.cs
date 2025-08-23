@@ -93,12 +93,8 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         var geopoint = completedLocation!.GeoPoint!;
         string latitude = geopoint.Latitude.ToString(CultureInfo.InvariantCulture);
         string longitude = geopoint.Longitude.ToString(CultureInfo.InvariantCulture);
-        string description = completedLocation.Address?.ToString() ?? geopoint.ToDecimalString();
-        Uri uri = new Uri(@"bingmaps:?collection=point." + latitude + "_" + longitude + "_" + description + "&sty=a");
-        await Launcher.LaunchUriAsync(uri, new LauncherOptions
-        {
-            TargetApplicationPackageFamilyName = "Microsoft.WindowsMaps_8wekyb3d8bbwe"
-        });
+        Uri uri = new Uri($"https://www.google.com/maps?q={latitude},{longitude}");
+        await Launcher.LaunchUriAsync(uri);
     }
 
 
