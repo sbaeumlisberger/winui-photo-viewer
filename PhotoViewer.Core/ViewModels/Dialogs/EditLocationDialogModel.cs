@@ -81,4 +81,8 @@ public partial class EditLocationDialogModel : ViewModelBase
         await onSave.Invoke(Location);
     }
 
+    public async Task<GeoPoint?> FindGeoPointAsync(Address address)
+    {
+        return await locationService.FindGeoPointAsync(address);
+    }
 }

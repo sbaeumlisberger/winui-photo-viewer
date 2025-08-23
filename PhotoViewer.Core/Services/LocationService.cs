@@ -14,7 +14,7 @@ namespace PhotoViewer.Core.Services
         /// <summary>Returns the location of the specified geographic point.</summary>
         Task<Location?> FindLocationAsync(GeoPoint geoPoint);
 
-        /// <summary>Retruns a list of locations found for the given query.</summary>
+        /// <summary>Returns a list of locations found for the given query.</summary>
         Task<IReadOnlyList<Location>> FindLocationsAsync(string query, uint maxResults = 5);
 
         /// <summary>Returns the nearest address of the specified geographic point. If no address is found, null is returned.</summary>

@@ -139,7 +139,7 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
         }
         else if (location?.Address != null)
         {
-            geopoint = await new LocationService().FindGeoPointAsync(location.Address);
+            geopoint = await ViewModel!.FindGeoPointAsync(location.Address);
         }
 
         if (geopoint is null)
