@@ -70,6 +70,7 @@ public partial class FlipViewPageModel : ViewModelBase
         DetailsBarModel.Cleanup();
         CommandBarModel.Cleanup();
         MetadataPanelModel.Cleanup();
+        editImageOverlayModel?.Cleanup();
     }
 
     public void OnNavigatedTo(object navigationParameter, bool popNavigationState)
