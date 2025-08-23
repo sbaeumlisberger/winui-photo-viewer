@@ -26,7 +26,7 @@ public class ErrorReportServiceTest
     public async Task CreateCrashReport_NoLogFile()
     {
         eventLogService.GetErrorsSinceLastCheck().Returns(["error"]);
-        string logFolderPath = TestUtils.CreateTestFolder();
+        string logFolderPath = TestUtils.CreateTestFolder(nameof(ErrorReportServiceTest), nameof(CreateCrashReport_NoLogFile));
         using var _ = TestUtils.RegisterLogger(new Logger([new FileAppender(logFolderPath)]));
 
         string? report = await errorReportService.CreateCrashReportAsync();
@@ -39,7 +39,7 @@ public class ErrorReportServiceTest
     public async Task CreateCrashReport_WithLogFile()
     {
         eventLogService.GetErrorsSinceLastCheck().Returns(["error"]);
-        string logFolderPath = TestUtils.CreateTestFolder();
+        string logFolderPath = TestUtils.CreateTestFolder(nameof(ErrorReportServiceTest), nameof(CreateCrashReport_WithLogFile));
         using var _ = TestUtils.RegisterLogger(new Logger([new FileAppender(logFolderPath)]));
         Log.Info("make sure the current log exists");
 

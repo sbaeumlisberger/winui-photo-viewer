@@ -11,7 +11,7 @@ public class FileSystemServiceTest
     [Fact]
     public async Task Restore()
     {
-        var testFolderPath = TestUtils.CreateTestFolder();
+        var testFolderPath = TestUtils.CreateTestFolder(nameof(FileSystemServiceTest));
         string testFilePath = Path.Combine(testFolderPath, "test.txt");
         File.WriteAllText(testFilePath, "test");
         var creationTime = File.GetCreationTime(testFilePath);

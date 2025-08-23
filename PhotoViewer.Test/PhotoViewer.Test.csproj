@@ -46,6 +46,18 @@
 		<Content Update="Resources\CropImageServiceTest\TestFile.jpg">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Update="Resources\CropImageServiceTest\TestFile.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Resources\CropImageServiceTest\TestFile_Rotate180.jpg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Resources\CropImageServiceTest\TestFile_Rotate270.jpg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Resources\CropImageServiceTest\TestFile_Rotate90.jpg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 		<Content Update="Resources\FaceDetectionServiceTest\TestImage.jpg">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>

@@ -1,11 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using MetadataAPI;
 using NSubstitute;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
+using System.Drawing;
+using WIC;
 using Windows.Graphics;
 using Windows.Storage;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace PhotoViewer.Test.Services;
 
@@ -13,77 +15,197 @@ public class CropImageServiceTest
 {
     private readonly CropImageService cropImageService = new CropImageService(new StrongReferenceMessenger(), Substitute.For<IMetadataService>());
 
-    private readonly string TestFolder = TestUtils.CreateTestFolder();
+    private string testFolder = "";
 
-    public CropImageServiceTest(ITestOutputHelper output)
+    private readonly IWICImagingFactory wic = WICImagingFactory.Create();
+
+    private const int CropOffset = 100;
+    private const int CropWidth = 900;
+    private const int CropHeight = 500;
+
+    private static readonly Color BackgroundColor = Color.LightGray;
+
+    public record TestData(
+        string FileName,
+        RectInt32 CropRect,
+        ExpectedCornerColors ExpectedCornerColors,
+        string ExpectedPeopleTagName,
+        double ExpectedPeopleTagX,
+        double ExpectedPeopleTagY);
+
+    public record ExpectedCornerColors(
+        Color TopLeft,
+        Color TopRight,
+        Color BottomLeft,
+        Color BottomRight);
+
+    public static TheoryData<TestData> GetTestData()
     {
-        output.WriteLine("TestFolder: " + TestFolder);
+        return [
+            new TestData(
+                "TestFile.jpg",
+                new RectInt32(CropOffset, CropOffset, CropWidth, CropHeight),
+                new ExpectedCornerColors(Color.Red, BackgroundColor, BackgroundColor, BackgroundColor),
+                "RedSquare", 0, 0),
+
+            new TestData(
+                "TestFile_Rotate90.jpg",
+                new RectInt32(CropOffset, CropOffset, CropHeight, CropWidth),
+                new ExpectedCornerColors(BackgroundColor, Color.Green, BackgroundColor, BackgroundColor),
+                "GreenSquare", 0.95, 0),
+
+            new TestData("TestFile_Rotate180.jpg",
+                new RectInt32(CropOffset, CropOffset, CropWidth, CropHeight),
+                new ExpectedCornerColors(BackgroundColor, BackgroundColor, BackgroundColor, Color.Yellow),
+                "YellowSquare", 0.95, 0.9),
+
+            new TestData("TestFile_Rotate270.jpg",
+                new RectInt32(CropOffset, CropOffset, CropHeight, CropWidth),
+                new ExpectedCornerColors(BackgroundColor, BackgroundColor, Color.Blue, BackgroundColor),
+                "BlueSquare", 0, 0.9)
+        ];
+    }
+
+    [Theory]
+    [MemberData(nameof(GetTestData))]
+    public async Task CropJpgInPlace(TestData testData)
+    {
+        testFolder = TestUtils.CreateTestFolder(nameof(CropImageServiceTest), nameof(CropJpgInPlace));
+        var storageFile = await GetCopiedTestFileAsync(testData.FileName);
+        var imageFile = new BitmapFileInfo(storageFile);
+        long originalFileSize = new FileInfo(imageFile.FilePath).Length;
+
+        await cropImageService.CropImageAsync(imageFile, testData.CropRect);
+
+        AssertCrop(imageFile.FilePath, originalFileSize, testData.ExpectedCornerColors);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetTestData))]
+    public async Task CropJpgToCopy(TestData testData)
+    {
+        testFolder = TestUtils.CreateTestFolder(nameof(CropImageServiceTest), nameof(CropJpgToCopy));
+        var storageFile = await GetTestFileAsync(testData.FileName);
+        var imageFile = new BitmapFileInfo(storageFile);
+        long originalFileSize = new FileInfo(imageFile.FilePath).Length; ;
+        var copyFilePath = Path.Combine(testFolder, testData.FileName.Replace(".jpg", "_Copy.jpg"));
+
+        using (var copyStream = File.Create(copyFilePath))
+        {
+            await cropImageService.CropImageAsync(imageFile, testData.CropRect, copyStream);
+        }
+
+        AssertCrop(copyFilePath, originalFileSize, testData.ExpectedCornerColors);
     }
 
     [Fact]
-    public async Task CropInPlaceWorks()
+    public async Task CropPng()
     {
-        var storageFile = await GetTestFileAsync();
+        testFolder = TestUtils.CreateTestFolder(nameof(CropImageServiceTest), nameof(CropPng));
+        var storageFile = await GetCopiedTestFileAsync("TestFile.png");
         var imageFile = new BitmapFileInfo(storageFile);
-        ulong orginalFileSize = await GetFileSize(storageFile);
+        long originalFileSize = new FileInfo(imageFile.FilePath).Length;
 
-        var newBounds = new RectInt32(200, 200, 600, 400);
+        var newBounds = new RectInt32(CropOffset, CropOffset, CropWidth, CropHeight);
         await cropImageService.CropImageAsync(imageFile, newBounds);
 
-        ulong newFileSize = await GetFileSize(storageFile);
-        Assert.True(newFileSize < orginalFileSize);
-        var imageProperties = await storageFile.Properties.GetImagePropertiesAsync();
-        Assert.Equal(newBounds.Width, (int)imageProperties.Width);
-        Assert.Equal(newBounds.Height, (int)imageProperties.Height);
-    }
-
-    [Fact]
-    public async Task CropToCopyWorks()
-    {
-        var storageFile = await GetTestFileAsync();
-        var imageFile = new BitmapFileInfo(storageFile);
-        ulong orginalFileSize = await GetFileSize(storageFile);
-        var copyFilePath = Path.Combine(TestFolder, "Copy.jpg");
-        using var copyStream = File.Create(copyFilePath);
-
-        var newBounds = new RectInt32(200, 200, 600, 400);
-        await cropImageService.CropImageAsync(imageFile, newBounds, copyStream);
-        copyStream.Close();
-
-        var copy = await StorageFile.GetFileFromPathAsync(copyFilePath);
-        ulong newFileSize = await GetFileSize(copy);
-        Assert.True(newFileSize < orginalFileSize);
-        var imageProperties = await copy.Properties.GetImagePropertiesAsync();
-        Assert.Equal(newBounds.Width, (int)imageProperties.Width);
-        Assert.Equal(newBounds.Height, (int)imageProperties.Height);
+        var expectedCornerColors = new ExpectedCornerColors(Color.Red, BackgroundColor, BackgroundColor, BackgroundColor);
+        AssertCrop(imageFile.FilePath, originalFileSize, expectedCornerColors);
     }
 
     [Fact]
     public async Task ThrowsForInvalidBounds()
     {
-        var storageFile = await GetTestFileAsync();
+        var storageFile = await GetTestFileAsync("TestFile.jpg");
         var imageFile = new BitmapFileInfo(storageFile);
 
         RectInt32 invalidBounds = new RectInt32(0, 0, 0, 0);
         await Assert.ThrowsAnyAsync<ArgumentException>(() => cropImageService.CropImageAsync(imageFile, invalidBounds));
     }
 
-    // TODO assert if offset is correct
-
-    // TODO test update of people tags 
-
-    private async Task<StorageFile> GetTestFileAsync()
+    [Theory]
+    [MemberData(nameof(GetTestData))]
+    public async Task PeopleTagsShouldBeUpdated(TestData testData)
     {
-        string srcPath = Path.Combine(Environment.CurrentDirectory, "Resources", "CropImageServiceTest/TestFile.jpg");
-        string filePath = Path.Combine(TestFolder, "TestFile.jpg");
-        File.Copy(srcPath, filePath, true);
-        return await StorageFile.GetFileFromPathAsync(filePath);
+        testFolder = TestUtils.CreateTestFolder(nameof(CropImageServiceTest), nameof(PeopleTagsShouldBeUpdated));
+        var storageFile = await GetCopiedTestFileAsync(testData.FileName);
+        var imageFile = new BitmapFileInfo(storageFile);
+
+        await cropImageService.CropImageAsync(imageFile, testData.CropRect);
+
+        using var fileStream = File.Open(imageFile.FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        var decoder = wic.CreateDecoderFromStream(fileStream, WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
+        var metadataReader = new MetadataReader(decoder.GetFrame(0).GetMetadataQueryReader(), decoder.GetDecoderInfo());
+        var peopleTags = metadataReader.GetProperty(MetadataProperties.People);
+
+        Assert.Single(peopleTags);
+        Assert.Equal(testData.ExpectedPeopleTagName, peopleTags[0].Name);
+        Assert.Equal(testData.ExpectedPeopleTagX, peopleTags[0].Rectangle!.Value.X, 0.01);
+        Assert.Equal(testData.ExpectedPeopleTagY, peopleTags[0].Rectangle!.Value.Y, 0.01);
     }
 
-    private async Task<ulong> GetFileSize(IStorageFile storageFile)
+    private void AssertCrop(string filePath, long originalFileSize, ExpectedCornerColors expectedCornerColors)
     {
-        using var fileStream = await storageFile.OpenAsync(FileAccessMode.Read);
-        return fileStream.Size;
+        long newFileSize = new FileInfo(filePath).Length;
+        Assert.True(newFileSize < originalFileSize);
+
+        using var fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        var decoder = wic.CreateDecoderFromStream(fileStream, WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
+        var imageSize = decoder.GetFrame(0).GetSize();
+        var pixels = decoder.GetFrame(0).GetPixels();
+        var imageData = BytesToColorGrid(pixels, imageSize.Width, imageSize.Height);
+        var pi = decoder.GetFrame(0).GetPixelFormatInfo();
+
+        Assert.Equal(CropWidth, imageSize.Width);
+        Assert.Equal(CropHeight, imageSize.Height);
+        Assert.Equal(expectedCornerColors.TopLeft, imageData[25, 25], CompareColors);
+        Assert.Equal(expectedCornerColors.TopRight, imageData[25, imageSize.Width - 25], CompareColors);
+        Assert.Equal(expectedCornerColors.BottomLeft, imageData[imageSize.Height - 25, 25], CompareColors);
+        Assert.Equal(expectedCornerColors.BottomRight, imageData[imageSize.Height - 25, imageSize.Width - 25], CompareColors);
     }
 
+    private bool CompareColors(Color colorA, Color colorB)
+    {
+        const int tolerance = 3;
+        return Math.Abs(colorA.R - colorB.R) <= tolerance
+            && Math.Abs(colorA.G - colorB.G) <= tolerance
+            && Math.Abs(colorA.B - colorB.B) <= tolerance;
+    }
+
+    private async Task<StorageFile> GetCopiedTestFileAsync(string fileName)
+    {
+        string srcPath = TestUtils.GetResourceFile("CropImageServiceTest", fileName);
+        string copyPath = Path.Combine(testFolder, fileName);
+        File.Copy(srcPath, copyPath, true);
+        return await StorageFile.GetFileFromPathAsync(copyPath);
+    }
+
+    private async Task<StorageFile> GetTestFileAsync(string fileName)
+    {
+        return await StorageFile.GetFileFromPathAsync(TestUtils.GetResourceFile("CropImageServiceTest", fileName));
+    }
+
+    private Color[,] BytesToColorGrid(byte[] bgrBytes, int width, int height)
+    {
+        if (bgrBytes.Length != width * height * 3)
+        {
+            throw new ArgumentException("Byte array size does not match width * height * 3.");
+        }
+
+        var colors = new Color[height, width];
+
+        int index = 0;
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                byte b = bgrBytes[index++];
+                byte g = bgrBytes[index++];
+                byte r = bgrBytes[index++];
+                colors[y, x] = Color.FromArgb(255, r, g, b);
+            }
+        }
+
+        return colors;
+    }
 }

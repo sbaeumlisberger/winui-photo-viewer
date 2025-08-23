@@ -346,7 +346,7 @@ public class MediaFilesLoaderServiceTest
         return mock;
     }
 
-    private string TestFolderPath = TestUtils.CreateTestFolder();
+    private string TestFolderPath = TestUtils.CreateTestFolder(nameof(MediaFilesLoaderServiceTest));
 
     private async Task<IStorageFile> CreateStorageFileAsync(string fileName)
     {

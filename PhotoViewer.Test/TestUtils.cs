@@ -23,9 +23,9 @@ internal static class TestUtils
         }
     }
 
-    internal static string CreateTestFolder()
+    internal static string CreateTestFolder(params string[] testPath)
     {
-        string path = Path.Combine(TestFoldersPath, Guid.NewGuid().ToString());
+        string path = Path.Combine(TestFoldersPath, Path.Combine(testPath));
         Directory.CreateDirectory(path);
         return path;
     }
@@ -111,5 +111,10 @@ internal static class TestUtils
         AsyncLocalLogger.Instance.Logger = logger;
 
         return new DelegatingDisposable(() => AsyncLocalLogger.Instance.Logger = previousLogger);
+    }
+
+    internal static string GetResourceFile(params string[] relativePath)
+    {
+        return Path.Combine(Environment.CurrentDirectory, "Resources", Path.Combine(relativePath));
     }
 }

@@ -77,32 +77,36 @@ internal class CropImageService : ICropImageService
 
     private async Task<bool> EncodeAsync(IBitmapFileInfo bitmapFile, IWICBitmapDecoder decoder, Stream dstStream, RectInt32 newBounds)
     {
-        var newBoundsWIC = ToWICRect(newBounds);
-
         var srcFrame = decoder.GetFrame(0);
+
+        var metadataReader = new MetadataReader(srcFrame.GetMetadataQueryReader(), decoder.GetDecoderInfo());
+
+        var orientation = MetadataProperties.Orientation.SupportedFormats.Contains(decoder.GetContainerFormat())
+            ? metadataReader.GetProperty(MetadataProperties.Orientation)
+            : PhotoOrientation.Normal;
+
+        var newBoundsUnrotated = GetUnrotatedRect(newBounds, orientation, srcFrame.GetSize());
 
         var encoder = wic.CreateEncoder(decoder.GetContainerFormat());
         encoder.Initialize(dstStream.AsCOMStream(), WICBitmapEncoderCacheOption.WICBitmapEncoderNoCache);
 
         var frame = encoder.CreateNewFrame();
         frame.Initialize();
-        frame.SetSize(newBoundsWIC.Width, newBoundsWIC.Height);
+        frame.SetSize(newBoundsUnrotated.Width, newBoundsUnrotated.Height);
         frame.SetResolution(srcFrame.GetResolution());
         frame.SetPixelFormat(srcFrame.GetPixelFormat());
 
         frame.AsMetadataBlockWriter().InitializeFromBlockReader(srcFrame.AsMetadataBlockReader());
 
-        var metadataReader = new MetadataReader(srcFrame.GetMetadataQueryReader(), decoder.GetDecoderInfo());
         var metadataWriter = new MetadataWriter(frame.GetMetadataQueryWriter(), encoder.GetEncoderInfo());
 
         bool peopleTagsUpdated = false;
-        var mimeTypes = encoder.GetEncoderInfo().GetMimeTypes();
-        if (mimeTypes.Contains("image/jpeg") || mimeTypes.Contains("image/tiff"))
+        if (MetadataProperties.People.SupportedFormats.Contains(decoder.GetContainerFormat()))
         {
-            peopleTagsUpdated = UpdatePeopleTags(bitmapFile, metadataReader, metadataWriter, srcFrame.GetSize(), newBounds);
+            peopleTagsUpdated = UpdatePeopleTags(bitmapFile, metadataReader, metadataWriter, srcFrame.GetSize(), newBoundsUnrotated);
         }
 
-        frame.WriteSource(srcFrame, newBoundsWIC);
+        frame.WriteSource(srcFrame, newBoundsUnrotated);
 
         frame.Commit();
         encoder.Commit();
@@ -111,7 +115,7 @@ internal class CropImageService : ICropImageService
         return peopleTagsUpdated;
     }
 
-    private bool UpdatePeopleTags(IBitmapFileInfo bitmapFile, MetadataReader metadataReader, MetadataWriter metadataWriter, WICSize sizeBefore, RectInt32 newBounds)
+    private bool UpdatePeopleTags(IBitmapFileInfo bitmapFile, MetadataReader metadataReader, MetadataWriter metadataWriter, WICSize sizeBefore, WICRect newBounds)
     {
         var peopleTags = metadataReader.GetProperty(MetadataProperties.People);
 
@@ -160,14 +164,45 @@ internal class CropImageService : ICropImageService
         return true;
     }
 
-    private WICRect ToWICRect(RectInt32 rect)
+    private WICRect GetUnrotatedRect(RectInt32 rotatedRect, PhotoOrientation orientation, WICSize imageSize)
     {
-        return new WICRect()
+        switch (orientation)
         {
-            X = rect.X,
-            Y = rect.Y,
-            Width = rect.Width,
-            Height = rect.Height
-        };
+            case PhotoOrientation.Normal:
+            case PhotoOrientation.Unspecified:
+                return new WICRect()
+                {
+                    X = rotatedRect.X,
+                    Y = rotatedRect.Y,
+                    Width = rotatedRect.Width,
+                    Height = rotatedRect.Height
+                };
+            case PhotoOrientation.Rotate270:
+                return new WICRect()
+                {
+                    X = rotatedRect.Y,
+                    Y = imageSize.Height - rotatedRect.X - rotatedRect.Width,
+                    Width = rotatedRect.Height,
+                    Height = rotatedRect.Width
+                };
+            case PhotoOrientation.Rotate180:
+                return new WICRect()
+                {
+                    X = imageSize.Width - rotatedRect.X - rotatedRect.Width,
+                    Y = imageSize.Height - rotatedRect.Y - rotatedRect.Height,
+                    Width = rotatedRect.Width,
+                    Height = rotatedRect.Height
+                };
+            case PhotoOrientation.Rotate90:
+                return new WICRect()
+                {
+                    X = imageSize.Width - rotatedRect.Y - rotatedRect.Height,
+                    Y = rotatedRect.X,
+                    Width = rotatedRect.Height,
+                    Height = rotatedRect.Width
+                };
+            default:
+                throw new NotSupportedException("Invalid image orientation.");
+        }
     }
 }
