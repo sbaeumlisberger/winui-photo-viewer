@@ -28,22 +28,20 @@ namespace PhotoViewer.Core.Services
     {
         private static string Language => ApplicationLanguages.Languages[0].ToString();
 
-        private static string ApiKey => CompileTimeConstants.HereApiKey;
-
         public async Task<Location?> FindLocationAsync(GeoPoint geoPoint)
         {
-            var uri = new Uri("https://revgeocode.search.hereapi.com/v1/revgeocode" + ToQueryString(
-                ("at", ToCoordinatesParam(geoPoint)),
-                ("lang", Language),
-                ("apiKey", ApiKey)
+            var uri = new Uri("https://nominatim.openstreetmap.org/reverse" + ToQueryString(
+                ("lat", geoPoint.Latitude.ToString(CultureInfo.InvariantCulture)),
+                ("lon", geoPoint.Longitude.ToString(CultureInfo.InvariantCulture)),
+                ("format", "json"),
+                ("accept-language", Language)
             ));
-
-            Log.Debug($"Sending request to {uri.ToString().Replace(ApiKey, "****")}");
-
+            Log.Debug($"Sending request to {uri}");
             var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("UniversePhotos");
             var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
-            var locations = ParseLocations(response);
-            return locations.FirstOrDefault(); ;
+
+            return ParseLocation(JsonDocument.Parse(response).RootElement);
         }
 
         public async Task<IReadOnlyList<Location>> FindLocationsAsync(string query, uint maxResults = 5)
@@ -58,19 +56,20 @@ namespace PhotoViewer.Core.Services
                 return Array.Empty<Location>();
             }
 
-            var uri = new Uri("https://geocode.search.hereapi.com/v1/geocode" + ToQueryString(
+            var uri = new Uri("https://nominatim.openstreetmap.org/search" + ToQueryString(
                 ("q", query),
                 ("limit", maxResults.ToString()),
-                ("lang", Language),
-                ("apiKey", ApiKey)
+                ("addressdetails", "1"),
+                ("format", "json"),
+                ("accept-language", Language)
             ));
 
-            Log.Debug($"Sending request to {uri.ToString().Replace(ApiKey, "****")}");
-
+            Log.Debug($"Sending request to {uri}");
             var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("UniversePhotos");
             var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
 
-            return ParseLocations(response);
+            return ParseLocations(JsonDocument.Parse(response).RootElement);
         }
 
         public async Task<Address?> FindAddressAsync(GeoPoint geoPoint)
@@ -85,14 +84,11 @@ namespace PhotoViewer.Core.Services
             return locations.FirstOrDefault()?.GeoPoint;
         }
 
-        private List<Location> ParseLocations(string response)
+        private List<Location> ParseLocations(JsonElement json)
         {
             var locations = new List<Location>();
 
-            var json = JsonDocument.Parse(response);
-            var items = json.RootElement.GetProperty("items");
-
-            foreach (var entry in items.EnumerateArray())
+            foreach (var entry in json.EnumerateArray())
             {
                 locations.Add(ParseLocation(entry));
             }
@@ -104,19 +100,19 @@ namespace PhotoViewer.Core.Services
         {
             var addressProperty = entry.GetProperty("address");
 
-            string street = GetStringProperty(addressProperty, "street");
-            string houseNumber = GetStringProperty(addressProperty, "houseNumber");
-            string postalCode = GetStringProperty(addressProperty, "postalCode");
-            string city = GetStringProperty(addressProperty, "city");
-            string state = GetStringProperty(addressProperty, "state");
-            string countryName = GetStringProperty(addressProperty, "countryName");
+            string road = GetStringPropertyOrEmpty(addressProperty, "road");
+            string houseNumber = GetStringPropertyOrEmpty(addressProperty, "house_number");
+            string postcode = GetStringPropertyOrEmpty(addressProperty, "postcode");
+            string city = GetStringPropertyOrEmpty(addressProperty, "town");
+            string state = GetStringPropertyOrEmpty(addressProperty, "state");
+            string country = GetStringPropertyOrEmpty(addressProperty, "country");
 
             var address = new Address()
             {
-                Street = StringUtils.JoinNonEmpty(" ", street, houseNumber),
-                City = StringUtils.JoinNonEmpty(" ", postalCode, city),
+                Street = StringUtils.JoinNonEmpty(" ", road, houseNumber),
+                City = StringUtils.JoinNonEmpty(" ", postcode, city),
                 Region = state,
-                Country = countryName,
+                Country = country,
             };
 
             if (address.ToString() == string.Empty)
@@ -124,13 +120,20 @@ namespace PhotoViewer.Core.Services
                 address = null;
             }
 
-            var positionProperty = entry.GetProperty("position");
-
-            double latitude = positionProperty.GetProperty("lat").GetDouble();
-            double longitude = positionProperty.GetProperty("lng").GetDouble();
+            double latitude = double.Parse(entry.GetProperty("lat").GetString()!, CultureInfo.InvariantCulture);
+            double longitude = double.Parse(entry.GetProperty("lon").GetString()!, CultureInfo.InvariantCulture);
             var geoPoint = new GeoPoint(latitude, longitude);
 
             return new Location(address, geoPoint);
+        }
+
+        private static string GetStringPropertyOrEmpty(JsonElement jsonElement, string propertyName)
+        {
+            if (jsonElement.TryGetProperty(propertyName, out var property))
+            {
+                return property.GetString() ?? string.Empty;
+            }
+            return string.Empty;
         }
 
         private static string ToQueryString(params (string Key, string Value)[] parameters)
@@ -140,22 +143,6 @@ namespace PhotoViewer.Core.Services
                 HttpUtility.UrlEncode(parameter.Key),
                 HttpUtility.UrlEncode(parameter.Value)
             )));
-        }
-
-        private static string GetStringProperty(JsonElement jsonElement, string propertyName)
-        {
-            if (jsonElement.TryGetProperty(propertyName, out var property))
-            {
-                return property.GetString() ?? string.Empty;
-            }
-            return string.Empty;
-        }
-
-        private string ToCoordinatesParam(GeoPoint geopoint)
-        {
-            string latitude = geopoint.Latitude.ToString(CultureInfo.InvariantCulture);
-            string longitude = geopoint.Longitude.ToString(CultureInfo.InvariantCulture);
-            return latitude + "," + longitude;
         }
     }
 
