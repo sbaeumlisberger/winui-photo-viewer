@@ -21,8 +21,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
 
     private partial bool CanShowLocationOnMap { get; set; } = false;
 
-    private Location? orginalLocation;
-    private Location? completedLocation;
+    private Location? location;
 
     private readonly IMetadataService metadataService;
     private readonly ILocationService locationService;
@@ -70,38 +69,39 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         bool allGeoTagsEqual = geoPoints.All(x => Equals(x, geoPoints.First()));
         bool allLocationEqual = allAddressesEqual && allGeoTagsEqual;
 
-        var addressTag = allLocationEqual ? addresses.FirstOrDefault() : null;
-        var geoTag = allLocationEqual ? geoPoints.FirstOrDefault() : null;
+        var address = allLocationEqual ? addresses.FirstOrDefault()?.ToAddress() : null;
+        var geoPoint = allLocationEqual ? geoPoints.FirstOrDefault()?.ToGeoPoint() : null;  
+        bool locationAvailable = address is not null || geoPoint is not null;
+        location = locationAvailable ? new Location(address, geoPoint) : null;
+
         PlaceholderText = allLocationEqual
             ? Strings.MetadataPanel_LocationPlaceholder
             : Strings.MetadataPanel_LocationPlaceholderDifferentValues;
 
-        orginalLocation = new Location(addressTag?.ToAddress(), geoTag?.ToGeopoint());
-        UpdateForLocation(orginalLocation);
+        CanShowLocationOnMap = location is not null;
 
-        completedLocation = await TryGetCompletedLocationAsync(orginalLocation, cancellationToken);
-
-        if (completedLocation != orginalLocation)
-        {
-            UpdateForLocation(completedLocation);
-        }
+        await UpdateDisplayTextAsync(location, cancellationToken);
     }
 
     [RelayCommand(CanExecute = nameof(CanShowLocationOnMap))]
     private async Task ShowLocationOnMapAsync()
     {
-        var geopoint = completedLocation!.GeoPoint!;
-        string latitude = geopoint.Latitude.ToString(CultureInfo.InvariantCulture);
-        string longitude = geopoint.Longitude.ToString(CultureInfo.InvariantCulture);
-        Uri uri = new Uri($"https://www.google.com/maps?q={latitude},{longitude}");
-        await Launcher.LaunchUriAsync(uri);
+        if (location!.GeoPoint is not null)
+        {
+            string latitude = location.GeoPoint.Latitude.ToString(CultureInfo.InvariantCulture);
+            string longitude = location.GeoPoint.Longitude.ToString(CultureInfo.InvariantCulture);      
+            await Launcher.LaunchUriAsync(new Uri($"https://www.google.com/maps?q={latitude},{longitude}"));
+        }
+        else 
+        {
+            await Launcher.LaunchUriAsync(new Uri($"https://www.google.com/maps?q={location.Address}"));
+        }
     }
-
 
     [RelayCommand]
     private async Task EditLocationAsync()
     {
-        var dialogModel = viewModelFactory.CreateEditLocationDialogModel(orginalLocation, SaveLocationAsync);
+        var dialogModel = viewModelFactory.CreateEditLocationDialogModel(location, SaveLocationAsync);
         await dialogService.ShowDialogAsync(dialogModel);
     }
 
@@ -129,7 +129,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
                 using var fileStream = File.OpenRead(file);
                 var metadataDecoder = new MetadataDecoder(fileStream);
                 var address = metadataDecoder.GetProperty(MetadataProperties.Address)?.ToAddress();
-                var geoTag = metadataDecoder.GetProperty(MetadataProperties.GeoTag)?.ToGeopoint();
+                var geoTag = metadataDecoder.GetProperty(MetadataProperties.GeoTag)?.ToGeoPoint();
                 await SaveLocationAsync(new Location(address, geoTag));
             }
             catch (Exception ex)
@@ -159,61 +159,37 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
         });
     }
 
-    private void UpdateForLocation(Location location)
+    private async Task UpdateDisplayTextAsync(Location? location, CancellationToken cancellationToken)
     {
-        CanShowLocationOnMap = location.GeoPoint is not null;
-        DisplayText = CreateDisplayText(location);
-    }
-
-    private async Task<Location> TryGetCompletedLocationAsync(Location location, CancellationToken cancellationToken)
-    {
-        if (location.GeoPoint is null && location.Address is not null)
+        if(location is null)
         {
-            try
-            {
-                var geopoint = await locationService.FindGeoPointAsync(location.Address);
-                cancellationToken.ThrowIfCancellationRequested();
-                return new Location(location.Address, geopoint);
-            }
-            catch (Exception ex) when (ex is not OperationCanceledException)
-            {
-                Log.Error("Failed to find geo point for address " + location.Address.ToString(), ex);
-            }
+            DisplayText = "";
         }
-        else if (location.Address is null && location.GeoPoint is not null)
+        else if (location.Address is not null && location.GeoPoint is not null)
         {
+            DisplayText = location.Address.ToString() + " (" + location.GeoPoint.ToDecimalString() + ")";
+        }
+        else if (location.GeoPoint is not null)
+        {
+            DisplayText = location.GeoPoint.ToDecimalString();
+
             try
             {
                 var address = await locationService.FindAddressAsync(location.GeoPoint);
                 cancellationToken.ThrowIfCancellationRequested();
-                return new Location(address, location.GeoPoint);
+                if (address is not null)
+                {
+                    DisplayText = address.ToString() + " (" + location.GeoPoint.ToDecimalString() + ")";
+                }
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 Log.Error("Failed to find address for geopoint " + location.GeoPoint.ToDecimalString(), ex);
             }
         }
-        cancellationToken.ThrowIfCancellationRequested();
-        return location;
-    }
-
-    private string CreateDisplayText(Location location)
-    {
-        if (location.Address is not null && location.GeoPoint is not null)
-        {
-            return location.Address.ToString() + " (" + location.GeoPoint.ToDecimalString() + ")";
-        }
         else if (location.Address is not null)
         {
-            return location.Address.ToString();
-        }
-        else if (location.GeoPoint is not null)
-        {
-            return location.GeoPoint.ToDecimalString();
-        }
-        else
-        {
-            return "";
+            DisplayText = location.Address.ToString();
         }
     }
 

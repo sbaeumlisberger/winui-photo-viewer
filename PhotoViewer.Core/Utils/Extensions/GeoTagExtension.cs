@@ -5,7 +5,7 @@ namespace PhotoViewer.Core.Utils;
 
 public static class GeoTagExtension
 {
-    public static GeoPoint ToGeopoint(this GeoTag geoTag)
+    public static GeoPoint ToGeoPoint(this GeoTag geoTag)
     {
         return new GeoPoint(geoTag.Latitude, geoTag.Longitude, geoTag.Altitude);
     }
