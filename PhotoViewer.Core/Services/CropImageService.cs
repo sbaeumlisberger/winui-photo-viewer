@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Essentials.NET.Logging;
 using MetadataAPI;
 using MetadataAPI.Data;
 using PhotoViewer.Core.Messages;
@@ -57,6 +58,7 @@ internal class CropImageService : ICropImageService
             fileStream.SetLength(0);
             await memoryStream.CopyToAsync(fileStream).ConfigureAwait(false);
             await fileStream.FlushAsync().ConfigureAwait(false);
+            fileStream.Close();
 
             bitmapFile.InvalidateCache();
 
@@ -106,6 +108,15 @@ internal class CropImageService : ICropImageService
             peopleTagsUpdated = UpdatePeopleTags(bitmapFile, metadataReader, metadataWriter, srcFrame.GetSize(), newBoundsUnrotated);
         }
 
+        try
+        {
+            frame.SetThumbnail(GenerateThumbnail(srcFrame, newBoundsUnrotated));
+        }
+        catch (Exception e) when (e.HResult == WinCodecError.UNSUPPORTED_OPERATION)
+        {
+            Log.Debug($"Embedded thumbnail not supported by {bitmapFile.FilePath}");
+        }
+
         frame.WriteSource(srcFrame, newBoundsUnrotated);
 
         frame.Commit();
@@ -113,6 +124,18 @@ internal class CropImageService : ICropImageService
         await dstStream.FlushAsync().ConfigureAwait(false);
 
         return peopleTagsUpdated;
+    }
+
+    private IWICBitmapSource GenerateThumbnail(IWICBitmapFrameDecode srcFrame, WICRect newBoundsUnrotated)
+    {
+        double aspectRadio = newBoundsUnrotated.Width / (double)newBoundsUnrotated.Height;
+        int thumbnailWidth = (int)(256 * Math.Min(aspectRadio, 1));
+        int thumbnailHeight = (int)(256 / Math.Max(aspectRadio, 1));
+        var clipper = wic.CreateBitmapClipper();
+        clipper.Initialize(srcFrame, newBoundsUnrotated);
+        var scaler = wic.CreateBitmapScaler();
+        scaler.Initialize(clipper, thumbnailWidth, thumbnailHeight, WICBitmapInterpolationMode.WICBitmapInterpolationModeFant);
+        return scaler;
     }
 
     private bool UpdatePeopleTags(IBitmapFileInfo bitmapFile, MetadataReader metadataReader, MetadataWriter metadataWriter, WICSize sizeBefore, WICRect newBounds)

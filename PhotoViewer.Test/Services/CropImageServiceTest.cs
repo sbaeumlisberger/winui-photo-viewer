@@ -110,7 +110,7 @@ public class CropImageServiceTest
         await cropImageService.CropImageAsync(imageFile, newBounds);
 
         var expectedCornerColors = new ExpectedCornerColors(Color.Red, BackgroundColor, BackgroundColor, BackgroundColor);
-        AssertCrop(imageFile.FilePath, originalFileSize, expectedCornerColors);
+        AssertCrop(imageFile.FilePath, originalFileSize, expectedCornerColors, assertThumbnail: false);
     }
 
     [Fact]
@@ -144,24 +144,32 @@ public class CropImageServiceTest
         Assert.Equal(testData.ExpectedPeopleTagY, peopleTags[0].Rectangle!.Value.Y, 0.01);
     }
 
-    private void AssertCrop(string filePath, long originalFileSize, ExpectedCornerColors expectedCornerColors)
+    private void AssertCrop(string filePath, long originalFileSize, ExpectedCornerColors expectedCornerColors, bool assertThumbnail = true)
     {
         long newFileSize = new FileInfo(filePath).Length;
         Assert.True(newFileSize < originalFileSize);
 
         using var fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         var decoder = wic.CreateDecoderFromStream(fileStream, WICDecodeOptions.WICDecodeMetadataCacheOnDemand);
-        var imageSize = decoder.GetFrame(0).GetSize();
-        var pixels = decoder.GetFrame(0).GetPixels();
-        var imageData = BytesToColorGrid(pixels, imageSize.Width, imageSize.Height);
-        var pi = decoder.GetFrame(0).GetPixelFormatInfo();
 
-        Assert.Equal(CropWidth, imageSize.Width);
-        Assert.Equal(CropHeight, imageSize.Height);
-        Assert.Equal(expectedCornerColors.TopLeft, imageData[25, 25], CompareColors);
-        Assert.Equal(expectedCornerColors.TopRight, imageData[25, imageSize.Width - 25], CompareColors);
-        Assert.Equal(expectedCornerColors.BottomLeft, imageData[imageSize.Height - 25, 25], CompareColors);
-        Assert.Equal(expectedCornerColors.BottomRight, imageData[imageSize.Height - 25, imageSize.Width - 25], CompareColors);
+        AssertImageData(decoder.GetFrame(0), CropWidth, CropHeight, expectedCornerColors);
+
+        if (assertThumbnail)
+        {
+            AssertImageData(decoder.GetFrame(0).GetThumbnail(), 256, 142, expectedCornerColors);
+        }
+    }
+
+    private void AssertImageData(IWICBitmapSource image, int expectedWidth, int expectedHeight, ExpectedCornerColors expectedCornerColors)
+    {
+        var imageSize = image.GetSize();
+        var imageData = BytesToColorGrid(image.GetPixels(), imageSize.Width, imageSize.Height);
+        Assert.Equal(expectedWidth, imageSize.Width);
+        Assert.Equal(expectedHeight, imageSize.Height);
+        Assert.Equal(expectedCornerColors.TopLeft, imageData[0, 0], CompareColors);
+        Assert.Equal(expectedCornerColors.TopRight, imageData[0, imageSize.Width - 1], CompareColors);
+        Assert.Equal(expectedCornerColors.BottomLeft, imageData[imageSize.Height - 1, 0], CompareColors);
+        Assert.Equal(expectedCornerColors.BottomRight, imageData[imageSize.Height - 1, imageSize.Width - 1], CompareColors);
     }
 
     private bool CompareColors(Color colorA, Color colorB)
