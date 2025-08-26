@@ -99,7 +99,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
         var sw = Stopwatch.StartNew();
         var files = await fileSystemService.ListFilesAsync(filesQuery).ConfigureAwait(false);
         sw.Stop();
-        Log.Info($"filesQuery.GetFilesAsync took {sw.ElapsedMilliseconds}ms");
+        Log.Debug($"filesQuery.GetFilesAsync took {sw.ElapsedMilliseconds}ms");
 
         /* We cannot use the neighboring files if the start file is not included. This is the 
          * case when the application was launched for a shortcut to a file from another folder. 
@@ -133,16 +133,23 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 
     private async Task<IEnumerable<IStorageFile>> LoadFilesFromRawsFolderAsync(string rawsFolderPath)
     {
-        if (await fileSystemService.TryGetFolderAsync(rawsFolderPath).ConfigureAwait(false) is { } rawsFolder)
+        try
         {
-            var filesFromRawsFolder = await fileSystemService.ListFilesAsync(rawsFolder).ConfigureAwait(false);           
-            
-            return filesFromRawsFolder.Where(file =>
+            if (await fileSystemService.TryGetFolderAsync(rawsFolderPath).ConfigureAwait(false) is { } rawsFolder)
             {
-                string fileExtension = file.FileType.ToLower();
-                return BitmapFileInfo.RawFileExtensions.Contains(fileExtension)
-                    || BitmapFileInfo.RawMetadataFileExtensions.Contains(fileExtension);
-            });
+                var filesFromRawsFolder = await fileSystemService.ListFilesAsync(rawsFolder).ConfigureAwait(false);
+
+                return filesFromRawsFolder.Where(file =>
+                {
+                    string fileExtension = file.FileType.ToLower();
+                    return BitmapFileInfo.RawFileExtensions.Contains(fileExtension)
+                        || BitmapFileInfo.RawMetadataFileExtensions.Contains(fileExtension);
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"Loading files from RAWs folder '{rawsFolderPath}' failed", ex);
         }
 
         return [];
