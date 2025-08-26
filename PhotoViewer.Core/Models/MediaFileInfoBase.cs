@@ -67,7 +67,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
     {
         if (dateModified is null)
         {
-            if (FilePath is not null)
+            if (!string.IsNullOrEmpty(FilePath))
             {
                 var lastWriteTime = File.GetLastWriteTimeUtc(FilePath);
                 var creationTime = File.GetCreationTimeUtc(FilePath);
@@ -87,7 +87,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
     {
         if (fileSize is null)
         {
-            if (FilePath is not null)
+            if (!string.IsNullOrEmpty(FilePath))
             {
                 fileSize = (ulong)new FileInfo(FilePath).Length;
             }
