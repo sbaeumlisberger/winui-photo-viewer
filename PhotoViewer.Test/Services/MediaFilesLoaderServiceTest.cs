@@ -1,5 +1,5 @@
-﻿using Essentials.NET.Logging;
-using NSubstitute;
+﻿using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Services;
 using System.Diagnostics;
@@ -225,6 +225,7 @@ public class MediaFilesLoaderServiceTest
     [Fact]
     public async Task LoadMediaFilesFromFilesQueryResult_MTP()
     {
+        fileSystemService.TryGetFolderAsync(Arg.Any<string>()).ThrowsAsync(new UnauthorizedAccessException());
         var files = new List<IStorageFile>
         {
             MockStorageFile("File 01.jpg"),
@@ -234,7 +235,9 @@ public class MediaFilesLoaderServiceTest
             MockStorageFile("File 05.jpg")
         };
         var neighboringFilesQuery = MockNeighboringFilesQuery(files);
-        var startFile = MockStorageFile("File 03[1].jpg", FileAttributes.Temporary | FileAttributes.ReadOnly, Path.GetTempPath());
+        var localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        var startFilePath = Path.Combine(localAppDataPath, "Microsoft", "Windows", "INetCache", "IE", "CBHPY5CT", "File 03[1].jpg");
+        var startFile = MockStorageFile("File 03[1].jpg", FileAttributes.Temporary | FileAttributes.ReadOnly, startFilePath);
         var config = new LoadMediaConfig(false, null, false);
 
         var loadMediaFilesTask = mediaFilesLoaderService.LoadNeighboringFilesQuery(startFile, neighboringFilesQuery, config);

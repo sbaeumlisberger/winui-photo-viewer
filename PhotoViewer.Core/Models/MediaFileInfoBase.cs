@@ -38,17 +38,9 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
 
     private byte[]? mtpBuffer = null;
 
-    public ulong Id { get; }
-
     public MediaFileInfoBase(IStorageFile file)
     {
         StorageFile = file;
-        Id = GetIdForFilePath(file.Path);
-    }
-
-    public static ulong GetIdForFilePath(string filePath)
-    {
-        return XxHash3.HashToUInt64(Encoding.UTF8.GetBytes(filePath));
     }
 
     public async Task<IRandomAccessStream> OpenAsRandomAccessStreamAsync(FileAccessMode fileAccessMode)

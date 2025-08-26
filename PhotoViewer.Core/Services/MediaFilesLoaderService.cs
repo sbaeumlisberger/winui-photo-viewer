@@ -2,6 +2,8 @@
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using System.Diagnostics;
+using System.Formats.Tar;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Windows.Storage;
 using Windows.Storage.Search;
@@ -40,11 +42,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             if (config.LinkRAWs && !string.IsNullOrEmpty(config.RAWsFolderName))
             {
                 string rawsFolderPath = Path.Combine(storageFolder.Path, config.RAWsFolderName);
-
-                if (await fileSystemService.TryGetFolderAsync(rawsFolderPath).ConfigureAwait(false) is { } rawsFolder)
-                {
-                    files.AddRange(await fileSystemService.ListFilesAsync(rawsFolder).ConfigureAwait(false));
-                }
+                files.AddRange(await LoadFilesFromRawsFolderAsync(rawsFolderPath).ConfigureAwait(false));
             }
 
             var mediaFiles = ConvertFilesToMediaFiles(null, files, config);
@@ -61,7 +59,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 
     public LoadMediaFilesTask LoadNeighboringFilesQuery(IStorageFile startFile, IStorageQueryResultBase neighboringFilesQuery, LoadMediaConfig config)
     {
-        var startMediaFile = GetStartMediaFile(startFile);
+        var startMediaFile = TryGetStartMediaFile(startFile);
         return new LoadMediaFilesTask(startMediaFile, Task.Run(async () =>
         {
             var mediaFiles = await LoadMediaFilesFromNeighboringFilesQueryAsync(startMediaFile, neighboringFilesQuery, config).ConfigureAwait(false);
@@ -84,7 +82,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 
         var startFile = fileSystemService.TryGetFileAsync(filePaths.First()).GetAwaiter().GetResult();
 
-        var startMediaFile = startFile != null ? GetStartMediaFile(startFile) : null;
+        var startMediaFile = startFile != null ? TryGetStartMediaFile(startFile) : null;
 
         return new LoadMediaFilesTask(startMediaFile, Task.Run(async () =>
         {
@@ -126,24 +124,38 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             if (!string.IsNullOrEmpty(directory))
             {
                 string rawsFolderPath = Path.Combine(directory, config.RAWsFolderName);
-
-                if (await fileSystemService.TryGetFolderAsync(rawsFolderPath).ConfigureAwait(false) is { } rawsFolder)
-                {
-                    files.AddRange(await fileSystemService.ListFilesAsync(rawsFolder).ConfigureAwait(false));
-                }
+                files.AddRange(await LoadFilesFromRawsFolderAsync(rawsFolderPath).ConfigureAwait(false));
             }
         }
 
         return ConvertFilesToMediaFiles(startMediaFile, files, config);
     }
 
-    private IMediaFileInfo? GetStartMediaFile(IStorageFile startFile)
+    private async Task<IEnumerable<IStorageFile>> LoadFilesFromRawsFolderAsync(string rawsFolderPath)
+    {
+        if (await fileSystemService.TryGetFolderAsync(rawsFolderPath).ConfigureAwait(false) is { } rawsFolder)
+        {
+            var filesFromRawsFolder = await fileSystemService.ListFilesAsync(rawsFolder).ConfigureAwait(false);           
+            
+            return filesFromRawsFolder.Where(file =>
+            {
+                string fileExtension = file.FileType.ToLower();
+                return BitmapFileInfo.RawFileExtensions.Contains(fileExtension)
+                    || BitmapFileInfo.RawMetadataFileExtensions.Contains(fileExtension);
+            });
+        }
+
+        return [];
+    }
+
+    private IMediaFileInfo? TryGetStartMediaFile(IStorageFile startFile)
     {
         string fileExtension = startFile.FileType.ToLower();
 
         if (startFile.Attributes.HasFlag(FileAttributes.Temporary)
             && startFile.Attributes.HasFlag(FileAttributes.ReadOnly)
-            && startFile.Path.StartsWith(Path.GetTempPath()))
+            && startFile.Path.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData))
+            && startFile.Path.Contains("INetCache"))
         {
             // file is probably a copy from a file accessed via MTP
             // the original file will be part of the neighboring files query

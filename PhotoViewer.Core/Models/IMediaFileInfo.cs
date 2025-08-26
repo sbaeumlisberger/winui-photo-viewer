@@ -20,8 +20,6 @@ public interface IMediaFileInfo
 
     string ContentType { get; }
 
-    ulong Id { get; }
-
     IReadOnlyList<IStorageFile> LinkedStorageFiles { get; }
 
     IEnumerable<IStorageFile> StorageFiles { get; }
