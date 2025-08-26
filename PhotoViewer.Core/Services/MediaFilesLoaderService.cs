@@ -2,8 +2,6 @@
 using PhotoViewer.Core.Models;
 using PhotoViewer.Core.Utils;
 using System.Diagnostics;
-using System.Formats.Tar;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Windows.Storage;
 using Windows.Storage.Search;
