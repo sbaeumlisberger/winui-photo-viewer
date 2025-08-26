@@ -69,7 +69,7 @@ public class LocationSectionModelTest
     }
 
     [Fact]
-    public void ShowsAddressAndCanNotShowLocationOnMap_WhenFileHasOnlyAddress()
+    public void ShowsAddressAndCanShowLocationOnMap_WhenFileHasOnlyAddress()
     {
         var metadata = new[] { CreateMetadataView(Address1, null) };
 
@@ -77,7 +77,7 @@ public class LocationSectionModelTest
 
         string expectedDiplayText = "TestStreet 1 TestCity TestRegion TestCountry";
         Assert.Equal(expectedDiplayText, locationSectionModel.DisplayText);
-        Assert.False(locationSectionModel.ShowLocationOnMapCommand.CanExecute(null));
+        Assert.True(locationSectionModel.ShowLocationOnMapCommand.CanExecute(null));
     }
 
     [Fact]
@@ -113,7 +113,7 @@ public class LocationSectionModelTest
 
         locationSectionModel.UpdateFilesChanged(null!, metadata);
 
-        string expectedDiplayText = "TestStreet 1 TestCity TestRegion TestCountry (40.124848, -36.128498)";
+        string expectedDiplayText = "TestStreet 1 TestCity TestRegion TestCountry";
         Assert.Equal(expectedDiplayText, locationSectionModel.DisplayText);
         Assert.True(locationSectionModel.ShowLocationOnMapCommand.CanExecute(null));
     }
