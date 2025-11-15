@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml.Media;
 
 namespace PhotoViewer.App.Utils;
+
 internal static class VisualTreeUtil
 {
 
