@@ -114,7 +114,6 @@
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
   <ItemGroup>
-    <PackageReference Include="Essentials.NET" Version="4.0.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4948" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
