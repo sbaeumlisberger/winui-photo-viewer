@@ -15,13 +15,12 @@ public interface IPersonalizationService
 
 public class PersonalizationService : IPersonalizationService
 {
-
-    public static readonly IEnumerable<string> SupportedFileTypes = new HashSet<string>() { ".jpe", ".jpeg", ".jpg", ".jfif", ".tiff", ".tif", ".bmp", ".dib", ".gif", ".png", ".jxr", ".wdp" };
+    public static readonly IReadOnlySet<string> SupportedFileTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".jpe", ".jpeg", ".jpg", ".jfif", ".tiff", ".tif", ".bmp", ".dib", ".gif", ".png", ".jxr", ".wdp" };
 
     public bool CanSetLockScreenBackground => UserProfilePersonalizationSettings.IsSupported();
     public bool CanSetDesktopBackground => UserProfilePersonalizationSettings.IsSupported();
 
-    public bool IsFileExtensionSupported(string fileExtension) => SupportedFileTypes.Contains(fileExtension.ToLower());
+    public bool IsFileExtensionSupported(string fileExtension) => SupportedFileTypes.Contains(fileExtension);
 
     public async Task SetLockScreenBackgroundAsync(IStorageFile file)
     {

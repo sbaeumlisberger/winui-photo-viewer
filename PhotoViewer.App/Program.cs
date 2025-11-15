@@ -27,8 +27,7 @@ public static class Program
         if (args.Length > 0)
         {
             string startFilePath = args[0];
-            string fileTypeExtension = Path.GetExtension(startFilePath).ToLower();
-            if (BitmapFileInfo.CommonFileExtensions.Contains(fileTypeExtension))
+            if (BitmapFileInfo.CommonFileExtensions.Contains(Path.GetExtension(startFilePath)))
             {
                 CachedImageLoaderService.Instance.Preload(startFilePath);
                 logTimeUntilImageDrawn = true;

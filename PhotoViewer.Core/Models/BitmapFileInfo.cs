@@ -18,15 +18,15 @@ public interface IBitmapFileInfo : IMediaFileInfo
 
 public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
 {
-    public static readonly IReadOnlyList<string> BmpFileExtensions = new[] { ".bmp", ".dib" };
-    public static readonly IReadOnlyList<string> GifFileExtensions = new[] { ".gif" };
-    public static readonly IReadOnlyList<string> IcoFileExtensions = new[] { ".ico" };
-    public static readonly IReadOnlyList<string> JpegFileExtensions = new[] { ".jpeg", ".jpe", ".jpg", ".jfif", };
-    public static readonly IReadOnlyList<string> PngFileExtensions = new[] { ".png", };
-    public static readonly IReadOnlyList<string> TiffFileExtensions = new[] { ".tiff", ".tif" };
-    public static readonly IReadOnlyList<string> JpegXrFileExtensions = new[] { ".jxr", ".wdp", };
-    public static readonly IReadOnlyList<string> HeifFileExtensions = new[] { ".heic", ".heif" };
-    public static readonly IReadOnlyList<string> WebpFileExtensions = new[] { ".webp" };
+    public static readonly IReadOnlySet<string> BmpFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".bmp", ".dib" };
+    public static readonly IReadOnlySet<string> GifFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".gif" };
+    public static readonly IReadOnlySet<string> IcoFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".ico" };
+    public static readonly IReadOnlySet<string> JpegFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".jpeg", ".jpe", ".jpg", ".jfif" };
+    public static readonly IReadOnlySet<string> PngFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".png", };
+    public static readonly IReadOnlySet<string> TiffFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".tiff", ".tif" };
+    public static readonly IReadOnlySet<string> JpegXrFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".jxr", ".wdp", };
+    public static readonly IReadOnlySet<string> HeifFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".heic", ".heif" };
+    public static readonly IReadOnlySet<string> WebpFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".webp" };
 
     public static readonly IReadOnlySet<string> CommonFileExtensions =
          BmpFileExtensions
@@ -38,15 +38,14 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
         .Concat(JpegXrFileExtensions)
         .Concat(HeifFileExtensions)
         .Concat(WebpFileExtensions)
-        .ToHashSet();
+        .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-    public static readonly IReadOnlySet<string> RawFileExtensions = new HashSet<string>()
+    public static readonly IReadOnlySet<string> RawFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
     {
-        ".arw", ".cr2", ".crw", ".erf", ".kdc", ".mrw", ".nef", ".nrw", ".orf",
-         ".pef", ".raf", ".raw", ".rw2", ".rwl", ".sr2", ".srw", ".dng"
+        ".arw", ".cr2", ".crw", ".erf", ".kdc", ".mrw", ".nef", ".nrw", ".orf", ".pef", ".raf", ".raw", ".rw2", ".rwl", ".sr2", ".srw", ".dng"
     };
 
-    public static readonly IReadOnlySet<string> RawMetadataFileExtensions = new HashSet<string>()
+    public static readonly IReadOnlySet<string> RawMetadataFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
     {
         ".xmp"
     };
@@ -57,14 +56,14 @@ public class BitmapFileInfo : MediaFileInfoBase, IBitmapFileInfo
 
     public override IReadOnlyList<IStorageFile> LinkedStorageFiles => linkedStorageFiles;
 
-    private readonly List<IStorageFile> linkedStorageFiles = new List<IStorageFile>();
+    private readonly List<IStorageFile> linkedStorageFiles = [];
 
     private Size sizeInPixels = Size.Empty;
 
     public BitmapFileInfo(IStorageFile file) : base(file)
     {
-        IsMetadataSupported = JpegFileExtensions.Contains(FileExtension.ToLower()) || TiffFileExtensions.Contains(FileExtension.ToLower());
-        IsReadMetadataSupported = IsMetadataSupported || HeifFileExtensions.Contains(FileExtension.ToLower());
+        IsMetadataSupported = JpegFileExtensions.Contains(FileExtension) || TiffFileExtensions.Contains(FileExtension);
+        IsReadMetadataSupported = IsMetadataSupported || HeifFileExtensions.Contains(FileExtension);
     }
 
     public void LinkStorageFile(IStorageFile storageFile)

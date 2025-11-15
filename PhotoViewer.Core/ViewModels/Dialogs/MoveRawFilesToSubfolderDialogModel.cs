@@ -73,8 +73,8 @@ public partial class MoveRawFilesToSubfolderDialogModel : ViewModelBase
         {
             foreach (var storageFile in mediaFile.StorageFiles)
             {
-                if ((BitmapFileInfo.RawFileExtensions.Contains(storageFile.FileType.ToLower())
-                    || BitmapFileInfo.RawMetadataFileExtensions.Contains(storageFile.FileType.ToLower()))
+                if ((BitmapFileInfo.RawFileExtensions.Contains(storageFile.FileType)
+                    || BitmapFileInfo.RawMetadataFileExtensions.Contains(storageFile.FileType))
                     && Path.GetDirectoryName(storageFile.Path) is string directoryPath
                     && !directoryPath.EndsWith("/" + settings.RawFilesFolderName))
                 {

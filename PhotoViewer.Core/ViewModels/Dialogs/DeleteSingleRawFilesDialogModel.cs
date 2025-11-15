@@ -69,7 +69,7 @@ public partial class DeleteSingleRawFilesDialogModel : ViewModelBase
     private async Task<ParallelResult<IMediaFileInfo>> DeleteSingleRawFilesAsync(IReadOnlyCollection<IMediaFileInfo> mediaFiles, IProgress<double> progress, CancellationToken cancellationToken)
     {
         var mediaFilesToDelete = mediaFiles
-            .Where(mediaFile => BitmapFileInfo.RawFileExtensions.Contains(mediaFile.FileExtension.ToLower())
+            .Where(mediaFile => BitmapFileInfo.RawFileExtensions.Contains(mediaFile.FileExtension)
                 && !ExistsFileWithSameName(mediaFiles, mediaFile))
             .ToList();
 

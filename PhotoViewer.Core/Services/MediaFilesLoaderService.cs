@@ -137,12 +137,8 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             {
                 var filesFromRawsFolder = await fileSystemService.ListFilesAsync(rawsFolder).ConfigureAwait(false);
 
-                return filesFromRawsFolder.Where(file =>
-                {
-                    string fileExtension = file.FileType.ToLower();
-                    return BitmapFileInfo.RawFileExtensions.Contains(fileExtension)
-                        || BitmapFileInfo.RawMetadataFileExtensions.Contains(fileExtension);
-                });
+                return filesFromRawsFolder.Where(file => BitmapFileInfo.RawFileExtensions.Contains(file.FileType)
+                                                      || BitmapFileInfo.RawMetadataFileExtensions.Contains(file.FileType));
             }
         }
         catch (Exception ex)
@@ -155,8 +151,6 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 
     private IMediaFileInfo? TryGetStartMediaFile(IStorageFile startFile)
     {
-        string fileExtension = startFile.FileType.ToLower();
-
         if (startFile.Attributes.HasFlag(FileAttributes.Temporary)
             && startFile.Attributes.HasFlag(FileAttributes.ReadOnly)
             && startFile.Path.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData))
@@ -166,7 +160,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             // the original file will be part of the neighboring files query
             return null;
         }
-        else if (BitmapFileInfo.CommonFileExtensions.Contains(fileExtension))
+        else if (BitmapFileInfo.CommonFileExtensions.Contains(startFile.FileType))
         {
             var bitmapFileInfo = new BitmapFileInfo(startFile);
 
@@ -175,16 +169,16 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 
             return bitmapFileInfo;
         }
-        else if (BitmapFileInfo.RawFileExtensions.Contains(fileExtension))
+        else if (BitmapFileInfo.RawFileExtensions.Contains(startFile.FileType))
         {
             // file might be linked to a common file    
             return null;
         }
-        else if (VideoFileInfo.SupportedFileExtensions.Contains(fileExtension))
+        else if (VideoFileInfo.SupportedFileExtensions.Contains(startFile.FileType))
         {
             return new VideoFileInfo(startFile);
         }
-        else if (VectorGraphicFileInfo.SupportedFileExtensions.Contains(fileExtension))
+        else if (VectorGraphicFileInfo.SupportedFileExtensions.Contains(startFile.FileType))
         {
             return new VectorGraphicFileInfo(startFile);
         }
@@ -209,17 +203,15 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
 
         foreach (var file in files)
         {
-            string fileExtension = file.FileType.ToLower();
-
             if (startMediaFile != null && file.IsSameFile(startMediaFile.StorageFile))
             {
                 mediaFiles.Add(startMediaFile);
             }
-            else if (BitmapFileInfo.CommonFileExtensions.Contains(fileExtension))
+            else if (BitmapFileInfo.CommonFileExtensions.Contains(file.FileType))
             {
                 mediaFiles.Add(new BitmapFileInfo(file));
             }
-            else if (BitmapFileInfo.RawFileExtensions.Contains(fileExtension))
+            else if (BitmapFileInfo.RawFileExtensions.Contains(file.FileType))
             {
                 if (linkRAWs && CanRawFileBeLinked(file, possibleLinkTargets))
                 {
@@ -230,18 +222,18 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
                     mediaFiles.Add(new BitmapFileInfo(file));
                 }
             }
-            else if (BitmapFileInfo.RawMetadataFileExtensions.Contains(fileExtension))
+            else if (BitmapFileInfo.RawMetadataFileExtensions.Contains(file.FileType))
             {
                 rawMetadataFilesToLink.Add(file);
             }
-            else if (VideoFileInfo.SupportedFileExtensions.Contains(fileExtension))
+            else if (VideoFileInfo.SupportedFileExtensions.Contains(file.FileType))
             {
                 if (includeVideos)
                 {
                     mediaFiles.Add(new VideoFileInfo(file));
                 }
             }
-            else if (VectorGraphicFileInfo.SupportedFileExtensions.Contains(fileExtension))
+            else if (VectorGraphicFileInfo.SupportedFileExtensions.Contains(file.FileType))
             {
                 mediaFiles.Add(new VectorGraphicFileInfo(file));
             }
