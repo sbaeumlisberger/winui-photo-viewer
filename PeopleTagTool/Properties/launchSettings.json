@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PeopleTagTool (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "PeopleTagTool (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

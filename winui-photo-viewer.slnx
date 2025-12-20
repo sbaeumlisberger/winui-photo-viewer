@@ -6,6 +6,10 @@
     <File Path=".editorconfig" />
   </Folder>
   <Project Path="GPSMetadataFixer/GPSMetadataFixer.csproj" />
+  <Project Path="PeopleTagTool/PeopleTagTool.csproj">
+       <Platform Solution="*|x64" Project="x64" />
+    <Deploy />
+  </Project>
   <Project Path="PhotoViewer.App/PhotoViewer.App.csproj">
     <Platform Solution="*|x64" Project="x64" />
     <Deploy />
