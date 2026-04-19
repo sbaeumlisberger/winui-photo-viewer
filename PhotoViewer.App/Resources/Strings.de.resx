@@ -133,7 +133,7 @@
     <value>Freies Seitenverhältnis</value>
   </data>
   <data name="AspectRadioMode_Orginal" xml:space="preserve">
-    <value>Orginal Seitenverhältnis</value>
+    <value>Original Seitenverhältnis</value>
   </data>
   <data name="BitmapFlipViewItem_LoadingMessage" xml:space="preserve">
     <value>{0} wird geladen</value>
@@ -163,7 +163,7 @@
     <value>Optionen</value>
   </data>
   <data name="CropImageTool_SaveButtonTooltip" xml:space="preserve">
-    <value>Speicheren</value>
+    <value>Speichern</value>
   </data>
   <data name="CropImageTool_SaveCopyMenuItem" xml:space="preserve">
     <value>Kopie speicheren</value>
@@ -211,7 +211,7 @@
     <value>sRGB-Farbraum</value>
   </data>
   <data name="DetailsBar_ColorSpaceUnknown" xml:space="preserve">
-    <value>Unbekannter Fabraum</value>
+    <value>Unbekannter Farbraum</value>
   </data>
   <data name="DetailsBar_NoInformationAvailable" xml:space="preserve">
     <value>Keine Information verfügbar</value>
@@ -376,7 +376,7 @@
     <value>Kopieren</value>
   </data>
   <data name="MediaFileContextMenu_OpenInNewWindows" xml:space="preserve">
-    <value>In neuem Fentster öffnen</value>
+    <value>In neuem Fenster öffnen</value>
   </data>
   <data name="MediaFileContextMenu_OpenWidth" xml:space="preserve">
     <value>Öffnen mit ...</value>
@@ -397,7 +397,7 @@
     <value>Festlegen als ...</value>
   </data>
   <data name="MediaFileContextMenu_SetAsDesktopBackground" xml:space="preserve">
-    <value>Dektop-Hintergrund</value>
+    <value>Desktop-Hintergrund</value>
   </data>
   <data name="MediaFileContextMenu_SetAsLockscreenBackground" xml:space="preserve">
     <value>Sperrbildschirm</value>
@@ -424,7 +424,7 @@
     <value>Person hinzufügen</value>
   </data>
   <data name="MetadataPanel_AnyFileNotSupported" xml:space="preserve">
-    <value>Die ausgwählte Datei unterstützt keine Metadaten</value>
+    <value>Die ausgewählte Datei unterstützt keine Metadaten</value>
   </data>
   <data name="MetadataPanel_ApplyKeywordToAll" xml:space="preserve">
     <value>Auf alle anwenden</value>
@@ -445,7 +445,7 @@
     <value>Copyright hinzufügen</value>
   </data>
   <data name="MetadataPanel_DateTakenHeader" xml:space="preserve">
-    <value>Aufnamedatum</value>
+    <value>Aufnahmedatum</value>
   </data>
   <data name="MetadataPanel_DifferentValuesPlaceholder" xml:space="preserve">
     <value>Unterschiedliche Werte</value>
@@ -472,10 +472,10 @@
     <value>Vorschläge verwalten</value>
   </data>
   <data name="MetadataPanel_NoDateTakenPresent" xml:space="preserve">
-    <value>Keine Aufnahmedatum</value>
+    <value>Kein Aufnahmedatum</value>
   </data>
   <data name="MetadataPanel_NoFilesSelected" xml:space="preserve">
-    <value>Wählen Sie Dateien zum Anzeigen der Metadata aus</value>
+    <value>Wählen Sie Dateien zum Anzeigen der Metadaten aus</value>
   </data>
   <data name="MetadataPanel_PeopleHeader" xml:space="preserve">
     <value>Personen</value>
@@ -541,7 +541,7 @@
     <value>Alle Dateien werden sortiert nach Aufnahmedatum mit einer fortlaufenden Nummer als Präfix umbenannt.</value>
   </data>
   <data name="PrefixFilesByDateDialog_SuccessMessage" xml:space="preserve">
-    <value>All Dateien wurden erfolgreich umbenannt.</value>
+    <value>Alle Dateien wurden erfolgreich umbenannt.</value>
   </data>
   <data name="PrefixFilesByDateDialog_Title" xml:space="preserve">
     <value>Dateien anhand Aufnahmedatum umbenennen</value>
@@ -727,7 +727,7 @@
     <value>Wiederherstellen</value>
   </data>
   <data name="SettingsPage_IsDebugLogEnabledToggleHeader" xml:space="preserve">
-    <value>Debug Log aktivieren (erfodert Neustart)</value>
+    <value>Debug Log aktivieren (erfordert Neustart)</value>
   </data>
   <data name="SettingsPage_LinkRawFilesDescripiton" xml:space="preserve">
     <value>Raw-Dateien und normale Bilddateien, wie z.B. jpeg-Dateien, werden als eine Datei angezeigt.</value>
@@ -745,7 +745,7 @@
     <value>Logdatei öffnen</value>
   </data>
   <data name="SettingsPage_RawFilesFolderNameDescription" xml:space="preserve">
-    <value>Spezifziert den Namen für einen Unterordner der nach Raw-Dateien durchsucht wird.</value>
+    <value>Spezifiziert den Namen für einen Unterordner der nach Raw-Dateien durchsucht wird.</value>
   </data>
   <data name="SettingsPage_RawFilesFolderNameHeader" xml:space="preserve">
     <value>Ordnername für Raw-Dateien</value>
@@ -871,7 +871,7 @@
     <value>Dokumentation öffnen</value>
   </data>
   <data name="MetadataPanel_SelectOnlySupportedFiles" xml:space="preserve">
-    <value>Nur unterstütze Dateien auswählen</value>
+    <value>Nur unterstützte Dateien auswählen</value>
   </data>
   <data name="MetadataPanel_CopyFormOtherPhotoButton" xml:space="preserve">
     <value>Kopieren von ...</value>

@@ -127,13 +127,13 @@
     <value>System</value>
   </data>
   <data name="AspectRadioMode_Fixed" xml:space="preserve">
-    <value>Fixed aspect radio</value>
+    <value>Fixed aspect ratio</value>
   </data>
   <data name="AspectRadioMode_Free" xml:space="preserve">
-    <value>Free aspect radio</value>
+    <value>Free aspect ratio</value>
   </data>
   <data name="AspectRadioMode_Orginal" xml:space="preserve">
-    <value>Orginal aspect radio</value>
+    <value>Original aspect ratio</value>
   </data>
   <data name="BitmapFlipViewItem_LoadingMessage" xml:space="preserve">
     <value>loading {0}</value>

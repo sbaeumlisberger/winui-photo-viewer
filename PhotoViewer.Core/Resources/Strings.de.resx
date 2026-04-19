@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddPeopleTagErrorDialog_Title" xml:space="preserve">
-    <value>Personenmarkierung konnte nicht hinzugeügt werden</value>
+    <value>Personenmarkierung konnte nicht hinzugefügt werden</value>
   </data>
   <data name="BackgroundTasksRunningMessage_Multiple" xml:space="preserve">
     <value>{0} Hintergrundaufgaben werden ausgeführt</value>
@@ -130,7 +130,7 @@
     <value>Vergleichen</value>
   </data>
   <data name="CropImageErrorDialogTitle" xml:space="preserve">
-    <value>Zuschneiden fehgeschlagen</value>
+    <value>Zuschneiden fehlgeschlagen</value>
   </data>
   <data name="DeleteFilesErrorDialog_Message" xml:space="preserve">
     <value>Die folgenden Dateien konnten nicht gelöscht werden:</value>
@@ -166,13 +166,13 @@
     <value>Kopieren des Aufnahmeorts fehlgeschlagen</value>
   </data>
   <data name="MetadataPanel_LocationPlaceholder" xml:space="preserve">
-    <value>Kein Aufnahmeort sepzifiziert</value>
+    <value>Kein Aufnahmeort spezifiziert</value>
   </data>
   <data name="OverviewPage_Title" xml:space="preserve">
     <value>Übersicht</value>
   </data>
   <data name="PeopleTagAlreadyExistingDialog_Message" xml:space="preserve">
-    <value>Es exisitert bereits eine Personenmarkierung mit dem Namen "{0}"</value>
+    <value>Es existiert bereits eine Personenmarkierung mit dem Namen "{0}"</value>
   </data>
   <data name="PeopleTagAlreadyExistingDialog_Title" xml:space="preserve">
     <value>Person bereits markiert</value>
@@ -181,7 +181,7 @@
     <value>Normal</value>
   </data>
   <data name="PhotoOrientation_Rotate180" xml:space="preserve">
-    <value>Zur Anzeige 180° gedreht angzeigt</value>
+    <value>Zur Anzeige 180° gedreht angezeigt</value>
   </data>
   <data name="PhotoOrientation_Rotate270" xml:space="preserve">
     <value>Zur Anzeige 90° nach rechts gedreht</value>
@@ -190,13 +190,13 @@
     <value>Zur Anzeige 90° nach links gedreht</value>
   </data>
   <data name="PhotoOrientation_Unspecified" xml:space="preserve">
-    <value>Unspezifziert</value>
+    <value>Unspezifiziert</value>
   </data>
   <data name="RemovePeopleTagErrorDialog_Title" xml:space="preserve">
-    <value>Personenmarkierung konnte nicht entfernet werden</value>
+    <value>Personenmarkierung konnte nicht entfernt werden</value>
   </data>
   <data name="RenameFileErrorDialog_Title" xml:space="preserve">
-    <value>Datei konnte nicht umbennant werden</value>
+    <value>Datei konnte nicht umbenannt werden</value>
   </data>
   <data name="SaveImageFailedDialog_Title" xml:space="preserve">
     <value>Speichern fehlgeschlagen</value>
