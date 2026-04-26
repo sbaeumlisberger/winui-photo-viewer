@@ -75,6 +75,6 @@ public static class Program
         LogLevel logLevel = applicationSettings.IsDebugLogEnabled || Debugger.IsAttached ? LogLevel.DEBUG : LogLevel.INFO;
         var fileAppender = new FileAppender(Path.Combine(AppData.PublicFolder, "logs"), logLevel);
         var logFormat = new DefaultLogFormat(filePathOffset: filePathOffset);
-        Log.Configure(new Logger([new DebugAppender(), fileAppender], logFormat));
+        Log.Configure(new Logger([new TraceAppender(), fileAppender], logFormat));
     }
 }
