@@ -13,11 +13,14 @@ public class ProgressTest
     [Fact]
     public async Task Report_ParallelAndOutOfOrder()
     {
-        using var _ = fakeSynchronizationContext.Apply();
-
         var timeProvider = new FakeTimeProvider();
 
-        var progress = new Progress(null, timeProvider);
+        Progress progress;
+
+        using (fakeSynchronizationContext.Apply())
+        {
+            progress = new Progress(null, timeProvider);
+        }
 
         SynchronizationContext? propertyChangedSynchronizationContext = null;
 
@@ -29,17 +32,17 @@ public class ProgressTest
             }
         };
 
+        var fakeTaskScheduler = new FakeTaskScheduler();
+
         var reportTasks = Enumerable.Range(1, 100)
             .Select(i => new Task(() =>
             {
-                using (new FakeSynchronizationContext().Apply())
-                {
-                    progress.Report(i / 100.0);
-                }
+                SynchronizationContext.SetSynchronizationContext(null);
+                progress.Report(i / 100.0);
             }))
             .ToList();
 
-        reportTasks.ForEach(task => task.Start());
+        reportTasks.ForEach(task => task.Start(fakeTaskScheduler));
 
         await Task.WhenAll(reportTasks);
 
@@ -48,5 +51,4 @@ public class ProgressTest
         Assert.Equal(fakeSynchronizationContext, propertyChangedSynchronizationContext);
         Assert.Equal(1, progress.Value);
     }
-
 }

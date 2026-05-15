@@ -51,7 +51,7 @@ public partial class Progress : ObservableObjectBase, IProgress<double>
 
         lock (lockObject)
         {
-            if (progress < value)
+            if (progress <= value)
             {
                 return;
             }

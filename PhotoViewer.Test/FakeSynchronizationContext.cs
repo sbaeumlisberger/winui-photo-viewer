@@ -1,22 +1,24 @@
 ﻿using Essentials.NET;
 
-namespace PhotoViewer.Test
-{
-    internal class FakeSynchronizationContext : SynchronizationContext
-    {
-        public override void Post(SendOrPostCallback callback, object? state)
-        {
-            using (Apply())
-            {
-                callback(state);
-            }
-        }
+namespace PhotoViewer.Test;
 
-        public IDisposable Apply()
+/// <summary>
+/// Executes posted callbacks synchronously.
+/// </summary>
+internal class FakeSynchronizationContext : SynchronizationContext
+{
+    public override void Post(SendOrPostCallback callback, object? state)
+    {
+        using (Apply())
         {
-            var previousSynchronizationContext = Current;
-            SetSynchronizationContext(this);
-            return new DelegatingDisposable(() => SetSynchronizationContext(previousSynchronizationContext));
+            callback(state);
         }
+    }
+
+    public IDisposable Apply()
+    {
+        var previousSynchronizationContext = Current;
+        SetSynchronizationContext(this);
+        return new DelegatingDisposable(() => SetSynchronizationContext(previousSynchronizationContext));
     }
 }
