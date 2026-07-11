@@ -105,8 +105,8 @@ public class DialogService
 
         if (dialogModel.InitialFolder is { } initialFolder)
         {
-            PInvoke.SHCreateItemFromParsingName(initialFolder, null, typeof(IShellItem).GUID, out void* initialFolderShellItem).ThrowOnFailure();
-            fileOpenDialog->SetFolder((IShellItem*)initialFolderShellItem);
+            PInvoke.SHCreateItemFromParsingName(initialFolder, null, out IShellItem* initialFolderShellItem).ThrowOnFailure();
+            fileOpenDialog->SetFolder(initialFolderShellItem);
         }
 
         if (dialogModel.FileTypeFilter is { } fileTypeFilter)
