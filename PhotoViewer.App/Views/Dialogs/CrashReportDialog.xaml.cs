@@ -19,9 +19,9 @@ public sealed partial class CrashReportDialog : ContentDialog
 
     private async void ShowReportButton_Click(object sender, RoutedEventArgs e)
     {
-        var filPath = Path.Combine(Path.GetTempPath(), "universe-photos-crash-report.txt");
-        File.WriteAllText(filPath, report);
-        var storageFile = await StorageFile.GetFileFromPathAsync(filPath);
+        var filePath = Path.Combine(Path.GetTempPath(), "universe-photos-crash-report.txt");
+        File.WriteAllText(filePath, report);
+        var storageFile = await StorageFile.GetFileFromPathAsync(filePath);
         await Launcher.LaunchFileAsync(storageFile);
     }
 }

@@ -34,7 +34,7 @@ public class NotifyComputedPropertyChangedGenerator : IIncrementalGenerator
     /// </summary>
     private static bool IsValidCandidateProperty(PropertyDeclarationSyntax property)
     {
-        // The node must be a property declaration with a expression body (e.g. "string MyProperty => SomeOtherProperty;")
+        // The node must be a property declaration with an expression body (e.g. "string MyProperty => SomeOtherProperty;")
         if (property.ExpressionBody is null)
         {
             return false;

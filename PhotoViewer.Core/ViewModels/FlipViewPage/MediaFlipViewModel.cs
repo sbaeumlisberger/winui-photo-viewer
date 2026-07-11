@@ -178,7 +178,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     {
         if (SelectedItem is not null && msg.Files.Count == 1 && msg.Files.Single() == SelectedItem)
         {
-            InfoBarModel.ShowMessage(new InfoBarModel.InforBarMessage()
+            InfoBarModel.ShowMessage(new InfoBarModel.InfoBarMessage()
             {
                 Text = string.Format(Strings.FileDeletedMessage, SelectedItem.DisplayName),
                 Command = RestoreLastDeletedFileCommand,
@@ -361,7 +361,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     }
 
     [RelayCommand(CanExecute = nameof(IsDiashowActive))]
-    private void ToogleDiashowLoop()
+    private void ToggleDiashowLoop()
     {
         if (IsDiashowLoopActive)
         {

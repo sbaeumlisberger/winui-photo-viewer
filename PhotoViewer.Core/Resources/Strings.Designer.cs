@@ -187,7 +187,7 @@ namespace PhotoViewer.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An error occurred while loading the files: {}.
+        ///   Looks up a localized string similar to An error occurred while loading the files: {0}.
         /// </summary>
         public static string LoadFilesErrorDialog_Message {
             get {
@@ -360,18 +360,18 @@ namespace PhotoViewer.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Failed to set desktop background.
         /// </summary>
-        public static string SetDesktopBackgroundFailedDialog_Ttile {
+        public static string SetDesktopBackgroundFailedDialog_Title {
             get {
-                return ResourceManager.GetString("SetDesktopBackgroundFailedDialog_Ttile", resourceCulture);
+                return ResourceManager.GetString("SetDesktopBackgroundFailedDialog_Title", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Failed to set lockscreen background.
         /// </summary>
-        public static string SetLockscreenBackgroundFailedDialog_Ttile {
+        public static string SetLockscreenBackgroundFailedDialog_Title {
             get {
-                return ResourceManager.GetString("SetLockscreenBackgroundFailedDialog_Ttile", resourceCulture);
+                return ResourceManager.GetString("SetLockscreenBackgroundFailedDialog_Title", resourceCulture);
             }
         }
         

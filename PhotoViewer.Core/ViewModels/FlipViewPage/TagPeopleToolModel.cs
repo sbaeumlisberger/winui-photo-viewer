@@ -85,7 +85,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
     {
         Register<MetadataModifiedMessage>(Receive);
         Register<SetTagPeopleToolActiveMessage>(Receive);
-        Register<BitmapModifiedMesssage>(Receive);
+        Register<BitmapModifiedMessage>(Receive);
         IsTagPeopleToolActive = Messenger.Request(new IsTagPeopleToolActiveRequestMessage(), false);
         initTask = LoadTaggedPeopleAsync();
         await initTask;
@@ -104,7 +104,7 @@ public partial class TagPeopleToolModel : ViewModelBase, ITagPeopleToolModel
         }
     }
 
-    private async void Receive(BitmapModifiedMesssage msg)
+    private async void Receive(BitmapModifiedMessage msg)
     {
         AutoSuggestBoxText = string.Empty;
         SelectionRectInPercent = Rect.Empty;

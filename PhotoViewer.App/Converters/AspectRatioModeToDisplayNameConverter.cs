@@ -5,15 +5,15 @@ using System;
 
 namespace PhotoViewer.App.Converters;
 
-public partial class AspectRadioModeToDisplayNameConverter : IValueConverter
+public partial class AspectRatioModeToDisplayNameConverter : IValueConverter
 {
     public object? Convert(object value, Type targetType, object parameter, string language)
     {
-        return (AspectRadioMode)value switch
+        return (AspectRatioMode)value switch
         {
-            AspectRadioMode.Orginal => Strings.AspectRadioMode_Orginal,
-            AspectRadioMode.Free => Strings.AspectRadioMode_Free,
-            AspectRadioMode.Fixed => Strings.AspectRadioMode_Fixed,
+            AspectRatioMode.Original => Strings.AspectRatioMode_Original,
+            AspectRatioMode.Free => Strings.AspectRatioMode_Free,
+            AspectRatioMode.Fixed => Strings.AspectRatioMode_Fixed,
             _ => throw new ArgumentOutOfRangeException(nameof(value))
         };
     }

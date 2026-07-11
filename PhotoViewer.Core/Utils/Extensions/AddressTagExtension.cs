@@ -3,7 +3,7 @@ using PhotoViewer.Core.Models;
 
 namespace PhotoViewer.Core.Utils;
 
-public static class AddresTagExtension
+public static class AddressTagExtension
 {
     public static Address ToAddress(this AddressTag address)
     {

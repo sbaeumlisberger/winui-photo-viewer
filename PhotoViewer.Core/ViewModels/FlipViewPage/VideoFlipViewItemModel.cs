@@ -22,7 +22,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     public partial MediaPlayer? MediaPlayer { get; private set; }
 
-    public bool IsContextMenuEnabeld => IsSelected && !IsDiashowActive;
+    public bool IsContextMenuEnabled => IsSelected && !IsDiashowActive;
 
     public IMediaFileContextMenuModel ContextMenuModel { get; }
 
@@ -41,9 +41,9 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
         ContextMenuModel.Files = new[] { mediaFile };
     }
 
-    partial void OnIsContextMenuEnabeldChanged()
+    partial void OnIsContextMenuEnabledChanged()
     {
-        ContextMenuModel.IsEnabled = IsContextMenuEnabeld;
+        ContextMenuModel.IsEnabled = IsContextMenuEnabled;
     }
 
     public async Task InitializeAsync()
@@ -160,7 +160,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     private void MediaPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
     {
-        Log.Error($"An error occured playing \"{MediaFile.DisplayName}\": {args.Error}: {args.ErrorMessage}", args.ExtendedErrorCode);
+        Log.Error($"An error occurred playing \"{MediaFile.DisplayName}\": {args.Error}: {args.ErrorMessage}", args.ExtendedErrorCode);
         playbackCompletionSource.TrySetResult();
     }
 }

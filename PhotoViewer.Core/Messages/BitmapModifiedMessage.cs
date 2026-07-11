@@ -2,4 +2,4 @@
 
 namespace PhotoViewer.Core.Messages;
 
-public record class BitmapModifiedMesssage(IBitmapFileInfo BitmapFile);
+public record class BitmapModifiedMessage(IBitmapFileInfo BitmapFile);

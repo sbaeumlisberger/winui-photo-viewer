@@ -52,7 +52,7 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
     private async Task InitializeAsync()
     {
         Register<ChangeThumbnailSizeMessage>(Receive);
-        Register<BitmapModifiedMesssage>(Receive);
+        Register<BitmapModifiedMessage>(Receive);
         Register<ActivateRenameFileMessage>(Receive);
 
         if (MediaFile is IBitmapFileInfo bitmapFile && bitmapFile.IsMetadataSupported)
@@ -66,7 +66,7 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
         ThumbnailSize = msg.NewThumbnailSize;
     }
 
-    private void Receive(BitmapModifiedMesssage msg)
+    private void Receive(BitmapModifiedMessage msg)
     {
         if (msg.BitmapFile == MediaFile)
         {
@@ -108,7 +108,7 @@ public partial class OverviewItemModel : ViewModelBase, IOverviewItemModel
 
     public void CancelRenaming()
     {
-        Log.Info("User canceld renaming");
+        Log.Info("User canceled renaming");
         ExitRenaming();
     }
 

@@ -49,7 +49,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         this.metadataService = metadataService;
         IsVisible = settings.AutoOpenDetailsBar;
         Register<MetadataModifiedMessage>(OnReceive);
-        Register<BitmapModifiedMesssage>(OnReceive);
+        Register<BitmapModifiedMessage>(OnReceive);
         Register<BitmapImageLoadedMessage>(OnReceive);
         Register<MediaFilesLoadingMessage>(OnReceive);
         Register<MediaFilesRenamedMessage>(OnReceive);
@@ -72,7 +72,7 @@ public partial class DetailsBarModel : ViewModelBase, IDetailsBarModel
         }
     }
 
-    private void OnReceive(BitmapModifiedMesssage msg)
+    private void OnReceive(BitmapModifiedMessage msg)
     {
         if (IsVisible
             && SelectedItemModel?.MediaFile is IBitmapFileInfo selectedFile

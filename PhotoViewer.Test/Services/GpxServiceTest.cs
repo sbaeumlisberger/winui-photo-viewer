@@ -128,7 +128,7 @@ public class GpxServiceTest
     }
 
     [Fact]
-    public async Task DoesNotApplyGpxTrackToFileWihtoutDateTaken()
+    public async Task DoesNotApplyGpxTrackToFileWithoutDateTaken()
     {
         var gpxTrack = new GpxTrack(new List<GpxTrackPoint>());
         var file = Substitute.For<IBitmapFileInfo>();

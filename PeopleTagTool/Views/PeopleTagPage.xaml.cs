@@ -43,7 +43,7 @@ public sealed partial class PeopleTagPage : UserControl
 
     private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        ViewModel.SelecetedFaces = gridView.SelectedItems.Cast<DetectedFaceViewModel>().ToList();
+        ViewModel.SelectedFaces = gridView.SelectedItems.Cast<DetectedFaceViewModel>().ToList();
     }
 
   

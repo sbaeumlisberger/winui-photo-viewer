@@ -6,13 +6,13 @@ namespace PhotoViewer.Core.Utils;
 
 public partial class ObservableObjectBase : ObservableObject
 {
-    public record class Subsciption
+    public record class Subscription
     {
         public object Subscriber { get; }
         public string PropertyName { get; }
         public Action Callback { get; }
 
-        public Subsciption(object subscriber, string propertyName, Action callback)
+        public Subscription(object subscriber, string propertyName, Action callback)
         {
             Subscriber = subscriber;
             PropertyName = propertyName;
@@ -20,7 +20,7 @@ public partial class ObservableObjectBase : ObservableObject
         }
     }
 
-    private readonly List<Subsciption> subscriptions = new List<Subsciption>();
+    private readonly List<Subscription> subscriptions = new List<Subscription>();
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
@@ -35,20 +35,20 @@ public partial class ObservableObjectBase : ObservableObject
 
     protected virtual void _NotifyComputedPropertyChanged(string? propertyName) { }
 
-    public Subsciption Subscribe(object subscriber, string propertyName, Action callback, bool initialCallback = false)
+    public Subscription Subscribe(object subscriber, string propertyName, Action callback, bool initialCallback = false)
     {
-        var subsciption = new Subsciption(subscriber, propertyName, callback);
-        subscriptions.Add(subsciption);
+        var subscription = new Subscription(subscriber, propertyName, callback);
+        subscriptions.Add(subscription);
         if (initialCallback)
         {
             callback();
         }
-        return subsciption;
+        return subscription;
     }
 
-    public void Unsubscribe(Subsciption subsciption)
+    public void Unsubscribe(Subscription subscription)
     {
-        subscriptions.Remove(subsciption);
+        subscriptions.Remove(subscription);
     }
 
     public void UnsubscribeAll(object subscriber)

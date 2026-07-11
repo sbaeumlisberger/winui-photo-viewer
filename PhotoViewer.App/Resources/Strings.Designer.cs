@@ -88,29 +88,29 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fixed aspect radio.
+        ///   Looks up a localized string similar to Fixed aspect ratio.
         /// </summary>
-        internal static string AspectRadioMode_Fixed {
+        internal static string AspectRatioMode_Fixed {
             get {
-                return ResourceManager.GetString("AspectRadioMode_Fixed", resourceCulture);
+                return ResourceManager.GetString("AspectRatioMode_Fixed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Free aspect radio.
+        ///   Looks up a localized string similar to Free aspect ratio.
         /// </summary>
-        internal static string AspectRadioMode_Free {
+        internal static string AspectRatioMode_Free {
             get {
-                return ResourceManager.GetString("AspectRadioMode_Free", resourceCulture);
+                return ResourceManager.GetString("AspectRatioMode_Free", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Orginal aspect radio.
+        ///   Looks up a localized string similar to Original aspect ratio.
         /// </summary>
-        internal static string AspectRadioMode_Orginal {
+        internal static string AspectRatioMode_Original {
             get {
-                return ResourceManager.GetString("AspectRadioMode_Orginal", resourceCulture);
+                return ResourceManager.GetString("AspectRatioMode_Original", resourceCulture);
             }
         }
         
@@ -162,18 +162,18 @@ namespace PhotoViewer.App.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Height:.
         /// </summary>
-        internal static string CropImageTool_AspectRadioHeightLabel {
+        internal static string CropImageTool_AspectRatioHeightLabel {
             get {
-                return ResourceManager.GetString("CropImageTool_AspectRadioHeightLabel", resourceCulture);
+                return ResourceManager.GetString("CropImageTool_AspectRatioHeightLabel", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Width:.
         /// </summary>
-        internal static string CropImageTool_AspectRadioWidthLabel {
+        internal static string CropImageTool_AspectRatioWidthLabel {
             get {
-                return ResourceManager.GetString("CropImageTool_AspectRadioWidthLabel", resourceCulture);
+                return ResourceManager.GetString("CropImageTool_AspectRatioWidthLabel", resourceCulture);
             }
         }
         
@@ -601,7 +601,7 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Alle files.
+        ///   Looks up a localized string similar to All files.
         /// </summary>
         internal static string FileOpenDialog_AllFiles {
             get {
@@ -1008,9 +1008,9 @@ namespace PhotoViewer.App.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Open with ....
         /// </summary>
-        internal static string MediaFileContextMenu_OpenWidth {
+        internal static string MediaFileContextMenu_OpenWith {
             get {
-                return ResourceManager.GetString("MediaFileContextMenu_OpenWidth", resourceCulture);
+                return ResourceManager.GetString("MediaFileContextMenu_OpenWith", resourceCulture);
             }
         }
         
@@ -1188,9 +1188,9 @@ namespace PhotoViewer.App.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Copy from ....
         /// </summary>
-        internal static string MetadataPanel_CopyFormOtherPhotoButton {
+        internal static string MetadataPanel_CopyFromOtherPhotoButton {
             get {
-                return ResourceManager.GetString("MetadataPanel_CopyFormOtherPhotoButton", resourceCulture);
+                return ResourceManager.GetString("MetadataPanel_CopyFromOtherPhotoButton", resourceCulture);
             }
         }
         
@@ -2025,36 +2025,36 @@ namespace PhotoViewer.App.Resources {
         /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
-        internal static string SettingsPage_AboutSectionTittle {
+        internal static string SettingsPage_AboutSectionTitle {
             get {
-                return ResourceManager.GetString("SettingsPage_AboutSectionTittle", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_AboutSectionTitle", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Appearance.
         /// </summary>
-        internal static string SettingsPage_AppearanceSectionTittle {
+        internal static string SettingsPage_AppearanceSectionTitle {
             get {
-                return ResourceManager.GetString("SettingsPage_AppearanceSectionTittle", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_AppearanceSectionTitle", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Show detailed information bar on startup.
         /// </summary>
-        internal static string SettingsPage_AutoShowDetailsBarToogle {
+        internal static string SettingsPage_AutoShowDetailsBarToggle {
             get {
-                return ResourceManager.GetString("SettingsPage_AutoShowDetailsBarToogle", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_AutoShowDetailsBarToggle", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Show metadata view on startup.
         /// </summary>
-        internal static string SettingsPage_AutoShowMetadataPanelToogle {
+        internal static string SettingsPage_AutoShowMetadataPanelToggle {
             get {
-                return ResourceManager.GetString("SettingsPage_AutoShowMetadataPanelToogle", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_AutoShowMetadataPanelToggle", resourceCulture);
             }
         }
         
@@ -2142,9 +2142,9 @@ namespace PhotoViewer.App.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Raw files and normal image files, such as jpeg files, are displayed as one file..
         /// </summary>
-        internal static string SettingsPage_LinkRawFilesDescripiton {
+        internal static string SettingsPage_LinkRawFilesDescription {
             get {
-                return ResourceManager.GetString("SettingsPage_LinkRawFilesDescripiton", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_LinkRawFilesDescription", resourceCulture);
             }
         }
         
@@ -2160,18 +2160,18 @@ namespace PhotoViewer.App.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Logging.
         /// </summary>
-        internal static string SettingsPage_LoggingSectionTittle {
+        internal static string SettingsPage_LoggingSectionTitle {
             get {
-                return ResourceManager.GetString("SettingsPage_LoggingSectionTittle", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_LoggingSectionTitle", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Manage settings.
         /// </summary>
-        internal static string SettingsPage_ManageSettingsSectionTittle {
+        internal static string SettingsPage_ManageSettingsSectionTitle {
             get {
-                return ResourceManager.GetString("SettingsPage_ManageSettingsSectionTittle", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_ManageSettingsSectionTitle", resourceCulture);
             }
         }
         
@@ -2205,9 +2205,9 @@ namespace PhotoViewer.App.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Raw files.
         /// </summary>
-        internal static string SettingsPage_RawFilesSectionTittle {
+        internal static string SettingsPage_RawFilesSectionTitle {
             get {
-                return ResourceManager.GetString("SettingsPage_RawFilesSectionTittle", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_RawFilesSectionTitle", resourceCulture);
             }
         }
         
@@ -2259,18 +2259,18 @@ namespace PhotoViewer.App.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Videos.
         /// </summary>
-        internal static string SettingsPage_VideoFilesSectionTittle {
+        internal static string SettingsPage_VideoFilesSectionTitle {
             get {
-                return ResourceManager.GetString("SettingsPage_VideoFilesSectionTittle", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_VideoFilesSectionTitle", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Shift date taken of all photos.
         /// </summary>
-        internal static string ShiftDatenTakenUICommand_Label {
+        internal static string ShiftDateTakenUICommand_Label {
             get {
-                return ResourceManager.GetString("ShiftDatenTakenUICommand_Label", resourceCulture);
+                return ResourceManager.GetString("ShiftDateTakenUICommand_Label", resourceCulture);
             }
         }
         

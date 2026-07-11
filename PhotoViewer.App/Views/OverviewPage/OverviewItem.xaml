@@ -16,7 +16,7 @@
         <ToolTipService.ToolTip>
             <ToolTip
                 x:Name="tooltip" 
-                Style="{StaticResource NoMaxWithTooltipStyle}"
+                Style="{StaticResource NoMaxWidthTooltipStyle}"
                 Opened="ToolTip_Opened"
                 Closed="ToolTip_Closed">               
                 <StackPanel Spacing="8" MaxWidth="600">

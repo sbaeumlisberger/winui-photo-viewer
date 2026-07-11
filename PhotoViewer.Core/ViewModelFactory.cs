@@ -25,7 +25,7 @@ public interface IViewModelFactory
     ICompareViewModel CreateCompareViewModel(IObservableList<IBitmapFileInfo> bitmapFiles);
     ICropImageToolModel CreateCropImageToolModel(IBitmapFileInfo bitmapFile);
     IImageViewModel CreateImageViewModel(IBitmapFileInfo bitmapFile);
-    EditLocationDialogModel CreateEditLocationDialogModel(Location? orginalLocation, Func<Location?, Task> saveLocation);
+    EditLocationDialogModel CreateEditLocationDialogModel(Location? originalLocation, Func<Location?, Task> saveLocation);
     BackgroundTasksViewModel CreateBackgroundTasksViewModel();
     EditImageOverlayModel CreateEditImageOverlayModel();
     SortMenuModel CreateSortMenuModel();
@@ -188,7 +188,7 @@ public class ViewModelFactory : IViewModelFactory
             IBitmapFileInfo bitmapFile => CreateBitmapFlipViewItemModel(bitmapFile),
             IVideoFileInfo => new VideoFlipViewItemModel(mediaFile, this, messenger),
             IVectorGraphicFileInfo => new VectorGraphicFlipViewItemModel(mediaFile, this),
-            _ => throw new Exception($"Unexcpected type of media file: {mediaFile.GetType()}")
+            _ => throw new Exception($"Unexpected type of media file: {mediaFile.GetType()}")
         };
     }
 
@@ -217,9 +217,9 @@ public class ViewModelFactory : IViewModelFactory
         return new ImageViewModel(bitmapFile, cachedImageLoaderService, messenger);
     }
 
-    public EditLocationDialogModel CreateEditLocationDialogModel(Location? orginalLocation, Func<Location?, Task> saveLocation)
+    public EditLocationDialogModel CreateEditLocationDialogModel(Location? originalLocation, Func<Location?, Task> saveLocation)
     {
-        return new EditLocationDialogModel(orginalLocation, saveLocation, locationService, clipboardService);
+        return new EditLocationDialogModel(originalLocation, saveLocation, locationService, clipboardService);
     }
 
     public BackgroundTasksViewModel CreateBackgroundTasksViewModel()
@@ -253,7 +253,7 @@ public class ViewModelFactory : IViewModelFactory
         return new ToolsMenuModel(
             new MoveRawFilesToSubfolderCommand(applicationSession, settings, dialogService),
             new DeleteSingleRawFilesCommand(applicationSession, messenger, dialogService),
-            new ShiftDatenTakenCommand(applicationSession, messenger, dialogService, metadataService),
+            new ShiftDateTakenCommand(applicationSession, messenger, dialogService, metadataService),
             new ImportGpxTrackCommand(applicationSession, messenger, dialogService, metadataService, gpxService),
             new PrefixFilesByDateCommand(applicationSession, dialogService, metadataService, messenger));
     }

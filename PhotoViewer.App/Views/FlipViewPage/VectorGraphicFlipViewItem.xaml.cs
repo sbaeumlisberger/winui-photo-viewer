@@ -76,7 +76,7 @@ public sealed partial class VectorGraphicFlipViewItem : UserControl, IMVVMContro
 
     private void ScrollDummy_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
-        if (ViewModel!.IsContextMenuEnabeld)
+        if (ViewModel!.IsContextMenuEnabled)
         {
             dummy.ShowAttachedFlyout(args);
         }

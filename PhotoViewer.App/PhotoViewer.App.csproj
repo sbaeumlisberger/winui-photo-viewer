@@ -77,7 +77,7 @@
 		<None Remove="Controls\AutoSuggestionBox.xaml" />
 		<None Remove="Controls\CanvasImageControl.xaml" />
 		<None Remove="Controls\ProgressControl.xaml" />
-		<None Remove="Controls\ScaleableRect.xaml" />
+		<None Remove="Controls\ScalableRect.xaml" />
 		<None Remove="Controls\SelectionRect.xaml" />
 		<None Remove="NativeMethods.json" />
 		<None Remove="Views\ComparePage.xaml" />
@@ -92,7 +92,7 @@
 		<None Remove="Views\Dialogs\ManagePeopleDialog.xaml" />
 		<None Remove="Views\Dialogs\MoveRawFilesToSubfolderDialog.xaml" />
 		<None Remove="Views\Dialogs\PrefixFilesByDateDialog.xaml" />
-		<None Remove="Views\Dialogs\ShiftDatenTakenDialog.xaml" />
+		<None Remove="Views\Dialogs\ShiftDateTakenDialog.xaml" />
 		<None Remove="Views\Dialogs\UnhandledExceptionDialog.xaml" />
 		<None Remove="Views\FlipViewPage.xaml" />
 		<None Remove="Views\BitmapFlipViewItem.xaml" />
@@ -218,7 +218,7 @@
 		<Page Update="Controls\CanvasImageControl.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
-		<Page Update="Controls\ScaleableRect.xaml">
+		<Page Update="Controls\ScalableRect.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\Shared\SortAppBarButton.xaml">
@@ -245,7 +245,7 @@
 		<Page Update="Views\CompareView.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
-		<Page Update="Views\Dialogs\ShiftDatenTakenDialog.xaml">
+		<Page Update="Views\Dialogs\ShiftDateTakenDialog.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Controls\AutoSuggestionBox.xaml">

@@ -31,7 +31,7 @@ public partial class App : Application
 
     public MainWindow Window { get; private set; } = null!;
 
-    private bool isUnhandeldExceptionDialogShown = false;
+    private bool isUnhandledExceptionDialogShown = false;
 
     private readonly ApplicationSettings applicationSettings;
 
@@ -159,14 +159,14 @@ public partial class App : Application
 
     private async void ShowUnhandledExceptionDialog(UnhandledExceptionEventArgs args)
     {
-        if (isUnhandeldExceptionDialogShown)
+        if (isUnhandledExceptionDialogShown)
         {
             return;
         }
 
         try
         {
-            isUnhandeldExceptionDialogShown = true;
+            isUnhandledExceptionDialogShown = true;
 
             var errorReportService = new ErrorReportService(Package.Current.Id.Version, new EventLogService());
 
@@ -198,7 +198,7 @@ public partial class App : Application
                 else
                 {
                     Log.Info("User decided to ignore unhandled exception");
-                    isUnhandeldExceptionDialogShown = false;
+                    isUnhandledExceptionDialogShown = false;
                 }
             });
         }

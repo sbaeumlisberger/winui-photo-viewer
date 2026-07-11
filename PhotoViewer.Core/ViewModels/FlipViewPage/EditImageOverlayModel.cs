@@ -137,7 +137,7 @@ public partial class EditImageOverlayModel : ViewModelBase
         try
         {
             await SaveReplaceAsync();
-            Messenger.Send(new BitmapModifiedMesssage(File!));
+            Messenger.Send(new BitmapModifiedMessage(File!));
             CloseAndReset();
         }
         catch (Exception ex)
@@ -169,7 +169,7 @@ public partial class EditImageOverlayModel : ViewModelBase
                 if (dstFile.IsSameFile(File.StorageFile))
                 {
                     await SaveReplaceAsync();
-                    Messenger.Send(new BitmapModifiedMesssage(File));
+                    Messenger.Send(new BitmapModifiedMessage(File));
                 }
                 else
                 {
@@ -341,9 +341,9 @@ public partial class EditImageOverlayModel : ViewModelBase
             || encoder.EncoderInformation.CodecId == BitmapEncoder.TiffEncoderId)
         {
             encoder.IsThumbnailGenerated = true;
-            double aspectRadio = decoder.PixelWidth / (double)decoder.PixelHeight;
-            encoder.GeneratedThumbnailWidth = (uint)(256 * Math.Min(aspectRadio, 1));
-            encoder.GeneratedThumbnailHeight = (uint)(256 / Math.Max(aspectRadio, 1));
+            double aspectRatio = decoder.PixelWidth / (double)decoder.PixelHeight;
+            encoder.GeneratedThumbnailWidth = (uint)(256 * Math.Min(aspectRatio, 1));
+            encoder.GeneratedThumbnailHeight = (uint)(256 / Math.Max(aspectRatio, 1));
         }
 
         SetPixelData(encoder, canvasRenderTarget!);

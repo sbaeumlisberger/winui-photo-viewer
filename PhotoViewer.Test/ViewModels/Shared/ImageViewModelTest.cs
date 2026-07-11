@@ -86,7 +86,7 @@ public class ImageViewModelTest : IDisposable
     }
 
     [Fact]
-    public async Task Receive_BitmapModifiedMesssage()
+    public async Task Receive_BitmapModifiedMessage()
     {
         imageLoadServiceMock.LoadFromFileAsync(bitmapFileMock, Arg.Any<CancellationToken>(), false)
             .Returns(Substitute.For<IBitmapImageModel>());
@@ -96,7 +96,7 @@ public class ImageViewModelTest : IDisposable
         imageLoadServiceMock.LoadFromFileAsync(bitmapFileMock, Arg.Any<CancellationToken>(), true)
             .Returns(loadFromFileAsyncTSC.Task);
 
-        messenger.Send(new BitmapModifiedMesssage(bitmapFileMock));
+        messenger.Send(new BitmapModifiedMessage(bitmapFileMock));
         await imageViewModel.LastDispatchTask;
 
         Assert.True(imageViewModel.IsLoading);
@@ -109,7 +109,7 @@ public class ImageViewModelTest : IDisposable
     }
 
     [Fact]
-    public async Task Receive_BitmapModifiedMesssage_Twice()
+    public async Task Receive_BitmapModifiedMessage_Twice()
     {
         imageLoadServiceMock.LoadFromFileAsync(bitmapFileMock, Arg.Any<CancellationToken>(), false)
             .Returns(Substitute.For<IBitmapImageModel>());
@@ -119,7 +119,7 @@ public class ImageViewModelTest : IDisposable
         imageLoadServiceMock.LoadFromFileAsync(bitmapFileMock, Arg.Any<CancellationToken>(), true)
             .Returns(loadFromFileAsyncTSC1.Task);
 
-        messenger.Send(new BitmapModifiedMesssage(bitmapFileMock));
+        messenger.Send(new BitmapModifiedMessage(bitmapFileMock));
         await imageViewModel.LastDispatchTask;
         await imageLoadServiceMock.Received().LoadFromFileAsync(bitmapFileMock, Arg.Any<CancellationToken>(), true);
 
@@ -127,7 +127,7 @@ public class ImageViewModelTest : IDisposable
         imageLoadServiceMock.LoadFromFileAsync(bitmapFileMock, Arg.Any<CancellationToken>(), true)
             .Returns(loadFromFileAsyncTSC2.Task);
 
-        messenger.Send(new BitmapModifiedMesssage(bitmapFileMock));
+        messenger.Send(new BitmapModifiedMessage(bitmapFileMock));
         await imageViewModel.LastDispatchTask;
         await imageLoadServiceMock.Received().LoadFromFileAsync(bitmapFileMock, Arg.Any<CancellationToken>(), true);
 
@@ -146,9 +146,9 @@ public class ImageViewModelTest : IDisposable
     }
 
     [Fact]
-    public void Receive_BitmapRotatedMesssage_OtherFile()
+    public void Receive_BitmapRotatedMessage_OtherFile()
     {
-        messenger.Send(new BitmapModifiedMesssage(Substitute.For<IBitmapFileInfo>()));
+        messenger.Send(new BitmapModifiedMessage(Substitute.For<IBitmapFileInfo>()));
 
         Assert.False(imageViewModel.IsLoading);
     }

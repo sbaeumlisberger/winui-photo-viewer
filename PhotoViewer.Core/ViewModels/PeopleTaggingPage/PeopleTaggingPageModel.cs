@@ -57,7 +57,7 @@ public partial class PeopleTaggingPageModel : ViewModelBase
         RecentPeopleNames = peopleSuggestionsService.GetRecent();
         AllPeopleNames = peopleSuggestionsService.GetAll();
         PropertyChanged += PeopleTaggingBatchViewPageModel_PropertyChanged;
-        _ = InitalizeAsync(session);
+        _ = InitializeAsync(session);
     }
 
     protected override void OnCleanup()
@@ -112,7 +112,7 @@ public partial class PeopleTaggingPageModel : ViewModelBase
         }
     }
 
-    private async Task InitalizeAsync(ApplicationSession session)
+    private async Task InitializeAsync(ApplicationSession session)
     {
         var files = session.Files
             .OfType<IBitmapFileInfo>()

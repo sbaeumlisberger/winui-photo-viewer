@@ -154,7 +154,7 @@
     <value>Import fehlgeschlagen</value>
   </data>
   <data name="LoadFilesErrorDialog_Message" xml:space="preserve">
-    <value>Beim Laden der Dateien ist ein Fehler aufgetreten: {}</value>
+    <value>Beim Laden der Dateien ist ein Fehler aufgetreten: {0}</value>
   </data>
   <data name="LoadFilesErrorDialog_Title" xml:space="preserve">
     <value>Dateien konnten nicht geladen werden</value>
@@ -201,10 +201,10 @@
   <data name="SaveImageFailedDialog_Title" xml:space="preserve">
     <value>Speichern fehlgeschlagen</value>
   </data>
-  <data name="SetDesktopBackgroundFailedDialog_Ttile" xml:space="preserve">
+  <data name="SetDesktopBackgroundFailedDialog_Title" xml:space="preserve">
     <value>Desktop-Hintergrund konnte nicht festgelegt werden</value>
   </data>
-  <data name="SetLockscreenBackgroundFailedDialog_Ttile" xml:space="preserve">
+  <data name="SetLockscreenBackgroundFailedDialog_Title" xml:space="preserve">
     <value>Hintergrund des Sperrbildschirms konnte nicht festgelegt werden</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
@@ -217,7 +217,7 @@
     <value>Ohne Speichern schließen</value>
   </data>
   <data name="UnsavedChangesDialog_Message" xml:space="preserve">
-    <value>Möchten Sie die Anwendung ohne zu speichern schließen ?</value>
+    <value>Möchten Sie die Anwendung ohne zu speichern schließen?</value>
   </data>
   <data name="UnsavedChangesDialog_Title" xml:space="preserve">
     <value>Ungespeicherte Änderungen</value>

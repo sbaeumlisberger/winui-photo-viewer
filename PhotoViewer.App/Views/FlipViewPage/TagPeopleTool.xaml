@@ -38,7 +38,7 @@
                             Background="Transparent"
                             PointerEntered="PeopleTag_PointerEntered"
                             PointerExited="PeopleTag_PointerExited">
-                            <controls:ScaleableRect              
+                            <controls:ScalableRect
                                 Visibility="{x:Bind IsVisible, Mode=OneWay}"
                                 ScaleFactor="{x:Bind UIScaleFactor, Mode=OneWay}"/>
                         </controls:PercentagePlacement>

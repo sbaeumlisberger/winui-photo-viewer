@@ -33,7 +33,7 @@ internal partial class PeopleTagPageModel : ObservableObject
 
     public ObservableList<DetectedFaceViewModel> DetectedFaces { get; } = [];
 
-    public IReadOnlyCollection<DetectedFaceViewModel> SelecetedFaces { get; set; } = [];
+    public IReadOnlyCollection<DetectedFaceViewModel> SelectedFaces { get; set; } = [];
 
     public double MinSize { get => field; set => SetProperty(ref field, value); } = 200;
 
@@ -124,7 +124,7 @@ internal partial class PeopleTagPageModel : ObservableObject
 
     public async Task TagSelectedFacesAsync(string name)
     {
-        foreach (var group in SelecetedFaces.GroupBy(vm => vm.FilePath))
+        foreach (var group in SelectedFaces.GroupBy(vm => vm.FilePath))
         {
             using var fileStream = File.Open(group.Key, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
             var encoder = new MetadataEncoder(fileStream);
@@ -144,8 +144,8 @@ internal partial class PeopleTagPageModel : ObservableObject
                 indexedPhotos.Update(photo);
             }
         }
-        DetectedFaces.RemoveRange(SelecetedFaces);
-        SelecetedFaces = [];
+        DetectedFaces.RemoveRange(SelectedFaces);
+        SelectedFaces = [];
 
         if (allPeopleNames.Find(x => x.Name == name) is { } suggestion)
         {

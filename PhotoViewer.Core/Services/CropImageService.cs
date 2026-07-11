@@ -62,7 +62,7 @@ internal class CropImageService : ICropImageService
 
             bitmapFile.InvalidateCache();
 
-            messenger.Send(new BitmapModifiedMesssage(bitmapFile));
+            messenger.Send(new BitmapModifiedMessage(bitmapFile));
 
             if (peopleTagsUpdated)
             {
@@ -128,9 +128,9 @@ internal class CropImageService : ICropImageService
 
     private IWICBitmapSource GenerateThumbnail(IWICBitmapFrameDecode srcFrame, WICRect newBoundsUnrotated)
     {
-        double aspectRadio = newBoundsUnrotated.Width / (double)newBoundsUnrotated.Height;
-        int thumbnailWidth = (int)(256 * Math.Min(aspectRadio, 1));
-        int thumbnailHeight = (int)(256 / Math.Max(aspectRadio, 1));
+        double aspectRatio = newBoundsUnrotated.Width / (double)newBoundsUnrotated.Height;
+        int thumbnailWidth = (int)(256 * Math.Min(aspectRatio, 1));
+        int thumbnailHeight = (int)(256 / Math.Max(aspectRatio, 1));
         var clipper = wic.CreateBitmapClipper();
         clipper.Initialize(srcFrame, newBoundsUnrotated);
         var scaler = wic.CreateBitmapScaler();

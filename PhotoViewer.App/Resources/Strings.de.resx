@@ -126,13 +126,13 @@
   <data name="AppTheme_System" xml:space="preserve">
     <value>System</value>
   </data>
-  <data name="AspectRadioMode_Fixed" xml:space="preserve">
+  <data name="AspectRatioMode_Fixed" xml:space="preserve">
     <value>Festes Seitenverhältnis</value>
   </data>
-  <data name="AspectRadioMode_Free" xml:space="preserve">
+  <data name="AspectRatioMode_Free" xml:space="preserve">
     <value>Freies Seitenverhältnis</value>
   </data>
-  <data name="AspectRadioMode_Orginal" xml:space="preserve">
+  <data name="AspectRatioMode_Original" xml:space="preserve">
     <value>Original Seitenverhältnis</value>
   </data>
   <data name="BitmapFlipViewItem_LoadingMessage" xml:space="preserve">
@@ -150,10 +150,10 @@
   <data name="ComparePage_LinkViewButton" xml:space="preserve">
     <value>Zoomen und Scrollen koppeln</value>
   </data>
-  <data name="CropImageTool_AspectRadioHeightLabel" xml:space="preserve">
+  <data name="CropImageTool_AspectRatioHeightLabel" xml:space="preserve">
     <value>Höhe:</value>
   </data>
-  <data name="CropImageTool_AspectRadioWidthLabel" xml:space="preserve">
+  <data name="CropImageTool_AspectRatioWidthLabel" xml:space="preserve">
     <value>Breite:</value>
   </data>
   <data name="CropImageTool_CancelButtonTooltip" xml:space="preserve">
@@ -166,7 +166,7 @@
     <value>Speichern</value>
   </data>
   <data name="CropImageTool_SaveCopyMenuItem" xml:space="preserve">
-    <value>Kopie speicheren</value>
+    <value>Kopie speichern</value>
   </data>
   <data name="DeleteLinkedFilesDialog_Message" xml:space="preserve">
     <value>Möchten Sie die mit dieser Datei verknüpften Dateien löschen?</value>
@@ -196,7 +196,7 @@
     <value>Einzelne Raw-Dateien werden gelöscht.</value>
   </data>
   <data name="DeleteSingleRawFilesDialog_SuccessMessage" xml:space="preserve">
-    <value>Alle einzelne Raw-Dateien wurden erfolgreich gelöscht.</value>
+    <value>Alle einzelnen Raw-Dateien wurden erfolgreich gelöscht.</value>
   </data>
   <data name="DeleteSingleRawFilesDialog_Title" xml:space="preserve">
     <value>Einzelne Raw-Dateien löschen</value>
@@ -277,7 +277,7 @@
     <value>Diashow starten</value>
   </data>
   <data name="FlipViewPageCommandBar_MetadataButton" xml:space="preserve">
-    <value>Metadata anzeigen</value>
+    <value>Metadaten anzeigen</value>
   </data>
   <data name="FlipViewPageCommandBar_NextButton" xml:space="preserve">
     <value>Weiter</value>
@@ -310,7 +310,7 @@
     <value>GPX-Datei auswählen</value>
   </data>
   <data name="ImportGpxTrackDialog_ErrorMessage" xml:space="preserve">
-    <value>Der Import des GPX-Track wurde fehlerhaft abgeschlossen. {0} Foto(s) wurden aktualisiert. Folgende Fehler sind aufgetreten:</value>
+    <value>Der Import des GPX-Tracks wurde fehlerhaft abgeschlossen. {0} Foto(s) wurden aktualisiert. Folgende Fehler sind aufgetreten:</value>
   </data>
   <data name="ImportGpxTrackDialog_ImportButton" xml:space="preserve">
     <value>Importieren</value>
@@ -378,7 +378,7 @@
   <data name="MediaFileContextMenu_OpenInNewWindows" xml:space="preserve">
     <value>In neuem Fenster öffnen</value>
   </data>
-  <data name="MediaFileContextMenu_OpenWidth" xml:space="preserve">
+  <data name="MediaFileContextMenu_OpenWith" xml:space="preserve">
     <value>Öffnen mit ...</value>
   </data>
   <data name="MediaFileContextMenu_Print" xml:space="preserve">
@@ -544,10 +544,10 @@
     <value>Alle Dateien wurden erfolgreich umbenannt.</value>
   </data>
   <data name="PrefixFilesByDateDialog_Title" xml:space="preserve">
-    <value>Dateien anhand Aufnahmedatum umbenennen</value>
+    <value>Dateien anhand des Aufnahmedatums umbenennen</value>
   </data>
   <data name="PrefixFilesByDateUICommand_Label" xml:space="preserve">
-    <value>Dateien anhand Aufnahmedatum umbenennen</value>
+    <value>Dateien anhand des Aufnahmedatums umbenennen</value>
   </data>
   <data name="NoItemsMessage" xml:space="preserve">
     <value>Keine Fotos zum Anzeigen vorhanden</value>
@@ -690,16 +690,16 @@
   <data name="PropertiesDialog_Title" xml:space="preserve">
     <value>Eigenschaften</value>
   </data>
-  <data name="SettingsPage_AboutSectionTittle" xml:space="preserve">
+  <data name="SettingsPage_AboutSectionTitle" xml:space="preserve">
     <value>Über diese App</value>
   </data>
-  <data name="SettingsPage_AppearanceSectionTittle" xml:space="preserve">
+  <data name="SettingsPage_AppearanceSectionTitle" xml:space="preserve">
     <value>Anzeige</value>
   </data>
-  <data name="SettingsPage_AutoShowDetailsBarToogle" xml:space="preserve">
+  <data name="SettingsPage_AutoShowDetailsBarToggle" xml:space="preserve">
     <value>Leiste mit Detailinformationen beim Starten öffnen</value>
   </data>
-  <data name="SettingsPage_AutoShowMetadataPanelToogle" xml:space="preserve">
+  <data name="SettingsPage_AutoShowMetadataPanelToggle" xml:space="preserve">
     <value>Metadaten-Ansicht beim Starten öffnen</value>
   </data>
   <data name="SettingsPage_BackButtonTooltip" xml:space="preserve">
@@ -729,16 +729,16 @@
   <data name="SettingsPage_IsDebugLogEnabledToggleHeader" xml:space="preserve">
     <value>Debug Log aktivieren (erfordert Neustart)</value>
   </data>
-  <data name="SettingsPage_LinkRawFilesDescripiton" xml:space="preserve">
+  <data name="SettingsPage_LinkRawFilesDescription" xml:space="preserve">
     <value>Raw-Dateien und normale Bilddateien, wie z.B. jpeg-Dateien, werden als eine Datei angezeigt.</value>
   </data>
   <data name="SettingsPage_LinkRawFilesHeader" xml:space="preserve">
     <value>Raw-Dateien verlinken</value>
   </data>
-  <data name="SettingsPage_LoggingSectionTittle" xml:space="preserve">
+  <data name="SettingsPage_LoggingSectionTitle" xml:space="preserve">
     <value>Logging</value>
   </data>
-  <data name="SettingsPage_ManageSettingsSectionTittle" xml:space="preserve">
+  <data name="SettingsPage_ManageSettingsSectionTitle" xml:space="preserve">
     <value>Einstellungen verwalten</value>
   </data>
   <data name="SettingsPage_OpenLogFileButton" xml:space="preserve">
@@ -750,7 +750,7 @@
   <data name="SettingsPage_RawFilesFolderNameHeader" xml:space="preserve">
     <value>Ordnername für Raw-Dateien</value>
   </data>
-  <data name="SettingsPage_RawFilesSectionTittle" xml:space="preserve">
+  <data name="SettingsPage_RawFilesSectionTitle" xml:space="preserve">
     <value>Raw-Dateien</value>
   </data>
   <data name="SettingsPage_ResetSettingsButton" xml:space="preserve">
@@ -768,10 +768,10 @@
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Einstellungen</value>
   </data>
-  <data name="SettingsPage_VideoFilesSectionTittle" xml:space="preserve">
+  <data name="SettingsPage_VideoFilesSectionTitle" xml:space="preserve">
     <value>Videos</value>
   </data>
-  <data name="ShiftDatenTakenUICommand_Label" xml:space="preserve">
+  <data name="ShiftDateTakenUICommand_Label" xml:space="preserve">
     <value>Aufnahmedaten aller Fotos verschieben</value>
   </data>
   <data name="ShiftDateTakenDialog_Continue" xml:space="preserve">
@@ -873,7 +873,7 @@
   <data name="MetadataPanel_SelectOnlySupportedFiles" xml:space="preserve">
     <value>Nur unterstützte Dateien auswählen</value>
   </data>
-  <data name="MetadataPanel_CopyFormOtherPhotoButton" xml:space="preserve">
+  <data name="MetadataPanel_CopyFromOtherPhotoButton" xml:space="preserve">
     <value>Kopieren von ...</value>
   </data>
   <data name="FileOpenDialog_AllFiles" xml:space="preserve">

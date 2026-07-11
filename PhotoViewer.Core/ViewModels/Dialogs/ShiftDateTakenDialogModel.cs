@@ -10,7 +10,7 @@ using PhotoViewer.Core.Utils;
 
 namespace PhotoViewer.Core.ViewModels;
 
-public partial class ShiftDatenTakenDialogModel : ViewModelBase
+public partial class ShiftDateTakenDialogModel : ViewModelBase
 {
     public partial bool ShowInput { get; private set; } = true;
     public partial bool ShowProgress { get; private set; } = false;
@@ -35,7 +35,7 @@ public partial class ShiftDatenTakenDialogModel : ViewModelBase
 
     private readonly IReadOnlyCollection<IMediaFileInfo> mediaFiles;
 
-    public ShiftDatenTakenDialogModel(IMessenger messenger, IMetadataService metadataService, IReadOnlyCollection<IMediaFileInfo> mediaFiles)
+    public ShiftDateTakenDialogModel(IMessenger messenger, IMetadataService metadataService, IReadOnlyCollection<IMediaFileInfo> mediaFiles)
     {
         this.messenger = messenger;
         this.metadataService = metadataService;
@@ -68,7 +68,7 @@ public partial class ShiftDatenTakenDialogModel : ViewModelBase
         }
         catch (OperationCanceledException)
         {
-            // canceld by user
+            // canceled by user
         }
         catch (Exception ex)
         {

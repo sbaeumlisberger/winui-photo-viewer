@@ -32,13 +32,13 @@ public partial class MetadataPanelModel : ViewModelBase, IMetadataPanelModel
 
     public bool IsLoaded => !IsLoading;
 
-    public partial bool IsErrorOccured { get; set; } = false;
+    public partial bool IsErrorOccurred { get; set; } = false;
 
     public partial bool IsNoFilesSelectedMessageVisible { get; private set; } = true;
 
     public partial bool IsInputVisible { get; private set; } = false;
 
-    public partial bool IsUnsupportedFilesMessageVisibile { get; private set; } = false;
+    public partial bool IsUnsupportedFilesMessageVisible { get; private set; } = false;
 
     public partial bool ShowSelectOnlySupportedFilesButton { get; private set; } = false;
 
@@ -85,7 +85,7 @@ public partial class MetadataPanelModel : ViewModelBase, IMetadataPanelModel
 
         IsVisible = applicationSettings.AutoOpenMetadataPanel;
 
-        Register<ToggleMetataPanelMessage>(OnReceive);
+        Register<ToggleMetadataPanelMessage>(OnReceive);
         Register<MetadataModifiedMessage>(OnReceive);
     }
 
@@ -101,7 +101,7 @@ public partial class MetadataPanelModel : ViewModelBase, IMetadataPanelModel
         DateTakenSectionModel.Cleanup();
     }
 
-    private void OnReceive(ToggleMetataPanelMessage msg)
+    private void OnReceive(ToggleMetadataPanelMessage msg)
     {
         IsVisible = !IsVisible;
     }
@@ -131,7 +131,7 @@ public partial class MetadataPanelModel : ViewModelBase, IMetadataPanelModel
         bool allFilesSupported = supportedFiles.Count == Files.Count;
 
         IsNoFilesSelectedMessageVisible = Files.Count == 0;
-        IsUnsupportedFilesMessageVisibile = Files.Count > 0 && !allFilesSupported;
+        IsUnsupportedFilesMessageVisible = Files.Count > 0 && !allFilesSupported;
         ShowSelectOnlySupportedFilesButton = Files.Count > 1 && !allFilesSupported;
 
         IsReadonly = supportedFiles.Any(file => !file.IsMetadataSupported);
@@ -153,19 +153,19 @@ public partial class MetadataPanelModel : ViewModelBase, IMetadataPanelModel
                 CopyrightTextboxModel.UpdateFilesChanged(supportedFiles, metadata);
                 DateTakenSectionModel.UpdateFilesChanged(supportedFiles, metadata);
 
-                IsErrorOccured = false;
+                IsErrorOccurred = false;
                 IsInputVisible = true;
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 Log.Error("Failed to update metadata panel", ex);
-                IsErrorOccured = true;
+                IsErrorOccurred = true;
                 IsInputVisible = false;
             }
         }
         else
         {
-            IsErrorOccured = false;
+            IsErrorOccurred = false;
             IsInputVisible = false;
         }
 

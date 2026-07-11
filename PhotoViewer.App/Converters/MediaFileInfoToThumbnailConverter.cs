@@ -37,7 +37,7 @@ public class MediaFileInfoToThumbnailConverter
         }
         catch (Exception ex)
         {
-            Log.Error("No thumbnail could be be retrieved for " + mediaFile.DisplayName, ex);
+            Log.Error("No thumbnail could be retrieved for " + mediaFile.DisplayName, ex);
         }
     }
 

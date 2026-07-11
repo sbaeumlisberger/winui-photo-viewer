@@ -49,7 +49,7 @@ public partial class DeleteSingleRawFilesDialogModel : ViewModelBase
         }
         catch (OperationCanceledException)
         {
-            // canceld by user
+            // canceled by user
         }
         catch (Exception ex)
         {
@@ -83,7 +83,7 @@ public partial class DeleteSingleRawFilesDialogModel : ViewModelBase
                 }
                 catch (FileNotFoundException)
                 {
-                    // files does no longer exist
+                    // files no longer exist
                 }
             }
         });

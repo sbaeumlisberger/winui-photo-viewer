@@ -123,13 +123,13 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
     {
         if (fileAccessMode != FileAccessMode.Read)
         {
-            // Files access via MTP are readonly
+            // Files accessed via MTP are readonly
             throw new Exception("Can not write file via MTP!");
         }
 
         if (mtpBuffer == null)
         {
-            // MTP allows no paralled file operations. Therefore all operations are
+            // MTP allows no parallel file operations. Therefore all operations are
             // synchronized. Due to many issues with passing the file streams to
             // native code like Win2D, the stream is copied to an in-memory stream.
             using (await mtpLock.AcquireAsync().ConfigureAwait(false))
@@ -141,7 +141,7 @@ public abstract class MediaFileInfoBase : IMediaFileInfo
                     if (fileStream.Size > 1024 * 1024 * 100)
                     {
                         // Do not load files larger than 100 MB
-                        throw new Exception("File to large!");
+                        throw new Exception("File too large!");
                     }
 
                     mtpBuffer = await fileStream.ReadBytesAsync().ConfigureAwait(false);

@@ -20,7 +20,7 @@ public sealed partial class ToolsAppBarButton : AppBarButton, IMVVMControl<Tools
         IKeyboardAcceleratedCommand[] commands = [
             viewModel.MoveRawFilesToSubfolderCommand,
             viewModel.DeleteSingleRawFilesCommand,
-            viewModel.ShiftDatenTakenCommand,
+            viewModel.ShiftDateTakenCommand,
             viewModel.ImportGpxTrackCommand,
             viewModel.PrefixFilesByDateCommand];
 

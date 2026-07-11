@@ -16,7 +16,7 @@
             x:Key="UIScaleTransform" 
             ScaleX="{x:Bind ViewModel.UIScaleFactor, Mode=OneWay}"
             ScaleY="{x:Bind ViewModel.UIScaleFactor, Mode=OneWay}"/>
-        <converters:AspectRadioModeToDisplayNameConverter x:Key="AspectRadioModeToDisplayNameConverter"/>
+        <converters:AspectRatioModeToDisplayNameConverter x:Key="AspectRatioModeToDisplayNameConverter"/>
     </UserControl.Resources>
 
     <Canvas
@@ -30,7 +30,7 @@
             BoundsChanging="SelectionRect_BoundsChanging"
             InteractionStarted="SelectionRect_InteractionStarted"
             InteractionEnded="SelectionRect_InteractionEnded"
-            AspectRadio="{x:Bind ViewModel.AspectRadio, Mode=OneWay}"
+            AspectRatio="{x:Bind ViewModel.AspectRatio, Mode=OneWay}"
             UIScaleFactor="{x:Bind ViewModel.UIScaleFactor, Mode=OneWay}"/>
 
         <Border
@@ -81,19 +81,19 @@
                                 <ComboBox
                                     Grid.ColumnSpan="2" 
                                     HorizontalAlignment="Stretch" 
-                                    ItemsSource="{x:Bind ViewModel.AvailableAspectRadioModes}"
-                                    SelectedItem="{x:Bind ViewModel.AspectRadioMode, Mode=TwoWay}">
+                                    ItemsSource="{x:Bind ViewModel.AvailableAspectRatioModes}"
+                                    SelectedItem="{x:Bind ViewModel.AspectRatioMode, Mode=TwoWay}">
                                     <ComboBox.ItemTemplate>
-                                        <DataTemplate x:DataType="vm:AspectRadioMode">
+                                        <DataTemplate x:DataType="vm:AspectRatioMode">
                                             <TextBlock
-                                                Text="{x:Bind Converter={StaticResource AspectRadioModeToDisplayNameConverter}}"/>
+                                                Text="{x:Bind Converter={StaticResource AspectRatioModeToDisplayNameConverter}}"/>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
                                 <controls:WrapGrid 
                                     Margin="0,4,0,0"
                                     RowSpacing="4" 
-                                    Visibility="{x:Bind ViewModel.IsFixedAspectRadio, Mode=OneWay}">
+                                    Visibility="{x:Bind ViewModel.IsFixedAspectRatio, Mode=OneWay}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
@@ -101,18 +101,18 @@
                                     <TextBlock 
                                         Margin="4,0,4,0" 
                                         VerticalAlignment="Center" 
-                                        Text="{x:Bind res:Strings.CropImageTool_AspectRadioWidthLabel}"/>
+                                        Text="{x:Bind res:Strings.CropImageTool_AspectRatioWidthLabel}"/>
                                     <NumberBox 
                                         Minimum="1"
-                                        Value="{x:Bind ViewModel.AspectRadioWidth, Mode=TwoWay}" 
+                                        Value="{x:Bind ViewModel.AspectRatioWidth, Mode=TwoWay}"
                                         SpinButtonPlacementMode="Inline"/>
                                     <TextBlock 
                                         Margin="4,0,4,0"
                                         VerticalAlignment="Center" 
-                                        Text="{x:Bind res:Strings.CropImageTool_AspectRadioHeightLabel}"/>
+                                        Text="{x:Bind res:Strings.CropImageTool_AspectRatioHeightLabel}"/>
                                     <NumberBox 
                                         Minimum="1"
-                                        Value="{x:Bind ViewModel.AspectRadioHeight, Mode=TwoWay}" 
+                                        Value="{x:Bind ViewModel.AspectRatioHeight, Mode=TwoWay}"
                                         SpinButtonPlacementMode="Inline"/>
                                 </controls:WrapGrid>
                             </StackPanel>

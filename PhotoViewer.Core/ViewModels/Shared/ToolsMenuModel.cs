@@ -7,20 +7,20 @@ public partial class ToolsMenuModel : ViewModelBase
 {
     public IKeyboardAcceleratedCommand MoveRawFilesToSubfolderCommand { get; }
     public IKeyboardAcceleratedCommand DeleteSingleRawFilesCommand { get; }
-    public IKeyboardAcceleratedCommand ShiftDatenTakenCommand { get; }
+    public IKeyboardAcceleratedCommand ShiftDateTakenCommand { get; }
     public IKeyboardAcceleratedCommand ImportGpxTrackCommand { get; }
     public IKeyboardAcceleratedCommand PrefixFilesByDateCommand { get; }
 
     internal ToolsMenuModel(
         IMoveRawFilesToSubfolderCommand moveRawFilesToSubfolderCommand,
         IDeleteSingleRawFilesCommand deleteSingleRawFilesCommand,
-        IShiftDatenTakenCommand shiftDatenTakenCommand,
+        IShiftDateTakenCommand shiftDateTakenCommand,
         IImportGpxTrackCommand importGpxTrackCommand,
         IPrefixFilesByDateCommand prefixFilesByDateCommand)
     {
         MoveRawFilesToSubfolderCommand = moveRawFilesToSubfolderCommand;
         DeleteSingleRawFilesCommand = deleteSingleRawFilesCommand;
-        ShiftDatenTakenCommand = shiftDatenTakenCommand;
+        ShiftDateTakenCommand = shiftDateTakenCommand;
         ImportGpxTrackCommand = importGpxTrackCommand;
         PrefixFilesByDateCommand = prefixFilesByDateCommand;
     }

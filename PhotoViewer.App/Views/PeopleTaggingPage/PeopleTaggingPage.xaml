@@ -51,7 +51,7 @@
                     <Border>
                         <ToolTipService.ToolTip>
                             <ToolTip 
-                                Style="{StaticResource NoMaxWithTooltipStyle}" 
+                                Style="{StaticResource NoMaxWidthTooltipStyle}"
                                 Opened="ToolTip_Opened">
                                 <controls:CanvasImageControl 
                                     HorizontalAlignment="Stretch"

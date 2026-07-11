@@ -103,7 +103,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
     [RelayCommand]
     private void ToggleMetadataPanel()
     {
-        Messenger.Send(new ToggleMetataPanelMessage());
+        Messenger.Send(new ToggleMetadataPanelMessage());
     }
 
     [RelayCommand(CanExecute = nameof(CanCropImage))]
@@ -126,7 +126,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         try
         {
             await rotateBitmapService.RotateClockwise90DegreesAsync(bitmap);
-            Messenger.Send(new BitmapModifiedMesssage(bitmap));
+            Messenger.Send(new BitmapModifiedMessage(bitmap));
         }
         catch (Exception ex)
         {

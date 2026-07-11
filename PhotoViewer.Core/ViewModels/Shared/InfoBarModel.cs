@@ -8,7 +8,7 @@ namespace PhotoViewer.Core.ViewModels;
 
 public partial class InfoBarModel : ViewModelBase
 {
-    public class InforBarMessage
+    public class InfoBarMessage
     {
         public required string Text { get; init; }
 
@@ -25,13 +25,13 @@ public partial class InfoBarModel : ViewModelBase
 
     private static readonly TimeSpan DefaultMessageDuration = TimeSpan.FromSeconds(3);
 
-    public partial InforBarMessage? Message { get; private set; }
+    public partial InfoBarMessage? Message { get; private set; }
 
     public bool IsOpen => Message is not null;
 
     private ITimer? timer;
 
-    public void ShowMessage(InforBarMessage message)
+    public void ShowMessage(InfoBarMessage message)
     {
         Message = message;
 
@@ -50,7 +50,7 @@ public partial class InfoBarModel : ViewModelBase
 
     public void ShowMessage(string text, InfoBarSeverity severity = InfoBarSeverity.Informational)
     {
-        ShowMessage(new InforBarMessage() { Text = text, Severity = severity });
+        ShowMessage(new InfoBarMessage() { Text = text, Severity = severity });
     }
 
     public void HideMessage()

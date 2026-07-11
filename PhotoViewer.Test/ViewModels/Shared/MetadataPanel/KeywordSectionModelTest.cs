@@ -86,7 +86,7 @@ public class KeywordSectionModelTest
     }
 
     [Fact]
-    public void AddKeywordCommandCanNotExecute_WhenAutoSuggestBoxTextEmtpty()
+    public void AddKeywordCommandCanNotExecute_WhenAutoSuggestBoxTextEmpty()
     {
         Assert.False(keywordsSectionModel.AddKeywordCommand.CanExecute(null));
     }

@@ -33,12 +33,12 @@
                 </MenuFlyoutItem.KeyboardAccelerators>
             </MenuFlyoutItem>
             <MenuFlyoutItem
-                Text="{x:Bind res:Strings.ShiftDatenTakenUICommand_Label}" 
-                Command="{x:Bind ViewModel.ShiftDatenTakenCommand}">
+                Text="{x:Bind res:Strings.ShiftDateTakenUICommand_Label}"
+                Command="{x:Bind ViewModel.ShiftDateTakenCommand}">
                 <MenuFlyoutItem.KeyboardAccelerators>
                     <KeyboardAccelerator
-                        Key="{x:Bind ViewModel.ShiftDatenTakenCommand.AcceleratorKey}"
-                        Modifiers="{x:Bind ViewModel.ShiftDatenTakenCommand.AcceleratorModifiers}"/>
+                        Key="{x:Bind ViewModel.ShiftDateTakenCommand.AcceleratorKey}"
+                        Modifiers="{x:Bind ViewModel.ShiftDateTakenCommand.AcceleratorModifiers}"/>
                 </MenuFlyoutItem.KeyboardAccelerators>
             </MenuFlyoutItem>
             <MenuFlyoutItem

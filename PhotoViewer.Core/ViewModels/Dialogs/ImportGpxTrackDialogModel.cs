@@ -86,7 +86,7 @@ public partial class ImportGpxTrackDialogModel : ViewModelBase
         }
         catch (OperationCanceledException)
         {
-            // canceld by user
+            // canceled by user
         }
         catch (Exception ex)
         {

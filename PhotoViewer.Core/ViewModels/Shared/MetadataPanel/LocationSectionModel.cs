@@ -112,7 +112,7 @@ public partial class LocationSectionModel : MetadataPanelSectionModelBase
     }
 
     [RelayCommand]
-    private async Task CopyFormOtherPhotoAsync()
+    private async Task CopyFromOtherPhotoAsync()
     {
         var filePickerModel = new FileOpenPickerModel2()
         {

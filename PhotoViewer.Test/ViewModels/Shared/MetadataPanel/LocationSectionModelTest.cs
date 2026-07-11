@@ -57,14 +57,14 @@ public class LocationSectionModelTest
     }
 
     [Fact]
-    public void ShowFullLocationAndCanShowLOcationOnMap_WhenFileHasAddressAndGeoTag()
+    public void ShowFullLocationAndCanShowLocationOnMap_WhenFileHasAddressAndGeoTag()
     {
         var metadata = new[] { CreateMetadataView(Address1, GeoPoint1) };
 
         locationSectionModel.UpdateFilesChanged(null!, metadata);
 
-        string expectedDiplayText = "TestStreet 1 TestCity TestRegion TestCountry (40.124848, -36.128498)";
-        Assert.Equal(expectedDiplayText, locationSectionModel.DisplayText);
+        string expectedDisplayText = "TestStreet 1 TestCity TestRegion TestCountry (40.124848, -36.128498)";
+        Assert.Equal(expectedDisplayText, locationSectionModel.DisplayText);
         Assert.True(locationSectionModel.ShowLocationOnMapCommand.CanExecute(null));
     }
 
@@ -75,8 +75,8 @@ public class LocationSectionModelTest
 
         locationSectionModel.UpdateFilesChanged(null!, metadata);
 
-        string expectedDiplayText = "TestStreet 1 TestCity TestRegion TestCountry";
-        Assert.Equal(expectedDiplayText, locationSectionModel.DisplayText);
+        string expectedDisplayText = "TestStreet 1 TestCity TestRegion TestCountry";
+        Assert.Equal(expectedDisplayText, locationSectionModel.DisplayText);
         Assert.True(locationSectionModel.ShowLocationOnMapCommand.CanExecute(null));
     }
 
@@ -87,8 +87,8 @@ public class LocationSectionModelTest
 
         locationSectionModel.UpdateFilesChanged(null!, metadata);
 
-        string expectedDiplayText = "40.124848, -36.128498";
-        Assert.Equal(expectedDiplayText, locationSectionModel.DisplayText);
+        string expectedDisplayText = "40.124848, -36.128498";
+        Assert.Equal(expectedDisplayText, locationSectionModel.DisplayText);
         Assert.True(locationSectionModel.ShowLocationOnMapCommand.CanExecute(null));
     }
 
@@ -100,8 +100,8 @@ public class LocationSectionModelTest
 
         locationSectionModel.UpdateFilesChanged(null!, metadata);
 
-        string expectedDiplayText = "TestStreet 1 TestCity TestRegion TestCountry (40.124848, -36.128498)";
-        Assert.Equal(expectedDiplayText, locationSectionModel.DisplayText);
+        string expectedDisplayText = "TestStreet 1 TestCity TestRegion TestCountry (40.124848, -36.128498)";
+        Assert.Equal(expectedDisplayText, locationSectionModel.DisplayText);
         Assert.True(locationSectionModel.ShowLocationOnMapCommand.CanExecute(null));
     }
 
@@ -113,8 +113,8 @@ public class LocationSectionModelTest
 
         locationSectionModel.UpdateFilesChanged(null!, metadata);
 
-        string expectedDiplayText = "TestStreet 1 TestCity TestRegion TestCountry";
-        Assert.Equal(expectedDiplayText, locationSectionModel.DisplayText);
+        string expectedDisplayText = "TestStreet 1 TestCity TestRegion TestCountry";
+        Assert.Equal(expectedDisplayText, locationSectionModel.DisplayText);
         Assert.True(locationSectionModel.ShowLocationOnMapCommand.CanExecute(null));
     }
 

@@ -7,9 +7,9 @@ using Windows.System;
 
 namespace PhotoViewer.Core.Commands;
 
-internal interface IShiftDatenTakenCommand : IKeyboardAcceleratedCommand { }
+internal interface IShiftDateTakenCommand : IKeyboardAcceleratedCommand { }
 
-internal partial class ShiftDatenTakenCommand : AsyncCommandBase, IShiftDatenTakenCommand
+internal partial class ShiftDateTakenCommand : AsyncCommandBase, IShiftDateTakenCommand
 {
     public VirtualKey AcceleratorKey => VirtualKey.T;
 
@@ -23,7 +23,7 @@ internal partial class ShiftDatenTakenCommand : AsyncCommandBase, IShiftDatenTak
 
     private readonly IMetadataService metadataService;
 
-    public ShiftDatenTakenCommand(ApplicationSession session, IMessenger messenger, IDialogService dialogService, IMetadataService metadataService)
+    public ShiftDateTakenCommand(ApplicationSession session, IMessenger messenger, IDialogService dialogService, IMetadataService metadataService)
     {
         this.session = session;
         this.messenger = messenger;
@@ -33,6 +33,6 @@ internal partial class ShiftDatenTakenCommand : AsyncCommandBase, IShiftDatenTak
 
     protected override async Task OnExecuteAsync()
     {
-        await dialogService.ShowDialogAsync(new ShiftDatenTakenDialogModel(messenger, metadataService, session.Files));
+        await dialogService.ShowDialogAsync(new ShiftDateTakenDialogModel(messenger, metadataService, session.Files));
     }
 }

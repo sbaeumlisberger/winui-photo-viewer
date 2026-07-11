@@ -23,8 +23,8 @@ public sealed partial class SelectionRect : UserControl
     public event TypedEventHandler<SelectionRect, BoundsChangingEventArgs>? BoundsChanging;
     public event TypedEventHandler<SelectionRect, EventArgs>? BoundsChanged;
 
-    public Size AspectRadio { get => aspectRadio; set { aspectRadio = value; OnAspectRadioChanged(); } }
-    private Size aspectRadio = Size.Empty;
+    public Size AspectRatio { get => aspectRatio; set { aspectRatio = value; OnAspectRatioChanged(); } }
+    private Size aspectRatio = Size.Empty;
 
     public float UIScaleFactor { get => uiScaleFactor; set { uiScaleFactor = value; OnUIScaleFactorChanged(); } }
     private float uiScaleFactor = 1f;
@@ -54,26 +54,26 @@ public sealed partial class SelectionRect : UserControl
 
     private void SelectionRect_Loaded(object sender, RoutedEventArgs e)
     {
-        OnAspectRadioChanged();
+        OnAspectRatioChanged();
         OnUIScaleFactorChanged();
     }
 
-    private void OnAspectRadioChanged()
+    private void OnAspectRatioChanged()
     {
         if (Canvas is null || double.IsNaN(Width) || double.IsNaN(Height))
         {
             return;
         }
 
-        if (TryGetAspectRadioAsDouble() is double aspectRadio)
+        if (TryGetAspectRatioAsDouble() is double aspectRatio)
         {
             if (Canvas.ActualHeight < Canvas.ActualWidth)
             {
-                Width = (double)aspectRadio * Height;
+                Width = (double)aspectRatio * Height;
             }
             else
             {
-                Height = (1 / (double)aspectRadio) * Width;
+                Height = (1 / (double)aspectRatio) * Width;
             }
             BoundsChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -182,19 +182,19 @@ public sealed partial class SelectionRect : UserControl
         }
         else
         {
-            double? aspectRadio = TryGetInteractiveAspectRadioAsDouble(args.KeyModifiers);
+            double? aspectRatio = TryGetInteractiveAspectRatioAsDouble(args.KeyModifiers);
 
             if (activeElement.Name == nameof(cornerLeftTop))
             {
                 Point anchorPos = new Point(startBounds.Right, startBounds.Bottom);
                 Point targetPos = new Point(currentPointerPosition.X, currentPointerPosition.Y);
-                SetBounds(CreateRectAdjustedToAspectRadio(anchorPos, targetPos, args.KeyModifiers));
+                SetBounds(CreateRectAdjustedToAspectRatio(anchorPos, targetPos, args.KeyModifiers));
             }
             else if (activeElement.Name == nameof(borderTop))
             {
-                double maxHeight = aspectRadio is null ? Canvas.ActualHeight : Canvas.ActualWidth / (double)aspectRadio;
+                double maxHeight = aspectRatio is null ? Canvas.ActualHeight : Canvas.ActualWidth / (double)aspectRatio;
                 double height = Math.Min(MathUtils.Diff(startBounds.Bottom, currentPointerPosition.Y), maxHeight);
-                double width = aspectRadio is null ? startBounds.Width : height * (double)aspectRadio;
+                double width = aspectRatio is null ? startBounds.Width : height * (double)aspectRatio;
                 double y = currentPointerPosition.Y < startBounds.Bottom ? startBounds.Bottom - height : startBounds.Bottom;
                 double x = Math.Max((startBounds.X + startBounds.Width / 2) - width / 2, 0);
                 SetBounds(new Rect(x, y, width, height));
@@ -203,13 +203,13 @@ public sealed partial class SelectionRect : UserControl
             {
                 Point anchorPos = new Point(startBounds.Left, startBounds.Bottom);
                 Point targetPos = new Point(currentPointerPosition.X, currentPointerPosition.Y);
-                SetBounds(CreateRectAdjustedToAspectRadio(anchorPos, targetPos, args.KeyModifiers));
+                SetBounds(CreateRectAdjustedToAspectRatio(anchorPos, targetPos, args.KeyModifiers));
             }
             else if (activeElement.Name == nameof(borderRight))
             {
-                double maxWidth = aspectRadio is null ? Canvas.ActualWidth : Canvas.ActualHeight * (double)aspectRadio;
+                double maxWidth = aspectRatio is null ? Canvas.ActualWidth : Canvas.ActualHeight * (double)aspectRatio;
                 double width = Math.Min(MathUtils.Diff(startBounds.Left, currentPointerPosition.X), maxWidth);
-                double height = aspectRadio is null ? startBounds.Height : width / (double)aspectRadio;
+                double height = aspectRatio is null ? startBounds.Height : width / (double)aspectRatio;
                 double x = currentPointerPosition.X < startBounds.Left ? startBounds.Left - width : startBounds.Left;
                 double y = Math.Max((startBounds.Y + startBounds.Height / 2) - height / 2, 0);
                 SetBounds(new Rect(x, y, width, height));
@@ -218,13 +218,13 @@ public sealed partial class SelectionRect : UserControl
             {
                 Point anchorPos = new Point(startBounds.Left, startBounds.Top);
                 Point targetPos = new Point(currentPointerPosition.X, currentPointerPosition.Y);
-                SetBounds(CreateRectAdjustedToAspectRadio(anchorPos, targetPos, args.KeyModifiers));
+                SetBounds(CreateRectAdjustedToAspectRatio(anchorPos, targetPos, args.KeyModifiers));
             }
             else if (activeElement.Name == nameof(borderBottom))
             {
-                double maxHeight = aspectRadio is null ? Canvas.ActualHeight : Canvas.ActualWidth / (double)aspectRadio;
+                double maxHeight = aspectRatio is null ? Canvas.ActualHeight : Canvas.ActualWidth / (double)aspectRatio;
                 double height = Math.Min(MathUtils.Diff(startBounds.Top, currentPointerPosition.Y), maxHeight);
-                double width = aspectRadio is null ? startBounds.Width : height * (double)aspectRadio;
+                double width = aspectRatio is null ? startBounds.Width : height * (double)aspectRatio;
                 double y = currentPointerPosition.Y < startBounds.Top ? startBounds.Top - height : startBounds.Top;
                 double x = Math.Max((startBounds.X + startBounds.Width / 2) - width / 2, 0);
                 SetBounds(new Rect(x, y, width, height));
@@ -233,13 +233,13 @@ public sealed partial class SelectionRect : UserControl
             {
                 Point anchorPos = new Point(startBounds.Right, startBounds.Top);
                 Point targetPos = new Point(currentPointerPosition.X, currentPointerPosition.Y);
-                SetBounds(CreateRectAdjustedToAspectRadio(anchorPos, targetPos, args.KeyModifiers));
+                SetBounds(CreateRectAdjustedToAspectRatio(anchorPos, targetPos, args.KeyModifiers));
             }
             else if (activeElement.Name == nameof(borderLeft))
             {
-                double maxWidth = aspectRadio is null ? Canvas.ActualWidth : Canvas.ActualHeight * (double)aspectRadio;
+                double maxWidth = aspectRatio is null ? Canvas.ActualWidth : Canvas.ActualHeight * (double)aspectRatio;
                 double width = Math.Min(MathUtils.Diff(startBounds.Right, currentPointerPosition.X), maxWidth);
-                double height = aspectRadio is null ? startBounds.Height : width / (double)aspectRadio;
+                double height = aspectRatio is null ? startBounds.Height : width / (double)aspectRatio;
                 double x = currentPointerPosition.X < startBounds.Right ? startBounds.Right - width : startBounds.Right;
                 double y = Math.Max((startBounds.Y + startBounds.Height / 2) - height / 2, 0);
                 SetBounds(new Rect(x, y, width, height));
@@ -256,9 +256,9 @@ public sealed partial class SelectionRect : UserControl
 
     public void SetBounds(Rect bounds)
     {
-        var boundsChanngingEventArgs = new BoundsChangingEventArgs() { NewBounds = bounds };
-        BoundsChanging?.Invoke(this, boundsChanngingEventArgs);
-        bounds = boundsChanngingEventArgs.NewBounds;
+        var boundsChangingEventArgs = new BoundsChangingEventArgs() { NewBounds = bounds };
+        BoundsChanging?.Invoke(this, boundsChangingEventArgs);
+        bounds = boundsChangingEventArgs.NewBounds;
         Canvas.SetLeft(this, bounds.X);
         Canvas.SetTop(this, bounds.Y);
         Width = bounds.Width;
@@ -266,42 +266,42 @@ public sealed partial class SelectionRect : UserControl
         BoundsChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    private double? TryGetInteractiveAspectRadioAsDouble(VirtualKeyModifiers keyModifiers)
+    private double? TryGetInteractiveAspectRatioAsDouble(VirtualKeyModifiers keyModifiers)
     {
-        double? aspectRadio = TryGetAspectRadioAsDouble();
-        if (AspectRadio.IsEmpty && keyModifiers.HasFlag(VirtualKeyModifiers.Shift))
+        double? aspectRatio = TryGetAspectRatioAsDouble();
+        if (AspectRatio.IsEmpty && keyModifiers.HasFlag(VirtualKeyModifiers.Shift))
         {
-            aspectRadio = Width / Height;
+            aspectRatio = Width / Height;
         }
-        return aspectRadio;
+        return aspectRatio;
     }
 
-    public double? TryGetAspectRadioAsDouble()
+    public double? TryGetAspectRatioAsDouble()
     {
-        if (AspectRadio.IsEmpty)
+        if (AspectRatio.IsEmpty)
         {
             return null;
         }
-        return AspectRadio.Width / AspectRadio.Height;
+        return AspectRatio.Width / AspectRatio.Height;
     }
 
-    private Rect CreateRectAdjustedToAspectRadio(Point anchorPos, Point targetPos, VirtualKeyModifiers keyModifiers)
+    private Rect CreateRectAdjustedToAspectRatio(Point anchorPos, Point targetPos, VirtualKeyModifiers keyModifiers)
     {
-        if (TryGetInteractiveAspectRadioAsDouble(keyModifiers) is double aspectRadio)
+        if (TryGetInteractiveAspectRatioAsDouble(keyModifiers) is double aspectRatio)
         {
             double targetWidth = Math.Abs(anchorPos.X - targetPos.X);
             double targetHeight = Math.Abs(anchorPos.Y - targetPos.Y);
-            double targetAspectRadio = (targetWidth / targetHeight);
-            if (targetAspectRadio < aspectRadio)
+            double targetAspectRatio = (targetWidth / targetHeight);
+            if (targetAspectRatio < aspectRatio)
             {
                 double sign = targetPos.Y < anchorPos.Y ? 1 : -1;
-                double adjustedHeight = targetWidth / aspectRadio;
+                double adjustedHeight = targetWidth / aspectRatio;
                 targetPos.Y += sign * (targetHeight - adjustedHeight);
             }
-            else if (targetAspectRadio > aspectRadio)
+            else if (targetAspectRatio > aspectRatio)
             {
                 double sign = targetPos.X < anchorPos.X ? 1 : -1;
-                double adjustedWidth = targetHeight * aspectRadio;
+                double adjustedWidth = targetHeight * aspectRatio;
                 targetPos.X += sign * (targetWidth - adjustedWidth);
             }
         }
@@ -330,7 +330,7 @@ public sealed partial class SelectionRect : UserControl
         return a + b;
     }
 
-    private double Substract(double a, double b)
+    private double Subtract(double a, double b)
     {
         return a - b;
     }

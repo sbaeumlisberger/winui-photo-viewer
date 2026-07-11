@@ -133,7 +133,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
             Log.Error("Could not set desktop background.", ex);
             await dialogService.ShowDialogAsync(new MessageDialogModel()
             {
-                Title = Strings.SetDesktopBackgroundFailedDialog_Ttile,
+                Title = Strings.SetDesktopBackgroundFailedDialog_Title,
                 Message = ex.Message
             });
         }
@@ -151,7 +151,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
             Log.Error("Could not set lockscreen background.", ex);
             await dialogService.ShowDialogAsync(new MessageDialogModel()
             {
-                Title = Strings.SetLockscreenBackgroundFailedDialog_Ttile,
+                Title = Strings.SetLockscreenBackgroundFailedDialog_Title,
                 Message = ex.Message
             });
         }
@@ -163,7 +163,7 @@ public partial class MediaFileContextMenuModel : ViewModelBase, IMediaFileContex
         foreach (var bitmap in Files.OfType<IBitmapFileInfo>())
         {
             await rotateBitmapService.RotateClockwise90DegreesAsync(bitmap);
-            Messenger.Send(new BitmapModifiedMesssage(bitmap));
+            Messenger.Send(new BitmapModifiedMessage(bitmap));
         }
     }
 

@@ -128,7 +128,7 @@ public partial class DateTakenSectionModel : MetadataPanelSectionModelBase
     [RelayCommand]
     private async Task ShiftDateTakenAsync()
     {
-        await dialogService.ShowDialogAsync(new ShiftDatenTakenDialogModel(Messenger, metadataService, Files));
+        await dialogService.ShowDialogAsync(new ShiftDateTakenDialogModel(Messenger, metadataService, Files));
     }
 
     private string FormatDate(DateTimeOffset date)

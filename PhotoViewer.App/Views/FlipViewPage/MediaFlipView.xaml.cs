@@ -135,7 +135,7 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
 
         if (e.Key == VirtualKey.Space)
         {
-            ViewModel!.ToogleDiashowLoopCommand.TryExecute();
+            ViewModel!.ToggleDiashowLoopCommand.TryExecute();
         }
         else if (e.Key == VirtualKey.Escape)
         {

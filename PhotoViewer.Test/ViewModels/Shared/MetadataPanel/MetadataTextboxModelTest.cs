@@ -163,7 +163,7 @@ public class MetadataTextboxModelTest
     }
 
     [Fact]
-    public async Task DoesNotSentPropertyChangedEventsForTextPropertyWhileUserTypes()
+    public async Task DoesNotSendPropertyChangedEventsForTextPropertyWhileUserTypes()
     {
         using var _ = synchronizationContextMock.Apply();
         var file = Substitute.For<IBitmapFileInfo>();

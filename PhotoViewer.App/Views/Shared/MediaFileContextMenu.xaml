@@ -12,7 +12,7 @@
 
         <MenuFlyout x:Key="MediaFileContextMenu">
             <MenuFlyoutItem
-                Icon="OpenWith" Text="{x:Bind res:Strings.MediaFileContextMenu_OpenWidth}"
+                Icon="OpenWith" Text="{x:Bind res:Strings.MediaFileContextMenu_OpenWith}"
                 Command="{x:Bind ViewModel.OpenWithCommand}"
                 Visibility="{x:Bind ViewModel.IsOpenWithItemVisible, Mode=OneWay}"/>
             <MenuFlyoutItem

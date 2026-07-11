@@ -64,7 +64,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
     [RelayCommand]
     private void ToggleMetadataPanel()
     {
-        Messenger.Send(new ToggleMetataPanelMessage());
+        Messenger.Send(new ToggleMetadataPanelMessage());
     }
 
     [RelayCommand(CanExecute = nameof(CanRotate))]
@@ -75,7 +75,7 @@ public partial class OverviewPageCommandBarModel : ViewModelBase, IOverviewPageC
         {
             await rotateBitmapService.RotateClockwise90DegreesAsync(bitmapFile).ConfigureAwait(false);
         });
-        result.ProcessedElements.ForEach(bitmapFile => Messenger.Send(new BitmapModifiedMesssage(bitmapFile)));
+        result.ProcessedElements.ForEach(bitmapFile => Messenger.Send(new BitmapModifiedMessage(bitmapFile)));
     }
 
     [RelayCommand(CanExecute = nameof(CanDelete))]

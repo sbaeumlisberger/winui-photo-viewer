@@ -44,7 +44,7 @@ public partial class ImageViewModel : ViewModelBase, IImageViewModel
     {
         this.imageService = imageService;
         this.bitmapFile = bitmapFile;
-        Register<BitmapModifiedMesssage>(OnReceive);
+        Register<BitmapModifiedMessage>(OnReceive);
     }
 
     public Task InitializeAsync()
@@ -95,7 +95,7 @@ public partial class ImageViewModel : ViewModelBase, IImageViewModel
         });
     }
 
-    private async void OnReceive(BitmapModifiedMesssage msg)
+    private async void OnReceive(BitmapModifiedMessage msg)
     {
         if (msg.BitmapFile.Equals(bitmapFile))
         {

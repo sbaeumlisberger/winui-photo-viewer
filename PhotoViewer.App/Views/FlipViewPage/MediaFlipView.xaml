@@ -84,7 +84,7 @@
                     <MenuFlyoutItem 
                         Icon="{x:Bind ToDiashowLoopMenuItemIcon(ViewModel.IsDiashowLoopActive), Mode=OneWay}" 
                         Text="{x:Bind ToDiashowLoopMenuItemText(ViewModel.IsDiashowLoopActive), Mode=OneWay}" 
-                        Command="{x:Bind ViewModel.ToogleDiashowLoopCommand}">
+                        Command="{x:Bind ViewModel.ToggleDiashowLoopCommand}">
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Space"/>
                         </MenuFlyoutItem.KeyboardAccelerators>

@@ -26,9 +26,9 @@ public class DateTakenSectionModelTest
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public void UpdateFilesChanged_SingleFile(bool intial)
+    public void UpdateFilesChanged_SingleFile(bool initial)
     {
-        if (!intial) { IntialUpdate(); }
+        if (!initial) { InitialUpdate(); }
         var mediaFile = Substitute.For<IBitmapFileInfo>();
         var dateTaken = new DateTime(2023, 03, 02, 19, 10, 35);
         var metadata = new[] { CreateMetadataView(dateTaken) };
@@ -49,9 +49,9 @@ public class DateTakenSectionModelTest
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public void UpdateFilesChanged_SingleFile_NotPresent(bool intial)
+    public void UpdateFilesChanged_SingleFile_NotPresent(bool initial)
     {
-        if (!intial) { IntialUpdate(); }
+        if (!initial) { InitialUpdate(); }
         var mediaFile = Substitute.For<IBitmapFileInfo>();
         var metadata = new[] { CreateMetadataView(null) };
 
@@ -71,9 +71,9 @@ public class DateTakenSectionModelTest
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public void UpdateFilesChanged_MultipleFiles_SingleValue(bool intial)
+    public void UpdateFilesChanged_MultipleFiles_SingleValue(bool initial)
     {
-        if (!intial) { IntialUpdate(); }
+        if (!initial) { InitialUpdate(); }
         var files = Substitute.For<IImmutableList<IBitmapFileInfo>>();
         var dateTaken = new DateTime(2023, 03, 02, 19, 10, 35);
         var metadata = new[]
@@ -99,9 +99,9 @@ public class DateTakenSectionModelTest
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public void UpdateFilesChanged_MultipleFiles_Range(bool intial)
+    public void UpdateFilesChanged_MultipleFiles_Range(bool initial)
     {
-        if (!intial) { IntialUpdate(); }
+        if (!initial) { InitialUpdate(); }
 
         var files = Substitute.For<IImmutableList<IBitmapFileInfo>>();
 
@@ -134,9 +134,9 @@ public class DateTakenSectionModelTest
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public void UpdateFilesChanged_MultipleFiles_NotPresent(bool intial)
+    public void UpdateFilesChanged_MultipleFiles_NotPresent(bool initial)
     {
-        if (!intial) { IntialUpdate(); }
+        if (!initial) { InitialUpdate(); }
         var files = Substitute.For<IImmutableList<IBitmapFileInfo>>();
         var metadata = new[]
         {
@@ -161,7 +161,7 @@ public class DateTakenSectionModelTest
     [Fact]
     public async Task MetadataIsWrittenWhenDateOrTimeChanged()
     {
-        IntialUpdate();
+        InitialUpdate();
 
         dateTakenSectionModel.Date = new DateTime(2023, 02, 28);
 
@@ -224,7 +224,7 @@ public class DateTakenSectionModelTest
         VerifyNoMetadataWritten();
     }
 
-    private void IntialUpdate()
+    private void InitialUpdate()
     {
         var metadata = new Dictionary<string, object?>()
         {

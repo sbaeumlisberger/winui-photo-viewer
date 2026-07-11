@@ -92,7 +92,7 @@ public class PeopleSectionModelTest
     }
 
     [Fact]
-    public void AddPersonCommandCanNotExecute_WhenAutoSuggestBoxTextEmtpty()
+    public void AddPersonCommandCanNotExecute_WhenAutoSuggestBoxTextEmpty()
     {
         Assert.False(peopleSectionModel.AddPersonCommand.CanExecute(null));
     }

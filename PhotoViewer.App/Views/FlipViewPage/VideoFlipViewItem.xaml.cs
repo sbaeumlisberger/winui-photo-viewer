@@ -37,7 +37,7 @@ public sealed partial class VideoFlipViewItem : UserControl, IMVVMControl<VideoF
 
     private void MediaPlayerElement_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
-        if (ViewModel!.IsContextMenuEnabeld)
+        if (ViewModel!.IsContextMenuEnabled)
         {
             mediaPlayerElement.ShowAttachedFlyout(args);
         }

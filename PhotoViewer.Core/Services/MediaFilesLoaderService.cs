@@ -258,7 +258,7 @@ public class MediaFilesLoaderService : IMediaFilesLoaderService
             return mediaFile;
         }
 
-        // The startFile can be a tempoary copy of one of the loaded files (e.g. when
+        // The startFile can be a temporary copy of one of the loaded files (e.g. when
         // accessing files on a smartphone or camera). Typically the file name of the
         // copy ends with a number inside brackets ("[" and "]").
         string assumedFileName = Regex.Replace(startFile.Name, "\\[\\d*\\]", "");

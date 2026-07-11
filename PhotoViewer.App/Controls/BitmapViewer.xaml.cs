@@ -23,11 +23,11 @@ public sealed partial class BitmapViewer : UserControl
 
     public static readonly DependencyProperty BitmapImageProperty = DependencyPropertyHelper<BitmapViewer>.Register<IBitmapImageModel?>(nameof(BitmapImage), null);
 
-    public static readonly DependencyProperty IsScaleUpEnabeldProperty = DependencyPropertyHelper<BitmapViewer>.Register(nameof(IsScaleUpEnabeld), false);
+    public static readonly DependencyProperty IsScaleUpEnabledProperty = DependencyPropertyHelper<BitmapViewer>.Register(nameof(IsScaleUpEnabled), false);
 
     public IBitmapImageModel? BitmapImage { get => (IBitmapImageModel?)GetValue(BitmapImageProperty); set => SetValue(BitmapImageProperty, value); }
 
-    public bool IsScaleUpEnabeld { get => (bool)GetValue(IsScaleUpEnabeldProperty); set => SetValue(IsScaleUpEnabeldProperty, value); }
+    public bool IsScaleUpEnabled { get => (bool)GetValue(IsScaleUpEnabledProperty); set => SetValue(IsScaleUpEnabledProperty, value); }
 
     public new object Content { get => contentPresenter.Content; set => contentPresenter.Content = value; }
 
@@ -51,7 +51,7 @@ public sealed partial class BitmapViewer : UserControl
 
         this.RegisterPropertyChangedCallbackSafely(IsEnabledProperty, OnIsEnabledChanged);
         this.RegisterPropertyChangedCallbackSafely(BitmapImageProperty, OnBitmapImageChanged);
-        this.RegisterPropertyChangedCallbackSafely(IsScaleUpEnabeldProperty, OnIsScaleUpEnabeldChanged);
+        this.RegisterPropertyChangedCallbackSafely(IsScaleUpEnabledProperty, OnIsScaleUpEnabledChanged);
 
         colorProfileProvider = ColorProfileProvider.Instance;
         colorProfileProvider.ColorProfileLoaded += ColorProfileProvider_ColorProfileLoaded;
@@ -96,9 +96,9 @@ public sealed partial class BitmapViewer : UserControl
         }
     }
 
-    private void OnIsScaleUpEnabeldChanged(DependencyObject sender, DependencyProperty dp)
+    private void OnIsScaleUpEnabledChanged(DependencyObject sender, DependencyProperty dp)
     {
-        Debug("OnIsScaleUpEnabeldChanged -> invalidate canvas");
+        Debug("OnIsScaleUpEnabledChanged -> invalidate canvas");
         InvalidateCanvas();
     }
 
@@ -160,18 +160,18 @@ public sealed partial class BitmapViewer : UserControl
         double imageWidthInDIPs = PixelsToDips(bitmapImage.SizeInPixels.Width);
         double imageHeightInDIPs = PixelsToDips(bitmapImage.SizeInPixels.Height);
 
-        double imageAspectRadio = imageWidthInDIPs / imageHeightInDIPs;
-        double canvasAspectRadio = ActualWidth / ActualHeight;
+        double imageAspectRatio = imageWidthInDIPs / imageHeightInDIPs;
+        double canvasAspectRatio = ActualWidth / ActualHeight;
 
-        if (canvasAspectRadio > imageAspectRadio)
+        if (canvasAspectRatio > imageAspectRatio)
         {
-            scrollDummy.Height = IsScaleUpEnabeld ? ActualHeight : Math.Min(ActualHeight, imageHeightInDIPs);
-            scrollDummy.Width = scrollDummy.Height * imageAspectRadio;
+            scrollDummy.Height = IsScaleUpEnabled ? ActualHeight : Math.Min(ActualHeight, imageHeightInDIPs);
+            scrollDummy.Width = scrollDummy.Height * imageAspectRatio;
         }
         else
         {
-            scrollDummy.Width = IsScaleUpEnabeld ? ActualWidth : Math.Min(ActualWidth, imageWidthInDIPs);
-            scrollDummy.Height = scrollDummy.Width / imageAspectRadio;
+            scrollDummy.Width = IsScaleUpEnabled ? ActualWidth : Math.Min(ActualWidth, imageWidthInDIPs);
+            scrollDummy.Height = scrollDummy.Width / imageAspectRatio;
         }
     }
 
@@ -249,11 +249,11 @@ public sealed partial class BitmapViewer : UserControl
         }
 
         double scrollDummyWidthInPixels = scrollDummy.ActualWidth * scrollDummy.XamlRoot.RasterizationScale;
-        double orginalSizeZoomFactor = BitmapImage.SizeInPixels.Width / scrollDummyWidthInPixels;
+        double originalSizeZoomFactor = BitmapImage.SizeInPixels.Width / scrollDummyWidthInPixels;
 
         if (MathUtils.ApproximateEquals(scrollViewer.ZoomFactor, 1))
         {
-            scrollViewer.Zoom((float)orginalSizeZoomFactor);
+            scrollViewer.Zoom((float)originalSizeZoomFactor);
         }
         else
         {

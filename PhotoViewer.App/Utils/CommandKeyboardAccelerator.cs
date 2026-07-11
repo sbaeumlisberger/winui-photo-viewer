@@ -16,10 +16,10 @@ public class CommandKeyboardAccelerator : KeyboardAccelerator
 
     public CommandKeyboardAccelerator()
     {
-        Invoked += OnKeyboardAcceleratornvoked;
+        Invoked += OnKeyboardAcceleratorInvoked;
     }
 
-    private void OnKeyboardAcceleratornvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    private void OnKeyboardAcceleratorInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {
         if (Command is not null && Command.CanExecute(CommandParameter))
         {

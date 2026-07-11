@@ -112,7 +112,7 @@ public partial class DeleteFilesService : IDeleteFilesService
         }
         catch (FileNotFoundException)
         {
-            // files does no longer exist
+            // files no longer exist
         }
     }
 
