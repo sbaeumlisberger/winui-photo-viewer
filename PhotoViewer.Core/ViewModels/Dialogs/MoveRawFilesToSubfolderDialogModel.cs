@@ -75,8 +75,7 @@ public partial class MoveRawFilesToSubfolderDialogModel : ViewModelBase
             {
                 if ((BitmapFileInfo.RawFileExtensions.Contains(storageFile.FileType)
                     || BitmapFileInfo.RawMetadataFileExtensions.Contains(storageFile.FileType))
-                    && Path.GetDirectoryName(storageFile.Path) is string directoryPath
-                    && !directoryPath.EndsWith("/" + settings.RawFilesFolderName))
+                    && !IsInRawFilesFolder(storageFile.Path, settings.RawFilesFolderName))
                 {
                     filesToMove.Add(storageFile);
                 }
@@ -96,5 +95,12 @@ public partial class MoveRawFilesToSubfolderDialogModel : ViewModelBase
         {
             await file.MoveAsync(rawFilesFolder);
         });
+    }
+
+    internal static bool IsInRawFilesFolder(string filePath, string rawFilesFolderName)
+    {
+        string? directoryPath = Path.GetDirectoryName(filePath);
+        return !string.IsNullOrEmpty(directoryPath)
+            && string.Equals(Path.GetFileName(directoryPath), rawFilesFolderName, StringComparison.OrdinalIgnoreCase);
     }
 }
