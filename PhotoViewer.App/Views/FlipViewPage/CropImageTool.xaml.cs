@@ -102,10 +102,12 @@ public sealed partial class CropImageTool : UserControl, IMVVMControl<CropImageT
     {
         var imageSizeInPixels = ViewModel!.ImageSizeInPixels;
 
-        ViewModel.SelectionXInPixels = Math.Round(args.NewBounds.X / selectionCanvas.ActualWidth * imageSizeInPixels.Width);
-        ViewModel.SelectionYInPixels = Math.Round(args.NewBounds.Y / selectionCanvas.ActualHeight * imageSizeInPixels.Height);
-        ViewModel.SelectionWidthInPixels = Math.Max(1, Math.Round(args.NewBounds.Width / selectionCanvas.ActualWidth * imageSizeInPixels.Width));
-        ViewModel.SelectionHeightInPixels = Math.Max(1, Math.Round(args.NewBounds.Height / selectionCanvas.ActualHeight * imageSizeInPixels.Height));
+        int left = (int)Math.Round(args.NewBounds.Left / selectionCanvas.ActualWidth * imageSizeInPixels.Width);
+        int top = (int)Math.Round(args.NewBounds.Top / selectionCanvas.ActualHeight * imageSizeInPixels.Height);
+        int right = (int)Math.Round(args.NewBounds.Right / selectionCanvas.ActualWidth * imageSizeInPixels.Width);
+        int bottom = (int)Math.Round(args.NewBounds.Bottom / selectionCanvas.ActualHeight * imageSizeInPixels.Height);
+
+        ViewModel.SetSelectionInPixels(new RectInt32(left, top, right - left, bottom - top));
 
         var adjustedSelectionRectBounds = CalculateSelectionRectBounds(ViewModel.SelectionInPixels, imageSizeInPixels);
 

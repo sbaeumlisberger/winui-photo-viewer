@@ -45,13 +45,13 @@
                 Background="{ThemeResource SystemControlBackgroundAltMediumBrush}">
                 <NumberBox 
                     x:Name="selectionXNumberBox"
-                    Text="{x:Bind ViewModel.SelectionWidthInPixels, Mode=TwoWay}"
+                    Value="{x:Bind ViewModel.SelectionWidthInPixels, Mode=TwoWay}"
                     Minimum="1"
                     Maximum="{x:Bind ViewModel.ImageSizeInPixels.Width, Mode=OneWay}"/>
                 <TextBlock VerticalAlignment="Center" Text="x"/>
                 <NumberBox 
                     x:Name="selectionYNumberBox"
-                    Text="{x:Bind ViewModel.SelectionHeightInPixels, Mode=TwoWay}"
+                    Value="{x:Bind ViewModel.SelectionHeightInPixels, Mode=TwoWay}"
                     Minimum="1"
                     Maximum="{x:Bind ViewModel.ImageSizeInPixels.Height, Mode=OneWay}"/>
                 <TextBlock Margin="0,0,2,0" VerticalAlignment="Center" Text="px"/>
