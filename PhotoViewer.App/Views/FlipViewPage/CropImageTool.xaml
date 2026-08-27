@@ -7,6 +7,7 @@
     xmlns:res="using:PhotoViewer.App.Resources"
     xmlns:vm="using:PhotoViewer.Core.ViewModels"
     xmlns:controls="using:PhotoViewer.App.Controls"
+    xmlns:utils="using:PhotoViewer.App.Utils"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -47,20 +48,22 @@
                     x:Name="selectionXNumberBox"
                     Value="{x:Bind ViewModel.SelectionWidthInPixels, Mode=TwoWay}"
                     Minimum="1"
-                    Maximum="{x:Bind ViewModel.ImageSizeInPixels.Width, Mode=OneWay}"/>
+                    Maximum="{x:Bind ViewModel.ImageSizeInPixels.Width, Mode=OneWay}"
+                    utils:NumberBoxExtension.IsClearButtonHidden="True"/>
                 <TextBlock VerticalAlignment="Center" Text="x"/>
                 <NumberBox 
                     x:Name="selectionYNumberBox"
                     Value="{x:Bind ViewModel.SelectionHeightInPixels, Mode=TwoWay}"
                     Minimum="1"
-                    Maximum="{x:Bind ViewModel.ImageSizeInPixels.Height, Mode=OneWay}"/>
+                    Maximum="{x:Bind ViewModel.ImageSizeInPixels.Height, Mode=OneWay}"
+                    utils:NumberBoxExtension.IsClearButtonHidden="True"/>
                 <TextBlock Margin="0,0,2,0" VerticalAlignment="Center" Text="px"/>
             </StackPanel>
         </Border>
 
         <Border 
             x:Name="toolbar"
-            RenderTransform="{StaticResource UIScaleTransform}" >
+            RenderTransform="{StaticResource UIScaleTransform}">
 
             <StackPanel 
                 Orientation="Horizontal" 
@@ -104,6 +107,7 @@
                                         Text="{x:Bind res:Strings.CropImageTool_AspectRatioWidthLabel}"/>
                                     <NumberBox 
                                         Minimum="1"
+                                        utils:NumberBoxExtension.IsClearButtonHidden="True"
                                         Value="{x:Bind ViewModel.FixedAspectRatioWidth, Mode=TwoWay}"
                                         SpinButtonPlacementMode="Inline"/>
                                     <TextBlock 
@@ -112,6 +116,7 @@
                                         Text="{x:Bind res:Strings.CropImageTool_AspectRatioHeightLabel}"/>
                                     <NumberBox 
                                         Minimum="1"
+                                        utils:NumberBoxExtension.IsClearButtonHidden="True"
                                         Value="{x:Bind ViewModel.FixedAspectRatioHeight, Mode=TwoWay}"
                                         SpinButtonPlacementMode="Inline"/>
                                 </controls:WrapGrid>
