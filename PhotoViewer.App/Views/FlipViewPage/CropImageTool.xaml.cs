@@ -62,7 +62,7 @@ public sealed partial class CropImageTool : UserControl, IMVVMControl<CropImageT
         double toolbarWidth = toolbar.ActualWidth * ViewModel!.UIScaleFactor;
         double toolbarHeight = toolbar.ActualHeight * ViewModel!.UIScaleFactor;
         double left = selectionRectBounds.GetCenterX() - toolbarWidth / 2;
-        Canvas.SetLeft(toolbar, Math.Clamp(left, 0, selectionCanvas.ActualWidth - toolbarWidth));
+        Canvas.SetLeft(toolbar, Math.Clamp(left, 0, Math.Max(selectionCanvas.ActualWidth - toolbarWidth, 0)));
         Canvas.SetTop(toolbar, Math.Min(selectionRectBounds.Bottom, selectionCanvas.ActualHeight - toolbarHeight));
     }
 
@@ -71,7 +71,7 @@ public sealed partial class CropImageTool : UserControl, IMVVMControl<CropImageT
         double selectionInfoWidth = selectionInfo.ActualWidth * ViewModel!.UIScaleFactor;
         double selectionInfoHeight = selectionInfo.ActualHeight * ViewModel!.UIScaleFactor;
         double left = selectionRectBounds.GetCenterX() - selectionInfoWidth / 2;
-        Canvas.SetLeft(selectionInfo, Math.Clamp(left, 0, selectionCanvas.ActualWidth - selectionInfoWidth));
+        Canvas.SetLeft(selectionInfo, Math.Clamp(left, 0, Math.Max(selectionCanvas.ActualWidth - selectionInfoWidth, 0)));
         Canvas.SetTop(selectionInfo, Math.Max(selectionRectBounds.Top - selectionInfoHeight, 0));
     }
 
