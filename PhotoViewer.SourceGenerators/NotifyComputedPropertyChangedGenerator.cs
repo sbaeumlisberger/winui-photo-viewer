@@ -128,7 +128,7 @@ public class NotifyComputedPropertyChangedGenerator : IIncrementalGenerator
     private static string GenerateCodeForProperties(IEnumerable<PropertyInfo> propertyInfos)
     {
         return $$"""
-            protected override void _NotifyComputedPropertyChanged(string ? propertyName)
+            protected override void _NotifyComputedPropertyChanged(string? propertyName)
             {
                 {{Utils.Indent(2, propertyInfos.Select(GeneratePropertyChangedCheck))}}
             }            

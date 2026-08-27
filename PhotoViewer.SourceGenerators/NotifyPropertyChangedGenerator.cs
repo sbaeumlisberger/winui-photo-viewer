@@ -1,11 +1,9 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace SourceGenerators;
@@ -141,11 +139,9 @@ public class NotifyPropertyChangedGenerator : IIncrementalGenerator
                 {{getterAccessibility}}get => field;
                 {{setterAccessibility}}set
                 {
-                    if (!EqualityComparer<{{propertyType}}>.Default.Equals(value, field))
+                    var oldValue = field;
+                    if (SetProperty(ref field, value))
                     {
-                        var oldValue = field;
-                        field = value;
-                        OnPropertyChanged(new PropertyChangedEventArgs("{{propertyName}}"));
                         On{{propertyName}}Changed();
                         On{{propertyName}}Changed(oldValue, value);
                     }
