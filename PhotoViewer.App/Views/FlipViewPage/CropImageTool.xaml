@@ -104,7 +104,7 @@
                                         Text="{x:Bind res:Strings.CropImageTool_AspectRatioWidthLabel}"/>
                                     <NumberBox 
                                         Minimum="1"
-                                        Value="{x:Bind ViewModel.AspectRatioWidth, Mode=TwoWay}"
+                                        Value="{x:Bind ViewModel.FixedAspectRatioWidth, Mode=TwoWay}"
                                         SpinButtonPlacementMode="Inline"/>
                                     <TextBlock 
                                         Margin="4,0,4,0"
@@ -112,7 +112,7 @@
                                         Text="{x:Bind res:Strings.CropImageTool_AspectRatioHeightLabel}"/>
                                     <NumberBox 
                                         Minimum="1"
-                                        Value="{x:Bind ViewModel.AspectRatioHeight, Mode=TwoWay}"
+                                        Value="{x:Bind ViewModel.FixedAspectRatioHeight, Mode=TwoWay}"
                                         SpinButtonPlacementMode="Inline"/>
                                 </controls:WrapGrid>
                             </StackPanel>

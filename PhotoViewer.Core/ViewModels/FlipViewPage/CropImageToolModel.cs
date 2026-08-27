@@ -29,9 +29,9 @@ public enum AspectRatioMode
 
 public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
 {
-    private enum AspectRatioAdjustment
+    private enum AuthoritativeDimension
     {
-        Fit,
+        None,
         Width,
         Height
     }
@@ -51,21 +51,14 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
         get => SelectionInPixels.Width;
         set
         {
-            if (!double.IsFinite(value))
+            if (!double.IsFinite(value) || value <= 0)
             {
-                return;
+                OnPropertyChanged();
             }
-
-            var previousSelection = SelectionInPixels;
-            SetSelectionInPixels(new RectInt32(
-                SelectionInPixels.X,
-                SelectionInPixels.Y,
-                (int)value,
-                SelectionInPixels.Height), AspectRatioAdjustment.Width);
-
-            if (SelectionInPixels == previousSelection)
+            else
             {
-                OnPropertyChanged(nameof(SelectionWidthInPixels));
+                var newSelection = SelectionInPixels with { Width = (int)value };
+                SetSelectionInPixels(newSelection, AuthoritativeDimension.Width);
             }
         }
     }
@@ -75,21 +68,14 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
         get => SelectionInPixels.Height;
         set
         {
-            if (!double.IsFinite(value))
+            if (!double.IsFinite(value) || value <= 0)
             {
-                return;
+                OnPropertyChanged();
             }
-
-            var previousSelection = SelectionInPixels;
-            SetSelectionInPixels(new RectInt32(
-                SelectionInPixels.X,
-                SelectionInPixels.Y,
-                SelectionInPixels.Width,
-                (int)value), AspectRatioAdjustment.Height);
-
-            if (SelectionInPixels == previousSelection)
+            else
             {
-                OnPropertyChanged(nameof(SelectionHeightInPixels));
+                var newSelection = SelectionInPixels with { Height = (int)value };
+                SetSelectionInPixels(newSelection, AuthoritativeDimension.Height);
             }
         }
     }
@@ -100,17 +86,41 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
 
     public bool IsFixedAspectRatio => AspectRatioMode == AspectRatioMode.Fixed;
 
-    public partial double AspectRatioWidth { get; set; } = 3;
+    public double FixedAspectRatioWidth
+    {
+        get;
+        set
+        {
+            if (!double.IsFinite(value) || value <= 0)
+            {
+                OnPropertyChanged();
+            }
+            else if (SetProperty(ref field, value) && IsFixedAspectRatio)
+            {
+                ReapplyAspectRatio(AuthoritativeDimension.Height);
+            }
+        }
+    } = 3;
 
-    public partial double AspectRatioHeight { get; set; } = 2;
+    public double FixedAspectRatioHeight
+    {
+        get;
+        set
+        {
+            if (!double.IsFinite(value) || value <= 0)
+            {
+                OnPropertyChanged();
+            }
+            else if (SetProperty(ref field, value) && IsFixedAspectRatio)
+            {
+                ReapplyAspectRatio(AuthoritativeDimension.Width);
+            }
+        }
+    } = 2;
 
     public Size AspectRatio => AspectRatioMode switch
     {
-        AspectRatioMode.Fixed when double.IsFinite(AspectRatioWidth)
-            && double.IsFinite(AspectRatioHeight)
-            && AspectRatioWidth > 0
-            && AspectRatioHeight > 0
-            => new Size(AspectRatioWidth, AspectRatioHeight),
+        AspectRatioMode.Fixed => new Size(FixedAspectRatioWidth, FixedAspectRatioHeight),
         AspectRatioMode.Original => new Size(ImageSizeInPixels.Width, ImageSizeInPixels.Height),
         _ => Size.Empty
     };
@@ -151,6 +161,19 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
         }
     }
 
+    partial void OnSelectionInPixelsChanged(RectInt32 oldValue, RectInt32 newValue)
+    {
+        if (oldValue.Width != newValue.Width)
+        {
+            OnPropertyChanged(nameof(SelectionWidthInPixels));
+        }
+
+        if (newValue.Height != oldValue.Height)
+        {
+            OnPropertyChanged(nameof(SelectionHeightInPixels));
+        }
+    }
+
     partial void OnIsEnabledChanged()
     {
         if (!IsEnabled)
@@ -167,62 +190,22 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
         }
     }
 
-    partial void OnSelectionInPixelsChanged()
-    {
-        OnPropertyChanged(nameof(SelectionWidthInPixels));
-        OnPropertyChanged(nameof(SelectionHeightInPixels));
-    }
-
     partial void OnAspectRatioModeChanged()
     {
-        ReapplyAspectRatio();
+        ReapplyAspectRatio(AuthoritativeDimension.None);
     }
 
-    partial void OnAspectRatioWidthChanged()
+    private void ReapplyAspectRatio(AuthoritativeDimension authoritativeDimension)
     {
-        if (IsFixedAspectRatio)
-        {
-            ReapplyAspectRatio(AspectRatioAdjustment.Height);
-        }
-    }
-
-    partial void OnAspectRatioHeightChanged()
-    {
-        if (IsFixedAspectRatio)
-        {
-            ReapplyAspectRatio(AspectRatioAdjustment.Width);
-        }
-    }
-
-    private void ReapplyAspectRatio()
-    {
-        var aspectRatioAdjustment = AspectRatio is { IsEmpty: false } aspectRatio
-            && SelectionInPixels.Width > 0
-            && SelectionInPixels.Height > 0
-            && aspectRatio.Width / aspectRatio.Height > SelectionInPixels.Width / (double)SelectionInPixels.Height
-                ? AspectRatioAdjustment.Height
-                : AspectRatioAdjustment.Width;
-
-        ReapplyAspectRatio(aspectRatioAdjustment);
-    }
-
-    private void ReapplyAspectRatio(AspectRatioAdjustment aspectRatioAdjustment)
-    {
-        var previousSelection = SelectionInPixels;
-        SetSelectionInPixels(previousSelection, aspectRatioAdjustment);
-
-        if (SelectionInPixels == previousSelection)
-        {
-            OnPropertyChanged(nameof(SelectionInPixels));
-        }
+        SetSelectionInPixels(SelectionInPixels, authoritativeDimension);
     }
 
     public void SetSelectionInPixels(RectInt32 selection)
     {
-        SetSelectionInPixels(selection, AspectRatioAdjustment.Fit);
+        SetSelectionInPixels(selection, AuthoritativeDimension.None);
     }
 
-    private void SetSelectionInPixels(RectInt32 selection, AspectRatioAdjustment aspectRatioAdjustment)
+    private void SetSelectionInPixels(RectInt32 selection, AuthoritativeDimension authoritativeDimension)
     {
         if (ImageSizeInPixels.Width < 1 || ImageSizeInPixels.Height < 1)
         {
@@ -241,7 +224,7 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
             int maxWidth = ImageSizeInPixels.Width - x;
             int maxHeight = ImageSizeInPixels.Height - y;
 
-            if (aspectRatioAdjustment == AspectRatioAdjustment.Width)
+            if (authoritativeDimension == AuthoritativeDimension.Width)
             {
                 height = Math.Max(1, (int)Math.Round(width / aspectRatio));
                 if (height > maxHeight)
@@ -250,7 +233,7 @@ public partial class CropImageToolModel : ViewModelBase, ICropImageToolModel
                     width = Math.Max(1, (int)Math.Round(height * aspectRatio));
                 }
             }
-            else if (aspectRatioAdjustment == AspectRatioAdjustment.Height)
+            else if (authoritativeDimension == AuthoritativeDimension.Height)
             {
                 width = Math.Max(1, (int)Math.Round(height * aspectRatio));
                 if (width > maxWidth)
