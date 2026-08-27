@@ -13,15 +13,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Essentials.NET" Version="4.2.0" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
+		<PackageReference Include="Essentials.NET" Version="4.3.0" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="2.4.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="MetadataAPI" Version="2.0.1" />
-		<PackageReference Include="System.Diagnostics.EventLog" Version="10.0.9" />
-		<PackageReference Include="System.IO.Hashing" Version="10.0.9" />
+		<PackageReference Include="System.Diagnostics.EventLog" Version="10.0.11" />
+		<PackageReference Include="System.IO.Hashing" Version="10.0.11" />
 		<PackageReference Include="WIC.DotNet" Version="2.0.1" />
 		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.4.0" />
-		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
 		<PackageReference Include="WindowsRecylceBin" Version="1.2.1" />
 	</ItemGroup>
 
