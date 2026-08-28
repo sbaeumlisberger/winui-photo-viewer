@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Essentials.NET.Logging;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.Globalization;
 using PhotoViewer.App.Utils;
 using PhotoViewer.App.Views.Dialogs;
@@ -170,11 +171,11 @@ public partial class App : Application
 
             var errorReportService = new ErrorReportService(Package.Current.Id.Version, new EventLogService());
 
-            string report = await errorReportService.CreateErrorReportAsync();
+            StorageFile reportFile = await errorReportService.CreateErrorReportAsync();
 
             await Window.DispatcherQueue.DispatchAsync(async () =>
             {
-                var dialog = new UnhandledExceptionDialog(args.Message, report);
+                var dialog = new UnhandledExceptionDialog(args.Message, reportFile);
 
                 var dialogResult = await Window.ShowDialogAsync(dialog, dialog.GetResultAsync);
 
@@ -182,11 +183,12 @@ public partial class App : Application
                 {
                     try
                     {
-                        await errorReportService.SendErrorReportAsync(report);
+                        await errorReportService.SendErrorReportAsync(reportFile);
                     }
-                    catch (Exception ex)
+                    catch (Exception e)
                     {
-                        Log.Error("Failed to send error report: " + ex);
+                        Log.Error("Failed to send error report", e);
+                        await ShowFailedToSendReportDialogAsync(reportFile);
                     }
                 }
 
@@ -209,4 +211,18 @@ public partial class App : Application
         }
     }
 
+    public async Task ShowFailedToSendReportDialogAsync(StorageFile reportFile)
+    {
+        await Window.ShowDialogAsync(new ContentDialog()
+        {
+            Title = "Failed to send report",
+            Content = new TextBlock()
+            {
+                IsTextSelectionEnabled = true,
+                TextWrapping = TextWrapping.Wrap,
+                Text = $"The report is located at \"{reportFile.Path}\". Please send it maually to \"universe-photos@outlook.de\".",
+            },
+            PrimaryButtonText = "Close"
+        });
+    }
 }

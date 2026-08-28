@@ -19,29 +19,31 @@ public class ErrorReportService
         this.eventLogService = eventLogService;
     }
 
-    public async Task SendErrorReportAsync(string report)
+    public async Task SendErrorReportAsync(StorageFile reportFile)
     {
+        string report = await FileIO.ReadTextAsync(reportFile);
         string subject = $"{AppData.ApplicationName} Error Report {DateTime.Now:g}";
         await SendMailAsync(subject, report).ConfigureAwait(false);
         Log.Info("Error report sent successfully");
     }
 
-    public async Task SendCrashReportAsync(string report)
+    public async Task SendCrashReportAsync(StorageFile reportFile)
     {
+        string report = await FileIO.ReadTextAsync(reportFile);
         string subject = $"{AppData.ApplicationName} Crash Report {DateTime.Now:g}";
         await SendMailAsync(subject, report).ConfigureAwait(false);
         Log.Info("Crash report sent successfully");
     }
 
-    public async Task<string> CreateErrorReportAsync()
+    public async Task<StorageFile> CreateErrorReportAsync()
     {
         var logFilePath = Log.Logger.Appenders.OfType<FileAppender>().First().LogFilePath;
         var logFile = await StorageFile.GetFileFromPathAsync(logFilePath).AsTask().ConfigureAwait(false);
         string log = await FileIO.ReadTextAsync(logFile).AsTask().ConfigureAwait(false);
-        return CreateReport(log);
+        return await CreateReportAsync("error", log);
     }
 
-    public async Task<string?> CreateCrashReportAsync()
+    public async Task<StorageFile?> CreateCrashReportAsync()
     {
         var errors = eventLogService.GetErrorsSinceLastCheck();
 
@@ -63,17 +65,20 @@ public class ErrorReportService
 
         string reportBody = string.Join("\n\n", [.. errors, log]);
 
-        return CreateReport(reportBody);
+        return await CreateReportAsync("crash", reportBody);
     }
 
-    private string CreateReport(string body)
+    private async Task<StorageFile> CreateReportAsync(string reportType, string body)
     {
-        var bodyBuilder = new StringBuilder();
-        bodyBuilder.AppendLine("App Version: " + appVersion.Major + "." + appVersion.Minor + "." + appVersion.Build);
-        bodyBuilder.AppendLine("OS Version: " + Environment.OSVersion.VersionString);
-        bodyBuilder.AppendLine();
-        bodyBuilder.AppendLine(body);
-        return bodyBuilder.ToString();
+        var builder = new StringBuilder();
+        builder.AppendLine("App Version: " + appVersion.Major + "." + appVersion.Minor + "." + appVersion.Build);
+        builder.AppendLine("OS Version: " + Environment.OSVersion.VersionString);
+        builder.AppendLine();
+        builder.AppendLine(body);
+        string report = builder.ToString();
+        var filePath = Path.Combine(Path.GetTempPath(), $"universe-photos-{reportType}-report.txt");
+        File.WriteAllText(filePath, report);
+        return await StorageFile.GetFileFromPathAsync(filePath);
     }
 
     private async Task SendMailAsync(string subject, string body)
@@ -83,7 +88,7 @@ public class ErrorReportService
 
         var emailMessage = new MailMessage();
         emailMessage.From = new MailAddress("universe.photos.app@gmail.com");
-        emailMessage.To.Add("s.baeumlisberger@live.de");
+        emailMessage.To.Add("universe-photos@outlook.de");
         emailMessage.Subject = subject;
         emailMessage.Body = body;
 

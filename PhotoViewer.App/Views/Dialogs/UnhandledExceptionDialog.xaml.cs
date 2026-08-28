@@ -2,7 +2,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.System;
@@ -15,11 +14,11 @@ public sealed partial class UnhandledExceptionDialog : UserControl
 {
     public bool IsSendErrorReportChecked { get; set; } = !Debugger.IsAttached;
 
-    private readonly string report;
+    private readonly StorageFile report;
 
     private TaskCompletionSource<UnhandledExceptionDialogResult>? tcs;
 
-    public UnhandledExceptionDialog(string exceptionMessage, string report)
+    public UnhandledExceptionDialog(string exceptionMessage, StorageFile report)
     {
         this.report = report;
 
@@ -36,10 +35,7 @@ public sealed partial class UnhandledExceptionDialog : UserControl
 
     private async void ShowReportButton_Click(object sender, RoutedEventArgs e)
     {
-        var filePath = Path.Combine(Path.GetTempPath(), "universe-photos-error-report.txt");
-        File.WriteAllText(filePath, report);
-        var storageFile = await StorageFile.GetFileFromPathAsync(filePath);
-        await Launcher.LaunchFileAsync(storageFile);
+        await Launcher.LaunchFileAsync(report);
     }
 
     private void ExitButton_Click(object sender, RoutedEventArgs e)

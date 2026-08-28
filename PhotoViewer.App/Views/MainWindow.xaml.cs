@@ -25,6 +25,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI;
 using WinUIEx;
@@ -232,15 +233,23 @@ public sealed partial class MainWindow : Window
     {
         var errorReportService = new ErrorReportService(Package.Current.Id.Version, new EventLogService());
 
-        if (await errorReportService.CreateCrashReportAsync() is string crashReport)
+        if (await errorReportService.CreateCrashReportAsync() is StorageFile crashReportFile)
         {
             await DispatcherQueue.DispatchAsync(async () =>
             {
-                var dialog = new CrashReportDialog(crashReport);
+                var dialog = new CrashReportDialog(crashReportFile);
 
                 if (await ShowDialogAsync(dialog) == ContentDialogResult.Primary)
                 {
-                    await errorReportService.SendCrashReportAsync(crashReport);
+                    try
+                    {
+                        await errorReportService.SendCrashReportAsync(crashReportFile);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("Failed to send crash report", e);
+                        await App.Current.ShowFailedToSendReportDialogAsync(crashReportFile);
+                    }
                 }
             });
         }
