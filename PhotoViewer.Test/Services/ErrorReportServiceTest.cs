@@ -13,13 +13,17 @@ public class ErrorReportServiceTest
 
     public ErrorReportServiceTest()
     {
-        errorReportService = new ErrorReportService(default, eventLogService);
+        errorReportService = new ErrorReportService(nameof(ErrorReportServiceTest), default, eventLogService);
     }
 
-    [Fact(Skip = "Skip test because it sends an email to gmail")]
+    [Fact(Skip = "Skip test because it sends an email")]
     public async Task SendErrorReport()
     {
-        await errorReportService.SendErrorReportAsync("Test");
+        eventLogService.GetErrorsSinceLastCheck().Returns(["error"]);
+        string logFolderPath = TestUtils.CreateTestFolder(nameof(ErrorReportServiceTest), nameof(CreateCrashReport_NoLogFile));
+        using var _ = TestUtils.RegisterLogger(new Logger([new FileAppender(logFolderPath)]));
+        var reportFile = await errorReportService.CreateCrashReportAsync();
+        await errorReportService.SendErrorReportAsync(reportFile!);
     }
 
     [Fact]
@@ -29,10 +33,11 @@ public class ErrorReportServiceTest
         string logFolderPath = TestUtils.CreateTestFolder(nameof(ErrorReportServiceTest), nameof(CreateCrashReport_NoLogFile));
         using var _ = TestUtils.RegisterLogger(new Logger([new FileAppender(logFolderPath)]));
 
-        string? report = await errorReportService.CreateCrashReportAsync();
+        var reportFile = await errorReportService.CreateCrashReportAsync();
 
+        Assert.NotNull(reportFile);
         string expectedReport = "error\n\nno log file found";
-        Assert.Contains(expectedReport, report);
+        Assert.Contains(expectedReport, File.ReadAllText(reportFile.Path));
     }
 
     [Fact]
@@ -57,10 +62,11 @@ public class ErrorReportServiceTest
         CreateArchivedLogFile(logFolderPath, DateTimeOffset.Now.AddMinutes(-5), "archived log");
         CreateArchivedLogFile(logFolderPath, DateTimeOffset.Now.AddMinutes(-10), "archived log");
 
-        string? report = await errorReportService.CreateCrashReportAsync();
+        var reportFile = await errorReportService.CreateCrashReportAsync();
 
+        Assert.NotNull(reportFile);
         string expectedReport = "error\n\nlog of crash";
-        Assert.Contains(expectedReport, report);
+        Assert.Contains(expectedReport, File.ReadAllText(reportFile.Path));
     }
 
     private void CreateLogFile(string logFolderPath, DateTimeOffset date, string content)

@@ -169,7 +169,7 @@ public partial class App : Application
         {
             isUnhandledExceptionDialogShown = true;
 
-            var errorReportService = new ErrorReportService(Package.Current.Id.Version, new EventLogService());
+            var errorReportService = new ErrorReportService(AppData.ApplicationName, AppData.Version, new EventLogService());
 
             StorageFile reportFile = await errorReportService.CreateErrorReportAsync();
 

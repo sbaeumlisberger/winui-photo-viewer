@@ -9,12 +9,15 @@ namespace PhotoViewer.Core.Services;
 
 public class ErrorReportService
 {
+    private readonly string applicationName;
+
     private readonly PackageVersion appVersion;
 
     private readonly IEventLogService eventLogService;
 
-    public ErrorReportService(PackageVersion appVersion, IEventLogService eventLogService)
+    public ErrorReportService(string applicationName, PackageVersion appVersion, IEventLogService eventLogService)
     {
+        this.applicationName = applicationName;
         this.appVersion = appVersion;
         this.eventLogService = eventLogService;
     }
@@ -22,7 +25,7 @@ public class ErrorReportService
     public async Task SendErrorReportAsync(StorageFile reportFile)
     {
         string report = await FileIO.ReadTextAsync(reportFile);
-        string subject = $"{AppData.ApplicationName} Error Report {DateTime.Now:g}";
+        string subject = $"{applicationName} Error Report {DateTime.Now:g}";
         await SendMailAsync(subject, report).ConfigureAwait(false);
         Log.Info("Error report sent successfully");
     }
@@ -30,7 +33,7 @@ public class ErrorReportService
     public async Task SendCrashReportAsync(StorageFile reportFile)
     {
         string report = await FileIO.ReadTextAsync(reportFile);
-        string subject = $"{AppData.ApplicationName} Crash Report {DateTime.Now:g}";
+        string subject = $"{applicationName} Crash Report {DateTime.Now:g}";
         await SendMailAsync(subject, report).ConfigureAwait(false);
         Log.Info("Crash report sent successfully");
     }
@@ -83,14 +86,19 @@ public class ErrorReportService
 
     private async Task SendMailAsync(string subject, string body)
     {
-        using var smtpClient = new SmtpClient("smtp.gmail.com", 587) { EnableSsl = true };
-        smtpClient.Credentials = new NetworkCredential("universe.photos.app@gmail.com", CompileTimeConstants.GMailPassword);
+        using var smtpClient = new SmtpClient("smtp.gmail.com", 587)
+        {
+            EnableSsl = true,
+            Credentials = new NetworkCredential("universe.photos.app@gmail.com", CompileTimeConstants.GMailAppPassword)
+        };
 
-        var emailMessage = new MailMessage();
-        emailMessage.From = new MailAddress("universe.photos.app@gmail.com");
-        emailMessage.To.Add("universe-photos@outlook.de");
-        emailMessage.Subject = subject;
-        emailMessage.Body = body;
+        var emailMessage = new MailMessage
+        {
+            From = new MailAddress("universe.photos.app@gmail.com"),
+            To = { "universe-photos@outlook.de" },
+            Subject = subject,
+            Body = body
+        };
 
         await smtpClient.SendMailAsync(emailMessage).ConfigureAwait(false);
     }

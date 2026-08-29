@@ -23,7 +23,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.System;
@@ -231,7 +230,7 @@ public sealed partial class MainWindow : Window
 
     private async Task ReportCrashAsync()
     {
-        var errorReportService = new ErrorReportService(Package.Current.Id.Version, new EventLogService());
+        var errorReportService = new ErrorReportService(AppData.ApplicationName, AppData.Version, new EventLogService());
 
         if (await errorReportService.CreateCrashReportAsync() is StorageFile crashReportFile)
         {
