@@ -69,10 +69,10 @@
                     IsOn="{x:Bind ViewModel.Settings.AutoOpenDetailsBar, Mode=TwoWay}"/>
                 <TextBlock 
                     Margin="0,4,0,0"
-                    Text="{x:Bind res:Strings.SettingsPage_DiashowTimeLabel}"/>
+                    Text="{x:Bind res:Strings.SettingsPage_SlideshowTimeLabel}"/>
                 <NumberBox 
                     Margin="0,4,0,0" HorizontalAlignment="Left" MinWidth="100" SpinButtonPlacementMode="Compact"                           
-                    Value="{x:Bind ViewModel.Settings.DiashowTime, Mode=TwoWay, Converter={StaticResource TimeSpanToDoubleConverter}}"
+                    Value="{x:Bind ViewModel.Settings.SlideshowTime, Mode=TwoWay, Converter={StaticResource TimeSpanToDoubleConverter}}"
                     Minimum="1" Maximum="3600"/>
 
                 <TextBlock 

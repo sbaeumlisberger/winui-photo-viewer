@@ -13,7 +13,7 @@ public class SettingsServiceTest : IDisposable
         ShowDeleteAnimation=False
         AutoOpenMetadataPanel=True
         AutoOpenDetailsBar=True
-        DiashowTime=00:00:05
+        SlideshowTime=00:00:05
         LinkRawFiles=True
         RawFilesFolderName=RAWs
         DeleteLinkedFilesOption=Yes
@@ -63,7 +63,7 @@ public class SettingsServiceTest : IDisposable
         Assert.True(settings.ShowDeleteAnimation);
         Assert.False(settings.AutoOpenMetadataPanel);
         Assert.False(settings.AutoOpenDetailsBar);
-        Assert.Equal(TimeSpan.FromSeconds(3), settings.DiashowTime);
+        Assert.Equal(TimeSpan.FromSeconds(3), settings.SlideshowTime);
         Assert.True(settings.LinkRawFiles);
         Assert.Equal("RAWs", settings.RawFilesFolderName);
         Assert.Equal(DeleteLinkedFilesOption.Ask, settings.DeleteLinkedFilesOption);
@@ -141,7 +141,7 @@ public class SettingsServiceTest : IDisposable
         settings.ShowDeleteAnimation = false;
         settings.AutoOpenMetadataPanel = true;
         settings.AutoOpenDetailsBar = true;
-        settings.DiashowTime = TimeSpan.FromSeconds(5);
+        settings.SlideshowTime = TimeSpan.FromSeconds(5);
         settings.DeleteLinkedFilesOption = DeleteLinkedFilesOption.Yes;
         settings.IsDebugLogEnabled = true;
         return settings;
@@ -153,7 +153,7 @@ public class SettingsServiceTest : IDisposable
         Assert.Equal(expected.ShowDeleteAnimation, actual.ShowDeleteAnimation);
         Assert.Equal(expected.AutoOpenMetadataPanel, actual.AutoOpenMetadataPanel);
         Assert.Equal(expected.AutoOpenDetailsBar, actual.AutoOpenDetailsBar);
-        Assert.Equal(expected.DiashowTime, actual.DiashowTime);
+        Assert.Equal(expected.SlideshowTime, actual.SlideshowTime);
         Assert.Equal(expected.LinkRawFiles, actual.LinkRawFiles);
         Assert.Equal(expected.RawFilesFolderName, actual.RawFilesFolderName);
         Assert.Equal(expected.DeleteLinkedFilesOption, actual.DeleteLinkedFilesOption);

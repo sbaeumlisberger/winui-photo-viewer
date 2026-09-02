@@ -19,7 +19,7 @@ namespace PhotoViewer.App.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Strings {
@@ -637,15 +637,6 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start diashow.
-        /// </summary>
-        internal static string FlipViewPageCommandBar_DiashowButton {
-            get {
-                return ResourceManager.GetString("FlipViewPageCommandBar_DiashowButton", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Edit image.
         /// </summary>
         internal static string FlipViewPageCommandBar_EditButton {
@@ -714,6 +705,15 @@ namespace PhotoViewer.App.Resources {
         internal static string FlipViewPageCommandBar_SettingsButton {
             get {
                 return ResourceManager.GetString("FlipViewPageCommandBar_SettingsButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start Slideshow.
+        /// </summary>
+        internal static string FlipViewPageCommandBar_SlideshowButton {
+            get {
+                return ResourceManager.GetString("FlipViewPageCommandBar_SlideshowButton", resourceCulture);
             }
         }
         
@@ -1089,27 +1089,27 @@ namespace PhotoViewer.App.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Pause.
         /// </summary>
-        internal static string MediaFlipView_DisableDiashowLoop {
+        internal static string MediaFlipView_DisableSlideshowLoop {
             get {
-                return ResourceManager.GetString("MediaFlipView_DisableDiashowLoop", resourceCulture);
+                return ResourceManager.GetString("MediaFlipView_DisableSlideshowLoop", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Resume.
         /// </summary>
-        internal static string MediaFlipView_EnableDiashowLoop {
+        internal static string MediaFlipView_EnableSlideshowLoop {
             get {
-                return ResourceManager.GetString("MediaFlipView_EnableDiashowLoop", resourceCulture);
+                return ResourceManager.GetString("MediaFlipView_EnableSlideshowLoop", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
-        internal static string MediaFlipView_ExitDiashow {
+        internal static string MediaFlipView_ExitSlideshow {
             get {
-                return ResourceManager.GetString("MediaFlipView_ExitDiashow", resourceCulture);
+                return ResourceManager.GetString("MediaFlipView_ExitSlideshow", resourceCulture);
             }
         }
         
@@ -2104,15 +2104,6 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Time span in seconds how long photos are displayed in the diashow.
-        /// </summary>
-        internal static string SettingsPage_DiashowTimeLabel {
-            get {
-                return ResourceManager.GetString("SettingsPage_DiashowTimeLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Export.
         /// </summary>
         internal static string SettingsPage_ExportSettingsButton {
@@ -2239,6 +2230,15 @@ namespace PhotoViewer.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Time span in seconds how long photos are displayed in the slideshow.
+        /// </summary>
+        internal static string SettingsPage_SlideshowTimeLabel {
+            get {
+                return ResourceManager.GetString("SettingsPage_SlideshowTimeLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Theme.
         /// </summary>
         internal static string SettingsPage_ThemeHeader {
@@ -2262,15 +2262,6 @@ namespace PhotoViewer.App.Resources {
         internal static string SettingsPage_VideoFilesSectionTitle {
             get {
                 return ResourceManager.GetString("SettingsPage_VideoFilesSectionTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Shift date taken of all photos.
-        /// </summary>
-        internal static string ShiftDateTakenUICommand_Label {
-            get {
-                return ResourceManager.GetString("ShiftDateTakenUICommand_Label", resourceCulture);
             }
         }
         
@@ -2307,6 +2298,15 @@ namespace PhotoViewer.App.Resources {
         internal static string ShiftDateTakenDialog_Title {
             get {
                 return ResourceManager.GetString("ShiftDateTakenDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shift date taken of all photos.
+        /// </summary>
+        internal static string ShiftDateTakenUICommand_Label {
+            get {
+                return ResourceManager.GetString("ShiftDateTakenUICommand_Label", resourceCulture);
             }
         }
         

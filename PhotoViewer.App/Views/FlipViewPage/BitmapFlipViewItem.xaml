@@ -18,7 +18,7 @@
             x:Name="bitmapViewer"
             BitmapImage="{x:Bind ViewModel.ImageViewModel.Image, Mode=OneWay}" 
             IsEnabled="{x:Bind ViewModel.IsSelected, Mode=OneWay}"
-            IsScaleUpEnabled="{x:Bind ViewModel.IsDiashowActive, Mode=OneWay}"
+            IsScaleUpEnabled="{x:Bind ViewModel.IsSlideshowActive, Mode=OneWay}"
             SizeChanged="BitmapViewer_SizeChanged">
             <Grid
                 Visibility="{x:Bind ViewModel.IsOverlayVisible, Mode=OneWay}"

@@ -9,9 +9,9 @@ public interface IMediaFlipViewItemModel : IViewModel
 
     bool IsSelected { get; set; }
 
-    bool IsDiashowActive { get; set; }
+    bool IsSlideshowActive { get; set; }
 
-    Task? PlaybackCompletedTask => null;
+    Task? SlideshowTask => null;
 
     Task InitializeAsync();
 }

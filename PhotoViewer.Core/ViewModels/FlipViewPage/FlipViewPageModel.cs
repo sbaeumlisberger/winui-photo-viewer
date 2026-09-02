@@ -57,8 +57,8 @@ public partial class FlipViewPageModel : ViewModelBase
         FlipViewModel = viewModelFactory.CreateMediaFlipViewModel();
         FlipViewModel.PropertyChanged += FlipViewModel_PropertyChanged;
 
-        Messenger.Register<StartDiashowMessage>(this, OnStartDiashowMessageReceived);
-        Messenger.Register<ExitDiashowMessage>(this, OnExitDiashowMessageReceived);
+        Messenger.Register<StartSlideshowMessage>(this, OnStartSlideshowMessageReceived);
+        Messenger.Register<ExitSlideshowMessage>(this, OnExitSlideshowMessageReceived);
     }
 
     protected override void OnCleanup()
@@ -103,7 +103,7 @@ public partial class FlipViewPageModel : ViewModelBase
         Messenger.Send(new PushNavigationStateMessage(navigationState));
     }
 
-    private void OnStartDiashowMessageReceived(StartDiashowMessage msg)
+    private void OnStartSlideshowMessageReceived(StartSlideshowMessage msg)
     {
         ShowUI = false;
         Messenger.Send(new EnterFullscreenMessage());
@@ -117,7 +117,7 @@ public partial class FlipViewPageModel : ViewModelBase
         }
     }
 
-    private void OnExitDiashowMessageReceived(ExitDiashowMessage msg)
+    private void OnExitSlideshowMessageReceived(ExitSlideshowMessage msg)
     {
         ShowUI = true;
         Messenger.Send(new ExitFullscreenMessage());

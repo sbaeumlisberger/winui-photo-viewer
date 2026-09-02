@@ -36,8 +36,8 @@
         Command="{x:Bind ViewModel.NavigateToComparePageCommand}"/>
     <AppBarButton 
         Icon="SlideShow" 
-        Label="{x:Bind res:Strings.FlipViewPageCommandBar_DiashowButton}"
-        Command="{x:Bind ViewModel.StartDiashowCommand}">
+        Label="{x:Bind res:Strings.FlipViewPageCommandBar_SlideshowButton}"
+        Command="{x:Bind ViewModel.StartSlideshowCommand}">
         <AppBarButton.KeyboardAccelerators>
             <KeyboardAccelerator Modifiers="Control" Key="D"/>
         </AppBarButton.KeyboardAccelerators>

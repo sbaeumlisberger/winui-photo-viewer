@@ -16,13 +16,13 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     public partial bool IsSelected { get; set; }
 
-    public partial bool IsDiashowActive { get; set; }
+    public partial bool IsSlideshowActive { get; set; }
 
-    public Task PlaybackCompletedTask => playbackCompletionSource.Task;
+    public Task SlideshowTask => playbackCompletionSource.Task;
 
     public partial MediaPlayer? MediaPlayer { get; private set; }
 
-    public bool IsContextMenuEnabled => IsSelected && !IsDiashowActive;
+    public bool IsContextMenuEnabled => IsSelected && !IsSlideshowActive;
 
     public IMediaFileContextMenuModel ContextMenuModel { get; }
 
@@ -63,7 +63,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
             MediaPlayer.MediaFailed += MediaPlayer_MediaFailed;
             MediaPlayer.Source = mediaSource;
 
-            if (IsSelected && IsDiashowActive)
+            if (IsSelected && IsSlideshowActive)
             {
                 PlayVideo();
             }
@@ -109,20 +109,20 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
             ResetPlaybackPosition();
         }
 
-        if (IsSelected && IsDiashowActive)
+        if (IsSelected && IsSlideshowActive)
         {
             PlayVideo();
         }
     }
 
-    partial void OnIsDiashowActiveChanged()
+    partial void OnIsSlideshowActiveChanged()
     {
         if (!IsSelected)
         {
             return;
         }
 
-        if (IsDiashowActive)
+        if (IsSlideshowActive)
         {
             PlayVideo();
         }
@@ -173,7 +173,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
     {
         playbackCompletionSource.TrySetResult();
 
-        if (IsSelected && IsDiashowActive)
+        if (IsSelected && IsSlideshowActive)
         {
             PlayVideo();
         }

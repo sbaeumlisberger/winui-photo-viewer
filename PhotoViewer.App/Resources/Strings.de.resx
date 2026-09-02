@@ -273,7 +273,7 @@
   <data name="FlipViewPageCommandBar_DeleteButton" xml:space="preserve">
     <value>Löschen</value>
   </data>
-  <data name="FlipViewPageCommandBar_DiashowButton" xml:space="preserve">
+  <data name="FlipViewPageCommandBar_SlideshowButton" xml:space="preserve">
     <value>Diashow starten</value>
   </data>
   <data name="FlipViewPageCommandBar_MetadataButton" xml:space="preserve">
@@ -405,13 +405,13 @@
   <data name="MediaFileContextMenu_Share" xml:space="preserve">
     <value>Teilen</value>
   </data>
-  <data name="MediaFlipView_DisableDiashowLoop" xml:space="preserve">
+  <data name="MediaFlipView_DisableSlideshowLoop" xml:space="preserve">
     <value>Pausieren</value>
   </data>
-  <data name="MediaFlipView_EnableDiashowLoop" xml:space="preserve">
+  <data name="MediaFlipView_EnableSlideshowLoop" xml:space="preserve">
     <value>Fortsetzen</value>
   </data>
-  <data name="MediaFlipView_ExitDiashow" xml:space="preserve">
+  <data name="MediaFlipView_ExitSlideshow" xml:space="preserve">
     <value>Beenden</value>
   </data>
   <data name="MetadataPanel_AddDateTakenButton" xml:space="preserve">
@@ -717,7 +717,7 @@
   <data name="SettingsPage_DeleteLinkedRawFilesHeader" xml:space="preserve">
     <value>Verlinkte Raw-Dateien löschen</value>
   </data>
-  <data name="SettingsPage_DiashowTimeLabel" xml:space="preserve">
+  <data name="SettingsPage_SlideshowTimeLabel" xml:space="preserve">
     <value>Zeitspanne in Sekunden, wie lange Fotos in der Diashow angezeigt werden</value>
   </data>
   <data name="SettingsPage_ExportSettingsButton" xml:space="preserve">

@@ -25,7 +25,7 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
 
     public ICommand SelectNextCommand { get; }
 
-    public bool CanStartDiashow => SelectedItemModel != null;
+    public bool CanStartSlideshow => SelectedItemModel != null;
 
     public bool CanCropImage => SelectedItemModel?.MediaFile is IBitmapFileInfo bitmapFileInfo && IsSupportedByBitmapEncoder(bitmapFileInfo);
 
@@ -94,10 +94,10 @@ public partial class FlipViewPageCommandBarModel : ViewModelBase, IFlipViewPageC
         Messenger.Send(new NavigateToPageMessage(typeof(ComparePageModel), SelectedItemModel!.MediaFile));
     }
 
-    [RelayCommand(CanExecute = nameof(CanStartDiashow))]
-    private void StartDiashow()
+    [RelayCommand(CanExecute = nameof(CanStartSlideshow))]
+    private void StartSlideshow()
     {
-        Messenger.Send(new StartDiashowMessage());
+        Messenger.Send(new StartSlideshowMessage());
     }
 
     [RelayCommand]

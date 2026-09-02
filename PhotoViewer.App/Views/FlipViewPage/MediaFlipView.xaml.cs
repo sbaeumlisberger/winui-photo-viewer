@@ -62,7 +62,7 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
 
     private void FlipView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
-        if (ViewModel!.IsDiashowActive)
+        if (ViewModel!.IsSlideshowActive)
         {
             flipView.ShowAttachedFlyout(args);
         }
@@ -70,7 +70,7 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
 
     private void FlipView_Tapped(object sender, TappedRoutedEventArgs e)
     {
-        if (ViewModel!.IsDiashowActive)
+        if (ViewModel!.IsSlideshowActive)
         {
             var window = App.Current.Window;
             var windowCenterX = window.Bounds.GetCenterX();
@@ -135,11 +135,11 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
 
         if (e.Key == VirtualKey.Space)
         {
-            ViewModel!.ToggleDiashowLoopCommand.TryExecute();
+            ViewModel!.ToggleSlideshowLoopCommand.TryExecute();
         }
         else if (e.Key == VirtualKey.Escape)
         {
-            ViewModel!.ExitDiashowCommand.TryExecute();
+            ViewModel!.ExitSlideshowCommand.TryExecute();
         }
     }
 
@@ -148,19 +148,19 @@ public sealed partial class MediaFlipView : UserControl, IMVVMControl<MediaFlipV
         Log.Debug("FlipView_LosingFocus " + args.FocusState + ", " + args.InputDevice + ", " + args.NewFocusedElement);
     }
 
-    private SolidColorBrush ToFlipViewBackground(bool isDiashowActive)
+    private SolidColorBrush ToFlipViewBackground(bool isSlideshowActive)
     {
-        return new SolidColorBrush(isDiashowActive ? Colors.Black : Colors.Transparent);
+        return new SolidColorBrush(isSlideshowActive ? Colors.Black : Colors.Transparent);
     }
 
-    private SymbolIcon ToDiashowLoopMenuItemIcon(bool isDiashowLoopActive)
+    private SymbolIcon ToSlideshowLoopMenuItemIcon(bool isSlideshowLoopActive)
     {
-        return new SymbolIcon(isDiashowLoopActive ? Symbol.Pause : Symbol.Play);
+        return new SymbolIcon(isSlideshowLoopActive ? Symbol.Pause : Symbol.Play);
     }
 
-    private string ToDiashowLoopMenuItemText(bool isDiashowLoopActive)
+    private string ToSlideshowLoopMenuItemText(bool isSlideshowLoopActive)
     {
-        return isDiashowLoopActive ? Strings.MediaFlipView_DisableDiashowLoop : Strings.MediaFlipView_EnableDiashowLoop;
+        return isSlideshowLoopActive ? Strings.MediaFlipView_DisableSlideshowLoop : Strings.MediaFlipView_EnableSlideshowLoop;
     }
 
     private async void InfoBar_LosingFocus(UIElement sender, LosingFocusEventArgs args)

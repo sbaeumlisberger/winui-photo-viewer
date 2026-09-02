@@ -37,7 +37,7 @@
             CornerRadius="0"
             UseTouchAnimationsForAllNavigation="False"
             ContextRequested="FlipView_ContextRequested"
-            Background="{x:Bind ToFlipViewBackground(ViewModel.IsDiashowActive), Mode=OneWay}"
+            Background="{x:Bind ToFlipViewBackground(ViewModel.IsSlideshowActive), Mode=OneWay}"
             Tapped="FlipView_Tapped"
             KeyDown="FlipView_KeyDown"
             LosingFocus="FlipView_LosingFocus"
@@ -82,17 +82,17 @@
             <FlyoutBase.AttachedFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem 
-                        Icon="{x:Bind ToDiashowLoopMenuItemIcon(ViewModel.IsDiashowLoopActive), Mode=OneWay}" 
-                        Text="{x:Bind ToDiashowLoopMenuItemText(ViewModel.IsDiashowLoopActive), Mode=OneWay}" 
-                        Command="{x:Bind ViewModel.ToggleDiashowLoopCommand}">
+                        Icon="{x:Bind ToSlideshowLoopMenuItemIcon(ViewModel.IsSlideshowLoopActive), Mode=OneWay}" 
+                        Text="{x:Bind ToSlideshowLoopMenuItemText(ViewModel.IsSlideshowLoopActive), Mode=OneWay}" 
+                        Command="{x:Bind ViewModel.ToggleSlideshowLoopCommand}">
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Space"/>
                         </MenuFlyoutItem.KeyboardAccelerators>
                     </MenuFlyoutItem>
                     <MenuFlyoutItem 
                         Icon="Cancel" 
-                        Text="{x:Bind res:Strings.MediaFlipView_ExitDiashow}" 
-                        Command="{x:Bind ViewModel.ExitDiashowCommand}">
+                        Text="{x:Bind res:Strings.MediaFlipView_ExitSlideshow}" 
+                        Command="{x:Bind ViewModel.ExitSlideshowCommand}">
                         <MenuFlyoutItem.KeyboardAccelerators>
                             <KeyboardAccelerator Key="Escape"/>
                         </MenuFlyoutItem.KeyboardAccelerators>

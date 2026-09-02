@@ -16,11 +16,11 @@ public partial class BitmapFlipViewItemModel : ViewModelBase, IBitmapFlipViewIte
 
     public partial bool IsSelected { get; set; } = false;
 
-    public partial bool IsDiashowActive { get; set; }
+    public partial bool IsSlideshowActive { get; set; }
 
     public IImageViewModel ImageViewModel { get; }
 
-    public bool IsOverlayVisible => IsSelected && !IsDiashowActive;
+    public bool IsOverlayVisible => IsSelected && !IsSlideshowActive;
 
     public IMediaFileContextMenuModel ContextMenuModel { get; }
 

@@ -44,9 +44,9 @@ public sealed partial class VectorGraphicFlipViewItem : UserControl, IMVVMContro
                 await ShowSvgAsync(svg);
             }
         }
-        else if (e.PropertyName == nameof(ViewModel.IsDiashowActive))
+        else if (e.PropertyName == nameof(ViewModel.IsSlideshowActive))
         {
-            if (ViewModel!.IsDiashowActive)
+            if (ViewModel!.IsSlideshowActive)
             {
                 scrollViewer.ChangeView(0, 0, 1, true);
             }

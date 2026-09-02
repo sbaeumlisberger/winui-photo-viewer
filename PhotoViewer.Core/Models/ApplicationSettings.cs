@@ -5,13 +5,13 @@ namespace PhotoViewer.Core.Models;
 
 public partial class ApplicationSettings : ObservableObject
 {
-    public static readonly TimeSpan DefaultDiashowTime = TimeSpan.FromSeconds(3);
+    public static readonly TimeSpan DefaultSlideshowTime = TimeSpan.FromSeconds(3);
 
     public partial AppTheme Theme { get; set; } = AppTheme.System;
     public partial bool ShowDeleteAnimation { get; set; } = true;
     public partial bool AutoOpenMetadataPanel { get; set; } = false;
     public partial bool AutoOpenDetailsBar { get; set; } = false;
-    public partial TimeSpan DiashowTime { get; set; } = DefaultDiashowTime;
+    public partial TimeSpan SlideshowTime { get; set; } = DefaultSlideshowTime;
 
     public partial bool LinkRawFiles { get; set; } = true;
     public partial string RawFilesFolderName { get; set; } = "RAWs";
@@ -35,7 +35,7 @@ public partial class ApplicationSettings : ObservableObject
         ShowDeleteAnimation = settings.ShowDeleteAnimation;
         AutoOpenMetadataPanel = settings.AutoOpenMetadataPanel;
         AutoOpenDetailsBar = settings.AutoOpenDetailsBar;
-        DiashowTime = settings.DiashowTime;
+        SlideshowTime = settings.SlideshowTime;
         LinkRawFiles = settings.LinkRawFiles;
         RawFilesFolderName = settings.RawFilesFolderName;
         DeleteLinkedFilesOption = settings.DeleteLinkedFilesOption;
@@ -68,8 +68,9 @@ public partial class ApplicationSettings : ObservableObject
                     case nameof(AutoOpenDetailsBar):
                         settings.AutoOpenDetailsBar = bool.Parse(value);
                         break;
-                    case nameof(DiashowTime):
-                        settings.DiashowTime = TimeSpan.ParseExact(value, "hh\\:mm\\:ss", null);
+                    case nameof(SlideshowTime):
+                    case "DiashowTime":
+                        settings.SlideshowTime = TimeSpan.ParseExact(value, "hh\\:mm\\:ss", null);
                         break;
                     case nameof(LinkRawFiles):
                         settings.LinkRawFiles = bool.Parse(value);
@@ -88,7 +89,8 @@ public partial class ApplicationSettings : ObservableObject
                         break;
                 }
             }
-        };
+        }
+        ;
         return settings;
     }
 
@@ -99,7 +101,7 @@ public partial class ApplicationSettings : ObservableObject
         stringBuilder.AppendLine(nameof(ShowDeleteAnimation) + "=" + ShowDeleteAnimation);
         stringBuilder.AppendLine(nameof(AutoOpenMetadataPanel) + "=" + AutoOpenMetadataPanel);
         stringBuilder.AppendLine(nameof(AutoOpenDetailsBar) + "=" + AutoOpenDetailsBar);
-        stringBuilder.AppendLine(nameof(DiashowTime) + "=" + DiashowTime.ToString("hh\\:mm\\:ss"));
+        stringBuilder.AppendLine(nameof(SlideshowTime) + "=" + SlideshowTime.ToString("hh\\:mm\\:ss"));
         stringBuilder.AppendLine(nameof(LinkRawFiles) + "=" + LinkRawFiles);
         stringBuilder.AppendLine(nameof(RawFilesFolderName) + "=" + RawFilesFolderName);
         stringBuilder.AppendLine(nameof(DeleteLinkedFilesOption) + "=" + DeleteLinkedFilesOption);

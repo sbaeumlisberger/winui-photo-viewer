@@ -37,7 +37,7 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
         bitmapViewer.ScrollViewer.ViewChanged += ScrollViewer_ViewChanged;
 
         viewModel.Subscribe(this, nameof(viewModel.IsSelected), OnIsSelectedChanged);
-        viewModel.Subscribe(this, nameof(viewModel.IsDiashowActive), OnIsDiashowActiveChanged);
+        viewModel.Subscribe(this, nameof(viewModel.IsSlideshowActive), OnIsSlideshowActiveChanged);
     }
 
     partial void DisconnectFromViewModel(BitmapFlipViewItemModel viewModel)
@@ -53,9 +53,9 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
         }
     }
 
-    private void OnIsDiashowActiveChanged(BitmapFlipViewItemModel viewModel)
+    private void OnIsSlideshowActiveChanged(BitmapFlipViewItemModel viewModel)
     {
-        if (viewModel.IsDiashowActive)
+        if (viewModel.IsSlideshowActive)
         {
             bitmapViewer.ScrollViewer.ChangeView(0, 0, 1);
         }
@@ -92,7 +92,7 @@ public sealed partial class BitmapFlipViewItem : UserControl, IMVVMControl<Bitma
 
         double zoomFactor = bitmapViewer.ScrollViewer.ZoomFactor;
 
-        if (zoomFactor == 1 || ViewModel.IsDiashowActive)
+        if (zoomFactor == 1 || ViewModel.IsSlideshowActive)
         {
             zoomTextBlockContainer.Visibility = Visibility.Collapsed;
             zoomTextBlock.Text = "";
