@@ -10,7 +10,7 @@ public interface IVideoFileInfo : IMediaFileInfo
 internal class VideoFileInfo : MediaFileInfoBase, IVideoFileInfo
 {
 
-    public static readonly IReadOnlySet<string> SupportedFileExtensions = new HashSet<string>()
+    public static readonly IReadOnlySet<string> SupportedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
     {
         ".mp4", ".m4v", ".avi", ".webm", ".mkv", ".ts", ".mov",
     };
