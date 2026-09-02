@@ -1,10 +1,8 @@
 ﻿using Essentials.NET;
 using Essentials.NET.Logging;
 using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -215,6 +213,10 @@ public sealed partial class BitmapViewer : UserControl
         if (dstRectInPixels.Width < srcRectInPixels.Width || dstRectInPixels.Height < srcRectInPixels.Height)
         {
             interpolationMode = CanvasImageInterpolation.HighQualityCubic;
+        }
+        else if (IsScaleUpEnabled && (dstRectInPixels.Width > srcRectInPixels.Width || dstRectInPixels.Height > srcRectInPixels.Height))
+        {
+            interpolationMode = CanvasImageInterpolation.Cubic;
         }
 
         if (colorProfileProvider.ColorProfile is not null)
