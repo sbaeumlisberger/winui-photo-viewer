@@ -32,7 +32,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     private readonly CancelableTaskRunner initRunner = new CancelableTaskRunner();
 
-    private readonly TaskCompletionSource playbackCompletionSource = new TaskCompletionSource();
+    private TaskCompletionSource playbackCompletionSource = new();
 
     public VideoFlipViewItemModel(IMediaFileInfo mediaFile, IViewModelFactory viewModelFactory, IMessenger messenger) : base(messenger)
     {
@@ -65,7 +65,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
             if (IsSelected && IsDiashowActive)
             {
-                MediaPlayer.Play();
+                RestartPlayback();
             }
         });
     }
@@ -116,7 +116,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
         if (IsSelected && IsDiashowActive)
         {
-            MediaPlayer.Play();
+            RestartPlayback();
         }
     }
 
@@ -129,11 +129,30 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
         if (IsDiashowActive)
         {
-            MediaPlayer.Play();
+            RestartPlayback();
         }
         else
         {
             MediaPlayer.Pause();
+        }
+    }
+
+    public void RestartPlayback()
+    {
+        var playbackCompleted = playbackCompletionSource.Task.IsCompleted;
+
+        if (playbackCompleted)
+        {
+            playbackCompletionSource = new();
+        }
+
+        if (MediaPlayer is not null)
+        {
+            if (playbackCompleted)
+            {
+                MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
+            }
+            MediaPlayer.Play();
         }
     }
 

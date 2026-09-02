@@ -289,7 +289,8 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         {
             while (SelectedItemModel is not null)
             {
-                await (SelectedItemModel.PlaybackCompletedTask ?? Task.Delay(settings.DiashowTime));
+                var selectedItemModel = SelectedItemModel;
+                await (selectedItemModel.PlaybackCompletedTask ?? Task.Delay(settings.DiashowTime));
                 if (cancellationToken.IsCancellationRequested)
                 {
                     break;
@@ -297,6 +298,11 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
                 isSelectionChangedByDiashowLoop = true;
                 SelectNext();
                 isSelectionChangedByDiashowLoop = false;
+
+                if (ReferenceEquals(selectedItemModel, SelectedItemModel))
+                {
+                    selectedItemModel.RestartPlayback();
+                }
             }
         }
 
@@ -363,16 +369,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     [RelayCommand(CanExecute = nameof(IsDiashowActive))]
     private void ToggleDiashowLoop()
     {
-        if (IsDiashowLoopActive)
-        {
-            IsDiashowLoopActive = false;
-            DisableDiashowLoop();
-        }
-        else
-        {
-            IsDiashowLoopActive = true;
-            EnableDiashowLoop();
-        }
+        IsDiashowLoopActive = !IsDiashowLoopActive;
     }
 
     [RelayCommand(CanExecute = nameof(IsDiashowActive))]
