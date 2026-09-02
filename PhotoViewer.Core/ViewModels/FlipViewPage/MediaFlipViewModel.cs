@@ -289,8 +289,7 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
         {
             while (SelectedItemModel is not null)
             {
-                var selectedItemModel = SelectedItemModel;
-                await (selectedItemModel.PlaybackCompletedTask ?? Task.Delay(settings.DiashowTime));
+                await (SelectedItemModel.PlaybackCompletedTask ?? Task.Delay(settings.DiashowTime));
                 if (cancellationToken.IsCancellationRequested)
                 {
                     break;
@@ -298,11 +297,6 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
                 isSelectionChangedByDiashowLoop = true;
                 SelectNext();
                 isSelectionChangedByDiashowLoop = false;
-
-                if (ReferenceEquals(selectedItemModel, SelectedItemModel))
-                {
-                    selectedItemModel.RestartPlayback();
-                }
             }
         }
 
@@ -394,9 +388,9 @@ public partial class MediaFlipViewModel : ViewModelBase, IMediaFlipViewModel
     [RelayCommand(AllowConcurrentExecutions = false)]
     private async Task RestoreLastDeletedFileAsync()
     {
-        if (this.lastDeletedFileInfo is null) 
+        if (this.lastDeletedFileInfo is null)
         {
-            return; 
+            return;
         }
 
         var lastDeletedFileInfo = this.lastDeletedFileInfo.Value;

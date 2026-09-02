@@ -30,7 +30,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     private MediaSource? mediaSource;
 
-    private readonly CancelableTaskRunner initRunner = new CancelableTaskRunner();
+    private readonly CancelableTaskRunner initRunner = new();
 
     private TaskCompletionSource playbackCompletionSource = new();
 
@@ -65,7 +65,7 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
             if (IsSelected && IsDiashowActive)
             {
-                RestartPlayback();
+                PlayVideo();
             }
         });
     }
@@ -103,57 +103,54 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
 
     partial void OnIsSelectedChanged()
     {
-        if (MediaPlayer is null)
-        {
-            return;
-        }
-
         if (!IsSelected)
         {
-            MediaPlayer.Pause();
-            MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
+            PauseVideo();
+            ResetPlaybackPosition();
         }
 
         if (IsSelected && IsDiashowActive)
         {
-            RestartPlayback();
+            PlayVideo();
         }
     }
 
     partial void OnIsDiashowActiveChanged()
     {
-        if (!IsSelected || MediaPlayer is null)
+        if (!IsSelected)
         {
             return;
         }
 
         if (IsDiashowActive)
         {
-            RestartPlayback();
+            PlayVideo();
         }
         else
         {
-            MediaPlayer.Pause();
+            PauseVideo();
         }
     }
 
-    public void RestartPlayback()
+    private void PlayVideo()
     {
-        var playbackCompleted = playbackCompletionSource.Task.IsCompleted;
-
-        if (playbackCompleted)
+        if (playbackCompletionSource.Task.IsCompleted)
         {
             playbackCompletionSource = new();
+            ResetPlaybackPosition();
         }
 
-        if (MediaPlayer is not null)
-        {
-            if (playbackCompleted)
-            {
-                MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
-            }
-            MediaPlayer.Play();
-        }
+        MediaPlayer?.Play();
+    }
+
+    private void PauseVideo()
+    {
+        MediaPlayer?.Pause();
+    }
+
+    private void ResetPlaybackPosition()
+    {
+        MediaPlayer?.PlaybackSession.Position = TimeSpan.Zero;
     }
 
     private void MediaSource_StateChanged(MediaSource sender, MediaSourceStateChangedEventArgs args)
@@ -175,6 +172,11 @@ public partial class VideoFlipViewItemModel : ViewModelBase, IMediaFlipViewItemM
     private void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
     {
         playbackCompletionSource.TrySetResult();
+
+        if (IsSelected && IsDiashowActive)
+        {
+            PlayVideo();
+        }
     }
 
     private void MediaPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)

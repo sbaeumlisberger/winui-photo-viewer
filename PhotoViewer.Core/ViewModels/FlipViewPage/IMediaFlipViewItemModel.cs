@@ -13,7 +13,5 @@ public interface IMediaFlipViewItemModel : IViewModel
 
     Task? PlaybackCompletedTask => null;
 
-    void RestartPlayback() { }
-
     Task InitializeAsync();
 }
