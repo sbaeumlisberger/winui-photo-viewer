@@ -216,6 +216,7 @@ public sealed partial class BitmapViewer : UserControl
         }
         else if (IsScaleUpEnabled && (dstRectInPixels.Width > srcRectInPixels.Width || dstRectInPixels.Height > srcRectInPixels.Height))
         {
+            // CanvasImageInterpolation.HighQualityCubic is only supported for downscaling
             interpolationMode = CanvasImageInterpolation.Cubic;
         }
 
