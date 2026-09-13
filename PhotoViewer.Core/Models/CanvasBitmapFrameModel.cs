@@ -11,7 +11,7 @@ public class CanvasBitmapFrameModel : IBitmapFrameModel
 
     public Point Offset { get; }
 
-    public double Delay { get; }
+    public TimeSpan Delay { get; }
 
     public bool RequiresClear { get; }
 
@@ -19,11 +19,11 @@ public class CanvasBitmapFrameModel : IBitmapFrameModel
     {
         CanvasBitmap = canvasBitmap;
         Offset = new Point(0, 0);
-        Delay = 0;
+        Delay = TimeSpan.Zero;
         RequiresClear = false;
     }
 
-    public CanvasBitmapFrameModel(CanvasBitmap canvasBitmap, Point offset, double delay, bool requiresClear)
+    public CanvasBitmapFrameModel(CanvasBitmap canvasBitmap, Point offset, TimeSpan delay, bool requiresClear)
     {
         CanvasBitmap = canvasBitmap;
         Offset = offset;

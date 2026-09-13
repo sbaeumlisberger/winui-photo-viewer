@@ -8,24 +8,26 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 
-namespace PhotoViewer.App.Views;
+namespace PhotoViewer.App.Utils;
 
-public class AnimatedBitmapRenderer : IDisposable
+public sealed class AnimatedBitmapRenderer : IDisposable
 {
     public event TypedEventHandler<AnimatedBitmapRenderer, EventArgs>? FrameRendered;
 
-    public CanvasRenderTarget RenderTarget { get; }
+    public CanvasRenderTarget RenderTarget => renderTarget ?? throw new ObjectDisposedException(GetType().FullName);
 
     public bool IsPlaying
     {
-        get => isPlaying;
+        get;
         set
         {
-            if (value != isPlaying)
-            {
-                isPlaying = value;
+            ObjectDisposedException.ThrowIf(renderTarget is null, this);
 
-                if (isPlaying)
+            if (value != field)
+            {
+                field = value;
+
+                if (field)
                 {
                     cancellationTokenSource = new CancellationTokenSource();
                     _ = RenderAsync(cancellationTokenSource.Token);
@@ -40,11 +42,9 @@ public class AnimatedBitmapRenderer : IDisposable
         }
     }
 
-    private bool isPlaying = false;
-
     private readonly IReadOnlyList<IBitmapFrameModel> frames;
 
-    private readonly CanvasDrawingSession drawingSession;
+    private CanvasRenderTarget? renderTarget;
 
     private int currentFrameIndex = 0;
 
@@ -57,10 +57,9 @@ public class AnimatedBitmapRenderer : IDisposable
         var device = animatedBitmap.Device;
         var size = animatedBitmap.SizeInPixels;
 
-        RenderTarget = new CanvasRenderTarget(device, size.Width, size.Height, 96);
-        drawingSession = RenderTarget.CreateDrawingSession();
-        drawingSession.DrawImage(frames[0].CanvasImage);
-        drawingSession.Flush();
+        renderTarget = new CanvasRenderTarget(device, size.Width, size.Height, 96);
+
+        RenderCurrentFrame(renderTarget);
     }
 
     public void Dispose()
@@ -69,29 +68,41 @@ public class AnimatedBitmapRenderer : IDisposable
         cancellationTokenSource?.Dispose();
         cancellationTokenSource = null;
         FrameRendered = null;
-        drawingSession.Dispose();
-        RenderTarget.Dispose();
+        renderTarget?.Dispose();
+        renderTarget = null;
     }
 
     private async Task RenderAsync(CancellationToken cancellationToken)
     {
-        if (frames.Count > 1)
+        if (frames.Count <= 1)
         {
-            var stopwatch = new Stopwatch();
-            while (!cancellationToken.IsCancellationRequested)
+            return;
+        }
+
+        while (true)
+        {
+            long startTimestamp = Stopwatch.GetTimestamp();
+            RenderCurrentFrame(renderTarget!);
+            FrameRendered?.Invoke(this, EventArgs.Empty);
+            var elapsedTime = Stopwatch.GetElapsedTime(startTimestamp);
+
+            var delay = CalucateDelay(elapsedTime);
+            await Task.Delay(delay, cancellationToken).SuppressThrowing();
+            if (cancellationToken.IsCancellationRequested)
             {
-                stopwatch.Restart();
-                var frame = frames[currentFrameIndex];
-                RenderFrame(frame);
-                stopwatch.Stop();
-                await Task.Delay((int)Math.Max(frame.Delay - stopwatch.ElapsedMilliseconds, 0));
-                MoveToNextFrame();
+                break;
             }
+
+            MoveToNextFrame();
         }
     }
 
-    private void RenderFrame(IBitmapFrameModel frame)
-    { 
+    private void RenderCurrentFrame(CanvasRenderTarget renderTarget)
+    {
+        using var drawingSession = renderTarget.CreateDrawingSession();
+
+        var frame = frames[currentFrameIndex];
+
         if (currentFrameIndex == 0 || frame.RequiresClear)
         {
             drawingSession.Clear(Colors.Transparent);
@@ -99,8 +110,12 @@ public class AnimatedBitmapRenderer : IDisposable
 
         drawingSession.DrawImage(frame.CanvasImage, (float)frame.Offset.X, (float)frame.Offset.Y);
         drawingSession.Flush();
+    }
 
-        FrameRendered?.Invoke(this, EventArgs.Empty);
+    private TimeSpan CalucateDelay(TimeSpan elapsedTime)
+    {
+        var delay = frames[currentFrameIndex].Delay - elapsedTime;
+        return delay < TimeSpan.Zero ? TimeSpan.Zero : delay;
     }
 
     private void MoveToNextFrame()

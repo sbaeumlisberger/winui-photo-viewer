@@ -38,10 +38,10 @@ public class GifImageLoaderService : IGifImageLoaderService
             _cancellationToken.ThrowIfCancellationRequested();
 
             Point offset = ExtractOffset(bitmapProperties);
-            double delayInMilliseconds = ExtractDelay(bitmapProperties);
+            TimeSpan delay = ExtractDelay(bitmapProperties);
             bool requiresClear = ExtractRequiresClear(bitmapProperties);
 
-            frames.Add(new CanvasBitmapFrameModel(canvasBitmap, offset, delayInMilliseconds, requiresClear));
+            frames.Add(new CanvasBitmapFrameModel(canvasBitmap, offset, delay, requiresClear));
         }
 
         return new CanvasBitmapImageModel(id, device, frames, new ColorSpaceInfo(ColorSpaceType.Unknown));
@@ -54,7 +54,7 @@ public class GifImageLoaderService : IGifImageLoaderService
         return new Point(x, y);
     }
 
-    private double ExtractDelay(BitmapPropertySet bitmapProperties)
+    private TimeSpan ExtractDelay(BitmapPropertySet bitmapProperties)
     {
         double delayInMilliseconds = 100;
         if (bitmapProperties.TryGetValue(DelayPropertyKey, out var delayProperty) && delayProperty.Type == PropertyType.UInt16)
@@ -65,7 +65,7 @@ public class GifImageLoaderService : IGifImageLoaderService
                 delayInMilliseconds = delayInHundredths * 10.0;
             }
         }
-        return delayInMilliseconds;
+        return TimeSpan.FromMilliseconds(delayInMilliseconds);
     }
 
     private bool ExtractRequiresClear(BitmapPropertySet bitmapProperties)

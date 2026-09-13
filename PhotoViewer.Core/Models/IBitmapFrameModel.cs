@@ -9,7 +9,7 @@ public interface IBitmapFrameModel : IDisposable
 
     Point Offset { get; }
 
-    double Delay { get; }
+    TimeSpan Delay { get; }
 
     bool RequiresClear { get; }
 }
