@@ -29,9 +29,9 @@ public class EventLogService : IEventLogService
 
         var eventLogReader = new EventLogReader(eventLogQuery);
 
-        for (EventRecord eventRecord; (eventRecord = eventLogReader.ReadEvent()) != null;)
+        for (EventRecord? eventRecord; (eventRecord = eventLogReader.ReadEvent()) != null;)
         {
-            string description = eventRecord.FormatDescription();
+            string? description = eventRecord.FormatDescription();
 
             if (description != null && description.Contains(AppData.ExecutableName))
             {
