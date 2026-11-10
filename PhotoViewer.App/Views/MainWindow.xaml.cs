@@ -230,7 +230,7 @@ public sealed partial class MainWindow : Window
 
     private async Task ReportCrashAsync()
     {
-        var errorReportService = new ErrorReportService(AppData.ApplicationName, AppData.Version, new EventLogService());
+        var errorReportService = new ErrorReportService(AppData.ApplicationName, AppData.VersionString, new EventLogService());
 
         if (await errorReportService.CreateCrashReportAsync() is StorageFile crashReportFile)
         {

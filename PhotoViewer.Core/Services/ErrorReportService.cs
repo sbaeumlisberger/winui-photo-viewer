@@ -2,7 +2,6 @@
 using System.Net;
 using System.Net.Mail;
 using System.Text;
-using Windows.ApplicationModel;
 using Windows.Storage;
 
 namespace PhotoViewer.Core.Services;
@@ -11,11 +10,11 @@ public class ErrorReportService
 {
     private readonly string applicationName;
 
-    private readonly PackageVersion appVersion;
+    private readonly string appVersion;
 
     private readonly IEventLogService eventLogService;
 
-    public ErrorReportService(string applicationName, PackageVersion appVersion, IEventLogService eventLogService)
+    public ErrorReportService(string applicationName, string appVersion, IEventLogService eventLogService)
     {
         this.applicationName = applicationName;
         this.appVersion = appVersion;
@@ -74,7 +73,7 @@ public class ErrorReportService
     private async Task<StorageFile> CreateReportAsync(string reportType, string body)
     {
         var builder = new StringBuilder();
-        builder.AppendLine("App Version: " + appVersion.Major + "." + appVersion.Minor + "." + appVersion.Build);
+        builder.AppendLine("App Version: " + appVersion);
         builder.AppendLine("OS Version: " + Environment.OSVersion.VersionString);
         builder.AppendLine();
         builder.AppendLine(body);

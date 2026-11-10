@@ -2,8 +2,8 @@
 using Essentials.NET.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
+using PhotoViewer.Core;
 using PhotoViewer.Core.Models;
-using PhotoViewer.Core.Services;
 using PhotoViewer.Core.Utils;
 using PhotoViewer.Core.ViewModels;
 using System;
@@ -18,7 +18,7 @@ namespace PhotoViewer.App.Views;
 [ViewRegistration(typeof(EditLocationDialogModel))]
 public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<EditLocationDialogModel>
 {
-    private string BingMapHtml { get; } = """
+    private string MapHtml { get; } = """
         <!DOCTYPE html>
         <html>
             <head>
@@ -81,7 +81,8 @@ public sealed partial class EditLocationDialog : ContentDialog, IMVVMControl<Edi
     {
         viewModel.PropertyChanged += ViewModel_PropertyChanged;
         await mapWebView.EnsureCoreWebView2Async();
-        mapWebView.NavigateToString(BingMapHtml);
+        mapWebView.CoreWebView2.Settings.UserAgent = AppData.UserAgent;
+        mapWebView.NavigateToString(MapHtml);
         mapWebView.WebMessageReceived += MapWebView_WebMessageReceived;
     }
 

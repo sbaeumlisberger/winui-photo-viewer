@@ -38,7 +38,7 @@ namespace PhotoViewer.Core.Services
             ));
             Log.Debug($"Sending request to {uri}");
             var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("UniversePhotos");
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(AppData.UserAgent);
             var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
 
             return ParseLocation(JsonDocument.Parse(response).RootElement);
@@ -66,7 +66,7 @@ namespace PhotoViewer.Core.Services
 
             Log.Debug($"Sending request to {uri}");
             var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("UniversePhotos");
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(AppData.UserAgent);
             var response = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
 
             return ParseLocations(JsonDocument.Parse(response).RootElement);

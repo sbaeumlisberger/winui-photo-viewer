@@ -11,6 +11,10 @@ public static class AppData
 
     public static PackageVersion Version => Package.Current.Id.Version;
 
+    public static string VersionString => $"{Version.Major}.{Version.Minor}.{Version.Build}";
+
+    public static string UserAgent => $"UniversePhotos/{VersionString}";
+
     public static readonly string PublicFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "PhotoViewer");
 
     public static readonly string PrivateFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PhotoViewer");

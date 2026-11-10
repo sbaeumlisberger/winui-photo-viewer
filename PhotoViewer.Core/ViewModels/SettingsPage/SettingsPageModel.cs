@@ -39,8 +39,7 @@ namespace PhotoViewer.Core.ViewModels
             Settings = settings;
             Settings.PropertyChanged += Settings_PropertyChanged;
             AppName = AppData.ApplicationName;
-            var version = AppData.Version;
-            Version = $"{version.Major}.{version.Minor}.{version.Build}";
+            Version = AppData.VersionString;
         }
 
         protected override void OnCleanup()
